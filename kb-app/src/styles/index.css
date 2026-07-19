@@ -1,0 +1,34 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--kb-bg);
+  color: var(--kb-text);
+  font-family: 'Heebo', system-ui, sans-serif;
+  line-height: 1.6;
+}
+
+:focus-visible {
+  box-shadow: var(--kb-focus-ring);
+  outline: none;
+}
+
+a, button, [role="button"], input, select, textarea, [tabindex] {
+  transition: background-color 160ms var(--kb-ease), color 160ms var(--kb-ease), box-shadow 160ms var(--kb-ease), transform 160ms var(--kb-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
