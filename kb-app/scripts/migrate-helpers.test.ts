@@ -1,6 +1,6 @@
 // kb-app/scripts/migrate-helpers.test.ts
 import { describe, it, expect } from 'vitest';
-import { hashId, extractBase64Images } from './migrate-helpers';
+import { hashId, extractBase64Images } from './migrate-helpers.ts';
 
 describe('hashId', () => {
   it('is stable for the same input', () => {
@@ -62,7 +62,7 @@ describe('extractBase64Images', () => {
   });
 });
 
-import { buildCleanTopicMeta, type RawTopic } from './migrate-helpers';
+import { buildCleanTopicMeta, type RawTopic } from './migrate-helpers.ts';
 
 describe('buildCleanTopicMeta', () => {
   const raw: RawTopic = {

@@ -5,6 +5,9 @@
 ## מה זה הפרויקט
 אתר למידה אישי (PWA, local-first) ל־160 נושאי קורס AI Engineer. React + TypeScript + Vite + Tailwind, נתונים מקומיים ב־IndexedDB, סנכרון אופציונלי דרך Supabase. עברית, RTL, בהיר/כהה.
 
+## גרסאות בפועל
+הסקפולד (`npm create vite@latest`) הביא גרסאות עדכניות מהמתוכנן (React 18 / Vite 6 / TS 5 / ESLint 9): בפועל React 19.2.7, Vite 8.1.5, TypeScript 6.0.3, ESLint 10.7.0. יש לתכנן קוד חדש מול React 19 (ref כ-prop רגיל, אין `defaultProps` לקומפוננטות פונקציה, effects מחמירים יותר).
+
 ## פקודות
 ```bash
 npm run dev        # פיתוח
