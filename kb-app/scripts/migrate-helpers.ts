@@ -31,3 +31,54 @@ export function extractBase64Images(html: string): ExtractResult {
 
   return { html: outHtml, images };
 }
+
+export interface RawTopic {
+  id: string;
+  module: string;
+  module_label: string;
+  category: string;
+  category_icon: string;
+  category_label: string;
+  num: number;
+  filename: string;
+  slug_name: string;
+  title: string;
+  definition: string;
+  content_html: string;
+  related_raw: string[];
+  related_match: (string | null)[];
+  link: string;
+  _search: string;
+}
+
+export interface CleanTopicMeta {
+  id: string;
+  module: string;
+  module_label: string;
+  category: string;
+  category_label: string;
+  num: number;
+  slug_name: string;
+  title: string;
+  definition: string;
+  related_raw: string[];
+  related_match: (string | null)[];
+  contentPath: string;
+}
+
+export function buildCleanTopicMeta(raw: RawTopic, contentPath: string): CleanTopicMeta {
+  return {
+    id: raw.id,
+    module: raw.module,
+    module_label: raw.module_label,
+    category: raw.category,
+    category_label: raw.category_label,
+    num: raw.num,
+    slug_name: raw.slug_name,
+    title: raw.title,
+    definition: raw.definition,
+    related_raw: raw.related_raw,
+    related_match: raw.related_match,
+    contentPath,
+  };
+}

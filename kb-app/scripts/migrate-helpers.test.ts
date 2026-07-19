@@ -61,3 +61,51 @@ describe('extractBase64Images', () => {
     expect(result.images[0].buffer.length).toBeGreaterThan(0);
   });
 });
+
+import { buildCleanTopicMeta, type RawTopic } from './migrate-helpers';
+
+describe('buildCleanTopicMeta', () => {
+  const raw: RawTopic = {
+    id: 'Intro to Data Science::algorithms::02_Linear_Regression.docx',
+    module: 'Intro to Data Science',
+    module_label: 'מבוא למדעי הנתונים',
+    category: 'algorithms',
+    category_icon: '⚙️',
+    category_label: 'אלגוריתמים',
+    num: 2,
+    filename: '02_Linear_Regression.docx',
+    slug_name: 'Linear Regression',
+    title: 'Linear Regression — רגרסיה לינארית',
+    definition: 'שיטת למידה מונחית לחיזוי ערך רציף.',
+    content_html: '<p>should not appear in clean metadata</p>',
+    related_raw: ['Foo'],
+    related_match: [null],
+    link: 'ignored-in-clean-output',
+    _search: 'ignored-in-clean-output',
+  };
+
+  it('keeps only the documented clean fields, no content_html', () => {
+    const clean = buildCleanTopicMeta(raw, '/topic-content/abc123.html');
+    expect(clean).toEqual({
+      id: raw.id,
+      module: raw.module,
+      module_label: raw.module_label,
+      category: raw.category,
+      category_label: raw.category_label,
+      num: raw.num,
+      slug_name: raw.slug_name,
+      title: raw.title,
+      definition: raw.definition,
+      related_raw: raw.related_raw,
+      related_match: raw.related_match,
+      contentPath: '/topic-content/abc123.html',
+    });
+  });
+
+  it('never alters id, title, or definition text', () => {
+    const clean = buildCleanTopicMeta(raw, '/topic-content/abc123.html');
+    expect(clean.id).toBe(raw.id);
+    expect(clean.title).toBe(raw.title);
+    expect(clean.definition).toBe(raw.definition);
+  });
+});
