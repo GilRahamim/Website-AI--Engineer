@@ -42,4 +42,22 @@ describe('extractBase64Images', () => {
     expect(result.images).toHaveLength(2);
     expect(result.images[0].hash).toBe(result.images[1].hash);
   });
+
+  it('maps image/jpeg mime type to .jpg extension', () => {
+    const b64 =
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+    const html = `<img src="data:image/jpeg;base64,${b64}">`;
+    const result = extractBase64Images(html);
+    expect(result.images).toHaveLength(1);
+    expect(result.images[0].ext).toBe('jpg');
+  });
+
+  it('decodes the buffer to the exact original image bytes', () => {
+    const b64 =
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+    const html = `<img src="data:image/png;base64,${b64}">`;
+    const result = extractBase64Images(html);
+    expect(result.images[0].buffer).toEqual(Buffer.from(b64, 'base64'));
+    expect(result.images[0].buffer.length).toBeGreaterThan(0);
+  });
 });
