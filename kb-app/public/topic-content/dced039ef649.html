@@ -1,0 +1,21 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>KG-RAG הוא הרחבה של RAG רגיל שבה לצד אחזור טקסטואלי (chunks), מאחזרים מסלולים מבניים (paths) בין ישויות בתוך Knowledge Graph. כאשר RAG וקטורי שוגה במשימות הדורשות נימוק מרובה-שלבים (multi-hop) או הבנת קשרי סיבה-תוצאה, KG-RAG מספק קשרים מפורשים שמאפשרים לוגיקת חיתוך/מסלול מבוססת-מבנה.</p>
+<h4 class='sec-h'>⚠️ היכן RAG רגיל נשבר</h4>
+<p>RAG סטנדרטי: Query → אחזור chunks → LLM. נכשל כאשר: המידע מקושר (connected) בין מסמכים שונים, נדרש נימוק מרובה-שלבים, או נדרשת הבנת קשרי סיבה←תוצאה.</p>
+<p>דוגמה: השאלה &quot;אילו ספקי סוללות Tesla משתמשת, ומי מהם מספק גם ל-BMW?&quot; — אחזור וקטורי ימצא אזכורים נפרדים של ספקי Tesla, ספקי BMW, ו-CATL, אך לא חיתוך (intersection) ביניהם, ולא לוגיקה מבנית. הפתרון דורש: (1) מציאת ספקי Tesla (2) מציאת ספקי BMW (3) חישוב חיתוך — זהו נימוק מבני.</p>
+<h4 class='sec-h'>🏛️ ייצוג Knowledge Graph</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/78f0cc57977e.png" loading="lazy" alt="Knowledge Graph RAG (KG-RAG) — ארכיטקטורה — architecture diagram" /></div>
+<p>קשרים מיוצגים כטריפלטים מפורשים: CATL → supplies → Tesla, CATL → supplies → BMW, Panasonic → supplies → Tesla, Samsung SDI → supplies → BMW. כשהקשרים מפורשים, חיתוך הופך לטריוויאלי.</p>
+<table class='kbtable'><tr><td><strong>שיטת אחזור</strong></td><td><strong>מה היא מאחזרת</strong></td></tr><tr><td>RAG (Vector)</td><td>טקסט (chunks) דמיוני-סמנטית</td></tr><tr><td>KG</td><td>מסלולים מבניים בין ישויות (structured paths)</td></tr><tr><td>Agent</td><td>מבצע את הנימוק עצמו (reasoning) מעל תוצאות האחזור</td></tr></table>
+<h4 class='sec-h'>🔄 השוואת שיטות אחזור: Keyword / Vector / Graph</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>עיקרון</strong></td><td><strong>יתרון</strong></td><td><strong>חיסרון</strong></td></tr><tr><td>Keyword</td><td>חפיפת token מדויקת</td><td>מהיר וניתן-להסבר (explainable)</td><td>שביר לניסוח חלופי (paraphrasing)</td></tr><tr><td>Vector</td><td>דמיון סמנטי (embeddings)</td><td>מתמודד עם ניסוח חלופי</td><td>לא יכול לעקוב אחר קשרים מוטיפסים (typed relationships)</td></tr><tr><td>Graph</td><td>מעבר (traversal) על קשתות מוטיפסות</td><td>מנצח בשאלות multi-hop החולשות על מספר מסמכים</td><td>דורש בניית גרף ותחזוקה</td></tr></table>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>שאלות &quot;מי מחובר ל-X?&quot; ו&quot;מה החפיפה בין A ל-B?&quot;</li><li>תעשיות עם רשתות יחסים מורכבות: שרשרת אספקה, בעלות תאגידית, רגולציה.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>קשרים מפורשים בין ישויות — לא רק דמיון.</li><li>שאילתות מבניות (structured queries), לא רק similarity.</li><li>תשובות טובות יותר לשאלות חיתוך/קישוריות.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>דורש: חילוץ ישויות (entity extraction), נורמליזציה של יחסים, ותחזוקת גרף.</li><li>יותר engineering מ-vector RAG רגיל.</li><li>התובנה המרכזית: KG-RAG משפר נימוק אך מעביר את המורכבות למידול הדאטה — נימוק טוב יותר נובע ממבנה טוב יותר, לא רק ממודלים טובים יותר.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מתי RAG וקטורי רגיל נכשל ו-KG-RAG מצליח?</strong></p>
+<p>ת: כשהשאלה דורשת חיתוך/קישוריות בין שתי קבוצות ישויות (multi-hop reasoning) — לדוגמה &quot;מי מספק לשני יצרנים שונים?&quot;. וקטור מוצא אזכורים נפרדים אך לא יכול לחשב חיתוך לוגי; גרף עם קשרים מפורשים הופך את החיתוך לטריוויאלי.</p>
+<p><strong>ש: מה ההבדל בין מה ש-RAG מאחזר לבין מה ש-KG מאחזר?</strong></p>
+<p>ת: RAG מאחזר טקסט (chunks) על בסיס דמיון סמנטי; KG מאחזר מסלולים מבניים (structured paths) בין ישויות על בסיס קשרים מוטיפסים מפורשים בגרף.</p>

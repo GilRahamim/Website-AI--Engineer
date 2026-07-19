@@ -1,0 +1,29 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>הרחבה של Word2Vec ללימוד וקטור הטמעה (embedding) שלם למסמך/פסקה, ולא רק למילים בודדות — כך שניתן להשוות מסמכים שלמים זה לזה ישירות במרחב הווקטורי.</p>
+<h4 class='sec-h'>⚙️ שני ארכיטקטורות מרכזיות</h4>
+<ul><li>DM (Distributed Memory): בנוסף לוקטורי המילים, נלמד וקטור נוסף עבור כל מסמך/פסקה (paragraph ID), המשמש כ'הקשר נוסף' שמסייע לחזות את המילה הבאה — בדומה ל-CBOW, אך עם תוספת זיכרון של זהות המסמך.</li><li>DBOW (Distributed Bag of Words): וקטור המסמך מאומן לחזות ישירות מילים אקראיות מתוך המסמך, ללא התבססות על וקטורי מילים בכלל — בדומה ל-Skip-gram, אך מילת המטרה היא 'זהות המסמך' עצמה.</li></ul>
+<h4 class='sec-h'>📐 הנוסחה</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/9d26ae03f63b.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>המודל DM — הסתברות המילה wt בהינתן חלון המילים שמסביב ווקטור המסמך d</em></p>
+<h4 class='sec-h'>🔡 הערה על המנגנון</h4>
+<p>וקטור המסמך d פועל כ'תקציר' נלמד של המסמך כולו — הוא מעודכן יחד עם וקטורי המילים בכל שלבי האימון, כך שבסיום מהווה ייצוג צפוף של המסמך השלם הניתן להשוואה (Cosine Similarity) עם מסמכים אחרים.</p>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>השוואת דמיון בין מסמכים שלמים (deduplication, near-duplicate detection).</li><li>זיהוי שאלות כפולות (לדוגמה Quora Duplicate Questions): מחשבים וקטור Doc2Vec לכל שאלה, ובונים פיצ'רים (cosine / concatenation) להזנה למודל סיווג (כגון Logistic Regression).</li><li>קלט וקטורי קבוע-גודל לכל מסמך, להזנה לכל אלגוריתם למידת מכונה קלאסי.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מספק וקטור יחיד וקומפקטי למסמך שלם, מבלי לצורך לאגרגד וקטורי מילים בעצמך.</li><li>תופס במידה מסוימת גם מבנה/סדר מקומי (בעיקר ב-DM), בשונה מ-BoW.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>בסיס חזק (baseline) פשוט יותר — ממוצע (mean) פשוט או משוקלל של וקטורי המילים במסמך — מתחרה לעיתים בביצועים עם Doc2Vec, ולכן מומלץ לבדוק אותו לפני שמשקיעים באימון Doc2Vec מלא.</li><li>דורש קורפוס גדול ואימון מחדש (re-train) של וקטור מסמך לכל מסמך חדש (אם לא משתמשים ב-inference API).</li><li>במבחנים אמפיריים, DM ו-DBOW מתואמים חלקית (correlation ~0.76 בין ביצועיהם) אך לא זהים — לעיתים שילוב (concatenation) של שניהם משתפר רק במידה מצומצמת על פני כל אחד בנפרד.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Duplicate Detection / Classification</td><td>Accuracy, F1</td></tr><tr><td>Similarity Ranking</td><td>Precision@K, Top-1 Accuracy</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>יתרון מרכזי</strong></td><td><strong>חסרון/אזהרה</strong></td></tr><tr><td>Doc2Vec (DM/DBOW)</td><td>וקטור מסמך שלם, נלמד באופן ייעודי</td><td>צריך אימון; baseline פשוט (mean vector) לעיתים מתחרה</td></tr><tr><td>Mean/Weighted Mean of Word Vectors</td><td>מהיר, ללא אימון נוסף</td><td>מתעלם לחלוטין מסדר המילים</td></tr><tr><td>TF-IDF + Cosine</td><td>פשוט ושקוף</td><td>אינו תופס דמיון סמנטי</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from gensim.models.doc2vec import Doc2Vec, TaggedDocument
+tagged = [TaggedDocument(words, [i]) for i, words in enumerate(tokenized_docs)]
+model = Doc2Vec(tagged, vector_size=100, dm=1, min_count=2, epochs=20)
+vec = model.infer_vector(new_doc_tokens)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מה ההבדל בין DM ל-DBOW ב-Doc2Vec?</strong></p>
+<p><strong>ת: </strong>DM משתמש בוקטור המסמך בנוסף לוקטורי המילים כדי לחזות מילה במסמך (דומה ל-CBOW); DBOW מאמן את וקטור המסמך לחזות ישירות מילים אקראיות מהמסמך, בלי להישען על וקטורי מילים בכלל (דומה ל-Skip-gram).</p>
+<p><strong>ש: </strong><strong>מתי כדאי לבדוק baseline פשוט במקום Doc2Vec ישירות?</strong></p>
+<p><strong>ת: </strong>כשיש לחץ זמן/משאבים — ממוצע (משוקלל) של וקטורי Word2Vec/GloVe של המילים במסמך הוא baseline מהיר וחסר-אימון נוסף, שלעיתים מתחרה בביצועי Doc2Vec המלא.</p>

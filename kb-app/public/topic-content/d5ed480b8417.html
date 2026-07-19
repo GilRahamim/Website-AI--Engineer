@@ -1,0 +1,39 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>אלגוריתם אופטימיזציה המשלב Momentum (ממוצע נע של הגרדיאנט עצמו) עם RMSProp (ממוצע נע של ריבוע הגרדיאנט), בתוספת תיקון bias — הוא ברירת המחדל הנפוצה ביותר לאימון רשתות עמוקות.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ol><li>מאתחלים m=0 (ממוצע נע ראשון) ו-v=0 (ממוצע נע שני).</li><li>בכל איטרציה מחשבים את הגרדיאנט g_t.</li><li>מעדכנים את m (כיוון התנע) ואת v (סקאלת השונות) באמצעות ממוצעים נעים אקספוננציאליים.</li><li>מתקנים את ה-bias של m ו-v (חשוב באיטרציות הראשונות כששני האיברים מתחילים מאפס).</li><li>מעדכנים את הפרמטרים לפי m המתוקן ו-v המתוקן.</li></ol>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<p>Momentum (first moment):</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/bbe45bb96e26.png" loading="lazy" alt="formula"></div>
+<p>Variance (second moment):</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/bb94465cc4e6.png" loading="lazy" alt="formula"></div>
+<p>תיקון Bias:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/b0ccb2344112.png" loading="lazy" alt="formula"></div>
+<p>עדכון משקלים:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/3b92503fdcfb.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>ברירת המחדל לאימון רשתות עמוקות מודרניות (CNN, RNN, Transformer)</li><li>כל בעיה שדורשת התכנסות מהירה ויציבה ללא הרבה כיוון ידני של היפר-פרמטרים</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>משלב את היתרונות של Momentum (התכנסות מהירה) ו-RMSProp (התאמת LR לכל פרמטר)</li><li>עובד טוב out-of-the-box עם היפר-פרמטרים סטנדרטיים</li><li>מתאים גם לדאטה דליל וגם לנוף Loss לא-קונבקסי</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>יכול להוביל ל-overfitting קל יותר מ-SGD על משימות מסוימות</li><li>צריך לאחסן שני מצברים (m,v) לכל פרמטר — עומס זיכרון כפול לעומת SGD</li><li>לעיתים מתכנס לפתרון עם generalization מעט פחות טוב מ-SGD+Momentum מכוון היטב</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Classification</td><td>Accuracy, Cross-Entropy Loss</td></tr><tr><td>Regression</td><td>MSE, RMSE</td></tr><tr><td>NLP / Sequence</td><td>Perplexity, BLEU</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>הבדל מרכזי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>SGD + Momentum</td><td>פשוט יותר, לעיתים generalization טוב יותר</td><td>כשיש זמן לכוון היפר-פרמטרים בקפידה</td></tr><tr><td>RMSProp</td><td>אין רכיב Momentum</td><td>Adam הוא בעצם השדרוג שלו</td></tr><tr><td>AdamW</td><td>מפריד Weight Decay מהעדכון — regularization נכון יותר</td><td>כשרוצים L2 regularization תקין יותר מ-Adam</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python / PyTorch)</h4>
+<pre class='code-block'><code>import torch
+
+model = torch.nn.Linear(10, 1)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001, betas=(0.9, 0.999))
+
+for x_batch, y_batch in dataloader:
+    optimizer.zero_grad()
+    loss = torch.nn.functional.mse_loss(model(x_batch), y_batch)
+    loss.backward()
+    optimizer.step()   # m, v updated with bias correction</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>למה צריך תיקון Bias ב-Adam?</p>
+<p><strong>ת: </strong>כי m ו-v מאותחלים באפס, באיטרציות הראשונות הם מוטים לכיוון אפס; חילוק ב-(1-β^t) מתקן את ההטיה הזו ומאפשר עדכונים נכונים מההתחלה.</p>
+<p><strong>ש: </strong>מה ההבדל בין Adam ל-AdamW?</p>
+<p><strong>ת: </strong>AdamW מפריד את Weight Decay מעדכון הגרדיאנט (decoupled weight decay), כך שה-regularization לא מתערבב עם ההתאמה האדפטיבית של ה-learning rate, מה שמשפר generalization.</p>

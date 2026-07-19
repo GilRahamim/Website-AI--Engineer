@@ -1,0 +1,25 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>ייצוג של מסמך כווקטור ספירות — לכל מילה באוצר המילים, כמה פעמים היא מופיעה במסמך. השם 'שק מילים' מבטא את העיקרון המרכזי: סדר המילים נשמט לחלוטין, ונשמרת רק תדירות ההופעה.</p>
+<h4 class='sec-h'>🔍 מתי זה קורה? (מתי משתמשים)</h4>
+<ul><li>כשלב ביניים בסיסי לפני שקלול TF-IDF, אימון Topic Modeling (LDA) או הזנת קלט לקלסיפייר.</li><li>כל פעם שצריך ייצוג מהיר וקל-לפענוח, ואין צורך ברגישות לסדר המילים.</li></ul>
+<h4 class='sec-h'>⚙️ איך בונים ייצוג BoW</h4>
+<ul><li>עיבוד מקדים (Preprocessing): הסרת סימני פיסוק.</li><li>Tokenization — פירוק הטקסט למילים בודדות.</li><li>בניית מילון (Dictionary) — הקצאת מזהה (id) לכל מילה שרוצים לשמור.</li><li>בניית וקטור BoW — ספירת מספר המופעים של כל מילה.</li></ul>
+<p>דוגמה: וקטור ה-BoW של מסמך מסוים יכול להיראות כך —</p>
+<div class="formula-block"><img class="block-formula-img" src="/topic-assets/9ff9317cc3a5.png" loading="lazy" alt="formula" alt="formula"></div>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מאפשר שימוש במדדי דמיון כמו Cosine Similarity לדירוג מסמכים.</li><li>מתחשב בגודל המסמך והשאילתה (בניגוד למודל הבוליאני).</li><li>אפשר לבצע שאילתות בטקסט חופשי, ללא צורך באופרטורים בוליאניים.</li><li>המטריצה N × D אמנם גדולה אך ספארסית — אפשר לנצל מימוש sparse לחיסכון בזיכרון.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>מפספס תוצאות שלא משתמשות במונח המדויק (אין הבנה של סינונימים).</li><li>אינו מתחשב בתדירות המילה בקורפוס כולו — מילים נפוצות מאוד (כמו 'the') מקבלות משקל גבוה מדי.</li><li>אינו מתחשב בסדר המילים במשפט.</li></ul>
+<h4 class='sec-h'>🛠️ איך פותרים / מטפלים?</h4>
+<ul><li>שקלול לפי נדירות (TF-IDF) — כדי שמילים נפוצות יקבלו משקל נמוך יותר.</li><li>הוספת n-grams (bigrams/trigrams) לתפיסת ביטויים רב-מילתיים.</li><li>מעבר לייצוגים סמנטיים (Word Embeddings) כדי לתפוס משמעות וסינונימים.</li></ul>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>BoW הוא הבסיס שעליו בנויות שיטות מתקדמות יותר: TF-IDF הוא שקלול של BoW; LDA לוקח מטריצת BoW (Document-Term Matrix) כקלט; ומודלי Embeddings מנסים לפתור את המגבלות הסמנטיות של BoW.</p>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from sklearn.feature_extraction.text import CountVectorizer
+model = CountVectorizer()
+matrix = model.fit_transform(docs)  # term-document count matrix</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מה ההבדל בין Binary Incidence Matrix לבין Bag-of-Words?</strong></p>
+<p><strong>ת: </strong>ב-Incidence המטריצה בינארית (0/1), ואילו ב-BoW נשמרת ספירה מלאה של מספר המופעים של כל מילה.</p>
+<p><strong>ש: </strong><strong>מה החיסרון המרכזי של BoW שדורש שקלול TF-IDF?</strong></p>
+<p><strong>ת: </strong>BoW מתייחס לכל המילים הנפוצות (כמו 'the') באותו אופן כמילים נדירות ואינפורמטיביות — TF-IDF מתקן זאת.</p>

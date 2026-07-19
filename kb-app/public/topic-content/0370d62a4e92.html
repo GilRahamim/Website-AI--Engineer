@@ -1,0 +1,32 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מסגרת כללית להערכת איכות ייצוגי embeddings (מילים/מסמכים), המתחלקת לשתי גישות מרכזיות: הערכה תוכית (Intrinsic) — בודקת תכונות פנימיות של מרחב הווקטורים עצמו, והערכה חיצונית (Extrinsic) — בודקת ביצועים על משימה downstream בפועל.</p>
+<h4 class='sec-h'>📐 נוסחאות עיקריות</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/d3fc3859b29f.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>Precision@K — שיעור התוצאות הרלוונטיות מתוך top-K תוצאות (לדוגמה — שכנים הקרובים ביותר ב-embedding space)</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/2769e8b5e91c.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>Accuracy — שיעור הסיווגים הנכונים (משימת Extrinsic — לדוגמה classification עם embeddings כפיצ'רים)</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/0a94698d846f.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>Top-1 Accuracy — שיעור השאלות/האנלוגיות שבהן התשובה הנכונה היא הראשונה בדירוג</em></p>
+<h4 class='sec-h'>🎯 מתאים לסוג למידה ומשימה</h4>
+<table class='kbtable'><tr><td><strong>גישת הערכה</strong></td><td><strong>משימה</strong></td><td><strong>מדדים אופייניים</strong></td></tr><tr><td>Intrinsic</td><td>Word Similarity (לדוגמה wordsim353)</td><td>קורלציה בין דמיון human-rated לדמיון קוסינוס</td></tr><tr><td>Intrinsic</td><td>Analogy Tests</td><td>Top-1 Accuracy</td></tr><tr><td>Extrinsic</td><td>Classification</td><td>Accuracy, F1 (לדוגמה Logistic Regression על embeddings)</td></tr><tr><td>Extrinsic</td><td>Clustering</td><td>ARI (Adjusted Rand Index)</td></tr><tr><td>Extrinsic</td><td>Ranking / Retrieval</td><td>Precision@K, Top-1 Accuracy</td></tr></table>
+<h4 class='sec-h'>📊 פירוט: הערכה תוכית (Intrinsic)</h4>
+<ul><li>מבחני דמיון (Similarity Tests) — משווים את דמיון הקוסינוס בין זוגות מילים לדירוג דמיון שניתן על-ידי בני אדם (datasets כמו wordsim353).</li><li>מבחני אנלוגיה (Analogy Tests) — בודקים אם יחסים לינאריים כמו &quot;king - man + woman ≈ queen&quot; אכן מתקיימים במרחב הווקטורי, ומדווחים Top-1 Accuracy.</li></ul>
+<h4 class='sec-h'>📊 פירוט: הערכה חיצונית (Extrinsic)</h4>
+<ul><li>Classification — מזינים את ה-embeddings (או ממוצע שלהם למסמך) כפיצ'רים למודל סיווג (לדוגמה Logistic Regression), ומדווחים Accuracy (לדוגמה ~93.3% במדגם classification טיפוסי).</li><li>Clustering — מפעילים K-means על וקטורי ה-embeddings, ומשווים לאשכולות אמת (ground-truth labels) באמצעות ARI (לדוגמה ~0.73 במדגם טיפוסי).</li><li>Visualization — הקרנת הווקטורים לממד נמוך (PCA/t-SNE) לבדיקה איכותית-ויזואלית אם נושאים/קבוצות נפרדים בבירור.</li></ul>
+<h4 class='sec-h'>✅ מתי עדיף Intrinsic ומתי Extrinsic?</h4>
+<ul><li>Intrinsic מהיר וזול לחישוב, ומאפשר השוואה בין מודלי embeddings שונים ללא צורך באימון מודל downstream.</li><li>Extrinsic מודד את מה שחשוב בפועל — ביצועים על המשימה הסופית — אך יקר יותר ותלוי בבחירת המודל/הפיצ'רים ה-downstream.</li><li>מומלץ לשלב את שתי הגישות: Intrinsic לסינון מהיר בין מודלים, Extrinsic לאישור סופי על המשימה האמיתית.</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>ציון גבוה ב-Intrinsic לא תמיד מתורגם לביצועים טובים ב-Extrinsic (המשימה בפועל) — אין קורלציה מובטחת.</li><li>השוואת embeddings שונים על משימת Extrinsic תלויה גם במודל ה-downstream שנבחר, ולא רק באיכות ה-embeddings עצמם.</li></ul>
+<h4 class='sec-h'>💻 מימוש בקוד</h4>
+<pre class='code-block'><code>from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, adjusted_rand_score
+from sklearn.cluster import KMeans
+clf = LogisticRegression().fit(X_train_emb, y_train)
+acc = accuracy_score(y_test, clf.predict(X_test_emb))
+labels = KMeans(n_clusters=k).fit_predict(X_emb)
+ari = adjusted_rand_score(true_labels, labels)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מה ההבדל בין הערכה Intrinsic להערכה Extrinsic של embeddings?</strong></p>
+<p><strong>ת: </strong>Intrinsic בודקת תכונות פנימיות של מרחב הווקטורים עצמו (דמיון, אנלוגיות) ללא קשר למשימה סופית; Extrinsic בודקת ביצועים על משימה downstream בפועל (כגון סיווג או אשכולות).</p>
+<p><strong>ש: </strong><strong>מדוע לא מספיק להעריך embeddings רק באמצעות מבחני אנלוגיה?</strong></p>
+<p><strong>ת: </strong>ציון גבוה במבחני אנלוגיה אינו מבטיח ביצועים טובים במשימה הסופית בפועל — חשוב לאשר גם באמצעות הערכה Extrinsic על המשימה הרלוונטית.</p>

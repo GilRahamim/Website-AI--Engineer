@@ -1,0 +1,26 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>שלב קדם-עיבוד שמטרתו להמיר מקורות מידע לא-מבניים (PDF, HTML, סקאנים) לטקסט נקי שניתן להזין ל-LLM/pipeline RAG — כולל ניקוי, נורמליזציה, ו-OCR למסמכים סרוקים.</p>
+<h4 class='sec-h'>⚙️ שלבי התהליך</h4>
+<ul><li>Diverse Source Ingestion — טקסט, HTML, PDF (כולל סרוקים).</li><li>Preprocessing — נורמליזציה, סינון רעש, התאמת סכמה.</li><li>LLM-Assisted Cleansing — סטנדרטיזציית ישויות, תיקון שגיאות, דה-דופליקציה, חילוץ תוכן.</li><li>Chunking &amp; Context Management — פיצול סמנטי ותקצוב טוקנים (ראו Chunking Strategies).</li></ul>
+<h4 class='sec-h'>📚 ספריות לחילוץ PDF — השוואה</h4>
+<table class='kbtable'><tr><td><strong>ספרייה</strong></td><td><strong>חוזק עיקרי</strong></td><td><strong>הערות</strong></td></tr><tr><td>pdfplumber</td><td>פרסור מודע-layout, טבלאות</td><td>שומר שורות, תומך PDF רב-עמודות</td></tr><tr><td>PyMuPDF (fitz)</td><td>מהיר ומדויק</td><td>טוב לטקסט פשוט + layout, תמיכה בתמונות/metadata</td></tr><tr><td>PyMuPDFLoader</td><td>LangChain-native</td><td>עוטף PyMuPDF, מחזיר Document objects ל-LLM</td></tr><tr><td>PyPDF2</td><td>חילוץ טקסט פשוט</td><td>פחות טוב עם פורמט/layout מורכב</td></tr><tr><td>pdfminer.six</td><td>שליטה ברמה נמוכה</td><td>עוצמתי אך מורכב לשימוש</td></tr><tr><td>unstructured</td><td>פלט מוכן ל-LLM</td><td>Markdown/JSON/HTML מבני, אידאלי ל-pipelines</td></tr><tr><td>Tika</td><td>תמיכה במגוון פורמטים</td><td>דורש Java, כולל metadata</td></tr></table>
+<h4 class='sec-h'>🎯 בחירת כלי לפי משימה</h4>
+<table class='kbtable'><tr><td><strong>משימה</strong></td><td><strong>כלי מומלץ</strong></td></tr><tr><td>חילוץ טקסט פשוט</td><td>PyPDF2, pdfplumber, PyMuPDFLoader</td></tr><tr><td>חילוץ מודע-layout</td><td>pdfplumber, PyMuPDF, PyMuPDFLoader</td></tr><tr><td>פרסור טבלאות</td><td>pdfplumber</td></tr><tr><td>מסמכים מורכבים/רועשים</td><td>unstructured, pdfminer.six</td></tr><tr><td>pipelines ל-LLM (Markdown/JSON)</td><td>unstructured, PyMuPDFLoader</td></tr><tr><td>מסמכים סרוקים בכמות גדולה</td><td>Tika (עם OCR), או unstructured + OCR</td></tr></table>
+<h4 class='sec-h'>🖼️ טיפול במסמכים סרוקים — OCR</h4>
+<p>מסמכים סרוקים מכילים תמונה של טקסט ולא טקסט הניתן לבחירה — parsers רגילים לא יחלצו ממנו תוכן. הפתרון: להמיר עמודים לתמונות, להריץ OCR (pytesseract), ולשלוח את הטקסט שחולץ ל-LLM.</p>
+<h4 class='sec-h'>💻 קוד לדוגמה (OCR pipeline)</h4>
+<pre class='code-block'><code>from pdf2image import convert_from_path
+import pytesseract
+images = convert_from_path(&amp;quot;scanned.pdf&amp;quot;, dpi=300)
+ocr_text = &amp;quot;\n&amp;quot;.join(pytesseract.image_to_string(img) for img in images)
+response = client.chat.completions.create(
+model=&amp;quot;gpt-4o&amp;quot;,
+messages=[{&amp;quot;role&amp;quot;: &amp;quot;user&amp;quot;, &amp;quot;content&amp;quot;: f&amp;quot;Summarize:\n{ocr_text}&amp;quot;}]
+)</code></pre>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>חילוץ המסמכים הוא הצעד הראשון בכל RAG pipeline — לפני Chunking ו-Embedding. כשל בחילוץ (טקסט פגום/חסר) מתפשט לכל השלבים הבאים.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מתי תבחר ב-unstructured על פני pdfplumber?</strong></p>
+<p>ת: כשהמסמכים מגוונים/מורכבים/רועשים (סקאנים, HTML מעורב, מבנים לא אחידים) ונדרש פלט מוכן ל-pipeline (Markdown/JSON) — unstructured נותן שכבת abstraction רחבה יותר. pdfplumber מתאים יותר ל-PDF נקיים עם טבלאות מובְנות.</p>
+<p><strong>ש: מה הסיכון בהרצת OCR על מסמך סרוק לפני שליחתו ל-LLM?</strong></p>
+<p>ת: שגיאות OCR (תווים שגויים, שורות מעורבבות) מוזרקות כטקסט ה'אמת' ל-LLM, שעלול לבנות עליהן תשובה שגויה בביטחון מלא — לכן חשוב QA על איכות ה-OCR לפני pipeline קריטי.</p>

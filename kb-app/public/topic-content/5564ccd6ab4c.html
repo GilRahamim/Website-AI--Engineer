@@ -1,0 +1,34 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>אסטרטגיות תכנון (Planning) הן השיטות שבהן Agent מפרק מטרה למספר צעדי-ביניים — מחולקות לתכנון ללא משוב (one-pass) ותכנון עם משוב (איטרטיבי, מתבסס על תוצאות צעדים קודמים).</p>
+<h4 class='sec-h'>⚙️ תכנון ללא משוב (Planning without Feedback)</h4>
+<ul><li>Chain-of-Thought (CoT) — מאפשר חשיבה מורכבת ל-LLM באמצעות שלבי נימוק (reasoning) ביניים, בנתיב חשיבה יחיד.</li><li>Tree-of-Thought (ToT) — מפרק בעיה למספר צעדי-חשיבה, מייצר מספר מחשבות אפשריות בכל צעד ובונה מבנה-עץ (לא נתיב יחיד).</li></ul>
+<h4 class='sec-h'>⚙️ תכנון עם משוב (Planning with Feedback)</h4>
+<ul><li>ReAct — שיטת prompting מתקדמת המשלבת Reasoning ו-Action בתוך אותו prompt (Thought → Action → Observation, חזרתי).</li><li>Reflexion — framework המחזק agents מבוססי-שפה דרך משוב לשוני (linguistic feedback) — ה-agent מבקר את הפעולות הקודמות שלו ומשתפר.</li></ul>
+<h4 class='sec-h'>🔄 השוואה</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>סוג</strong></td><td><strong>הבדל מרכזי</strong></td></tr><tr><td>CoT</td><td>ללא משוב</td><td>נתיב חשיבה יחיד, ליניארי</td></tr><tr><td>ToT</td><td>ללא משוב</td><td>מבנה עץ, מספר מחשבות אפשריות בכל שלב</td></tr><tr><td>ReAct</td><td>עם משוב</td><td>מחזור Thought→Action→Observation, יכול לקרוא לכלים באמצע החשיבה</td></tr><tr><td>Reflexion</td><td>עם משוב</td><td>ביקורת עצמית מבוססת-שפה, שיפור על סמך משוב מהפעלות קודמות</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה — ReAct prompt template</h4>
+<pre class='code-block'><code>react_prompt_template = &amp;quot;&amp;quot;&amp;quot;
+You are a ReAct agent that can use the following tools:
+{tools}
+You must follow this format exactly:
+Question: the input question you must answer
+Thought: you should always think about what to do
+Action: the action to take, must be one of [{tool_names}]
+Action Input: the input to the action, as a JSON object
+Observation: the result of the action
+... (this Thought/Action/Action Input/Observation cycle can repeat) ...
+Thought: I now know the final answer
+Final Answer: the answer to the original question
+Begin
+Question: {input}
+Thought:{agent_scratchpad}
+&amp;quot;&amp;quot;&amp;quot;
+from langchain.agents import create_react_agent, AgentExecutor
+agent = create_react_agent(llm, tools, react_prompt)
+agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, handle_parsing_errors=True)
+result = agent_executor.invoke({&amp;quot;input&amp;quot;: &amp;quot;Is 72 an even number? Then tell me a fact about blue.&amp;quot;, &amp;quot;agent_scratchpad&amp;quot;: &amp;quot;&amp;quot;})</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל המהותי בין CoT ל-ToT?</strong></p>
+<p>ת: CoT מייצר נתיב נימוק ליניארי יחיד; ToT מרחיב זאת למבנה עץ — מספר מחשבות אפשריות בכל שלב, מה שמאפשר חיפוש/השוואה בין מסלולי חשיבה לפני בחירת התשובה הסופית.</p>
+<p><strong>ש: מה תפקיד ה-Observation במחזור ReAct?</strong></p>
+<p>ת: Observation היא התוצאה שמתקבלת מהפעלת הכלי (Action) — היא מוזרקת בחזרה לתוך ה-prompt ומאפשרת ל-Agent להמשיך לנמק (Thought הבא) על בסיס תוצאה אמיתית ולא רק על הנחה.</p>

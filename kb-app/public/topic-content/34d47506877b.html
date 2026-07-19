@@ -1,0 +1,33 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>שיטה המנרמלת את האקטיבציות של שכבה (לממוצע 0 ושונות 1) על פני כל מיני-באטץ' באימון, ולאחר מכן מאפשרת לרשת ללמוד קנה מידה (scale) והיסט (shift) משלה — מייצבת ומאיצה את האימון.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ol><li>בכל מיני-באטץ' מחשבים את הממוצע והשונות של האקטיבציות בכל ערוץ/נוירון.</li><li>מנרמלים את האקטיבציות: מחסרים את הממוצע ומחלקים בשורש השונות (פלוס אפסילון).</li><li>מכפילים בפרמטר γ (scale) ומוסיפים פרמטר β (shift) — שני פרמטרים נלמדים.</li><li>בזמן Inference משתמשים בממוצע/שונות גלובליים (running statistics) שנאספו באימון, ולא בסטטיסטיקת ה-batch הנוכחי.</li></ol>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<p>נרמול:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/62be7caf48e4.png" loading="lazy" alt="formula"></div>
+<p>Scale &amp; Shift:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/7b8feb7ab90e.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>אימון רשתות עמוקות (CNN, MLP) שבהן ההתפלגות הפנימית של האקטיבציות משתנה במהלך האימון (internal covariate shift)</li><li>מאפשר שימוש ב-learning rate גבוה יותר ומקצר זמן אימון</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מאיץ משמעותית את התכנסות האימון</li><li>מאפשר learning rate גבוה יותר ביציבות</li><li>פועל גם כרגולריזציה קלה (מפחית Overfitting)</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>תלוי בגודל batch — לא עובד טוב עם batch קטן מאוד</li><li>מוסיף תקורת חישוב וזיכרון (שמירת running stats)</li><li>פחות מתאים ל-RNN (שם Layer Normalization עדיף)</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Classification</td><td>Accuracy, F1</td></tr><tr><td>Computer Vision (CNN)</td><td>Accuracy, mAP</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>הבדל מרכזי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>Layer Normalization</td><td>מנרמל על פני התכונות של דוגמה בודדת, לא על פני ה-batch</td><td>RNN / Transformer</td></tr><tr><td>Group Normalization</td><td>מנרמל קבוצות ערוצים — לא תלוי בגודל batch</td><td>batch size קטן (זיהוי תמונה ברזולוציה גבוהה)</td></tr><tr><td>Dropout</td><td>מכבה נוירונים אקראית, לא מנרמל התפלגות</td><td>שילוב משלים, לא תחליף</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python / PyTorch)</h4>
+<pre class='code-block'><code>import torch.nn as nn
+
+model = nn.Sequential(
+    nn.Linear(784, 256),
+    nn.BatchNorm1d(256),  # מנרמל את האקטיבציות לפני ReLU
+    nn.ReLU(),
+    nn.Linear(256, 10),
+)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה זה internal covariate shift ואיך Batch Norm פותר אותו?</p>
+<p><strong>ת: </strong>זו התופעה שבה התפלגות הקלט לכל שכבה משתנה במהלך האימון כתוצאה מעדכוני המשקלים בשכבות הקודמות; Batch Norm מנרמל מחדש את ההתפלגות בכל שכבה, מה שמייצב ומאיץ את האימון.</p>
+<p><strong>ש: </strong>מה ההבדל בין Batch Norm באימון לבין ב-Inference?</p>
+<p><strong>ת: </strong>באימון משתמשים בממוצע/שונות של ה-batch הנוכחי; ב-Inference משתמשים בממוצע/שונות גלובליים (running mean/var) שנאספו במהלך כל האימון, כדי שהתחזית תהיה דטרמיניסטית.</p>

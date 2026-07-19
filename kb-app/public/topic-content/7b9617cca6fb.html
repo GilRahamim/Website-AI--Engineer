@@ -1,0 +1,48 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>הערכת RAG מתחלקת לשני עוגנים: הערכת ה-retrieval (האם נשלפו המסמכים הנכונים) והערכת ה-generation (האם התשובה שנוצרה מעוגנת ונכונה לאור המסמכים שנשלפו). Faithfulness ו-RAGAS הם הכלים המרכזיים להערכת ציר ה-generation.</p>
+<h4 class='sec-h'>📐 הנוסחה — Faithfulness</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/d886813fbcc7.png" loading="lazy" alt="formula"></div>
+<p>תשובה נחשבת &quot;faithful&quot; אם כל טענה בה נתמכת באופן ישיר על ידי ההקשר שנשלף (ולא הומצאה/מוסקת ללא בסיס).</p>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>Number of Faithful Answers</td><td>מספר התשובות שכל הטענות בהן נתמכות על ידי ההקשר שנשלף</td></tr><tr><td>Total Number of Answers</td><td>סך כל התשובות שהוערכו בסט הבדיקה</td></tr></table>
+<h4 class='sec-h'>🎯 מתאים לסוג למידה ומשימה</h4>
+<table class='kbtable'><tr><td><strong>סוג מדד</strong></td><td><strong>משימה</strong></td><td><strong>מתאים?</strong></td><td><strong>הערות</strong></td></tr><tr><td>Faithfulness</td><td>RAG Q&amp;A</td><td>✅</td><td>מודד עיגון עובדתי בהקשר שנשלף</td></tr><tr><td>Answer Relevancy</td><td>RAG Q&amp;A</td><td>✅</td><td>מודד עד כמה התשובה רלוונטית לשאלה עצמה</td></tr><tr><td>Context Precision</td><td>Retrieval</td><td>✅</td><td>מודד כמה מהקונטקסט שנשלף רלוונטי בפועל</td></tr><tr><td>Retrieval Recall</td><td>Retrieval</td><td>✅</td><td>מודד אם כל המידע הרלוונטי נשלף בכלל</td></tr></table>
+<h4 class='sec-h'>🧰 RAGAS — Retrieval-Augmented Generation Assessment</h4>
+<p>RAGAS הוא framework פתוח-קוד המספק מדדים אוטומטיים (ללא צורך בתשובות ייחוס/ground-truth מלאות) להערכת מערכות RAG:</p>
+<ul><li>Faithfulness — עיגון עובדתי של התשובה בהקשר.</li><li>Answer Relevancy — רלוונטיות התשובה לשאלה.</li><li>Context Precision — דיוק הקשר שנשלף (כמה ממנו רלוונטי).</li><li>Retrieval Recall (Context Recall) — האם כל המידע הרלוונטי נשלף.</li></ul>
+<h4 class='sec-h'>🧑‍⚖️ LLM-as-Judge</h4>
+<p>שיטה משלימה: שימוש ב-LLM נפרד (&quot;שופט&quot;) שמקבל סכימה מבנית (לדוגמה Pydantic) ומחזיר ציון מובנה — לדוגמה GroundingJudgment עם grounded_score (כמה התשובה מעוגנת בהקשר) ו-factual_score (דיוק עובדתי כללי). שיטה זו גמישה יותר מ-RAGAS אך תלויה באיכות ה-judge model.</p>
+<h4 class='sec-h'>✅ מתי עדיף על מדדים אחרים</h4>
+<ul><li>כשאין ground-truth answers מתויגות ידנית — RAGAS עובד ללא תיוג ידני מלא.</li><li>כשצריך לבדוק hallucination/עיגון עובדתי באופן שיטתי ועקבי.</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>RAGAS ו-LLM-as-judge תלויים באיכות ה-LLM המעריך עצמו — יכולים לשגות.</li><li>לא מחליפים הערכה אנושית (human eval) במקרים קריטיים (רפואה, משפט).</li></ul>
+<h4 class='sec-h'>💻 קוד לדוגמה — RAGAS</h4>
+<pre class='code-block'><code>from ragas import evaluate
+from ragas.metrics import faithfulness, answer_relevancy, context_precision, context_recall
+from datasets import Dataset
+data = {
+&amp;quot;question&amp;quot;: [&amp;quot;What helped lower insulin prices in the U.S.?&amp;quot;],
+&amp;quot;answer&amp;quot;: [&amp;quot;The Inflation Reduction Act capped insulin co-pays at $35/month for Medicare patients.&amp;quot;],
+&amp;quot;contexts&amp;quot;: [[&amp;quot;The Inflation Reduction Act of 2022 capped insulin costs at $35/month for Medicare beneficiaries.&amp;quot;]],
+&amp;quot;ground_truth&amp;quot;: [&amp;quot;The Inflation Reduction Act capped Medicare insulin co-pays at $35/month.&amp;quot;]
+}
+dataset = Dataset.from_dict(data)
+result = evaluate(dataset, metrics=[faithfulness, answer_relevancy, context_precision, context_recall])
+print(result)</code></pre>
+<h4 class='sec-h'>💻 קוד לדוגמה — LLM-as-Judge (Pydantic schema)</h4>
+<pre class='code-block'><code>from pydantic import BaseModel, Field
+class GroundingJudgment(BaseModel):
+grounded_score: float = Field(..., description=&amp;quot;0-1: how well the answer is grounded in retrieved context&amp;quot;)
+factual_score: float = Field(..., description=&amp;quot;0-1: overall factual accuracy of the answer&amp;quot;)
+explanation: str
+judge_prompt = f&amp;quot;&amp;quot;&amp;quot;Evaluate this answer for grounding and factual accuracy.
+Context: {retrieved_context}
+Question: {question}
+Answer: {generated_answer}
+Return a GroundingJudgment.&amp;quot;&amp;quot;&amp;quot;
+# judgment = structured_llm.invoke(judge_prompt)  # returns GroundingJudgment instance</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין Faithfulness ל-Answer Relevancy ב-RAGAS?</strong></p>
+<p>ת: Faithfulness מודד אם כל טענה בתשובה נתמכת בהקשר שנשלף (עיגון עובדתי); Answer Relevancy מודד אם התשובה אכן עונה על השאלה שנשאלה — תשובה יכולה להיות faithful אך לא relevant, או להפך.</p>
+<p><strong>ש: מהו היתרון של RAGAS על פני הערכה אנושית בלבד?</strong></p>
+<p>ת: RAGAS מאפשר הערכה אוטומטית, מהירה וניתנת לחזרה (reproducible) ללא צורך בתיוג ידני מלא לכל שאלה — שימושי ל-CI/CD ולבדיקות רגרסיה תדירות, אך לא מחליף הערכה אנושית במקרים קריטיים.</p>

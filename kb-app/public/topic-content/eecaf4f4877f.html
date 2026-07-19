@@ -1,0 +1,13 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מיפוי הנוף המעשי של מודלי שפה גדולים ב-2026: ספקי API מסחריים מובילים, פלטפורמות hosting מולטי-מודל, ואפשרויות הרצה מקומית/open-source — לצורך בחירת הפתרון המתאים לפרויקט.</p>
+<h4 class='sec-h'>⚙️ ספקי API מסחריים מובילים</h4>
+<table class='kbtable'><tr><td><strong>פלטפורמה</strong></td><td><strong>חברה</strong></td><td><strong>חוזק בולט</strong></td></tr><tr><td>GPT-5</td><td>OpenAI</td><td>יכולות multimodal רחבות ואקוסיסטם כלים גדול</td></tr><tr><td>Claude 4.5 Sonnet</td><td>Anthropic</td><td>הבנת קונטקסט ארוך, אמינות בקוד ובסוכנים (agentic tasks)</td></tr><tr><td>Gemini 2.5 Pro</td><td>Google</td><td>אינטגרציה הדוקה עם Google Cloud ו-multimodal native</td></tr></table>
+<h4 class='sec-h'>💰 תמחור ו-Multimodality</h4>
+<ul><li>תמחור מבוסס טוקנים (input/output tokens) — לרוב מחיר נפרד ל-input ול-output.</li><li>רוב המודלים המובילים תומכים כיום בקלט multimodal: טקסט, תמונה, ולעיתים אודיו/וידאו.</li><li>Amazon Bedrock מאפשר אירוח (hosting) של מספר מודלים מספקים שונים תחת API אחיד אחד.</li></ul>
+<h4 class='sec-h'>🖥️ מודלים פתוחים (Open-Source) והרצה מקומית</h4>
+<ul><li>Hugging Face — מאגר המודלים הפתוחים המרכזי, כולל אפשרות הרצה והרצת inference מנוהלת.</li><li>Together AI — hosting מנוהל למודלים open-source בקנה מידה.</li><li>Ollama — הרצת מודלים open-source מקומית על מחשב אישי בקלות.</li><li>LM Studio — ממשק גרפי להרצת מודלים מקומיים ובדיקתם.</li><li>LiteLLM — שכבת API אחידה שמאפשרת להחליף ספק/מודל בלי לשנות קוד אפליקציה.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מתי תעדיף מודל מקומי (Ollama/LM Studio) על פני API מסחרי?</strong></p>
+<p><strong>ת: </strong>כשיש דרישות פרטיות/רגולציה שמונעות שליחת מידע לשרת חיצוני, כשיש נפח שימוש גבוה שמייקר API, או כשנדרשת עבודה offline — במחיר של יכולות נמוכות יותר מהמודלים המסחריים המובילים.</p>
+<p><strong>ש: </strong><strong>מה התפקיד של LiteLLM בארכיטקטורת מולטי-מודל?</strong></p>
+<p><strong>ת: </strong>הוא נותן interface אחיד (כמו OpenAI-style API) לכל הספקים, כך שאפשר להחליף ספק/מודל, להוסיף fallback chain בין מודלים, ולנהל עלויות — בלי לשנות את קוד האפליקציה.</p>

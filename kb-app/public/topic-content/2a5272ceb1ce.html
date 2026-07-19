@@ -1,0 +1,16 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מנגנון המחשב, עבור כל איבר ברצף, סכום משוקלל של איברים אחרים ברצף (Values), כאשר המשקלים נקבעים על ידי דמיון (Dot-Product) בין שאילתה (Query) למפתחות (Keys) — הרכיב הבסיסי של ארכיטקטורת Transformer.</p>
+<h4 class='sec-h'>📐 הנוסחאות</h4>
+<p><strong>Attention</strong></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/d1e4f27b3a82.png" loading="lazy" alt="formula"></div>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>Q</td><td>מטריצת Queries — מה שמחפשים עבור כל טוקן</td></tr><tr><td>K</td><td>מטריצת Keys — מה שמייצג כל טוקן לצורך התאמה</td></tr><tr><td>V</td><td>מטריצת Values — המידע שמועבר בפועל לפי המשקלים</td></tr><tr><td>d_k</td><td>מימד הווקטורים ב-K (משמש לנרמול הסקאלה)</td></tr></table>
+<p>התוצאה היא סכום משוקלל של V, כאשר המשקלים (לאחר Softmax) מסכמים ל-1 ומשקפים את רמת ה'תשומת לב' שכל טוקן מקבל מהשאילתה.</p>
+<h4 class='sec-h'>🎯 מתי משתמשים?</h4>
+<ul><li>מנגנון הליבה בשכבת Self-Attention/Cross-Attention בארכיטקטורת Transformer</li><li>כל מודל NLP מודרני (BERT, GPT) ומודלי Vision Transformer (ViT)</li></ul>
+<h4 class='sec-h'>🔄 השוואה בין הפונקציות</h4>
+<table class='kbtable'><tr><td><strong>מרכיב</strong></td><td><strong>תפקיד</strong></td></tr><tr><td>QK^T</td><td>מחשב דמיון (similarity score) בין כל זוג טוקנים ברצף</td></tr><tr><td>חלוקה ב-√d_k</td><td>מונעת מהציונים לגדול מדי כשd_k גדול, מה שהיה דוחס את ה-Softmax לקצוות (gradient קטן)</td></tr><tr><td>Softmax</td><td>מנרמל את הציונים להתפלגות הסתברות (סכום=1) על פני הטוקנים</td></tr><tr><td>מכפלה ב-V</td><td>מייצרת פלט שהוא סכום משוקלל של ה-Values, לפי משקלי ה-Attention</td></tr></table>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>למה מחלקים ב-√d_k בנוסחת ה-Attention?</p>
+<p><strong>ת: </strong>כש-d_k גדול, ערכי QK^T נוטים לקבל ערכים גדולים בסקאלה, מה שדוחס את פלט ה-Softmax לקצוות (ערכים קרובים ל-0 או 1) וגורם לגרדיאנטים קטנים מאוד; חלוקה ב-√d_k מנרמלת את הסקאלה ומשמרת גרדיאנטים יציבים יותר לאימון.</p>
+<p><strong>ש: </strong>מה ההבדל בין Self-Attention ל-Cross-Attention במונחי Q, K, V?</p>
+<p><strong>ת: </strong>ב-Self-Attention, Q, K ו-V מגיעים כולם מאותו רצף קלט (לדוגמה כל הטוקנים באותו משפט); ב-Cross-Attention, Q מגיע מרצף אחד (לדוגמה ה-Decoder) ו-K,V מגיעים מרצף אחר (לדוגמה פלט ה-Encoder).</p>

@@ -1,0 +1,26 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מדד להערכת איכות הנושאים שהתקבלו ממודל Topic Modeling (כגון LDA) — בודק עד כמה המילים המאפיינות נושא נתון 'הולכות יחד' באופן סמנטי. ציון גבוה מעיד על נושאים שמילותיהם נוטות להופיע יחד באופן עקבי בקורפוס, ולא רק נושאים סטטיסטיים מקריים.</p>
+<h4 class='sec-h'>📐 הנוסחה</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/95790415d322.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>UMass Coherence — סכום ה-log-ratio של תדירויות משולבות, על פני כל זוגות המילים המאפיינות נושא</em></p>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>wi, wj</td><td>שתי מילים מתוך רשימת המילים המאפיינות (top words) של נושא נתון</td></tr><tr><td>D(wi,wj)</td><td>מספר המסמכים בהם wi ו-wj מופיעות יחד</td></tr><tr><td>D(wi)</td><td>מספר המסמכים בהם מופיעה wi</td></tr></table>
+<h4 class='sec-h'>🎯 מתאים לסוג למידה ומשימה</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מתאים?</strong></td><td><strong>הערות</strong></td></tr><tr><td>Topic Modeling (LDA וכד׳)</td><td>✅</td><td>המדד הסטנדרטי להערכת איכות נושאים ולבחירת K</td></tr><tr><td>Classification / Regression</td><td>❌</td><td>לא רלוונטי — אין נושאים סמויים למדוד</td></tr></table>
+<h4 class='sec-h'>📊 שתי דרכי הערכה</h4>
+<ul><li>הערכה איכותית (Qualitative): קריאת רשימת המילים המאפיינות כל נושא ובדיקה אנושית אם הן 'הגיוניות' יחד (לדוגמה: &quot;basketball, NBA, score, team&quot; — נושא קוהרנטי; לעומת רשימת מילים לא קשורות — נושא לא קוהרנטי).</li><li>הערכה כמותית (Quantitative): שימוש במדד פורמלי כמו c_v או UMass, המבוססים על תדירויות הופעה משולבת (co-occurrence) של המילים בקורפוס.</li></ul>
+<h4 class='sec-h'>✅ מתי עדיף על מדדים אחרים?</h4>
+<ul><li>משתמשים בקוהרנטיות כדי לבחור את מספר הנושאים K — מאמנים כמה מודלים עם K שונה ובוחרים את זה עם הציון הגבוה ביותר.</li><li>מאפשר השוואה אוטומטית בין מודלים שונים (LDA עם פרמטרים שונים) ללא צורך בבדיקה אנושית לכל נושא.</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>ציון קוהרנטיות גבוה אינו מבטיח שהנושאים שימושיים או רלוונטיים למשימה הסופית — זהו מדד פנימי (intrinsic) ולא תמיד מתואם עם שימושיות בפועל.</li><li>תלוי בקורפוס הרפרנס לחישוב תדירויות ה-co-occurrence.</li></ul>
+<h4 class='sec-h'>💻 מימוש בקוד</h4>
+<pre class='code-block'><code>from gensim.models import CoherenceModel
+cm = CoherenceModel(model=lda, texts=tokenized_docs,
+dictionary=dictionary, coherence='c_v')
+score = cm.get_coherence()
+print(score)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>איך משתמשים ב-Topic Coherence כדי לבחור את מספר הנושאים K במודל LDA?</strong></p>
+<p><strong>ת: </strong>מאמנים מספר מודלי LDA עם ערכי K שונים, מחשבים את ציון הקוהרנטיות לכל מודל, ובוחרים את K שמקסם את הציון.</p>
+<p><strong>ש: </strong><strong>מה ההבדל בין הערכה איכותית לכמותית של נושאים?</strong></p>
+<p><strong>ת: </strong>הערכה איכותית מתבססת על קריאה אנושית של מילות הנושא ושיפוט סובייקטיבי, בעוד הערכה כמותית (c_v, UMass) מחשבת ציון אובייקטיבי מבוסס סטטיסטיקות co-occurrence בקורפוס.</p>

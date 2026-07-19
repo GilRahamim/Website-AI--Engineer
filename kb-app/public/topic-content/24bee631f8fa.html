@@ -1,0 +1,56 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Neo4j הוא מסד נתונים גרפי (graph database) שנועד לאחסון ולשאילתת קשרים. דאטה מיוצג כ-Nodes (ישויות, לדוגמה Tesla, BMW, CATL), Relationships (קשרים, לדוגמה SUPPLIES, USES) ו-Properties (תכונות, לדוגמה type, year, category). מותאם לשאילתות קשרים, traversal מרובה-hops וחקירת גרף.</p>
+<h4 class='sec-h'>🏛️ רכיבי מפתח</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/9c14228b9d9b.png" loading="lazy" alt="Neo4j — מסד נתונים גרפי — architecture diagram" /></div>
+<table class='kbtable'><tr><td><strong>רכיב</strong></td><td><strong>תפקיד</strong></td></tr><tr><td>Cypher</td><td>שפת שאילתות גרפית של Neo4j — תחביר תבני (pattern-matching) לתיאור קשרים</td></tr><tr><td>APOC</td><td>Awesome Procedures On Cypher — plugin שמוסיף פונקציות עזר, פעולות גרפיות מתקדמות ושאילתות דינמיות</td></tr><tr><td>Docker Deployment</td><td>הרצת Neo4j כקונטיינר עם הגדרות env (URI, username, password)</td></tr><tr><td>Neo4jGraph (LangChain)</td><td>מעטפת Python שמתחברת ל-Neo4j ומריצה שאילתות Cypher מתוך קוד</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה — שאילתת Cypher בסיסית</h4>
+<pre class='code-block'><code>MATCH (s)-[:SUPPLIES]-&amp;gt;(t:Company {name: &amp;quot;Tesla&amp;quot;})
+RETURN s</code></pre>
+<h4 class='sec-h'>💻 קוד לדוגמה — הרצת Neo4j ב-Docker וחיבור מ-Python</h4>
+<pre class='code-block'><code># .env
+NEO4J_URI=bolt://localhost:7687
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=testpassword
+# Run Neo4j (Docker)
+docker run -d --name neo4j-demo \
+-p 7474:7474 -p 7687:7687 \
+--env-file neo4j.env \
+-e NEO4JLABS_PLUGINS='[&amp;quot;apoc&amp;quot;]' \
+-e NEO4J_dbms_security_procedures_unrestricted=apoc.* \
+neo4j:5
+graph = Neo4jGraph(
+url=os.getenv(&amp;quot;NEO4J_URI&amp;quot;),
+username=os.getenv(&amp;quot;NEO4J_USERNAME&amp;quot;),
+password=os.getenv(&amp;quot;NEO4J_PASSWORD&amp;quot;),
+)
+graph.query(&amp;quot;&amp;quot;&amp;quot;
+MERGE (s:Entity {name: $subject})
+MERGE (o:Entity {name: $object})
+WITH s, o
+CALL apoc.merge.relationship(s, $relation, {}, {doc_id: $doc_id, sentence: $sentence}, o, {})
+YIELD rel
+RETURN rel
+&amp;quot;&amp;quot;&amp;quot;, params={...})</code></pre>
+<h4 class='sec-h'>💻 קוד לדוגמה — Text-to-Cypher עם GraphCypherQAChain</h4>
+<pre class='code-block'><code>cypher_chain = GraphCypherQAChain.from_llm(
+llm=ChatOpenAI(model=&amp;quot;gpt-4o-mini&amp;quot;, temperature=0),
+graph=graph,
+cypher_prompt=CYPHER_PROMPT,
+qa_prompt=QA_PROMPT,
+verbose=True,
+allow_dangerous_requests=True,
+)
+response = cypher_chain.invoke({&amp;quot;query&amp;quot;: &amp;quot;Which manufacturers source battery cells from CATL?&amp;quot;})
+print(&amp;quot;Final answer:&amp;quot;, response[&amp;quot;result&amp;quot;])
+# Generated Cypher:
+# MATCH (:Entity {name: 'CATL'})-[:supplies]-&amp;gt;(m:Entity) RETURN m.name AS manufacturer
+# UNION MATCH (m:Entity)-[:sources_from]-&amp;gt;(:Entity {name: 'CATL'}) RETURN m.name AS manufacturer
+# Final answer: BMW, Tesla, and Volkswagen source battery cells from CATL.</code></pre>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>שאילתות יחסים (relationship queries) מורכבות בין ישויות מקושרות.</li><li>Traversal מרובה-hops לאיתור מסלולים בין ישויות מרוחקות בגרף.</li><li>חקירת גרף (graph exploration) פתוחה — &quot;מה מחובר ל-X?&quot;</li></ul>
+<h4 class='sec-h'>🔄 השוואה: NetworkX (in-memory) מול Neo4j</h4>
+<table class='kbtable'><tr><td><strong>מאפיין</strong></td><td><strong>NetworkX</strong></td><td><strong>Neo4j</strong></td></tr><tr><td>אחסון</td><td>In-memory בלבד (Python object)</td><td>מסד נתונים persistent עם תמיכה ב-disk</td></tr><tr><td>שפת שאילתה</td><td>קוד Python ישיר (out_edges/in_edges)</td><td>Cypher — שפת pattern-matching ייעודית</td></tr><tr><td>סקלאביליות</td><td>מוגבל לזיכרון של תהליך בודד</td><td>מתאים לגרפים גדולים, multi-user, production</td></tr><tr><td>Text-to-Query</td><td>דורש קוד מותאם</td><td>GraphCypherQAChain מאפשר תרגום שאלה→Cypher אוטומטי</td></tr></table>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ה-APOC plugin מוסיף ל-Neo4j?</strong></p>
+<p>ת: פונקציות עזר (utility functions), פעולות גרפיות מתקדמות (כגון apoc.merge.relationship), ויכולות שאילתה דינמיות שאינן חלק מ-Cypher הבסיסי.</p>
+<p><strong>ש: מה היתרון של GraphCypherQAChain על פני כתיבת Cypher ידנית?</strong></p>
+<p>ת: מאפשר למשתמש לשאול בשפה טבעית, וה-LLM מתרגם אוטומטית לשאילתת Cypher (text-to-Cypher) על בסיס schema הגרף, מריץ אותה, ומחזיר תשובה בשפה טבעית — ללא צורך לדעת Cypher.</p>

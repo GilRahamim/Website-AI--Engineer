@@ -1,0 +1,25 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מדד המעריך עד כמה מודל שפה (Language Model) 'מבולבל' בעת חיזוי הטוקן הבא ברצף — מוגדר כ-2 בחזקת ה-Entropy הצולבת (או e בחזקת ה-Loss), כאשר ערך נמוך יותר מצביע על מודל בטוח ומדויק יותר.</p>
+<h4 class='sec-h'>📐 הנוסחה</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/fcccdbc79c1a.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/f894f1d02fca.png" loading="lazy" alt="formula"></td><td>ההסתברות שהמודל מקצה לטוקן האמיתי w_i, בהינתן כל הטוקנים הקודמים</td></tr><tr><td>n</td><td>מספר הטוקנים ברצף</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/2d0839dcf517.png" loading="lazy" alt="formula"></td><td>ה-Cross-Entropy Loss הממוצע על הרצף</td></tr></table>
+<h4 class='sec-h'>🎯 מתאים לסוג למידה ומשימה</h4>
+<table class='kbtable'><tr><td><strong>סוג למידה</strong></td><td><strong>משימה</strong></td><td><strong>מתאים?</strong></td></tr><tr><td>מפוקחת/Self-Supervised</td><td>Language Modeling (GPT וכו')</td><td>✅ המדד הסטנדרטי להערכת מודלי שפה</td></tr><tr><td>מפוקחת</td><td>Machine Translation</td><td>⚠️ שימושי אך BLEU נפוץ יותר להערכת תרגום בפועל</td></tr><tr><td>מפוקחת</td><td>Classification</td><td>❌ לא רלוונטי</td></tr></table>
+<h4 class='sec-h'>📊 טווח ערכים ופרשנות</h4>
+<table class='kbtable'><tr><td><strong>ערך</strong></td><td><strong>משמעות</strong></td></tr><tr><td>1</td><td>מודל מושלם — מנבא את הטוקן הנכון בהסתברות 1 בכל פעם</td></tr><tr><td>נמוך (קרוב ל-1)</td><td>המודל 'בטוח' ומדויק בחיזוי הטוקן הבא</td></tr><tr><td>גבוה</td><td>המודל 'מבולבל' — מתפזר על הרבה אפשרויות לטוקן הבא</td></tr></table>
+<h4 class='sec-h'>✅ מתי עדיף על מדדים אחרים?</h4>
+<ul><li>כשרוצים להעריך עד כמה מודל שפה טוב בחיזוי רצף טקסט, ללא תלות במשימה downstream ספציפית</li><li>נוח להשוואה בין מודלי שפה שונים על אותו דאטה-סט הערכה</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>לא מודד ישירות איכות תוכן/קוהרנטיות בעיני אדם — מודל יכול לקבל Perplexity טוב אך לייצר טקסט פחות איכותי</li><li>תלוי בגודל המילון (vocabulary) ובאופן הטוקניזציה — לא ניתן להשוות Perplexity בין מודלים עם טוקניזציה שונה</li></ul>
+<h4 class='sec-h'>💻 מימוש בקוד</h4>
+<pre class='code-block'><code>import torch
+import torch.nn.functional as F
+
+loss = F.cross_entropy(model_logits, target_tokens)  # ממוצע על הרצף
+perplexity = torch.exp(loss)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה הקשר בין Perplexity ל-Cross-Entropy Loss?</p>
+<p><strong>ת: </strong>Perplexity הוא e (או 2) בחזקת ה-Cross-Entropy Loss הממוצע; ככל ש-Cross-Entropy נמוך יותר (המודל מקצה הסתברות גבוהה לטוקן הנכון), כך ה-Perplexity קרוב יותר ל-1.</p>
+<p><strong>ש: </strong>למה אי אפשר להשוות ישירות Perplexity בין שני מודלים עם טוקניזציה שונה?</p>
+<p><strong>ת: </strong>Perplexity תלוי בגודל אוצר המילים ובאופן חלוקת הטקסט לטוקנים; טוקניזציה שונה משנה את מספר הטוקנים ואת ההתפלגות שלהם, כך שערכי Perplexity לא ניתנים להשוואה ישירה בין מודלים עם טוקניזציה שונה.</p>

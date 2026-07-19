@@ -1,0 +1,18 @@
+<h4 class='sec-h'>‏📋 הגדרה</h4>
+<p>‏Bias-Variance Tradeoff מתאר את הקשר בין שני מקורות שגיאה במודל למידת מכונה: Bias (הטיה — שגיאה שמקורה בהנחות פשטניות מדי של המודל) ו-Variance (שונות — רגישות גבוהה לתנודות בנתוני האימון).</p>
+<p>‏הגדלת מורכבות (flexibility) המודל מקטינה את ה-Bias אך מגדילה את ה-Variance, ולהפך — לכן מחפשים את נקודת האיזון.</p>
+<h4 class='sec-h'>‏🔍 מתי זה קורה?</h4>
+<ul><li>‏בכל בחירה של מורכבות מודל: מספר features, עומק עץ, דרגת פולינום, עוצמת רגולריזציה וכו'.</li><li>‏Bias גבוה נוצר ממודל פשוט מדי (Underfitting).</li><li>‏Variance גבוה נוצר ממודל מורכב מדי שמשתפח ל&quot;רעש&quot; בדאטה (Overfitting).</li></ul>
+<h4 class='sec-h'>‏⚠️ איך מזהים?</h4>
+<ul><li>‏שגיאת Train נמוכה אך שגיאת Test גבוהה ← Variance גבוה (Overfitting).</li><li>‏שגיאת Train ו-Test גבוהות שתיהן ← Bias גבוה (Underfitting).</li><li>‏גרף של Prediction Error מול Model Complexity מציג עקומת U עבור שגיאת הבדיקה (Test), עם מינימום בנקודת האיזון.</li></ul>
+<h4 class='sec-h'>‏🛠️ איך פותרים / מטפלים?</h4>
+<ul><li>‏Bias גבוה: להוסיף features רלוונטיים, להגדיל את מורכבות המודל, להפחית רגולריזציה.</li><li>‏Variance גבוה: רגולריזציה (L1/L2), Cross-Validation, איסוף יותר נתוני אימון, Ensemble methods כמו Bagging/Random Forest, Early Stopping.</li><li>‏להשתמש ב-Train-Test Split ו/או Cross-Validation כדי למדוד את השגיאה על דאטה שהמודל לא ראה, ולא להסתמך על שגיאת האימון בלבד.</li></ul>
+<h4 class='sec-h'>‏🔄 קשר לנושאים אחרים</h4>
+<ul><li>‏Overfitting / Underfitting — שני הקצוות של ה-Tradeoff.</li><li>‏Regularization — כלי מרכזי להפחתת Variance.</li><li>‏Random Forest (Bagging) — מפחית Variance על ידי שילוב עצים רבים בלתי-מתואמים.</li><li>‏Train-Test Split ו-Cross-Validation — הכלים למדידת ה-Tradeoff בפועל.</li></ul>
+<h4 class='sec-h'>‏🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: ‏מה ההבדל בין </strong><strong>Bias</strong><strong> ל-</strong><strong>Variance</strong><strong>?</strong></p>
+<p><strong>ת: </strong>‏Bias היא שגיאה שמקורה בהנחות מוטות/פשטניות מדי של המודל, שגורמת לו לא ללכוד את הקשר האמיתי בדאטה. Variance היא רגישות יתר של המודל לתנודות אקראיות בנתוני האימון הספציפיים.</p>
+<p><strong>ש: ‏איך </strong><strong>Random Forest</strong><strong> מתמודד עם </strong><strong>Variance</strong><strong> גבוה?</strong></p>
+<p><strong>ת: </strong>‏באמצעות Bagging: אימון עצים רבים על דגימות Bootstrap עם בחירת features אקראית בכל split, ושילוב התחזיות (הצבעה/ממוצע). זה &quot;מנתק קורלציה&quot; בין העצים ומקטין את ה-Variance הכולל.</p>
+<p><strong>ש: ‏האם אפשר להקטין גם </strong><strong>Bias</strong><strong> וגם </strong><strong>Variance</strong><strong> בלי שום טרייד-אוף?</strong></p>
+<p><strong>ת: </strong>‏באופן חלקי כן — יותר דאטה איכותי, feature engineering טוב יותר, ושיטות Ensemble מתקדמות יכולות לשפר את שניהם בו-זמנית, אך בסופו של דבר יש גבול שבו שיפור באחד פוגע באחר עבור מודל ומשאבים נתונים.</p>

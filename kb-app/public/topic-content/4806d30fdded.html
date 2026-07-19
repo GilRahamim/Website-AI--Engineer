@@ -1,0 +1,37 @@
+<h4 class='sec-h'>Gaussian Mixture Models (GMM)</h4>
+<p class='formula-label'><em>Model-Based Clustering בעזרת אלגוריתם Expectation-Maximization (EM)</em></p>
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Gaussian Mixture Model הוא מודל הסתברותי המניח שהנתונים נוצרו מתערובת (mixture) של כמה התפלגויות גאוסיות (נורמליות). בניגוד ל-K-Means, GMM מבצע שיוך 'רך' (soft assignment) — כל נקודה מקבלת הסתברות להשתייך לכל אשכול, ולא תווית בודדת.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>מניחים <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> קומפוננטות גאוסיות, כל אחת עם פרמטרים: ממוצע <img class="inline-formula-img" src="/topic-assets/699d1d5e7f03.png" loading="lazy" alt="formula">, מטריצת קוואריאנס <img class="inline-formula-img" src="/topic-assets/ec3fd3a32b0a.png" loading="lazy" alt="formula">, ומשקל <img class="inline-formula-img" src="/topic-assets/aae79dc3e2e5.png" loading="lazy" alt="formula">.</li><li>שלב E (Expectation): בהינתן הפרמטרים הנוכחיים, מחשבים לכל נקודה את ההסתברות (responsibility) שהיא שייכת לכל קומפוננטה.</li><li>שלב M (Maximization): מעדכנים את הפרמטרים (<img class="inline-formula-img" src="/topic-assets/02f079ab16ab.png" loading="lazy" alt="formula">) כך שימקסמו את הלייקלהוד, בהתבסס על ההסתברויות שחושבו בשלב E.</li><li>חוזרים על E ו-M לחילופין עד התכנסות (שינוי קטן ב-log-likelihood).</li></ul>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<p>פונקציית הצפיפות של תערובת הגאוסיאנים:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/fea18e149c34.png" loading="lazy" alt="formula"></div>
+<p>ההסתברות (responsibility) שנקודה <img class="inline-formula-img" src="/topic-assets/c2c8ee932b97.png" loading="lazy" alt="formula"> שייכת לקומפוננטה <img class="inline-formula-img" src="/topic-assets/8ddbd9873b43.png" loading="lazy" alt="formula">, המחושבת בשלב E:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/75db9d3f4290.png" loading="lazy" alt="formula"></div>
+<p>ועדכון הממוצע בשלב M:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/86330f493443.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>סגמנטציה כשרוצים הסתברות שיוך (soft) ולא רק תווית בינארית.</li><li>Density Estimation — אומדן פונקציית הצפיפות הכוללת של הדאטה.</li><li>Anomaly Detection — נקודות עם likelihood נמוך מתחת לכל הקומפוננטות נחשבות חריגות.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>שיוך הסתברותי (soft clustering) — מספק מידת ביטחון ולא רק תווית קשה.</li><li>מאפשר אשכולות אליפטיים (לא רק כדוריים כמו K-Means) דרך מטריצת הקוואריאנס.</li><li>מסגרת הסתברותית מוצקה שמאפשרת חישוב likelihood והשוואת מודלים בעזרת BIC/AIC.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>רגיש לאתחול — עלול להתכנס למינימום מקומי, בדומה ל-K-Means.</li><li>דורש לקבוע מספר קומפוננטות <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> מראש (אם כי ניתן להשתמש ב-BIC לבחירה).</li><li>מורכבות חישובית גבוהה יותר מ-K-Means, בפרט עם מטריצות קוואריאנס מלאות בממדים גבוהים.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>בחירת מספר קומפוננטות</td><td>BIC (Bayesian Information Criterion), AIC</td></tr><tr><td>Clustering</td><td>Silhouette Score (על תוויות hard מתוך ה-soft assignment)</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>יתרון עיקרי</strong></td><td><strong>חסרון עיקרי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>K-Means</td><td>מהיר ופשוט יותר</td><td>שיוך קשה בלבד, אשכולות כדוריים</td><td>כשמהירות חשובה ואין צורך בהסתברויות</td></tr><tr><td>DBSCAN</td><td>מזהה צורות שרירותיות ורעש</td><td>אין מסגרת הסתברותית</td><td>אשכולות לא-גאוסיים, יש outliers</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>from sklearn.mixture import GaussianMixture
+gmm = GaussianMixture(n_components=3, covariance_type=&amp;quot;full&amp;quot;, random_state=42)
+gmm.fit(X)
+labels = gmm.predict(X)           # שיוך קשה (הקומפוננטה הסבירה ביותר)
+probs = gmm.predict_proba(X)      # שיוך רך — הסתברות לכל קומפוננטה
+print(gmm.bic(X))                 # להשוואת מספר קומפוננטות שונה</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מה ההבדל בין שיוך 'קשה' (hard) ל-'רך' (soft) בקלסטרינג?</strong></p>
+<p><strong>ת: </strong>בשיוך קשה (כמו K-Means) כל נקודה מקבלת תווית אשכול בודדת ויחידה. בשיוך רך (כמו GMM) כל נקודה מקבלת התפלגות הסתברויות על פני כל האשכולות — לדוגמה 70% אשכול א', 30% אשכול ב'.</p>
+<p><strong>ש: </strong><strong>מה תפקיד אלגוריתם EM ב-GMM?</strong></p>
+<p><strong>ת: </strong>EM הוא תהליך איטרטיבי דו-שלבי למקסום likelihood כאשר יש משתנים נסתרים (latent) — כאן: לאיזו קומפוננטה שייכת כל נקודה. שלב E מחשב הסתברויות שיוך בהינתן הפרמטרים, שלב M מעדכן את הפרמטרים בהינתן ההסתברויות, וכך לסירוגין עד התכנסות.</p>
+<p><strong>ש: </strong><strong>איך משתמשים ב-BIC לבחירת מספר הקומפוננטות?</strong></p>
+<p><strong>ת: </strong>מריצים GMM למספר ערכי <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> שונים, מחשבים BIC לכל אחד (משקלל likelihood עם עונש על מורכבות המודל), ובוחרים את <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> עם ה-BIC המינימלי — איזון בין התאמה טובה לדאטה לבין הימנעות מ-overfitting.</p>

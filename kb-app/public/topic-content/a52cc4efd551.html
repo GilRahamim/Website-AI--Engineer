@@ -1,0 +1,46 @@
+<h4 class='sec-h'>📋 הגדרה כללית</h4>
+<p>מדדי הערכה ל-retrieval בודקים האם, וכמה טוב, מערכת השליפה (vector search / hybrid search) מצליחה להחזיר את המסמכים הרלוונטיים ביותר לשאילתה — בטרם שלב ה-LLM. הערכה שיטתית מאפשרת השוואת אסטרטגיות chunking, מודלי embedding, ולוגיקת re-ranking, ומונעת מצב שבו בעיית retrieval גרועה מוסווה ככשל LLM.</p>
+<p><strong>1️⃣ Recall@k</strong></p>
+<p>📋 מודד אם לפחות מסמך רלוונטי אחד מופיע בתוך top-k התוצאות שהוחזרו. קריטי כשאסור לפספס תוכן רלוונטי (למשל מערכות retrieval רפואיות).</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/3be07880d099.png" loading="lazy" alt="formula"></div>
+<p><strong>2️⃣ Precision@k</strong></p>
+<p>📋 מחשב את שיעור המסמכים הרלוונטיים מתוך top-k התוצאות. מתמקד באיכות (לא רק בנוכחות) של מה שהוחזר — חשוב כשרק מספר מצומצם של chunks נכנס ל-LLM.</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/046cdddea440.png" loading="lazy" alt="formula"></div>
+<p><strong>3️⃣ MRR — Mean Reciprocal Rank</strong></p>
+<p>📋 מודד באיזה מיקום בדירוג מופיע המסמך הרלוונטי הראשון. נותן פרס למערכות שמציבות תוצאות רלוונטיות בראש הרשימה — נפוץ במערכות QA וחיפוש.</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/08ae9ad30935.png" loading="lazy" alt="formula"></div>
+<p>כאשר rankq הוא המיקום של המסמך הרלוונטי הראשון לשאילתה <em>q</em>.</p>
+<p><strong>4️⃣ nDCG — Normalized Discounted Cumulative Gain</strong></p>
+<p>📋 מעריך את איכות הדירוג המלא, ומשקלל מסמכים רלוונטיים לפי מיקומם — מתאים להגדרות עם רלוונטיות מדורגת (graded relevance) ולא רק בינארית.</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/9664cb06af5e.png" loading="lazy" alt="formula"></div>
+<p>כאשר reli הוא ציון הרלוונטיות של המסמך במיקום <em>i</em>, ו-IDCG@k הוא ה-DCG של הדירוג האידיאלי.</p>
+<h4 class='sec-h'>🎯 מתאים לסוג למידה ומשימה</h4>
+<table class='kbtable'><tr><td><strong>מדד</strong></td><td><strong>משימה</strong></td><td><strong>מתאים?</strong></td><td><strong>הערות</strong></td></tr><tr><td>Recall@k</td><td>Retrieval (vector / hybrid)</td><td>✅</td><td>קריטי כשלא ניתן לפספס מסמך רלוונטי (רפואה, משפט)</td></tr><tr><td>Precision@k</td><td>Retrieval עם הקשר LLM מוגבל</td><td>✅</td><td>חשוב כשרק מספר מצומצם של chunks נכנס ל-prompt</td></tr><tr><td>MRR</td><td>QA / חיפוש</td><td>✅</td><td>טוב כשרוצים שהתשובה הראשונה הטובה תהיה מובילה</td></tr><tr><td>nDCG</td><td>דירוג עם רלוונטיות מדורגת</td><td>✅</td><td>המדד המקיף ביותר — בודק את כל הרשימה, לא רק נוכחות</td></tr><tr><td>nDCG</td><td>Clustering</td><td>❌</td><td>לא רלוונטי — אין מושג 'דירוג' במשימת clustering</td></tr></table>
+<h4 class='sec-h'>📊 טווח ערכים ופרשנות</h4>
+<table class='kbtable'><tr><td><strong>ערך</strong></td><td><strong>משמעות</strong></td></tr><tr><td>1.0</td><td>מושלם — לכל המדדים</td></tr><tr><td>0.5</td><td>ביצועים אקראיים/בינוניים, תלוי במדד ובגודל הקורפוס</td></tr><tr><td>0.0</td><td>גרוע — שום מסמך רלוונטי לא נמצא / לא בראש הדירוג</td></tr></table>
+<h4 class='sec-h'>✅ מתי עדיף איזה מדד</h4>
+<ul><li>Recall@k — כשהעדיפות היא לא לפספס תוכן רלוונטי, גם במחיר רעש.</li><li>Precision@k — כשחלון ההקשר של ה-LLM מוגבל וכל chunk 'תופס מקום יקר'.</li><li>MRR — כשחשוב שהתשובה הטובה ביותר תהיה ממש בראש הרשימה (UX של חיפוש).</li><li>nDCG — כשיש דירוג מרובה-רמות (graded relevance) ורוצים להעריך את כל הרשימה, לא רק את החלק העליון.</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>כל המדדים תלויים בקיומו של ground truth (שאילתות בנצ'מארק עם תשובות ידועות) — איסוף הנתון הזה דורש מאמץ.</li><li>Recall/Precision בגרסתם הבסיסית הם בינאריים — לא מבחינים בין 'רלוונטי קצת' ל'רלוונטי מאוד' (לכך משמש nDCG).</li></ul>
+<h4 class='sec-h'>💻 מימוש בקוד</h4>
+<pre class='code-block'><code>def recall_at_k(relevant, retrieved, k):
+return any(item in relevant for item in retrieved[:k])
+def precision_at_k(relevant, retrieved, k):
+top_k = retrieved[:k]
+return sum(1 for item in top_k if item in relevant) / k
+def mrr(relevant, retrieved):
+for rank, item in enumerate(retrieved, start=1):
+if item in relevant:
+return 1 / rank
+return 0
+# Simulate a test case
+relevant_docs = {&amp;quot;doc2&amp;quot;, &amp;quot;doc4&amp;quot;}
+retrieved_docs = [&amp;quot;doc5&amp;quot;, &amp;quot;doc1&amp;quot;, &amp;quot;doc4&amp;quot;, &amp;quot;doc3&amp;quot;]
+print(f&amp;quot;Recall@3: {recall_at_k(relevant_docs, retrieved_docs, k=3)}&amp;quot;)
+print(f&amp;quot;Precision@3: {precision_at_k(relevant_docs, retrieved_docs, k=3):.2f}&amp;quot;)
+print(f&amp;quot;MRR: {mrr(relevant_docs, retrieved_docs):.2f}&amp;quot;)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין Recall@k ל-Precision@k?</strong></p>
+<p>ת: Recall@k בודק אם לפחות תוצאה רלוונטית אחת נכללת ב-top-k (נוכחות), בעוד Precision@k בודק איזה אחוז מה-top-k הוא בכלל רלוונטי (איכות/ניקיון).</p>
+<p><strong>ש: מתי תבחר nDCG על פני MRR?</strong></p>
+<p>ת: כשיש יותר ממסמך רלוונטי אחד ורלוונטיות מדורגת (לא בינארית) — nDCG מעריך את כל הרשימה המדורגת, בעוד MRR מתמקד רק במיקום של הראשון.</p>

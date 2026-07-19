@@ -1,0 +1,35 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Hook הוא פקודת shell שה-runtime מפעיל באירוע מחזור-חיים (lifecycle event) מסוים — ופועל תמיד, באופן דטרמיניסטי, ללא תלות בהחלטת המודל. קוד היציאה (exit code) והפלט (stdout) קובעים מה קורה בהמשך (לדוגמה: לחסום קריאת כלי).</p>
+<h4 class='sec-h'>🔍 הבעיה שזה פותר</h4>
+<p>מודלי LLM הם non-deterministic — אי אפשר לסמוך על מודל ש'יזכור' להריץ lint, לחסום rm -rf, או לפרמט קוד בכל פעם. Hooks מספקים אכיפה מובטחת, מחוץ לשליטת המודל.</p>
+<h4 class='sec-h'>⚙️ אירועי Hook עיקריים</h4>
+<table class='kbtable'><tr><td><strong>אירוע</strong></td><td><strong>תפקיד</strong></td></tr><tr><td>PreToolUse</td><td>בדיקה או חסימה של קריאת כלי לפני הביצוע</td></tr><tr><td>PostToolUse</td><td>תגובה לתוצאות (פרמוט, lint, לוג)</td></tr><tr><td>UserPromptSubmit</td><td>הזרקת קונטקסט, או דחיית פרומפטים</td></tr><tr><td>SessionStart / Stop / Notification</td><td>ניהול ותחזוקה (bookkeeping)</td></tr></table>
+<p>מוגדרים בקובץ .claude/settings.json או באמצעות אופציית hooks ב-SDK.</p>
+<h4 class='sec-h'>💻 קוד לדוגמה — חסימת Bash מסוכן + פרמוט אוטומטי</h4>
+<pre class='code-block'><code># .claude/settings.json
+{
+&amp;quot;hooks&amp;quot;: {
+&amp;quot;PreToolUse&amp;quot;: [{
+&amp;quot;matcher&amp;quot;: &amp;quot;Bash&amp;quot;,
+&amp;quot;hooks&amp;quot;: [{ &amp;quot;type&amp;quot;: &amp;quot;command&amp;quot;, &amp;quot;command&amp;quot;: &amp;quot;./scripts/guard_bash.sh&amp;quot; }]
+}],
+&amp;quot;PostToolUse&amp;quot;: [{
+&amp;quot;matcher&amp;quot;: &amp;quot;Edit|Write&amp;quot;,
+&amp;quot;hooks&amp;quot;: [{ &amp;quot;type&amp;quot;: &amp;quot;command&amp;quot;,
+&amp;quot;command&amp;quot;: &amp;quot;prettier --write $CLAUDE_FILE_PATH&amp;quot; }]
+}]
+}
+}
+# scripts/guard_bash.sh  — exit 2 blocks the tool call
+jq -r '.tool_input.command' | grep -Eq 'rm -rf /|:(\)\{' &amp;amp;&amp;amp; exit 2</code></pre>
+<h4 class='sec-h'>🛠️ עקרונות עבודה (best practice / anti-pattern)</h4>
+<ul><li>Hooks הם שומרים (guards), לא features — לא להטמיע בהם לוגיקה עסקית מורכבת.</li><li>לשמור אותם קצרים ו-idempotent (הרצה חזרתית לא משנה תוצאה).</li><li>דוגמה ל-deterministic gate: hook מסוג PreToolUse שמריץ typecheck לפני כל Edit — חוסם commits שבורים.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>אכיפה מובטחת — לא תלוי בזיכרון/ציות של המודל.</li><li>חוצה את כל שכבות ה-stack (plugin, skill, sub-agent, tool) — guardrail אחיד.</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>אם hook מכיל לוגיקה כבדה/לא-אידמפוטנטית — עלול לגרום לתופעות לוואי בלתי צפויות.</li><li>לא מתאים לקבלת החלטות 'חכמות' — Hooks הם שכבת כפייה (enforcement), לא הסקה (reasoning).</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מדוע אסור לסמוך על system prompt בלבד כדי למנוע פקודת rm -rf / מסוכנת?</strong></p>
+<p>ת: כי system prompt הוא הנחיה למודל non-deterministic — המודל יכול 'לשכוח' או לפרש לא נכון תחת לחץ הקשר. Hook מסוג PreToolUse רץ כקוד שמחוץ למודל ובודק/חוסם תמיד, ללא תלות בהחלטת המודל.</p>
+<p><strong>ש: מה ההבדל בין PreToolUse ל-PostToolUse hook?</strong></p>
+<p>ת: PreToolUse רץ לפני ביצוע הכלי ויכול לחסום אותו (exit code 2 חוסם); PostToolUse רץ אחרי התוצאה ומשמש לתגובה — פרמוט, lint, לוג — אך לא יכול למנוע את הביצוע שכבר קרה.</p>

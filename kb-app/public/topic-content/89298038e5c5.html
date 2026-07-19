@@ -1,0 +1,33 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>אלגוריתם אופטימיזציה המעדכן את משקלי המודל בכיוון ההפוך לגרדיאנט של פונקציית ה-Loss, תוך שימוש ב-batch קטן (או דוגמה בודדת) בכל איטרציה במקום כל הדאטה.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ol><li>בוחרים מיני-באטץ' (mini-batch) אקראי מתוך סט האימון.</li><li>מחשבים את הפלט והלוס על המיני-באטץ' (Forward Pass).</li><li>מחשבים את הגרדיאנט של הלוס לגבי המשקלים (Backpropagation).</li><li>מעדכנים את המשקלים בכיוון ההפוך לגרדיאנט, בגודל צעד אלפא (learning rate).</li><li>חוזרים על התהליך עבור כל המיני-באטצ'ים (epoch), ולאורך כמה epochs.</li></ol>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/caba60305020.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>אימון בסיסי של כל מודל deep learning</li><li>מתאים במיוחד לדאטה-סטים גדולים שלא נכנסים לזיכרון בבת אחת</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>פשוט למימוש וזול מבחינה חישובית בכל איטרציה</li><li>ה-Randomness מסייע לפעמים לברוח ממינימום מקומי</li><li>מתאים לאימון online / streaming</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>התכנסות רועשת (noisy) ולא יציבה בהשוואה ל-Gradient Descent הרגיל</li><li>רגיש מאוד לבחירת learning rate</li><li>מתכנס לאט יחסית לשיטות מתקדמות יותר (Momentum, Adam)</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Classification</td><td>Accuracy, Cross-Entropy Loss</td></tr><tr><td>Regression</td><td>MSE, RMSE</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>הבדל מרכזי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>Batch Gradient Descent</td><td>משתמש בכל הדאטה בכל עדכון — מדויק אך איטי</td><td>דאטה-סט קטן</td></tr><tr><td>Mini-batch SGD</td><td>פשרה בין דיוק למהירות — הנפוץ בפועל</td><td>ברירת המחדל בדיפ-לרנינג</td></tr><tr><td>Adam</td><td>מוסיף momentum + adaptive learning rate</td><td>כשנדרשת התכנסות מהירה ויציבה</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python / PyTorch)</h4>
+<pre class='code-block'><code>import torch
+
+model = torch.nn.Linear(10, 1)
+optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+
+for x_batch, y_batch in dataloader:
+    optimizer.zero_grad()
+    pred = model(x_batch)
+    loss = torch.nn.functional.mse_loss(pred, y_batch)
+    loss.backward()
+    optimizer.step()   # theta := theta - alpha * grad</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה ההבדל בין SGD ל-Gradient Descent רגיל?</p>
+<p><strong>ת: </strong>Gradient Descent רגיל מחשב גרדיאנט על כל סט האימון בכל עדכון; SGD מחשב על מיני-באטץ' או דוגמה בודדת, מה שמהיר יותר אך רועש יותר.</p>
+<p><strong>ש: </strong>מה הבעיה המרכזית של learning rate קבוע ב-SGD?</p>
+<p><strong>ת: </strong>אם הוא גדול מדי — האימון לא מתכנס ומתנדנד; אם קטן מדי — ההתכנסות איטית מאוד. זו הסיבה שפותחו שיטות adaptive כמו Adam.</p>

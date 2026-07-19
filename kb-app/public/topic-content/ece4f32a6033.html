@@ -1,0 +1,14 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>שלושת ה-frameworks המרכזיים לבניית AI Agents כיום נבדלים בעיקר באופן שבו הם מנהלים multi-agent collaboration, planning, ושיתוף הקשר.</p>
+<h4 class='sec-h'>🔄 טבלת השוואה</h4>
+<table class='kbtable'><tr><td><strong>Feature</strong></td><td><strong>LangChain</strong></td><td><strong>AutoGen</strong></td><td><strong>CrewAI</strong></td></tr><tr><td>Tool use</td><td>✅</td><td>✅</td><td>✅</td></tr><tr><td>Multi-agent support</td><td>✅ (מוגבל)</td><td>✅ (chat loops)</td><td>✅ (roles/tasks)</td></tr><tr><td>Planning</td><td>✅ (via task chains)</td><td>מוגבל</td><td>✅ (roles/tasks)</td></tr><tr><td>Deployment maturity</td><td>High</td><td>Experimental</td><td>Moderate</td></tr></table>
+<h4 class='sec-h'>🎯 תיאור קצר לכל framework</h4>
+<ul><li>LangChain — שימוש בכלים (tool use), ReAct, Planner; השליטה המלאה ביותר אך דורש ניהול הקשר מפורש (manual prompt chaining).</li><li>AutoGen — chat loops בין מספר agents; experimental אך גמיש לשיחות multi-agent חופשיות.</li><li>CrewAI — שיתוף פעולה מבוסס-תפקידים (role-based collaboration); שיתוף הקשר אוטומטי בין tasks דרך kickoff().</li></ul>
+<h4 class='sec-h'>🔄 CrewAI מול LangChain — שיתוף הקשר</h4>
+<table class='kbtable'><tr><td><strong>Feature</strong></td><td><strong>CrewAI kickoff()</strong></td><td><strong>LangChain .invoke()</strong></td></tr><tr><td>Context sharing</td><td>אוטומטי (implicit)</td><td>ידני (manual)</td></tr><tr><td>Flexibility</td><td>פחות שליטה</td><td>שליטה מלאה</td></tr><tr><td>Effort required</td><td>מינימלי</td><td>שרשור ידני</td></tr></table>
+<p>ב-CrewAI, פלט של task קודם מתווסף אוטומטית ל-prompt של ה-agent הבא (&quot;זיכרון משותף&quot; מדומה) — ב-LangChain חובה להעביר את הפלט באופן מפורש מ-task ל-task.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מתי תעדיף LangChain על פני CrewAI?</strong></p>
+<p>ת: כשצריך שליטה מלאה ומדויקת על זרימת המידע בין שלבים (fine-grained control), או כשהמערכת כבר בנויה על LangChain ל-tool use/ReAct ולא מצריכה collaboration מבוסס-תפקידים.</p>
+<p><strong>ש: מהו הסיכון בשיתוף הקשר אוטומטי (implicit context sharing) של CrewAI?</strong></p>
+<p>ת: פחות שקיפות ושליטה — קשה לדעת בדיוק אילו חלקי הקשר &quot;זולגים&quot; ל-agent הבא, מה שמקשה debugging במקרים של תשובות לא צפויות.</p>

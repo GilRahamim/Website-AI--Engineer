@@ -1,0 +1,35 @@
+<h4 class='sec-h'>‏📋 הגדרה</h4>
+<p>‏משפחת שיטות למידה מונחית (לסיווג ולרגרסיה) המבוססות על חלוקה רקורסיבית (Recursive Splitting) של מרחב הפיצ'רים למבנה של עץ הכרעות. כוללת עץ בודד (Decision Tree) ושיטות אנסמבל המשלבות עצים רבים — Random Forest (Bagging) ו-Gradient Boosting (Boosting).</p>
+<h4 class='sec-h'>‏⚙️ איך זה עובד</h4>
+<ul><li>‏1. בכל Node בוחרים feature וערך-סף לפיצול הדאטה לשני ילדים, כך שטוהר (Purity) הילדים משתפר — לפי Entropy/Information Gain (או Gini).</li><li>‏2. ה-Root הוא הפיצול הראשון בעץ, וה-Leaves הם הצמתים הסופניים שמהם נגזר החיזוי.</li><li>‏3. ב-Random Forest: בונים L עצים על דגימות Bootstrap, ובכל פיצול בוחרים מתת-קבוצה אקראית של m features (לרוב m=√p בסיווג) — כך &quot;מנתקים קורלציה&quot; בין העצים, ומשלבים את התחזיות בהצבעה (סיווג) או ממוצע (רגרסיה).</li><li>‏4. ב-Gradient Boosting: העצים נבנים ברצף, כל עץ חדש לומד לחזות את השארית (residual) של החיזוי המצטבר הקודם, והתחזית הסופית היא סכום משוקלל (לפי קצב למידה η) של כל העצים.</li></ul>
+<h4 class='sec-h'>‏📐 נוסחאות</h4>
+<p class='formula-label'><em>‏</em><em>Entropy</em><em> — מדד אי-טוהר (</em><em>impurity</em><em>) של קבוצת דגימות </em><em>S</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="H(S)=-\sum_{i} p_{i}{\log}_{2}p_{i}">H(S)=-∑_i^​p_ilog_2p_i</span></div>
+<p class='formula-label'><em>‏</em><em>Information Gain</em><em> — הירידה ב-</em><em>Entropy</em><em> כתוצאה מפיצול לפי </em><em>feature A</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="IG(S,A)=H(S)-\sum_{v} \frac{|S_{v}|}{|S|}H(S_{v})">IG(S,A)=H(S)-∑_v^​(|S_v|)/(|S|)H(S_v)</span></div>
+<p class='formula-label'><em>‏</em><em>Gradient Boosting</em><em> — תחזית סופית עם קצב למידה η ו-</em><em>M</em><em> עצים</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="\hat{y}(x)=T_{0}(x)+\eta\sum_{m=1}^{M} T_{m}(x)">ŷ(x)=T_0(x)+η∑_{m=1}^MT_m(x)</span></div>
+<h4 class='sec-h'>‏🎯 שימושים עיקריים</h4>
+<ul><li>‏בעיות סיווג ורגרסיה כלליות עם קשרים לא-לינאריים בין הפיצ'רים.</li><li>‏ניתוח חשיבות פיצ'רים (Feature Importance) להבנת הדאטה.</li><li>‏דאטה מעורב (קטגוריאלי ומספרי) שלא דורש נרמול מקדים.</li></ul>
+<h4 class='sec-h'>‏✅ יתרונות</h4>
+<ul><li>‏עץ בודד: קל מאוד לפרשנות והדמיה ('white box').</li><li>‏לא דורש נרמול (scaling) של הפיצ'רים, ומטפל טבעית בקשרים לא-לינאריים.</li><li>‏Random Forest ו-Gradient Boosting מגיעים לדיוק גבוה מאוד ברוב המקרים המעשיים.</li></ul>
+<h4 class='sec-h'>‏❌ חסרונות / מגבלות</h4>
+<ul><li>‏עץ בודד נוטה מאוד ל-Overfitting (Variance גבוה).</li><li>‏Random Forest ו-Gradient Boosting הם 'black box' — קשה לפרש אותם כמו עץ בודד.</li><li>‏Gradient Boosting רגיש ל-hyperparameters (learning rate, מספר עצים, עומק) ואיטי יותר לאימון בגלל הרצף.</li></ul>
+<h4 class='sec-h'>‏📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>‏סוג משימה</strong></td><td><strong>‏מדדים מומלצים</strong></td></tr><tr><td>‏Classification</td><td>‏Accuracy, F1, ROC-AUC</td></tr><tr><td>‏Regression</td><td>‏RMSE, R2</td></tr></table>
+<p>‏</p>
+<h4 class='sec-h'>‏🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>‏שיטה</strong></td><td><strong>‏יתרון עיקרי</strong></td><td><strong>‏חסרון עיקרי</strong></td><td><strong>‏מתי לבחור</strong></td></tr><tr><td>‏Decision Tree</td><td>‏פרשנות מקסימלית, מהיר</td><td>‏Overfitting קל</td><td>‏כשצריך חוקי הסבר ברורים</td></tr><tr><td>‏Random Forest (Bagging)</td><td>‏מפחית Variance, רובסטי</td><td>‏פחות פרשני מעץ בודד</td><td>‏ביצועים טובים כלליים, פחות tuning</td></tr><tr><td>‏Gradient Boosting</td><td>‏דיוק גבוה מאוד</td><td>‏איטי, רגיש ל-tuning, overfitting אם לא נשלט</td><td>‏כשנדרש דיוק מקסימלי</td></tr></table>
+<p>‏</p>
+<h4 class='sec-h'>‏💻 קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>from sklearn.ensemble import RandomForestClassifier
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)</code></pre>
+<h4 class='sec-h'>‏🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: ‏מה ההבדל בין </strong><strong>Bagging</strong><strong> ל-</strong><strong>Boosting</strong><strong>?</strong></p>
+<p><strong>ת: </strong>‏Bagging מאמן מודלים במקביל ובאופן בלתי-תלוי על דגימות Bootstrap כדי להפחית Variance (לדוגמה Random Forest). Boosting מאמן מודלים ברצף, כל מודל מתקן את שגיאות קודמו, ומפחית בעיקר Bias (לדוגמה Gradient Boosting).</p>
+<p><strong>ש: ‏למה </strong><strong>Random Forest</strong><strong> בוחר תת-קבוצה אקראית של </strong><strong>features</strong><strong> בכל </strong><strong>split</strong><strong>?</strong></p>
+<p><strong>ת: </strong>‏כדי 'לנתק קורלציה' (decorrelate) בין העצים. אם יש feature חזק אחד מאוד, רוב העצים ישתמשו בו כפיצול ראשון ויהיו דומים מאוד זה לזה — וממוצע על תחזיות מתואמות לא מפחית Variance כצפוי.</p>
+<p><strong>ש: ‏מה מודדים </strong><strong>Entropy</strong><strong> ו-</strong><strong>Information Gain</strong><strong>?</strong></p>
+<p><strong>ת: </strong>‏Entropy מודד את אי-הטוהר (uncertainty) של קבוצת דגימות; Information Gain מודד כמה Entropy 'נחסכת' (כמה הילדים נטו יותר טהורים מההורה) כתוצאה מפיצול נתון — וכך בוחרים את הפיצול הטוב ביותר.</p>

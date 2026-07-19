@@ -1,0 +1,24 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מדד סטטיסטי הבוחן עד כמה שני אירועים (לדוגמה — שתי מילים) מופיעים יחד בתדירות גבוהה יותר ממה שהיה צפוי בהנחת אי-תלות סטטיסטית. מבוסס על הרעיון המפורסם בבלשנות: &quot;A word is characterized by the company it keeps&quot; (Firth, 1957) — מילה מאופיינת על-ידי המילים שמופיעות לצידה.</p>
+<h4 class='sec-h'>📐 הנוסחה</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/333ba825d049.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>PMI בין שני אירועים/מילים a ו-b</em></p>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>P(a,b)</td><td>ההסתברות המשולבת שאירוע a ואירוע b מתרחשים יחד (לדוגמה — מופיעים יחד בחלון מילים מסוים)</td></tr><tr><td>P(a), P(b)</td><td>ההסתברויות השוליות (Marginal) של כל אירוע בנפרד</td></tr></table>
+<h4 class='sec-h'>📊 תכונות חשובות</h4>
+<ul><li>ערך PMI(a,b) &gt; 0 — a ו-b מופיעים יחד בתדירות גבוהה יותר מהצפוי באקראי (אסוציאציה חיובית).</li><li>ערך PMI(a,b) = 0 — a ו-b בלתי תלויים סטטיסטית.</li><li>ערך PMI(a,b) &lt; 0 — a ו-b מופיעים יחד פחות מהצפוי (אסוציאציה שלילית / 'דוחות' אחת את השנייה).</li><li>דוגמת אינטואיציה ('Dove Soap'): המילה &quot;Dove&quot; מקבלת PMI גבוה במיוחד עם &quot;Soap&quot; (כי הצירוף הזה הרבה יותר נפוץ ביחס לתדירויות הבודדות שלהן), בהשוואל ל-PMI בין &quot;Dove&quot; למילים נפוצות באופן כללי כמו &quot;the&quot;.</li></ul>
+<h4 class='sec-h'>🎯 מתי משתמשים?</h4>
+<ul><li>זיהוי קוֹלוֹקציות (collocations) וביטויים רב-מילתיים — בסיס לאלגוריתמי Phrase Detection (כגון gensim Phrases / word2phrase).</li><li>הערכת קוהרנטיות נושאים (Topic Coherence) — מדדים כמו UMass מבוססים על עיקרון דומה ל-PMI.</li><li>אפיון מילים נדירות אך משמעותיות לעומת מילים נפוצות שאינן אינפורמטיביות (בדומה לרעיון שמאחורי IDF).</li></ul>
+<h4 class='sec-h'>🔄 השוואה לפונקציות דומות</h4>
+<table class='kbtable'><tr><td><strong>פונקציה</strong></td><td><strong>מתי עדיפה</strong></td></tr><tr><td>PMI</td><td>מדידת אסוציאציה בין שני אירועים/מילים ספציפיים</td></tr><tr><td>TF-IDF</td><td>שקלול חשיבות מילה במסמך יחיד יחסית לקורפוס</td></tr><tr><td>Topic Coherence (UMass)</td><td>הערכת קבוצת מילים שלמה (נושא) ולא זוג בודד</td></tr></table>
+<h4 class='sec-h'>💻 מימוש בקוד</h4>
+<pre class='code-block'><code>import math
+def pmi(p_a, p_b, p_ab):
+return math.log2(p_ab / (p_a * p_b))
+# לדוגמה מתוך סטטיסטיקות קורפוס:
+pmi(p_a=0.01, p_b=0.02, p_ab=0.005)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מה ההבדל בין PMI חיובי לשלילי?</strong></p>
+<p><strong>ת: </strong>PMI חיובי מציין ששני האירועים מופיעים יחד בתדירות גבוהה מהצפוי באקראי (אסוציאציה), ואילו PMI שלילי מציין שהם מופיעים יחד בתדירות נמוכה מהצפוי (הם 'דוחים' אחד את השני).</p>
+<p><strong>ש: </strong><strong>איך PMI משמש לזיהוי ביטויים רב-מילתיים?</strong></p>
+<p><strong>ת: </strong>צמדי מילים עם PMI גבוה במיוחד (כמו &quot;New York&quot;) מעידים שהן מופיעות יחד בעקביות חזקה ביותר מהמצופה מתדירותן הבודדת — ולכן סביר שמדובר בביטוי קבוע ולא בצירוף מקרי.</p>

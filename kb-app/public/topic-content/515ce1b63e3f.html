@@ -1,0 +1,32 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>שיטה להגדלת גיוון סט האימון על ידי יצירת גרסאות משתנות (אך תקפות מבחינה סמנטית) של דוגמאות קיימות — למשל סיבוב, היפוך או שינוי בהירות של תמונות — במקום אספת דאטה חדש.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ol><li>בוחרים סט טרנספורמציות מתאימות לדומיין (לדוגמה: סיבוב, היפוך אופקי, שינוי בהירות/קונטרסט לתמונות).</li><li>קובעים הסתברות/טווח אקראי לכל טרנספורמציה.</li><li>בכל epoch, על כל דוגמת אימון, מגרילים ומפעילים טרנספורמציה (או שילוב טרנספורמציות) באופן אקראי.</li><li>מאמנים את המודל על הגרסאות המשתנות, כאילו הן דוגמאות חדשות — התווית (label) נשארת זהה.</li></ol>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/2d4382d86682.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>Computer Vision — סיבוב, חיתוך (crop), היפוך, שינוי צבע/בהירות</li><li>NLP — synonym replacement, back-translation</li><li>Audio — שינוי גובה צליל (pitch shift), הוספת רעש</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מגדיל את גיוון הדאטה בלי לאסוף דוגמאות חדשות בפועל</li><li>מפחית Overfitting ומשפר generalization</li><li>זול חישובית יחסית לאיסוף דאטה חדש</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>טרנספורמציות לא מתאימות יכולות לפגוע בתווית (label) או ליצור דוגמאות לא ריאליסטיות</li><li>מוסיף תקורת זמן עיבוד בכל epoch</li><li>לא תחליף לדאטה מגוון אמיתי כשהפער בין דומיינים גדול</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Computer Vision</td><td>Accuracy, mAP</td></tr><tr><td>NLP</td><td>Accuracy, F1, BLEU</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>הבדל מרכזי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>Dropout</td><td>רגולריזציה ברמת הרשת, לא ברמת הדאטה</td><td>שילוב משלים</td></tr><tr><td>Transfer Learning</td><td>מנצל ידע ממודל מאומן מראש, לא יוצר וריאציות דאטה</td><td>כשיש מעט דאטה ייעודי לבעיה</td></tr><tr><td>Synthetic Data Generation</td><td>יוצר דוגמאות חדשות לחלוטין (לא טרנספורמציה של קיים)</td><td>כשגם זה אפשרי ומשתלם</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python / PyTorch)</h4>
+<pre class='code-block'><code>import torchvision.transforms as T
+
+augment = T.Compose([
+    T.RandomHorizontalFlip(p=0.5),
+    T.RandomRotation(degrees=15),
+    T.ColorJitter(brightness=0.2, contrast=0.2),
+    T.ToTensor(),
+])
+
+augmented_image = augment(original_image)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>איך Data Augmentation מפחית Overfitting?</p>
+<p><strong>ת: </strong>הוא חושף את המודל לגיוון רחב יותר של וריאציות של אותה דוגמה, כך שהמודל לומד תכונות כלליות יותר ולא משתמש ב&quot;קיצורי דרך&quot; ספציפיים לדוגמאות האימון.</p>
+<p><strong>ש: </strong>איזה סוגי Augmentation לא מתאימים לכל בעיה?</p>
+<p><strong>ת: </strong>לדוגמה היפוך אופקי (Horizontal Flip) לא מתאים לזיהוי טקסט או ספרות (שכן זה משנה את המשמעות), ולכן יש לבחור טרנספורמציות ששומרות על תקפות התווית.</p>

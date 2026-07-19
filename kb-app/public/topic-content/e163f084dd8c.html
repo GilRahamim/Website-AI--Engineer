@@ -1,0 +1,15 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מסגרת מעשית לבחירת מודל LLM למשימה נתונה, לפי קריטריונים תפעוליים (multimodality, מהירות, עלות, פרטיות, הסקה, קונטקסט) ולא לפי 'המודל הגדול ביותר'.</p>
+<h4 class='sec-h'>⚙️ קריטריונים מרכזיים</h4>
+<table class='kbtable'><tr><td><strong>קריטריון</strong></td><td><strong>מתי קריטי</strong></td><td><strong>כיוון פתרון</strong></td></tr><tr><td>Multimodal &amp; Input Types</td><td>צריך לעבד תמונות/וידאו/PDF</td><td>מודלים עם תמיכה multimodal native</td></tr><tr><td>Speed vs. Cost</td><td>אפליקציות real-time או נפח גבוה</td><td>מודלי 'Flash'/Mini, מודלים זולים יותר</td></tr><tr><td>Structured Output &amp; Tools</td><td>אינטגרציית API, JSON, function calling</td><td>מודלים עם תמיכת tools חזקה</td></tr><tr><td>Local Deployment &amp; Privacy</td><td>Offline / self-hosted / רגולציה</td><td>מודלי open-source מקומיים</td></tr><tr><td>Advanced Reasoning</td><td>קוד, מתמטיקה, היגיון תחומי</td><td>מודלי flagship מתקדמים</td></tr><tr><td>Long Context</td><td>מסמכים ארוכים / ספרים / מחקר</td><td>מודלים עם חלון קונטקסט גדול</td></tr></table>
+<h4 class='sec-h'>🛠️ עקרונות עבודה</h4>
+<ul><li>להתחיל מהמטרה והאילוצים — לא מהמודל הגדול ביותר הקיים.</li><li>להעריך מודלים על משימות אמיתיות ומדדים סטנדרטיים: Recall@k, MRR, Latency.</li><li>להשתמש בכלים כמו LiteLLM / LangChain / PromptLayer להשוואת ספקים בקלות, בלי לשנות קוד אפליקציה.</li><li>לבחור את המודל הפשוט ביותר שעומד בדרישות, ולשפר משם בהדרגה.</li></ul>
+<h4 class='sec-h'>🎯 התאמת אסטרטגיה למטרה</h4>
+<table class='kbtable'><tr><td><strong>מטרה</strong></td><td><strong>אסטרטגיה</strong></td></tr><tr><td>מינימום עלות</td><td>מודלים קטנים ומהירים למשימות כמו classification/extraction</td></tr><tr><td>מקסימום מהירות</td><td>מודלי Flash (כמו Gemini Flash) או הסקה מקומית</td></tr><tr><td>מקסימום דיוק</td><td>Re-ranking + מודלים מתמחי-תחום (GPT-4o, Claude Opus)</td></tr><tr><td>שילוב חוזקות</td><td>כמה מודלים יחד — לדוגמה GPT-4o לפלט מבני, MiniLM ל-retrieval</td></tr></table>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>משלים את 'נוף ספקי LLM' (מי קיים בשוק) עם שכבת ההחלטה (איך בוחרים בפועל לפי המשימה). מדדי ההערכה (Recall@k, MRR) מקושרים ל-Embedding Strategies &amp; Retrieval.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: למה לא לבחור תמיד במודל ה'חזק' ביותר הקיים?</strong></p>
+<p>ת: עלות וזמן תגובה גבוהים יותר, ולעיתים יתרון הדיוק שולי למשימה הספציפית. גישה נכונה: לבחור את המודל הפשוט/הזול ביותר שעומד בדרישות, ולעלות במורכבות רק אם נדרש.</p>
+<p><strong>ש: מה התפקיד של LiteLLM באסטרטגיית בחירת מודל?</strong></p>
+<p>ת: מאפשר להשוות ולהחליף בין ספקים/מודלים בקלות מאחורי interface אחיד, כך שניתן לבדוק אמפירית כמה מודלים על המשימה האמיתית בלי לשנות את קוד האפליקציה בכל פעם.</p>

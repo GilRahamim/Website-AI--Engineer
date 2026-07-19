@@ -1,0 +1,39 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>ארכיטקטורת רשת עצבית המתמחה בעיבוד נתונים בעלי מבנה מרחבי (תמונות בעיקר), המבוססת על שכבות קונבולוציה המשתפות משקולות (Filters) על פני כל המרחב הקלט.</p>
+<h4 class='sec-h'>🏛️ מבנה הרשת</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/e38e45c1d59a.png" loading="lazy" alt="CNN — Convolutional Neural Network — architecture diagram" /></div>
+<ul><li>שכבות קונבולוציה (Convolutional Layers) — מריצות פילטרים קטנים על פני התמונה לחילוץ פיצ'רים מקומיים</li><li>שכבות Pooling (בד&quot;כ Max Pooling) — מקטינות את הרזולוציה המרחבית ומוסיפות שונות (Invariance) להזזות קטנות</li><li>שכבות Fully-Connected בסוף הרשת — ממירות את מפות הפיצ'רים לתחזית סופית (סיווג / רגרסיה)</li></ul>
+<h4 class='sec-h'>📐 נוסחאות מפתח</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/a35772785b39.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 תחומי שימוש</h4>
+<ul><li>סיווג תמונות (Image Classification)</li><li>גילוי אובייקטים (Object Detection) ופילוח תמונה (Segmentation)</li><li>עיבוד אותות חד-מימדיים (אודיו, סיגנלים זמניים) באמצעות Conv1D</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>שיתוף משקולות (Weight Sharing) מקטין דרמטית את מספר הפרמטרים לעומת MLP</li><li>Translation Invariance — מזהה דפוס בלי קשר למיקומו בתמונה</li><li>לומד היררכיה של פיצ'רים: קצוות → טקסטורות → חלקים → אובייקטים שלמים</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>דורש כמות גדולה של דאטה מתויג לאימון מאפס</li><li>פחות מתאים מטבעו לרצפים ארוכים או נתונים לא-רשתיים (Non-Grid)</li><li>שדה הקליטה (Receptive Field) מוגבל ללא רשתות עמוקות מאוד או Dilated Convolutions</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Classification</td><td>Accuracy, F1, Top-5 Accuracy</td></tr><tr><td>Object Detection</td><td>mAP, IoU</td></tr><tr><td>Segmentation</td><td>Dice Score, mIoU</td></tr></table>
+<h4 class='sec-h'>🔄 וריאנטים / גרסאות</h4>
+<table class='kbtable'><tr><td><strong>וריאנט</strong></td><td><strong>הבדל מרכזי</strong></td></tr><tr><td>LeNet</td><td>אחת הראשונות, לסיווג ספרות (MNIST)</td></tr><tr><td>ResNet</td><td>מוסיף Skip/Residual Connections למניעת Vanishing Gradients ברשתות עמוקות</td></tr><tr><td>VGG</td><td>מערימה שכבות 3x3 קונבולוציה רבות, פשוטה ועמוקה</td></tr><tr><td>EfficientNet</td><td>מאזן עומק/רוחב/רזולוציה ביעילות פרמטרים</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (PyTorch)</h4>
+<pre class='code-block'><code>import torch.nn as nn
+
+class SimpleCNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=3, padding=1), nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Conv2d(32, 64, kernel_size=3, padding=1), nn.ReLU(),
+            nn.MaxPool2d(2),
+        )
+        self.classifier = nn.Linear(64 * 8 * 8, 10)
+
+    def forward(self, x):
+        x = self.features(x)
+        x = x.flatten(1)
+        return self.classifier(x)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה היתרון של Weight Sharing בקונבולוציה?</p>
+<p><strong>ת: </strong>אותו פילטר מופעל על כל אזורי התמונה, כך שמספר הפרמטרים לא תלוי בגודל התמונה, וניתן ללמוד אותו דפוס בכל מיקום.</p>
+<p><strong>ש: </strong>מה תפקיד שכבות ה-Pooling?</p>
+<p><strong>ת: </strong>מקטינות את הרזולוציה המרחבית (Downsampling), מפחיתות עומס חישובי ומוסיפות חוסר-רגישות קטן להזזות ולעיוותים קלים.</p>

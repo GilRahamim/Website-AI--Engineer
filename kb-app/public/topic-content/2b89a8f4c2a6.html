@@ -1,0 +1,11 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>שתי משפחות עיקריות של מודלי Transformer ב-NLP: מודלים Encoder-only (כמו BERT) שמעבדים את הטקסט באופן דו-כיווני (bidirectional) ומתאימים להבנה/סיווג, ומודלים Decoder-only (כמו משפחת GPT) שמייצרים טקסט אוטורגרסיבית טוקן אחר טוקן.</p>
+<h4 class='sec-h'>📊 השוואה</h4>
+<table class='kbtable'><tr><td><strong>מאפיין</strong></td><td><strong>Encoder-only (BERT)</strong></td><td><strong>Decoder-only (GPT)</strong></td></tr><tr><td>כיוון עיבוד</td><td>דו-כיווני (bidirectional)</td><td>חד-כיווני (autoregressive)</td></tr><tr><td>משימה טיפוסית</td><td>Classification, NER, QA חולצי-תשובה</td><td>יצירת טקסט חופשית (generation)</td></tr><tr><td>פלט</td><td>וקטור הקשר לכל טוקן/משפט</td><td>טוקן הבא, ברצף</td></tr><tr><td>שימוש ב-LLM מודרניים (Claude/GPT/Gemini)</td><td>פחות מרכזי כמודל עצמאי</td><td>הבסיס לרוב LLM-ים שיחתיים מודרניים</td></tr></table>
+<h4 class='sec-h'>🎯 תחומי שימוש</h4>
+<ul><li>Encoder-only — חיפוש סמנטי (כשמשמש כ-Bi-Encoder), סיווג טקסט, חילוץ ישויות.</li><li>Decoder-only — צ'אטבוטים, agents, השלמת קוד, כל משימת generation חופשית.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>למה אי אפשר להשתמש ב-BERT כדי 'לשוחח' כמו ChatGPT?</strong></p>
+<p><strong>ת: </strong>BERT הוא Encoder-only ומאומן במשימת Masked Language Modeling דו-כיוונית — הוא בונה ייצוג הקשר לטקסט קיים, לא מיועד ליצור רצף טוקנים חדש אחד אחרי השני כמו מודל אוטורגרסיבי.</p>
+<p><strong>ש: </strong><strong>מה היתרון של דו-כיווניות (bidirectional) במשימות הבנה?</strong></p>
+<p><strong>ת: </strong>מודל דו-כיווני 'רואה' גם את ההקשר שאחרי המילה וגם לפניה בעת בניית הייצוג, מה שמשפר משימות כמו NER ו-QA שתלויות בהקשר המלא של המשפט.</p>

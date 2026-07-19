@@ -1,0 +1,33 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>שיטת אופטימיזציה המתאימה learning rate נפרד לכל פרמטר, על סמך סכום ריבועי הגרדיאנטים ההיסטוריים שלו — פרמטרים עם גרדיאנטים גדולים בעבר מקבלים learning rate קטן יותר, ולהפך.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ol><li>מאתחלים מצבר ריבועי גרדיאנטים G=0 עבור כל פרמטר.</li><li>בכל איטרציה מחשבים את הגרדיאנט g_t ומצרפים את ריבועו ל-G.</li><li>מחשבים learning rate אפקטיבי לכל פרמטר: α מחולק בשורש G (פלוס אפסילון למניעת חילוק באפס).</li><li>מעדכנים כל פרמטר ב-learning rate האפקטיבי שלו.</li></ol>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/548e2112c904.png" loading="lazy" alt="formula"></div>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/7271d04e0c1a.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>דאטה דליל (sparse), כגון NLP עם מילים נדירות — פרמטרים נדירים מקבלים עדכון גדול יותר כשהם כן מופיעים</li><li>בעיות שבהן תכונות שונות בסקאלות שונות מאוד</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מתאים learning rate אוטומטית לכל פרמטר בנפרד</li><li>עובד טוב מאוד עם דאטה דליל</li><li>אין צורך לכוון ידנית learning rate שונה לכל תכונה</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>ה-learning rate האפקטיבי דועך באופן מונוטוני ועלול להפוך לקטן מאוד עד שהאימון &quot;נתקע&quot; (vanishing LR)</li><li>פחות מתאים לרשתות עמוקות לא-קונבקסיות בהשוואה ל-Adam</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Classification</td><td>Accuracy, Cross-Entropy Loss</td></tr><tr><td>Sparse Data / NLP</td><td>Accuracy, F1</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>הבדל מרכזי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>RMSProp</td><td>מחליף את הסכום המצטבר בממוצע נע — פותר את בעיית ה-LR הדועך</td><td>כשהאימון ארוך וה-LR של AdaGrad נעשה קטן מדי</td></tr><tr><td>Adam</td><td>RMSProp + Momentum</td><td>ברירת מחדל מודרנית</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python / PyTorch)</h4>
+<pre class='code-block'><code>import torch
+
+model = torch.nn.Linear(10, 1)
+optimizer = torch.optim.Adagrad(model.parameters(), lr=0.01)
+
+for x_batch, y_batch in dataloader:
+    optimizer.zero_grad()
+    loss = torch.nn.functional.mse_loss(model(x_batch), y_batch)
+    loss.backward()
+    optimizer.step()   # G += grad^2 ; theta -= alpha/sqrt(G+eps) * grad</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה החיסרון המרכזי של AdaGrad באימון ארוך?</p>
+<p><strong>ת: </strong>ה-G המצטבר רק גדל עם הזמן, כך שה-learning rate האפקטיבי דועך באופן מונוטוני ויכול להגיע לאפס בפועל לפני שהמודל התכנס.</p>
+<p><strong>ש: </strong>למה AdaGrad מתאים במיוחד ל-NLP?</p>
+<p><strong>ת: </strong>כי תכונות/מילים נדירות מקבלות גרדיאנטים גדולים לעיתים רחוקות, ו-AdaGrad משמר עבורן learning rate גבוה יחסית כשהן כן מופיעות.</p>

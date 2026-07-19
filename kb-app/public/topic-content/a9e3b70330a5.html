@@ -1,0 +1,37 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>אימון מודל YOLO מותאם-אישית על דאטה ייעודי, באמצעות Transfer Learning — המשך אימון ממשקלים pretrained (לא מאפס) לזיהוי קטגוריות חדשות שלא היו בדאטהסט המקורי (כגון COCO).</p>
+<h4 class='sec-h'>⚙️ צנרת האימון (Training Pipeline)</h4>
+<ul><li>1. Dataset — אוסף תמונות עם תיוג.</li><li>2. Labels — קואורדינטות bounding box + class לכל אובייקט.</li><li>3. Transfer Learning — התחלה ממשקלים pretrained.</li><li>4. Training — אימון על הדאטה הספציפי.</li><li>5. Validation — הערכה על סט אימות.</li><li>6. Best Weights — שמירת המשקלים הטובים ביותר.</li><li>7. Inference — שימוש במודל המאומן על תמונות חדשות.</li></ul>
+<h4 class='sec-h'>🔑 מדוע Transfer Learning קריטי</h4>
+<p>לא מאמנים מאפס (NOT training from scratch). במקום זאת: מתחילים ממשקלים pretrained, משתמשים מחדש בתכונות חזותיות שכבר נלמדו (reuse learned visual features), ו-fine-tune על הדאטה הספציפי. יתרונות: אימון מהיר יותר, פחות דאטה נדרש, ביצועים טובים יותר — בדיוק כעקרון ה-Fine-Tuning שנדון במסמכים 51-54, כאן מיושם על מודלי vision.</p>
+<h4 class='sec-h'>💻 קוד לדוגמה — הגדרת דאטהסט ואימון</h4>
+<pre class='code-block'><code>COCO128 (128 תמונות, 80 קטגוריות) הוא דוגמית קטנה שמורידה אוטומטית ע&amp;quot;י Ultralytics. לדאטה אישי, מצביעים על קובץ YAML:
+# data.yaml
+path: ../datasets/my_data
+train: images/train
+val: images/val
+names:
+0: cat
+1: dog
+# 10_train_yolo.py
+model.train(
+data=DATA_YAML,
+epochs=EPOCHS,
+imgsz=IMG_SIZE,
+batch=BATCH,
+name=RUN_NAME,
+)</code></pre>
+<h4 class='sec-h'>💻 קוד לדוגמה — חיזוי עם מודל מאומן</h4>
+<pre class='code-block'><code>זרימה: Train → Save Weights → Load Model → Predict on New Images.
+# 11_predict_trained.py
+WEIGHTS_PATH = &amp;quot;runs/detect/yolo_demo_run/weights/best.pt&amp;quot;
+DEFAULT_IMAGE = &amp;quot;https://ultralytics.com/images/bus.jpg&amp;quot;
+model = YOLO(WEIGHTS_PATH)
+results = model(image_source, save=True)</code></pre>
+<h4 class='sec-h'>✅ יתרונות Transfer Learning</h4>
+<ul><li>אימון מהיר משמעותית מאימון from-scratch.</li><li>דורש פחות דאטה מתויג — קריטי כשתיוג ידני יקר.</li><li>מבצע טוב יותר בדרך כלל ממודל שאומן מאפס על דאטה קטן.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מדוע COCO128 משמש כדוגמית הדגמה ולא COCO המלא (כ-330,000 תמונות)?</strong></p>
+<p>ת: כי המטרה בדמו היא להדגים את ה-pipeline (data → labels → transfer learning → training → validation → inference) בזמן קצר ועל משאבים מוגבלים — COCO128 (128 תמונות) מספיק להראות שהקוד עובד מקצה לקצה, בלי לדרוש שעות אימון על דאטהסט מלא.</p>
+<p><strong>ש: מה ההבדל בין 'transfer learning' ב-YOLO ל'fine-tuning embeddings' שנדון במסמך 51?</strong></p>
+<p>ת: שניהם מבוססים על אותו עיקרון — להמשיך אימון ממשקלים pretrained במקום מאפס — אך התחום שונה: YOLO transfer learning מתאים שכבות חזותיות (visual features, קצוות/טקסטורות/צורות) למשימת detection חדשה; embedding fine-tuning מתאים את מרחב הדמיון הטקסטואלי למשימת retrieval. העקרון המתמטי-מושגי דומה, התחום (vision מול NLP) שונה.</p>

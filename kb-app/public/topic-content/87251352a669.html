@@ -1,0 +1,27 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מדד המעריך את איכות טקסט שנוצר אוטומטית (לדוגמה תרגום מכונה) על ידי השוואת n-grams (רצפי מילים סמוכות) בין הטקסט שנוצר לבין טקסט התייחסות (reference) שנכתב על ידי אדם, בתוספת קנס על פלט קצר מדי.</p>
+<h4 class='sec-h'>📐 הנוסחה</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/54210c826316.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>p_n</td><td>דיוק (precision) של n-grams — אחוז ה-n-grams בפלט שמופיעים גם בטקסט ההתייחסות</td></tr><tr><td>w_n</td><td>משקל לכל n (בדרך כלל ממוצע שווה, לדוגמה 1/4 לכל אחד מ-1..4)</td></tr><tr><td>BP</td><td>Brevity Penalty — קנס על פלט קצר מהותית מטקסט ההתייחסות</td></tr></table>
+<h4 class='sec-h'>🎯 מתאים לסוג למידה ומשימה</h4>
+<table class='kbtable'><tr><td><strong>סוג למידה</strong></td><td><strong>משימה</strong></td><td><strong>מתאים?</strong></td></tr><tr><td>מפוקחת</td><td>Machine Translation</td><td>✅ המדד הסטנדרטי המקובל ביותר</td></tr><tr><td>מפוקחת/Self-Supervised</td><td>Text Summarization / Image Captioning</td><td>⚠️ שימושי אך ROUGE/METEOR נפוצים גם הם</td></tr><tr><td>מפוקחת</td><td>Classification</td><td>❌ לא רלוונטי</td></tr></table>
+<h4 class='sec-h'>📊 טווח ערכים ופרשנות</h4>
+<table class='kbtable'><tr><td><strong>ערך</strong></td><td><strong>משמעות</strong></td></tr><tr><td>1.0 (100)</td><td>התאמה מושלמת ל-reference (כל ה-n-grams תואמים)</td></tr><tr><td>0.3–0.5 (30–50)</td><td>תרגום סביר-טוב במשימות תרגום מכונה אמיתיות</td></tr><tr><td>0.0</td><td>אין חפיפת n-grams כלל בין הפלט לטקסט ההתייחסות</td></tr></table>
+<h4 class='sec-h'>✅ מתי עדיף על מדדים אחרים?</h4>
+<ul><li>כשיש טקסט reference כתוב על ידי אדם להשוואה, ורוצים מדד אוטומטי וזול לחישוב בהשוואה להערכה אנושית</li><li>נוח להשוואה בין מודלי תרגום/יצירת טקסט שונים על אותו דאטה-סט בדיקה</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>מתמקד בחפיפה מילולית (n-grams) ולא במשמעות סמנטית — תרגום נכון בניסוח שונה מה-reference יקבל ציון נמוך באופן לא הוגן</li><li>לא תמיד תואם הערכה אנושית של שטף (fluency) וקוהרנטיות הטקסט</li><li>דורש לפחות טקסט reference אחד באיכות טובה לכל דוגמה</li></ul>
+<h4 class='sec-h'>💻 מימוש בקוד</h4>
+<pre class='code-block'><code>from nltk.translate.bleu_score import sentence_bleu
+
+reference = [[&amp;quot;the&amp;quot;, &amp;quot;cat&amp;quot;, &amp;quot;is&amp;quot;, &amp;quot;on&amp;quot;, &amp;quot;the&amp;quot;, &amp;quot;mat&amp;quot;]]
+candidate = [&amp;quot;the&amp;quot;, &amp;quot;cat&amp;quot;, &amp;quot;sat&amp;quot;, &amp;quot;on&amp;quot;, &amp;quot;the&amp;quot;, &amp;quot;mat&amp;quot;]
+
+score = sentence_bleu(reference, candidate)
+print(score)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה תפקיד ה-Brevity Penalty בנוסחת BLEU?</p>
+<p><strong>ת: </strong>הוא מעניש פלט קצר משמעותית מטקסט ההתייחסות — בלעדיו, מודל יכול 'לרמות' את המדד על ידי הפקת פלט קצר מאוד המכיל רק n-grams נכונים בביטחון גבוה, ולקבל דיוק (precision) מנופח.</p>
+<p><strong>ש: </strong>מה החיסרון המרכזי של BLEU כמדד להערכת תרגום מכונה?</p>
+<p><strong>ת: </strong>BLEU מודד חפיפה מילולית (n-grams) בלבד ולא מבין משמעות סמנטית — תרגום תקין לחלוטין שמנוסח אחרת מטקסט ההתייחסות (שימוש במילים שונות, סדר מילים שונה) יקבל ציון נמוך באופן לא מדויק.</p>

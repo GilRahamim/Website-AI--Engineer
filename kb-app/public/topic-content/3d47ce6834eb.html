@@ -1,0 +1,15 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>LLM מייצר טקסט על ידי חיזוי חזרתי של הטוקן הבא — בכל שלב המודל מחשב התפלגות הסתברות על כל הטוקנים האפשריים באוצר המילים, ופרמטרי ה-decoding קובעים איך בוחרים טוקן מתוך ההתפלגות הזו.</p>
+<h4 class='sec-h'>📐 נוסחת הבסיס</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/c37647338ded.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎛️ פרמטרי Decoding</h4>
+<ul><li>Temperature — פרמטר שמכווץ/מרחיב את ההתפלגות; temperature נמוך → פלט יותר דטרמיניסטי וצפוי, temperature גבוה → יותר מגוון ויצירתי.</li><li>Top-k — בוחר רק מתוך ה-k הטוקנים הסבירים ביותר, וזורק את שאר ההתפלגות.</li><li>Top-p (Nucleus Sampling) — בוחר את הקבוצה הקטנה ביותר של טוקנים שסכום ההסתברות שלהם עובר סף p, ודוגם מתוכה.</li></ul>
+<h4 class='sec-h'>📊 השוואת פרמטרים</h4>
+<table class='kbtable'><tr><td><strong>פרמטר</strong></td><td><strong>אפקט</strong></td><td><strong>מתי להגדיר ערך נמוך</strong></td></tr><tr><td>Temperature</td><td>שולט ב'חדות' ההתפלגות לפני דגימה</td><td>משימות עובדתיות/קוד שדורשות עקביות</td></tr><tr><td>Top-k</td><td>מגביל לקבוצת k טוקנים קבועה</td><td>כשרוצים גיוון מבוקר אך לא קיצוני</td></tr><tr><td>Top-p</td><td>מגביל דינמית לפי מסת הסתברות</td><td>כשרוצים גמישות שמתאימה את עצמה להתפלגות</td></tr></table>
+<h4 class='sec-h'>🔡 טוקנים (Tokens)</h4>
+<p>טוקן הוא יחידת הטקסט הבסיסית שעליה עובד המודל — לא בהכרח מילה שלמה. כלל אצבע נפוץ: כ-4 תווים באנגלית ≈ טוקן אחד. מחיר ה-API ומגבלת חלון ההקשר (context window) נמדדים בטוקנים, לא בתווים או מילים.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>למה temperature=0 לא בהכרח נותן את אותה תשובה בכל פעם?</strong></p>
+<p><strong>ת: </strong>כי גם ב-temperature=0 (greedy decoding) ייתכנו אי-דטרמיניזם מסיבות אחרות — חישובי floating-point מקבילים על GPU, batching דינמי בשרת, או הבדלים זניחים ב-numerical precision.</p>
+<p><strong>ש: </strong><strong>מה ההבדל המעשי בין Top-k ל-Top-p?</strong></p>
+<p><strong>ת: </strong>Top-k שומר על מספר קבוע של טוקנים מועמדים תמיד, גם אם ההתפלגות שטוחה מאוד; Top-p מתאים את גודל קבוצת המועמדים דינמית לפי מסת ההסתברות, ולכן מתמודד טוב יותר עם מצבים שבהם פעם יש טוקן בודד דומיננטי ופעם הסתברות מפוזרת.</p>

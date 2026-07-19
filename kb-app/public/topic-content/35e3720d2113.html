@@ -1,0 +1,27 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>כדי שמודל מחשב יוכל לעבד טקסט, יש להמיר כל מסמך לכתב מספרי — וקטור במרחב |V|-מימדי, כאשר V הוא אוצר המילים (Vocabulary) של הקורפוס. כל מסמך d מיוצג כווקטור שבו כל תא מתאר היבט מסוים של מילה אחת באוצר המילים.</p>
+<h4 class='sec-h'>🔍 למה צריך את זה?</h4>
+<ul><li>מודלים סטטיסטיים ואלגוריתמי למידת מכונה דורשים קלט מספרי, ולא מחרוזות טקסט.</li><li>ייצוג וקטורי מאפשר להגדיר מרחק/דמיון בין מסמכים באופן פורמלי (לדוגמה Cosine Similarity).</li><li>קורפוס טקסט גדול יכול להכיל 100K ועד מיליוני מילים ייחודיות — כך שהווקטורים נוטים להיות גדולים וספארסיים (Sparse).</li></ul>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>בונים מילון/אוצר מילים (Dictionary / Lexicon / Vocabulary) מכל המילים הייחודיות בקורפוס, ומקצים לכל מילה אינדקס.</li><li>לכל מסמך בונים וקטור באורך |V|, כאשר כל תא מייצג מילה אחת מהמילון.</li><li>ממלאים את תאי הווקטור לפי שיטת הייצוג שנבחרה — ערך בינארי (קיים/לא קיים), ספירת מופעים (Bag-of-Words), או משקל משוקלל (TF-IDF).</li></ul>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>אחזור מידע (Information Retrieval) — דירוג מסמכים לפי שאילתה.</li><li>חישוב דמיון בין מסמכים (deduplication, clustering, recommendation).</li><li>קלט למודלים נוספים — סיווג טקסט, topic modeling, חיפוש סמנטי.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מאפשר להשתמש בכל כלי האלגברה הלינארית והסטטיסטיקה הקיימים על מסמכי טקסט.</li><li>פשוט להבנה וליישום, ומהווה בסיס לכל שיטות הייצוג המתקדמות יותר.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>אובדן מידע על סדר המילים (Bag-of-Words וגרסאותיו אינם רגישים לסדר).</li><li>ממד גבוה מאוד וספארסיות — הווקטור באורך אוצר המילים השלם, גם אם מסמך בודד מכיל מעט מילים.</li><li>אינו רגיש מטבעו למשמעות/סינונימים, אלא אם משתמשים בייצוגים מתקדמים יותר (embeddings).</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Retrieval / Ranking</td><td>Recall@K, MRR, Precision@K</td></tr><tr><td>Similarity</td><td>Cosine Similarity, Jaccard Similarity</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה לשיטות ייצוג</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>מה שומרת</strong></td><td><strong>חיסרון מרכזי</strong></td></tr><tr><td>Binary Incidence</td><td>האם מילה מופיעה במסמך</td><td>ללא מידע על תדירות</td></tr><tr><td>Bag-of-Words</td><td>תדירות המילה במסמך</td><td>מילים נפוצות מקבלות משקל גבוה מדי</td></tr><tr><td>TF-IDF</td><td>תדירות משוקללת לפי נדירות</td><td>עדיין לא תופס משמעות/קונטקסט</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from sklearn.feature_extraction.text import CountVectorizer
+docs = ['the cat sat', 'the dog barked']
+model = CountVectorizer()
+matrix = model.fit_transform(docs)  # sparse |D| x |V| matrix
+print(model.get_feature_names_out())</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מדוע הווקטור שמתקבל מטקסט הוא בדרך כלל ספארסי (sparse)?</strong></p>
+<p><strong>ת: </strong>כל מסמך בודד מכיל רק חלק קטן מאוצר המילים הכולל, כך שרוב התאים בווקטור שלו יהיו אפסים.</p>
+<p><strong>ש: </strong><strong>מה ההבדל בין אוצר מילים (Vocabulary) של מסמך לבין של קורפוס?</strong></p>
+<p><strong>ת: </strong>אוצר המילים נבנה מכל המילים הייחודיות בקורפוס השלם; וקטור מסמך בודד מציין רק אילו מהמילים הללו מופיעות בו ובאיזו מידה.</p>

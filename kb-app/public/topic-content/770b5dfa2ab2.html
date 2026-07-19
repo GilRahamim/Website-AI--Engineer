@@ -1,0 +1,60 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Agent מבוסס-ReAct יכול לבצע נימוק איטרטיבי מעל Knowledge Graph: בכל שלב הוא בוחן אם יש לו מספיק עדות, קורא לכלי חיפוש-גרף, קורא את התוצאה, ומחליט אם להמשיך לחקור entity-גשר (bridge entity) חדש שהתגלה. כך ה-agent &quot;קופץ&quot; בין ישויות (multi-hop) עד שמגיע לתשובה מלאה.</p>
+<h4 class='sec-h'>🏛️ זרימת העבודה (Full Demo Architecture)</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/300133c7214f.png" loading="lazy" alt="נימוק Multi-Hop באמצעות Agent מעל Knowledge Graph — architecture diagram" /></div>
+<p>User Query → LLM (ReAct reasoning) → Tool call → Neo4j → Graph results → LLM מחליט את השלב הבא → (חזרה לכלי או) → Final Answer.</p>
+<h4 class='sec-h'>⚙️ לופ ReAct מקומי — צעד אחר צעד</h4>
+<ul><li>Thought — האם יש כבר מספיק עדות לענות?</li><li>Action — קריאה ל-graph_search_tool עם המוקד (focus) הנוכחי.</li><li>Observation — קריאת תוצאת הכלי.</li><li>Thought — האם ה-observation חשף entity-גשר חדש ששווה לחקור? אם כן — להגדיר focus חדש ולחזור ללופ; אם לא — לעצור.</li></ul>
+<h4 class='sec-h'>💻 קוד לדוגמה — ReAct מקומי עם כלי גרף</h4>
+<pre class='code-block'><code>def local_react_agent(query: str, max_steps: int = 2) -&amp;gt; dict:
+&amp;quot;&amp;quot;&amp;quot;Iterative ReAct loop: think, act, observe, decide whether to act again.&amp;quot;&amp;quot;&amp;quot;
+trace, evidence, explored = [], [], set()
+current_focus = query
+for step in range(1, max_steps + 1):
+trace.append({&amp;quot;step&amp;quot;: &amp;quot;Thought&amp;quot;,
+&amp;quot;content&amp;quot;: f&amp;quot;Step {step}: current focus is {current_focus!r}.&amp;quot;})
+observation = graph_search_tool(current_focus)
+# Thought: does observation surface a new bridge entity worth exploring?
+# If yes -&amp;gt; current_focus = bridge_entity; loop. If no -&amp;gt; stop.
+return {&amp;quot;trace&amp;quot;: trace, &amp;quot;evidence&amp;quot;: evidence}</code></pre>
+<h4 class='sec-h'>💻 קוד לדוגמה — LangChain Agent + כלי גרף</h4>
+<pre class='code-block'><code>@tool
+def graph_search(query: str) -&amp;gt; str:
+&amp;quot;&amp;quot;&amp;quot;Searches the knowledge graph for relationships between automotive entities
+such as manufacturers, models, suppliers, platforms, and parent groups.&amp;quot;&amp;quot;&amp;quot;
+return graph_search_tool(query)
+llm = ChatOpenAI(model=&amp;quot;gpt-4o-mini&amp;quot;, temperature=0, api_key=openai_api_key)
+agent = create_agent(
+model=llm, tools=[graph_search],
+system_prompt=&amp;quot;You are a helpful assistant for automotive knowledge-graph reasoning.&amp;quot;,
+)
+response = agent.invoke({&amp;quot;messages&amp;quot;: [{&amp;quot;role&amp;quot;: &amp;quot;user&amp;quot;,
+&amp;quot;content&amp;quot;: &amp;quot;Which manufacturers source battery cells from CATL?&amp;quot;}]})
+print(response[&amp;quot;messages&amp;quot;][-1].content)
+# -&amp;gt; &amp;quot;The manufacturers that source battery cells from CATL include: Tesla, BMW, Volkswagen&amp;quot;</code></pre>
+<h4 class='sec-h'>💻 קוד לדוגמה — שני כלי Neo4j משלימים</h4>
+<pre class='code-block'><code>@tool
+def neo4j_graph_search(query: str) -&amp;gt; str:
+&amp;quot;&amp;quot;&amp;quot;Best for open-ended exploration ('what is connected to X?').&amp;quot;&amp;quot;&amp;quot;
+return neo4j_graph_search_tool(query)
+@tool
+def neo4j_cypher_query(question: str) -&amp;gt; str:
+&amp;quot;&amp;quot;&amp;quot;Best for specific factual questions ('who supplies X?').&amp;quot;&amp;quot;&amp;quot;
+response = cypher_chain.invoke({&amp;quot;query&amp;quot;: question})
+return response[&amp;quot;result&amp;quot;]
+react_agent = create_agent(model=react_llm, tools=[neo4j_graph_search, neo4j_cypher_query],
+system_prompt=&amp;quot;You are a knowledge-graph reasoning assistant for the automotive industry.&amp;quot;)
+question = &amp;quot;Which battery suppliers does Tesla use, and which of them also supply BMW?&amp;quot;
+result = react_agent.invoke({&amp;quot;messages&amp;quot;: [{&amp;quot;role&amp;quot;: &amp;quot;user&amp;quot;, &amp;quot;content&amp;quot;: question}]})
+# -&amp;gt; &amp;quot;Tesla uses battery cells from CATL. BMW also sources from CATL and Samsung SDI.
+#     The relevant supplier serving both is CATL.&amp;quot;</code></pre>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>שאלות חיתוך/קישוריות בין שתי קבוצות ישויות (&quot;מי מספק לשני יצרנים?&quot;).</li><li>שילוב כלי open-ended exploration (graph traversal) עם כלי factual lookup (text-to-Cypher) באותו agent, לפי אופי השאלה.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>ה-agent יכול לעקוב אחר entity-גשר שמתגלה בזמן ריצה — לא תלוי בנתיב מוגדר מראש.</li><li>שילוב שני כלים (graph_search + cypher_query) מאפשר גמישות בין חקירה פתוחה לשאילתה מדויקת.</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>מספר צעדים מקסימלי (max_steps/max_hops) נדרש כדי למנוע לופים אינסופיים.</li><li>תלוי באיכות הכלים (seed entity matching, Cypher generation) — שגיאה בשלב מוקדם מתפשטת.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין neo4j_graph_search ל-neo4j_cypher_query כשני כלים נפרדים?</strong></p>
+<p>ת: neo4j_graph_search מתאים לחקירה פתוחה (&quot;מה מחובר ל-X?&quot;) ומחזיר קשתות תומכות גולמיות; neo4j_cypher_query מתאים לשאלות עובדתיות ספציפיות (&quot;מי מספק X?&quot;) ומתרגם לשאילתת Cypher מדויקת ומחזיר תשובה ישירה.</p>
+<p><strong>ש: איך ה-agent יודע מתי להמשיך לחקור entity-גשר חדש?</strong></p>
+<p>ת: בשלב ה-Thought השני בכל איטרציה, ה-agent בוחן את ה-observation שהתקבל ומזהה אם הוא מכיל ישות בעלת מעלה (degree) גבוהה או רלוונטיות לשאלה המקורית; אם כן הוא מעדכן את current_focus לישות זו וממשיך ללופ.</p>

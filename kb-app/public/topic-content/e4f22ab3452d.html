@@ -1,0 +1,31 @@
+<h4 class='sec-h'>Feature Space ו-Feature Engineering</h4>
+<p class='formula-label'><em>מרחב הפיצ'רים והנדסת המשתנים בלמידת מכונה</em></p>
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Feature Space הוא המרחב הרב-מימדי שכל ציר בו מייצג פיצ'ר (feature/משתנה) אחד, וכל נקודת נתונים מיוצגת כווקטור באותו מרחב. Feature Engineering הוא תהליך יצירה, בחירה והתאמה של הפיצ'רים, במטרה לשפר את יכולת האלגוריתם ללמוד מהדאטה (כולל אלגוריתמי unsupervised כמו clustering).</p>
+<h4 class='sec-h'>🔍 מתי זה קורה / מתי זה רלוונטי</h4>
+<ul><li>לפני כל הרצה של אלגוריתם clustering/dimensionality reduction — איכות ה-feature space קובעת במידה רבה את איכות התוצאה.</li><li>כאשר פיצ'רים נמצאים בסקאלות שונות מאוד (לדוגמה גיל לעומת הכנסה) — חיוני Feature Scaling לפני שימוש במרחקים (K-Means, DBSCAN).</li><li>כאשר יש פיצ'רים קטגוריאליים (categorical) שיש להמיר לייצוג נומרי (One-Hot Encoding, Embedding) לפני שימוש באלגוריתם המבוסס מרחק.</li></ul>
+<h4 class='sec-h'>⚠️ איך מזהים / איך מיישמים</h4>
+<ul><li>פיצ'רים בסקאלות שונות בצורה קיצונית — ניתן לראות בעזרת תיאור סטטיסטי (describe()) של הדאטה.</li><li>פיצ'רים מתואמים מאוד (correlated) זה עם זה — מידע רדונדנטי שעלול 'להכביד' באופן לא הוגן על מרחק/שונות.</li><li>פיצ'רים עם הרבה ערכים חסרים (missing values) שדורשים טיפול לפני המידול.</li></ul>
+<h4 class='sec-h'>🛠️ איך פותרים / מטפלים</h4>
+<ul><li>Feature Scaling: Standardization (<img class="inline-formula-img" src="/topic-assets/f7eb33d6f005.png" loading="lazy" alt="formula">) או Min-Max Normalization, כדי שלכל פיצ'ר תהיה השפעה מאוזנת על מדדי המרחק.</li><li>Encoding: One-Hot Encoding למשתנים קטגוריאליים נומינליים, או Ordinal Encoding כשיש סדר טבעי.</li><li>יצירת פיצ'רים חדשים (Feature Construction) — לדוגמה ניתוח RFM (Recency, Frequency, Monetary) ליצירת תכונות התנהגותיות מנתוני קנייה גולמיים.</li><li>הפחתת מימד (PCA / t-SNE / UMAP) להסרת רדונדנסיה ולהתמודדות עם Curse of Dimensionality.</li><li>Feature Selection — הסרת פיצ'רים לא רלוונטיים/רועשים שמוסיפים רעש למרחב המרחקים.</li></ul>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<ul><li>ה-feature space שעליו עובד K-Means, DBSCAN, Hierarchical Clustering ושאר אלגוריתמי clustering נקבע במלואו על-ידי תהליך ה-Feature Engineering.</li><li>PCA ו-t-SNE/UMAP הם בעצמם כלים ל'שינוי' מרחב הפיצ'רים — הם יוצרים feature space חדש, מופחת-מימד.</li><li>מספר הפיצ'רים (מימד ה-feature space) משפיע ישירות על חשיפה ל-Curse of Dimensionality.</li></ul>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>from sklearn.preprocessing import StandardScaler, OneHotEncoder
+import pandas as pd
+# Scaling לפיצ'רים נומריים
+numeric_cols = [&amp;quot;age&amp;quot;, &amp;quot;income&amp;quot;]
+X_scaled = StandardScaler().fit_transform(df[numeric_cols])
+# One-Hot Encoding לפיצ'רים קטגוריאליים
+X_cat = pd.get_dummies(df[&amp;quot;category&amp;quot;], prefix=&amp;quot;cat&amp;quot;)
+# בניית RFM Features מדאטה גולמי של עסקאות
+rfm = df.groupby(&amp;quot;customer_id&amp;quot;).agg(
+recency=(&amp;quot;order_date&amp;quot;, lambda x: (pd.Timestamp.now() - x.max()).days),
+frequency=(&amp;quot;order_id&amp;quot;, &amp;quot;count&amp;quot;),
+monetary=(&amp;quot;amount&amp;quot;, &amp;quot;sum&amp;quot;),
+)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מדוע Feature Scaling קריטי לפני K-Means או DBSCAN, אך פחות חיוני ב-Tree-based models?</strong></p>
+<p><strong>ת: </strong>K-Means ו-DBSCAN מתבססים על מרחק אוקלידי בין נקודות, ופיצ'ר בסקאלה גדולה ישלוט על המרחק ללא קשר לחשיבותו האמיתית. מודלים מבוססי-עצים מפצלים לפי סף בכל פיצ'ר בנפרד ואינם משתמשים במרחק גלובלי, ולכן אינם רגישים לסקאלה.</p>
+<p><strong>ש: </strong><strong>מה ההבדל בין Feature Selection ל-Feature Extraction?</strong></p>
+<p><strong>ת: </strong>Feature Selection בוחרת תת-קבוצה מתוך הפיצ'רים המקוריים (ללא שינוי). Feature Extraction (כמו PCA) יוצרת פיצ'רים חדשים שהם קומבינציה/טרנספורמציה של המקוריים.</p>

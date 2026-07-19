@@ -1,0 +1,41 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>חיבור agent ב-CrewAI ל-retriever (מסד וקטורי) מאפשר לו לבסס (ground) את תשובותיו על מסמכים רלוונטיים אמיתיים — משלב את הגמישות המבנית של agent workflows עם עומק הידע של retrieval מבוסס-מסמכים.</p>
+<h4 class='sec-h'>🏛️ זרימת העבודה</h4>
+<p>User Query → Retriever (Vector DB) → Relevant Documents → CrewAI Agent → Grounded Response</p>
+<h4 class='sec-h'>🎯 יתרונות השילוב</h4>
+<ul><li>תשובות מבוססות-עדות (grounded) ולא רק על ידע גנרי של ה-LLM.</li><li>מפחית hallucinations — ה-agent מצטט מקורות ([KB-#]) מתוך מסד הידע הפנימי.</li><li>מתאים הקשר בזמן אמת — מתעדכן עם המסמכים שבמסד, לא תלוי ב-knowledge cutoff.</li></ul>
+<h4 class='sec-h'>💻 קוד לדוגמה — בניית/טעינת מסד וקטורי ו-Agent מחקר</h4>
+<pre class='code-block'><code>def load_pdf_chunks(pdf_path: str):
+pages = PyMuPDFLoader(pdf_path).load()
+splitter = RecursiveCharacterTextSplitter(chunk_size=700, chunk_overlap=100)
+chunks = splitter.split_documents(pages)
+for i, c in enumerate(chunks):
+c.metadata.setdefault(&amp;quot;source&amp;quot;, pdf_path)
+c.metadata[&amp;quot;chunk_id&amp;quot;] = i
+return chunks
+def build_or_load_vstore() -&amp;gt; Chroma:
+os.makedirs(PERSIST_DIR, exist_ok=True)
+emb = HuggingFaceEmbeddings(model_name=EMBED_MODEL)
+if any(os.scandir(PERSIST_DIR)):
+return Chroma(collection_name=&amp;quot;crew_rag_demo&amp;quot;, embedding_function=emb, persist_directory=PERSIST_DIR)
+docs = load_pdf_chunks(SOURCE_PDF)
+return Chroma.from_documents(docs, emb, collection_name=&amp;quot;crew_rag_demo&amp;quot;, persist_directory=PERSIST_DIR)
+VSTORE = build_or_load_vstore()
+research_agent = Agent(
+role=&amp;quot;Evidence Research Agent&amp;quot;,
+goal=&amp;quot;Answer using the private PDF KB (RAG) first. Cite [KB-#].&amp;quot;,
+backstory=&amp;quot;You ground answers in the internal PDF knowledge base.&amp;quot;,
+tools=[rag_search], llm=llm, verbose=True, allow_delegation=False, max_iter=4,
+)
+task_research = Task(
+description=(&amp;quot;Use the RAG tool to gather evidence and produce 3 concise bullets.\n&amp;quot;
+&amp;quot;Include a 'Citations' section listing the [KB-#] you used.\n&amp;quot;
+f&amp;quot;User question: {QUESTION}&amp;quot;),
+expected_output=&amp;quot;Markdown with 3 bullets and a 'Citations' section referencing [KB-#].&amp;quot;,
+agent=research_agent,
+)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה תפקיד max_iter בהגדרת Agent ב-RAG context?</strong></p>
+<p>ת: מגביל את מספר הצעדים/קריאות הכלים שה-agent מבצע באיטרציה בודדת — מונע לופים אינסופיים של חיפוש-חיפוש-חיפוש בלי להגיע לתשובה סופית.</p>
+<p><strong>ש: למה דרישת ציטוט [KB-#] חשובה ב-agent מבוסס-RAG?</strong></p>
+<p>ת: היא מאלצת את ה-agent להראות איזה chunk תומך בכל טענה — מאפשרת אימות (auditability) ועוזרת לזהות מקרים שבהם תשובה לא נתמכת בפועל בהקשר שנשלף.</p>

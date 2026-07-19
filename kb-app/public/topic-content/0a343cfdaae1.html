@@ -1,0 +1,41 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Embedding Fine-Tuning הוא תהליך של אימון מודל sentence-transformer (לדוגמה all-MiniLM-L6-v2) על דאטה ספציפי-לתחום, כדי לשנות את פונקציית המיפוי <em>f</em>(text) → vector — ובכך לשנות מה נחשב 'דומה' (similarity space), ולא לשנות וקטורים קיימים במסד הנתונים.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>1. איסוף PDFs ספציפיים לתחום.</li><li>2. חילוץ וחיתוך טקסט (sentence-aware chunking עם overlap, באמצעות NLTK).</li><li>3. בניית זוגות קונטרסטיביים (contrastive pairs) בשיטת SimCSE — כל טקסט מזווג עם עצמו (positive pair), וטקסטים אחרים ב-batch משמשים כ-negatives.</li><li>4. אימון המודל עם MultipleNegativesRankingLoss.</li><li>5. הערכת שיפור באחזור (retrieval) — לפני/אחרי.</li></ul>
+<h4 class='sec-h'>🔑 מה משתנה ומה לא</h4>
+<table class='kbtable'><tr><td><strong>קטגוריה</strong></td><td><strong>פרטים</strong></td></tr><tr><td>משתנה</td><td>דירוג תוצאות אחזור, מרחקים סמנטיים יחסיים, קידוד משמעות ספציפית-לתחום</td></tr><tr><td>לא משתנה</td><td>אופן יצירת הטקסט (generation) — Fine-tuning embeddings לא משפיע על style/ניסוח התשובה</td></tr><tr><td>לא קורה</td><td>וקטורים קיימים במסד אינם נערכים ידנית; כל הדאטה צריך להיות מקודד מחדש (re-embedded) עם המודל המעודכן</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה — בניית דוגמאות אימון בשיטת SimCSE</h4>
+<pre class='code-block'><code>def build_unsupervised_examples(chunks, holdout=1000):
+&amp;quot;&amp;quot;&amp;quot;
+SimCSE-style training: each text is paired with itself.
+- Positive pairs: (text, text)
+- Negative pairs: other texts in the same batch
+&amp;quot;&amp;quot;&amp;quot;
+...
+examples = build_unsupervised_examples(chunks, holdout=100)
+print(f&amp;quot;Training examples: {len(examples)}&amp;quot;)</code></pre>
+<h4 class='sec-h'>💻 קוד לדוגמה — אימון עם MultipleNegativesRankingLoss</h4>
+<pre class='code-block'><code>def train_model(examples, model_name, out_dir, epochs=3, batch_size=128,
+lr=5e-5, warmup_ratio=0.05, max_seq_length=256):
+&amp;quot;&amp;quot;&amp;quot;
+Key components:
+- MultipleNegativesRankingLoss: Learns to rank positive pairs higher
+- SimCSE-style training: Each text paired with itself
+- In-batch negatives: Other texts in batch serve as negatives
+&amp;quot;&amp;quot;&amp;quot;
+loss = losses.MultipleNegativesRankingLoss(model)
+...
+model = train_model(
+examples=examples, model_name=&amp;quot;sentence-transformers/all-MiniLM-L6-v2&amp;quot;,
+out_dir=model_out, epochs=EPOCHS, batch_size=BATCH_SIZE, lr=5e-5, max_seq_length=256)</code></pre>
+<h4 class='sec-h'>📊 דוגמת אחזור — לפני/אחרי</h4>
+<p>שאלה: &quot;What methodological challenges arise when deploying AI systems in healthcare?&quot; — לפני fine-tuning: האחזור מעדיף נושאי deployment כלליים (guidelines, policy, human-in-the-loop). אחרי fine-tuning: האחזור עובר לאתגרי deployment טכניים (data shift, OOD detection, drift monitoring, robustness) — קרובים יותר לתחום הספציפי שעליו אומן המודל.</p>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>משפר בחירת context — מעלה אמינות (reliability) של RAG.</li><li>לא דורש labeled data מורכב — שיטת SimCSE היא unsupervised (self-paired).</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>אינו מוסיף ידע חדש ואינו לומד intent — רק מעצב מחדש את מרחב הדמיון.</li><li>דורש re-embedding מלא של כל הקורפוס בכל פעם שמודל ה-embedding מתעדכן.</li><li>לא משפיע על style/ניסוח התשובה הסופית — זה תפקיד ה-LLM, לא ה-embedding.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין embedding fine-tuning ל-LLM fine-tuning במונחי 'מה משתנה'?</strong></p>
+<p>ת: Embedding fine-tuning משנה <em>f</em>(text) → vector — קובע מה ה-model 'רואה' (retrieval quality). LLM fine-tuning משנה את אופן היצירה (generation behavior) — קובע איך ה-model 'מגיב'. אותו pipeline, שני failure modes שונים.</p>
+<p><strong>ש: מדוע MultipleNegativesRankingLoss מתאים לאימון SimCSE-style?</strong></p>
+<p>ת: כי הוא מנצל את שאר הדגימות ב-batch כ-negatives 'בחינם' (in-batch negatives), מבלי לדרוש תיוג ידני של זוגות שליליים — כל מה שצריך הוא זוג positive (טקסט מזווג עם עצמו).</p>

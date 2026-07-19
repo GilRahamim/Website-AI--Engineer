@@ -1,0 +1,51 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>LoRA (Low-Rank Adaptation) היא שיטת PEFT (Parameter-Efficient Fine-Tuning) המאמנת adapter קטן ('Low-Rank') במקום את כל משקלי המודל. QLoRA משלבת זאת עם quantization ל-4-bit של המודל הבסיסי — כך שניתן לאמן adapters על GPU בודד או laptop, בעוד המודל הבסיסי (frozen) נשאר מקוונטז וקפוא.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>1. טעינת tokenizer + מודל בסיס בקוונטיזציית 4-bit (BitsAndBytesConfig, nf4).</li><li>2. הכנת המודל לאימון k-bit (prepare_model_for_kbit_training).</li><li>3. הגדרת LoraConfig — דרגת ה-adapter (r), lora_alpha, dropout, ויעדי השכבות (target_modules כגון q_proj/k_proj/v_proj/o_proj).</li><li>4. Tokenization של הדאטה (טקסט חופשי, או chat-formatted עם apply_chat_template).</li><li>5. אימון עם Trainer רגיל — רק משקלי ה-adapter מתעדכנים; המודל הבסיסי קפוא.</li><li>6. שמירת ה-adapter בנפרד, וטעינתו מעל המודל הבסיסי בזמן inference (PeftModel.from_pretrained).</li></ul>
+<h4 class='sec-h'>📐 עקרון מתמטי</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/b425ec176424.png" loading="lazy" alt="formula"></div>
+<p>המשקל המקורי <em>W</em>0 נשאר קפוא; מתאמנת רק תוספת מדרגה נמוכה (low-rank) <em>ΔW = BA</em>, שמספר הפרמטרים בה קטן בהרבה ממספר הפרמטרים המלא של השכבה.</p>
+<h4 class='sec-h'>💻 קוד לדוגמה — הגדרת QLoRA</h4>
+<pre class='code-block'><code>BASE_MODEL = &amp;quot;TinyLlama/TinyLlama-1.1B-Chat-v1.0&amp;quot;
+tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL, use_fast=True)
+if tokenizer.pad_token is None:
+tokenizer.pad_token = tokenizer.eos_token
+bnb_config = BitsAndBytesConfig(
+load_in_4bit=True,
+bnb_4bit_quant_type=&amp;quot;nf4&amp;quot;,
+bnb_4bit_compute_dtype=torch.float16,
+)
+base = AutoModelForCausalLM.from_pretrained(
+BASE_MODEL, device_map=&amp;quot;auto&amp;quot;,
+quantization_config=bnb_config, torch_dtype=torch.float16,
+)
+base = prepare_model_for_kbit_training(base)
+lora_cfg = LoraConfig(
+r=16, lora_alpha=32, lora_dropout=0.05, bias=&amp;quot;none&amp;quot;,
+task_type=&amp;quot;CAUSAL_LM&amp;quot;,
+target_modules=[&amp;quot;q_proj&amp;quot;, &amp;quot;k_proj&amp;quot;, &amp;quot;v_proj&amp;quot;, &amp;quot;o_proj&amp;quot;],
+)</code></pre>
+<h4 class='sec-h'>💻 קוד לדוגמה — אימון על דאטה בפורמט chat (roles)</h4>
+<pre class='code-block'><code>def tokenize_chat_batch(batch):
+&amp;quot;&amp;quot;&amp;quot;Tokenize chat-formatted examples using the tokenizer's chat template.&amp;quot;&amp;quot;&amp;quot;
+texts = []
+for messages in batch[&amp;quot;messages&amp;quot;]:
+formatted_text = tokenizer.apply_chat_template(
+messages, tokenize=False, add_generation_prompt=False)
+texts.append(formatted_text)
+enc = tokenizer(texts, truncation=True, max_length=MAX_SEQ_LEN,
+padding=&amp;quot;max_length&amp;quot;, return_tensors=None)
+enc[&amp;quot;labels&amp;quot;] = enc[&amp;quot;input_ids&amp;quot;].copy()
+return enc
+system_prompt = &amp;quot;You are a talented rap artist. Write creative rap lyrics with rhythm and flow.&amp;quot;</code></pre>
+<h4 class='sec-h'>🔄 טקסט חופשי לעומת Chat Roles</h4>
+<table class='kbtable'><tr><td><strong>גישה</strong></td><td><strong>מאפיינים</strong></td></tr><tr><td>טקסט חופשי (raw continuation)</td><td>אין system prompt / chat template; המודל לומד להמשיך טקסט בסטייל נתון (לדוגמה rap lyrics) ישירות</td></tr><tr><td>Chat Roles + Prompt Engineering</td><td>דאטה מאורגן כ-{prompt, completion} / messages עם roles (system/user/assistant); משתמשים ב-apply_chat_template; מתאים לשימוש production עם system prompt עקבי</td></tr></table>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>ניתן לאמן על GPU בודד או laptop — בזכות quantization ל-4-bit.</li><li>המודל הבסיסי קפוא — אפשר להחזיק כמה adapters קלים (לתחומים/סטיילים שונים) מעל אותו base.</li><li>פחות prompt engineering נדרש בזמן inference — ההתנהגות 'מקודדת' ב-adapter.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>לא מוסיף ידע עובדתי חדש — רק משנה style/tone/structure/consistency.</li><li>עדיין תלוי ב-retrieval טוב אם המשימה דורשת מידע עדכני (RAG עדיין נחוץ).</li><li>rank <em>r</em> נמוך מדי עלול להגביל את יכולת ההסתגלות; rank גבוה מדי מתקרב לעלות full fine-tuning.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מדוע QLoRA מאפשרת אימון על GPU יחיד כשהמודל המקורי לא היה נכנס לזיכרון ב-fp16?</strong></p>
+<p>ת: כי המודל הבסיסי נטען בקוונטיזציית 4-bit (nf4) ונשאר קפוא — רק משקלי ה-adapter (B,A, מדרגה נמוכה <em>r</em>) מתעדכנים ונשמרים ב-fp16/fp32, כך שטביעת הזיכרון של gradients ו-optimizer states קטנה בהרבה מאימון מלא.</p>
+<p><strong>ש: מה ההבדל בין אימון על טקסט חופשי לאימון עם chat template?</strong></p>
+<p>ת: טקסט חופשי מאמן את המודל להמשיך טקסט גולמי (ללא system prompt) — דורש שהפרומפט בזמן inference יהיה בפורמט תואם. אימון עם chat template (apply_chat_template) מלמד את המודל להגיב לפי roles מובנים (system/user/assistant) — תואם לשימוש production סטנדרטי.</p>

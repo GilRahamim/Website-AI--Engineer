@@ -1,0 +1,13 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>LLMs הם stateless מטבעם (אין להם זיכרון מובנה). Agentic Memory הוא המנגנון המאפשר ל-Agent לשמר הקשר שיחה/אינטראקציה — ברמת session בודד (קצר-טווח) או בין sessions שונים (ארוך-טווח).</p>
+<h4 class='sec-h'>🏛️ סוגי זיכרון</h4>
+<table class='kbtable'><tr><td><strong>סוג</strong></td><td><strong>תיאור</strong></td><td><strong>דוגמה</strong></td></tr><tr><td>Short-term (Session-based)</td><td>שומר הקשר שיחה ופניות המשתמש בתוך session בודד</td><td>בוט טריאז' רפואי: &quot;כאב בבטן&quot; → &quot;זה התחיל אתמול&quot; מקושר אוטומטית</td></tr><tr><td>Long-term (Persistent)</td><td>שומר הקשר בין sessions שונים</td><td>מורה פרטי: זוכר שבסשן קודם הלומד התקשה ב-eigenvalues</td></tr><tr><td>Hybrid (Context + DB)</td><td>שילוב זיכרון session עם מסד נתונים/וקטורי חיצוני</td><td>מתכנן טיולים: שולף תוכנית טיול ישנה ממסד וקטורי ומעדכן אותה</td></tr></table>
+<h4 class='sec-h'>🎯 מתי להשתמש בכל סוג</h4>
+<ul><li>Short-term מתאים כשצריך המשכיות תוך שיחה בודדת בלבד (תמיכה, טריאז').</li><li>Long-term מתאים כשצריך לזכור עובדות/העדפות אישיות על פני זמן (הוראה, ליווי לקוח מתמשך).</li><li>Hybrid מתאים כשיש גם הקשר שיחה מיידי וגם נתונים היסטוריים שצריך לשלוף (תכנון מורכב, ניהול פרויקטים).</li></ul>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>Agentic Memory הוא ההרחבה הכללית של מנגנון ה-memory שנדון ב-Conversational RAG — שם מדובר ספציפית בזיכרון לצורך retrieval-augmented QA, וכאן במנגנון הזיכרון הכללי של Agent בכל סוג משימה.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: למה LLMs נחשבים stateless, ומה המשמעות המעשית?</strong></p>
+<p>ת: LLM מעבד כל קריאה (API call) ללא זיכרון מובנה של קריאות קודמות — כל מה ש-&quot;זוכר&quot; Agent חייב להיות מוזרק מחדש ל-prompt על ידי שכבת ה-memory החיצונית.</p>
+<p><strong>ש: מתי תבחר ב-Hybrid Memory על פני Long-term Memory בלבד?</strong></p>
+<p>ת: כשצריך גם המשכיות מיידית תוך שיחה (קונטקסט session) וגם גישה לנתונים היסטוריים ממקור חיצוני (DB/Vector Store) — לדוגמה עדכון תוכנית טיול קיימת בסשן חדש.</p>

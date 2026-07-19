@@ -1,0 +1,39 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Skill הוא תיקייה ארוזה של הוראות, סקריפטים וקבצי-עזר ש-Claude טוען לפי-דרישה כאשר המשימה מתאימה. ניתן לחשוב עליו כ&quot;ספר-משחק&quot; מתמחה: Claude קורא את SKILL.md, מגלה אילו כלים/קבצים זמינים, ועוקב אחר התהליך המתועד. העיקרון המרכזי: model-invoked, לא protocol-invoked — Claude עצמו מחליט מתי להפעיל Skill לפי התיאור שלו, ללא חיווט (wiring) או שרתים.</p>
+<h4 class='sec-h'>🏛️ אנטומיה של Skill</h4>
+<ul><li>SKILL.md (חובה) — YAML frontmatter עם name ו-description (לצורך התאמת הפעלה), וגוף markdown עם הוראות ש-Claude קורא כשה-Skill נטען.</li><li>scripts/ — עזרים הרצים (Python, Bash, Node).</li><li>references/ — מסמכים ארוכים ש-Claude קורא רק לפי צורך.</li><li>templates/, assets/ — תבניות, תמונות, דוגמאות.</li></ul>
+<h4 class='sec-h'>⚙️ Progressive Disclosure — טעינה בשלושה שלבים</h4>
+<table class='kbtable'><tr><td><strong>שלב</strong></td><td><strong>מה נטען</strong></td><td><strong>מתי</strong></td></tr><tr><td>Tier 1</td><td>name + description בלבד מכל Skill</td><td>תמיד טעון</td></tr><tr><td>Tier 2</td><td>גוף ה-SKILL.md</td><td>בעת הפעלה (כשהמשימה תואמת)</td></tr><tr><td>Tier 3</td><td>scripts/, references/</td><td>לפי דרישה, רק כשנדרש</td></tr></table>
+<p>התוצאה: עשרות Skills יכולים להתקיים יחד בעומס token מינימלי — Claude מביא לתוך ה-context רק את הפרוצדורה הרלוונטית למשימה הנוכחית. בניגוד לכלי MCP — שבהם כל סכמת tool נטענת מראש, יתרון לקריאת-כלים מסוג typed אך עלות גבוהה כשיש מאות כלים.</p>
+<h4 class='sec-h'>💻 קוד לדוגמה — SKILL.md</h4>
+<pre class='code-block'><code>---
+name: pdf-extractor
+description: Extracts structured text and tables from PDF files.
+Use when the user asks to read, parse, or summarize a PDF.
+---
+# PDF Extractor Skill
+## When to use
+Activate when the user provides a .pdf path and asks for its content,
+tables, or a summary.
+## How to run
+1. Call scripts/extract.py with the PDF path.
+2. If extraction yields no text, fall back to scripts/ocr.py.
+3. Format the output using templates/report.md.</code></pre>
+<h4 class='sec-h'>💻 קוד לדוגמה — הפעלת Skill מתוך Agent SDK</h4>
+<pre class='code-block'><code>from anthropic import Anthropic
+from pathlib import Path
+client = Anthropic()
+skill_dir = Path(__file__).parent / &amp;quot;stock-report&amp;quot;
+skill_md = (skill_dir / &amp;quot;SKILL.md&amp;quot;).read_text()
+resp = client.messages.create(
+model=&amp;quot;claude-sonnet-4-6&amp;quot;, max_tokens=2048,
+system=f&amp;quot;You have access to this Skill:\n\n{skill_md}&amp;quot;,
+tools=[{&amp;quot;type&amp;quot;: &amp;quot;bash_20250124&amp;quot;, &amp;quot;name&amp;quot;: &amp;quot;bash&amp;quot;}],
+messages=[{&amp;quot;role&amp;quot;: &amp;quot;user&amp;quot;, &amp;quot;content&amp;quot;: &amp;quot;Give me a stock report for NVDA.&amp;quot;}],
+)
+print(resp.content[-1].text)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין 'model-invoked' ל-'protocol-invoked'?</strong></p>
+<p>ת: Skill הוא model-invoked — Claude עצמו מחליט מתי להפעיל אותו, על סמך התאמת ה-description למשימה, ללא צורך בחיווט חיצוני. כלי MCP הם protocol-invoked — הפעלתם מתבססת על סכמת tool מוגדרת-מראש שנטענת ונקראת באופן מבני.</p>
+<p><strong>ש: מה היתרון המרכזי של progressive disclosure?</strong></p>
+<p>ת: מאפשר לעשרות Skills להתקיים יחד בעומס טוקנים מינימלי — רק השם וה-description תמיד בזיכרון, וגוף ההוראות/קבצי העזר נטענים רק כשה-Skill בפועל מופעל.</p>

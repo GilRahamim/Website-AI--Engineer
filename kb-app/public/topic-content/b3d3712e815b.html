@@ -1,0 +1,29 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>הרחבה של Word2Vec הממדלת כל מילה כסכום וקטורי תת-יחידות תת-מילתיות (character n-grams), ולא כווקטור יחיד שרירותי. כך FastText יכול לייצר וקטור סביר אפילו למילה שלא נראתה כלל באימון, ולנצל דמיון מורפולוגי בין מילים.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>כל מילה מפורקת לרצף של character n-grams (בד&quot;כ n=3 עד 6), בתוספת המילה השלמה עצמה כיחידה נפרדת.</li><li>כל n-gram מקבל וקטור הטמעה (embedding) משלו.</li><li>וקטור המילה השלם מחושב כסכום (או ממוצע) של וקטורי כל ה-n-grams המרכיבים אותה.</li><li>האימון עצמו מתבצע באופן דומה ל-Skip-gram של Word2Vec (חיזוי הקשר עם Negative Sampling), אך מבוסס על ייצוג ה-n-grams ולא וקטור מילה בודד.</li></ul>
+<h4 class='sec-h'>📐 הנוסחה</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/f6b663bcde7f.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>ציון ההתאמה בין מילה w למילת הקשר c — סכום מכפלות פנימיות על פני כל ה-n-grams של w</em></p>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>w, c</td><td>מילה (word) ומילת הקשר (context)</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/a025cebb53c9.png" loading="lazy" alt="formula"></td><td>n-gram בודד g, מתוך קבוצת ה-n-grams ζ_w של המילה w</td></tr><tr><td>z_g</td><td>וקטור ההטמעה של ה-n-gram g</td></tr><tr><td>v_c</td><td>וקטור ההטמעה של מילת ההקשר c</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/39fe8282be01.png" loading="lazy" alt="formula"></td><td>אורך טיפוסי של ה-character n-grams בשימוש</td></tr></table>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>שפות עם מורפולוגיה עשירה (כגון פינית, טורקית, עברית) — היכן ש-Word2Vec/GloVe מתקשים.</li><li>טיפול בטקסט עם שגיאות כתיב, סלנג, או מילים נדירות/חדשות (Out-Of-Vocabulary).</li><li>זיהוי שפה (Language Identification) — שימוש נפוץ נוסף של הספרייה.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מטפל היטב במילים שלא נראו באימון (OOV) — מרכיב וקטור מתת-היחידות שכן נראו.</li><li>תופס דמיון מורפולוגי בין מילים (לדוגמה &quot;running&quot;/&quot;runner&quot; ישתפו n-grams רבים).</li><li>עמיד יותר לשגיאות כתיב קלות לעומת Word2Vec/GloVe.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>דורש יותר זיכרון לאחסון וקטורי n-grams בנוסף לוקטורי המילים השלמות.</li><li>אימון איטי יותר מ-Word2Vec הבסיסי, בשל הצורך לחשב סכום וקטורי n-grams לכל מילה.</li><li>לא בהכרח עוזר לשפות בעלות מורפולוגיה פשוטה (כמו אנגלית) — היתרון בולט בעיקר בשפות עשירות מורפולוגית.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Embedding Quality</td><td>Similarity/Analogy Tests; ביצועי OOV handling</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>יתרון מרכזי לעומת FastText</strong></td><td><strong>חסרון לעומת FastText</strong></td></tr><tr><td>Word2Vec</td><td>פשוט יותר, קל וזריז יותר לאימון</td><td>לא מטפל ב-OOV, לא תופס מורפולוגיה</td></tr><tr><td>GloVe</td><td>מנצל סטטיסטיקה גלובלית</td><td>לא מטפל ב-OOV, לא תופס מורפולוגיה</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from gensim.models import FastText
+model = FastText(sentences=tokenized_docs, vector_size=100,
+window=5, min_n=3, max_n=6)
+model.wv['unseenword']  # מחזיר וקטור גם למילה לא-מוכרת</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>איך FastText מצליח להפיק וקטור למילה שלא נראתה באימון?</strong></p>
+<p><strong>ת: </strong>FastText מייצג כל מילה כסכום וקטורי תת-המילים (character n-grams) המרכיבות אותה. גם אם המילה השלמה לא נראתה, רוב ה-n-grams שמרכיבים אותה כן נראו במילים אחרות, ולכן ניתן להרכיב וקטור סביר.</p>
+<p><strong>ש: </strong><strong>באילו תנאים השימוש ב-FastText מועיל במיוחד לעומת Word2Vec?</strong></p>
+<p><strong>ת: </strong>בשפות עשירות מורפולוגית, בטקסט עם שגיאות כתיב/סלנג, ובמצבים שבהם צפויות מילים נדירות או חדשות שלא נראו באימון.</p>

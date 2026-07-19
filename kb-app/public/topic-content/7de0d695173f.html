@@ -1,0 +1,32 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Re-ranking הוא שלב נוסף בפייפליין ה-retrieval שבו תוצאות חיפוש וקטורי ראשוני (בדרך כלל top-N) מסודרות מחדש על ידי מודל מדויק יותר (לרוב Cross-Encoder), כדי להעלות לראש הרשימה את התוצאות הרלוונטיות באמת לפני שליחתן ל-LLM.</p>
+<h4 class='sec-h'>🔍 מתי זה קורה / למה צריך?</h4>
+<ul><li>חיפוש וקטורי טהור (Bi-Encoder) יכול להחזיר שכנים קרובים סמנטית אך לא רלוונטיים הקשרית.</li><li>ה-retrieval הראשוני מהיר אך מוגבל בניואנס; re-ranking מוסיף הבנת הקשר עמוקה יותר בין שאילתה למסמך.</li></ul>
+<h4 class='sec-h'>⚠️ תהליך העבודה (Re-ranking Flow)</h4>
+<ol><li>הטמעת השאילתה (embedding) באמצעות אותו מודל ששימש למסד הווקטורים.</li><li>שליפת top-N (למשל 10–20) מועמדים ממסד הווקטורים לפי דמיון קוסינוס.</li><li>ניקוד מחדש (re-scoring) של כל מועמד מול השאילתה באמצעות Cross-Encoder (כגון BGE-Reranker או Cohere Reranker).</li><li>בחירת top-k הסופי (למשל 3–5) לפי הציון החדש, לשליחה ל-LLM.</li></ol>
+<h4 class='sec-h'>🛠️ מתי כן להשתמש ב-re-ranking</h4>
+<ul><li>דיוק חשוב יותר ממהירות, וחלון ההקשר של ה-LLM מוגבל (4–6 chunks בלבד).</li><li>דומיין רגיש/בעל סיכון גבוה — רפואה, משפט, פיננסים — שם רלוונטיות מדויקת קריטית.</li><li>נצפו hallucinations או grounding חלש בתשובות ה-LLM.</li></ul>
+<h4 class='sec-h'>🛠️ מתי לא להשתמש</h4>
+<ul><li>כאשר נשלפים מסמכים/תמלילים שלמים (לא chunks בודדים) — re-ranking על פיסות בודדות פחות יעיל.</li><li>חיפוש פתוח/יצירתי (brainstorming) שאינו דורש סינון קשיח לרלוונטיות.</li><li>כאשר latency הוא העדיפות העליונה (למשל chatbot עם דרישת תגובה מתחת לשנייה).</li></ul>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>Re-ranking תלוי לחלוטין באיכות שלב ה-retrieval הראשוני — re-rank על מועמדים גרועים (recall נמוך בשלב ראשון) לא יעזור. זהו השלב המקשר בין Bi-Encoder (מהיר) ל-Cross-Encoder (מדויק) בארכיטקטורת RAG.</p>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from sentence_transformers import SentenceTransformer, CrossEncoder
+import faiss, numpy as np
+bi_encoder = SentenceTransformer('all-MiniLM-L6-v2')
+corpus_embeddings = bi_encoder.encode(documents)
+index = faiss.IndexFlatL2(corpus_embeddings.shape[1])
+index.add(np.array(corpus_embeddings))
+query_embedding = bi_encoder.encode([query])
+D, I = index.search(np.array(query_embedding), 10)
+candidate_texts = [documents[i] for i in I[0]]
+cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
+pair_inputs = [[query, doc] for doc in candidate_texts]
+cross_scores = cross_encoder.predict(pair_inputs)
+reranked = sorted(zip(candidate_texts, cross_scores), key=lambda x: x[1], reverse=True)
+top_chunks = [doc for doc, score in reranked[:3]]</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה הבעיה ב-re-ranking אם שלב ה-retrieval הראשוני החזיר תוצאות גרועות?</strong></p>
+<p>ת: Cross-Encoder יכול רק לסדר מחדש את המועמדים שכבר נשלפו — אם ה-recall הראשוני נמוך והמסמך הרלוונטי לא נכלל ב-top-N, re-ranking לא יוכל 'להמציא' אותו.</p>
+<p><strong>ש: באילו דומיינים re-ranking הוא קריטי במיוחד?</strong></p>
+<p>ת: דומיינים בעלי סיכון גבוה כמו רפואה (להבטיח שהתשובה תואמת באמת לאבחנה/תסמינים) ומשפט (להציג רק תקדימים רלוונטיים מבחינה משפטית).</p>

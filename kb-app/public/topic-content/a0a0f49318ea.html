@@ -1,0 +1,39 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>CrewAI הוא framework לבניית מערכות multi-agent מבוססות-תפקידים — צוות (Crew) של agents מתמחים (researcher, writer וכו') משתפים פעולה דרך תהליך (Process) מוגדר כדי להשיג מטרה משותפת.</p>
+<h4 class='sec-h'>🏛️ ארבעת הרכיבים המרכזיים</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/9acaaf2457fc.png" loading="lazy" alt="CrewAI — ארכיטקטורת Role-Based Multi-Agent — architecture diagram" /></div>
+<table class='kbtable'><tr><td><strong>רכיב</strong></td><td><strong>תיאור</strong></td><td><strong>תכונות מפתח</strong></td></tr><tr><td>Crew</td><td>הארגון העל-ברמתי</td><td>מנהל צוותי agents, מפקח על workflows, מבטיח שיתוף פעולה, מספק תוצרים</td></tr><tr><td>AI Agents</td><td>חברי צוות מתמחים</td><td>תפקידים ספציפיים (researcher, writer), כלים מותאמים, יכולת delegation, החלטות אוטונומיות</td></tr><tr><td>Process</td><td>מערכת ניהול workflow</td><td>מגדיר תבניות שיתוף פעולה, שולט בהקצאת משימות, מנהל אינטראקציות</td></tr><tr><td>Tasks</td><td>משימות בודדות</td><td>מטרות ברורות, כלים ספציפיים, מזינות את ה-process הכולל, מייצרות תוצרים</td></tr></table>
+<h4 class='sec-h'>⚙️ שלבי הגדרת Crew</h4>
+<ol><li>הגדרת המטרה הכוללת (לדוגמה: &quot;כתוב פוסט בלוג על מוצר חדש בהתבסס על חוות דעת לקוחות&quot;).</li><li>הגדרת Manager/Captain Agent — &quot;הבוס&quot; שמתכנן, מקצה ומאחד משימות.</li><li>הגדרת Crew Members (Expert Agents) — כל אחד עם role, goal, backstory, tools.</li><li>הגדרת כלים ומשאבים משותפים (חיפוש אינטרנט, scraping, מחשבון וכו').</li></ol>
+<h4 class='sec-h'>🔄 איך CrewAI משתף הקשר בין Agents</h4>
+<p>ב-Crew(...).kickoff(), פלט של task קודם מתווסף אוטומטית ל-prompt של ה-agent הבא — יוצר אשליה של &quot;זיכרון משותף&quot; בלי העברה מפורשת. לדוגמה: אם Task 1 קבע &quot;ברצלונה נבחרה כעיר היעד&quot;, Task 2 (&quot;כתוב מדריך על העיר הזו&quot;) יכול להבין ש-&quot;העיר הזו&quot; = ברצלונה, כי הפלט הקודם הוא חלק מה-system prompt.</p>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>שיתוף הקשר אוטומטי בין agents — מינימום קוד נדרש.</li><li>מבנה role-based טבעי וקריא — מתאים לדמיית צוותי עבודה אנושיים.</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>שליטה פחות מדויקת על העברת הקשר בהשוואה ל-LangChain.</li><li>Deployment maturity נחשב &quot;Moderate&quot; — פחות בוגר מ-LangChain.</li></ul>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from crewai import Agent, Task, Crew, Process
+from crewai_tools import SerperDevTool, ScrapeWebsiteTool
+from langchain_openai import ChatOpenAI
+llm = ChatOpenAI(model=&amp;quot;gpt-3.5-turbo&amp;quot;, temperature=0.1)
+search_tool = SerperDevTool()
+scrape_tool = ScrapeWebsiteTool()
+researcher = Agent(role=&amp;quot;Market Research Analyst&amp;quot;, goal=&amp;quot;Research AI productivity tools&amp;quot;,
+backstory=&amp;quot;You specialize in market analysis.&amp;quot;, tools=[search_tool, scrape_tool], llm=llm)
+strategist = Agent(role=&amp;quot;Content Strategist&amp;quot;, goal=&amp;quot;Develop launch content strategy&amp;quot;,
+backstory=&amp;quot;You craft strategies based on research.&amp;quot;, llm=llm)
+writer = Agent(role=&amp;quot;Content Writer&amp;quot;, goal=&amp;quot;Write blog/social/email content&amp;quot;,
+backstory=&amp;quot;You write clear, engaging content.&amp;quot;, llm=llm)
+research = Task(description=&amp;quot;Research top AI productivity tools, market size, trends, and competitors&amp;quot;,
+agent=researcher, expected_output=&amp;quot;Market report&amp;quot;)
+strategy = Task(description=&amp;quot;Create content strategy based on research&amp;quot;, agent=strategist,
+expected_output=&amp;quot;Content strategy doc&amp;quot;, context=[research])
+writing = Task(description=&amp;quot;Write blog, posts, email, and product description&amp;quot;, agent=writer,
+expected_output=&amp;quot;Content package&amp;quot;, context=[strategy])
+crew = Crew(agents=[researcher, strategist, writer], tasks=[research, strategy, writing],
+process=Process.sequential, verbose=True)
+result = crew.kickoff()</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה תפקיד הפרמטר context=[...] בהגדרת Task ב-CrewAI?</strong></p>
+<p>ת: הוא מגדיר אילו tasks קודמים מזינים את ה-task הנוכחי — הפלט שלהם מתווסף לפרומפט של ה-agent המבצע, ומאפשר שרשור לוגי בין שלבים (research → strategy → writing).</p>
+<p><strong>ש: מה ההבדל בין role, goal ו-backstory בהגדרת Agent ב-CrewAI?</strong></p>
+<p>ת: role הוא תפקיד ה-agent (כתובת זהות), goal הוא המטרה הספציפית שהוא צריך להשיג, backstory מספק &quot;אישיות&quot;/הקשר שמשפיע על איך ה-LLM מנמק ומגיב — שלושתם משולבים ל-system prompt של ה-agent.</p>

@@ -1,0 +1,26 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>שכבת רשת עצבית הממירה אינדקסים דיסקרטיים (כגון מילים, קטגוריות, פריטים) לוקטורים רציפים בעלי מימד נמוך, הנלמדים כחלק מתהליך האימון.</p>
+<h4 class='sec-h'>🏛️ מבנה הרשת</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/681029def6a0.png" loading="lazy" alt="Embedding Layer — architecture diagram" /></div>
+<ul><li>טבלת חיפוש (Lookup Table) בגודל $V \times d$ — כל שורה היא וקטור Embedding למילה/פריט ה-$i$</li><li>בזמן Forward Pass, פעולת ה-Embedding היא פשוט חיפוש (Indexing) לפי האינדקס של הקלט</li><li>המשקולות של הטבלה מתעדכנות ב-Backpropagation בדיוק כמו כל פרמטר אחר ברשת</li></ul>
+<h4 class='sec-h'>📐 נוסחאות מפתח</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/f656323be2f1.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 תחומי שימוש</h4>
+<ul><li>ייצוג מילים ב-NLP (כשכבה ראשונה לפני RNN/Transformer)</li><li>מערכות המלצה — Embeddings למשתמשים ולפריטים</li><li>ייצוג קטגוריות (Categorical Features) ברשתות עמוקות על נתונים טבלאיים</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>לומד ייצוג צפוף (Dense) הרבה יותר חסכוני מ-One-Hot Encoding</li><li>לוכד דמיון סמנטי — וקטורים קרובים מייצגים פריטים/מילים דומים בהקשר</li><li>ניתן לאתחל מ-Embeddings מאומנים מראש (Word2Vec, GloVe) או ללמוד מאפס</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>הייצוג הוא סטטי (Static) — לכל מילה וקטור קבוע, ללא תלות בהקשר (ראו Contextual Embeddings)</li><li>דורש אגירה של טבלה גדולה כשה-Vocabulary רחב</li><li>מילים שלא נראו באימון (OOV) אין להן Embedding מאומן</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Word/Item Similarity</td><td>Cosine Similarity</td></tr><tr><td>Downstream Task</td><td>תלוי במשימה — Accuracy/F1/MSE לפי הראש שמעליה</td></tr></table>
+<h4 class='sec-h'>🔄 וריאנטים / גרסאות</h4>
+<table class='kbtable'><tr><td><strong>וריאנט</strong></td><td><strong>הבדל מרכזי</strong></td></tr><tr><td>Learned Embedding</td><td>נלמד מאפס יחד עם המשימה</td></tr><tr><td>Pretrained Embedding (Word2Vec/GloVe)</td><td>מאותחל מאימון מוקדם, ניתן להקפיא או לכוון (Fine-tune)</td></tr><tr><td>Contextual Embedding (BERT)</td><td>אינו Embedding Layer קלאסי — מייצר וקטור תלוי-הקשר באמצעות הרשת כולה</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (PyTorch)</h4>
+<pre class='code-block'><code>import torch.nn as nn
+
+embedding = nn.Embedding(num_embeddings=10000, embedding_dim=128)
+vectors = embedding(input_ids)  # input_ids: (batch, seq_len) -&amp;gt; (batch, seq_len, 128)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה ההבדל בין Embedding Layer ל-One-Hot Encoding?</p>
+<p><strong>ת: </strong>One-Hot הוא וקטור דליל (Sparse) באורך אוצר המילים שאינו נלמד וללא מידע על דמיון; Embedding הוא וקטור צפוף ונלמד שמקודד דמיון סמנטי במרחב רציף.</p>
+<p><strong>ש: </strong>איך בוחרים את מימד ה-Embedding ($d$)?</p>
+<p><strong>ת: </strong>טרייד-אוף בין יכולת ייצוג (מימד גבוה יותר = ביטוי עשיר יותר) לבין כמות פרמטרים וסיכון ל-Overfitting; בפועל נבחר אמפירית, בד&quot;כ 50-300 למילים, מאות-אלפים ב-LLMs.</p>

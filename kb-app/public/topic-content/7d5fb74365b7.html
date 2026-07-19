@@ -1,0 +1,32 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>ארכיטקטורת אחזור מידע סמנטי המקודדת שאילתה (Query) ומסמכים (Documents) בנפרד, כל אחד באמצעות Encoder (לרוב מבוסס BERT), כך שניתן לחשב דמיון בין הווקטורים שנוצרו במהירות וביעילות גם על אוסף מסמכים גדול.</p>
+<h4 class='sec-h'>🏛️ מבנה הרשת</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/ec89e6f6bc9d.png" loading="lazy" alt="Bi-Encoder Retriever (Dense Retrieval) — architecture diagram" /></div>
+<ul><li>Query Encoder — מקודד את השאילתה לווקטור $q$ במרחב משותף</li><li>Document Encoder — מקודד כל מסמך לווקטור $d$ באותו מרחב (לעיתים אותו Encoder, לעיתים שני Encoders נפרדים)</li><li>אינדקס וקטורי (לדוגמה FAISS) — מאפשר חיפוש שכנים קרובים (Nearest Neighbor) יעיל בין $q$ לכל ה-$d$ באוסף</li><li>חישוב דמיון — בד&quot;כ Dot Product או Cosine Similarity בין $q$ ל-$d$</li></ul>
+<h4 class='sec-h'>📐 נוסחאות מפתח</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/66aa45e660ad.png" loading="lazy" alt="formula"></div>
+<p>פונקציית האימון הנפוצה (Contrastive Loss):</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/d3239508700a.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 תחומי שימוש</h4>
+<ul><li>חיפוש סמנטי (Semantic Search) — מציאת מסמכים רלוונטיים מעבר להתאמת מילים מדויקת</li><li>Retrieval-Augmented Generation (RAG) — שליפת הקשר רלוונטי להזנה למודל שפה גנרטיבי</li><li>מערכות שאלות-תשובות בקנה מידה גדול (Open-Domain QA)</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>ניתן לקודד את כל המסמכים מראש (Offline) ולאנדקס אותם — חיפוש מהיר בזמן הסקה</li><li>לוכד דמיון סמנטי, לא רק חפיפת מילים (בשונה משיטות כמו BM25)</li><li>קל לשלב עם אינדקסי וקטורים יעילים (FAISS, ScaNN) לסקייל לאוסף עתק</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>שאילתה ומסמך מקודדים בנפרד — אין אינטראקציה ביניהם בזמן הקידוד (בניגוד ל-Cross-Encoder), מה שעלול לפגוע בדיוק</li><li>דורש אימון עם דוגמאות שליליות (Negative Sampling) איכותיות</li><li>פחות מדויק מ-Cross-Encoder לדירוג סופי (Re-ranking), ולכן משולב לרוב כשלב ראשון בצנרת דו-שלבית</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Retrieval</td><td>Recall@K, MRR, nDCG</td></tr><tr><td>Re-ranking (אם בשילוב Cross-Encoder)</td><td>MAP, nDCG</td></tr></table>
+<h4 class='sec-h'>🔄 וריאנטים / גרסאות</h4>
+<table class='kbtable'><tr><td><strong>וריאנט</strong></td><td><strong>הבדל מרכזי</strong></td></tr><tr><td>Bi-Encoder</td><td>קידוד נפרד של Query ו-Document, מהיר וסקיילבילי</td></tr><tr><td>Cross-Encoder</td><td>מקודד Query ו-Document יחד — מדויק יותר אך איטי, מתאים ל-Re-ranking</td></tr><tr><td>Sentence-BERT</td><td>מימוש פופולרי של Bi-Encoder מבוסס BERT למשימות דמיון משפטים</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (PyTorch)</h4>
+<pre class='code-block'><code>from sentence_transformers import SentenceTransformer
+import numpy as np
+
+model = SentenceTransformer('all-MiniLM-L6-v2')
+query_vec = model.encode(&amp;quot;how does attention work?&amp;quot;)
+doc_vecs = model.encode([&amp;quot;Attention computes weighted sums...&amp;quot;, &amp;quot;Convolution applies filters...&amp;quot;])
+
+scores = np.dot(doc_vecs, query_vec)  # similarity per document</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה ההבדל בין Bi-Encoder ל-Cross-Encoder?</p>
+<p><strong>ת: </strong>Bi-Encoder מקודד שאילתה ומסמך בנפרד ומאפשר אינדוקס ל-Retrieval מהיר; Cross-Encoder מקודד את שניהם יחד עם Attention הדדי, מדויק יותר אך לא ניתן לאינדוקס מראש — לכן משמש לדירוג מחדש על קבוצה קטנה של מועמדים.</p>
+<p><strong>ש: </strong>איך בוחרים דוגמאות שליליות (Negative Sampling) לאימון Bi-Encoder?</p>
+<p><strong>ת: </strong>אפשרויות נפוצות: In-batch Negatives (מסמכים אחרים מאותו Batch), Hard Negatives (מסמכים שדומים אך לא רלוונטיים, נשלפים על ידי מודל ביניים), ושילוב של שניהם לאיזון בין יציבות לקושי האימון.</p>

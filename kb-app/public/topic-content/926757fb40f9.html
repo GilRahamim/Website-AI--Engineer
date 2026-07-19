@@ -1,0 +1,36 @@
+<h4 class='sec-h'>K-Means Clustering</h4>
+<p class='formula-label'><em>אלגוריתם Partitioning-based Clustering</em></p>
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>K-Means הוא אלגוריתם clustering מבוסס חלוקה (Partitioning) שמחלק קבוצת נתונים ל-<img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> אשכולות (clusters), כך שכל נקודה משתייכת לאשכול שמרכזו (centroid) הקרוב אליה ביותר. <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> נקבע מראש על-ידי המשתמש.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>בוחרים מספר אשכולות <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula">, ומאתחלים <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> מרכזים (centroids) — בדרך כלל באקראי, או בעזרת K-Means++ לאיתחול חכם.</li><li>שלב Assignment: כל נקודת נתונים משויכת לצנטרואיד הקרוב אליה ביותר (לפי מרחק אוקלידי בדרך כלל).</li><li>שלב Update: כל צנטרואיד מחושב מחדש כממוצע (mean) של כל הנקודות שהשתייכו לו.</li><li>חוזרים על שלבי Assignment ו-Update עד שהשיוכים מתייצבים (אין שינוי) או עד למספר איטרציות מקסימלי — האלגוריתם מתכנס למינימום מקומי של פונקציית המטרה.</li></ul>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<p>פונקציית המטרה שה-K-Means ממזער היא ה-Inertia (סכום ריבועי המרחקים תוך-אשכוליים, Within-Cluster Sum of Squares):</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/839e05a4534f.png" loading="lazy" alt="formula"></div>
+<p>כאשר <img class="inline-formula-img" src="/topic-assets/3369933efb19.png" loading="lazy" alt="formula"> הוא האשכול ה-<img class="inline-formula-img" src="/topic-assets/df3ec01f900b.png" loading="lazy" alt="formula">, ו-<img class="inline-formula-img" src="/topic-assets/08db764d8183.png" loading="lazy" alt="formula"> מרכזו, המתעדכן בכל איטרציה לפי:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/660614a25ad4.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>סגמנטציה של לקוחות (Customer Segmentation) — לדוגמה ניתוח RFM (Recency, Frequency, Monetary) לחלוקת לקוחות לקבוצות התנהגות קנייה.</li><li>דחיסת תמונות וכימות צבעים (Color Quantization).</li><li>שלב טרום-עיבוד (pre-processing) לפני אלגוריתמים אחרים — לדוגמה יצירת features חדשים מתוצאות clustering.</li><li>ניתוח מסמכים/טקסטים לפי נושאים (Topic grouping) כאשר משתמשים בווקטורי embedding.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>פשוט להבנה ומהיר מאוד להרצה (<img class="inline-formula-img" src="/topic-assets/f62d7a445d5a.png" loading="lazy" alt="formula"> — לינארי במספר הנקודות).</li><li>מתאים מצוין כאשר האשכולות כדוריים (spherical) וגודלם דומה.</li><li>ניתן להרחבה (scalable) למערכי נתונים גדולים, וקיימות גרסאות mini-batch.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>דורש לקבוע את <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> מראש — נדרשת שיטה חיצונית (Elbow / Silhouette) לבחירתו.</li><li>רגיש מאוד לאתחול הראשוני ועלול להיתקע במינימום מקומי — פתרון נפוץ: הרצה מרובה (n_init) או K-Means++.</li><li>רגיש לאאוטליירים (outliers) כי הממוצע מושפע מערכים קיצוניים.</li><li>מניח אשכולות כדוריים בגודל דומה — נכשל באשכולות בצורות מורכבות, מוארכות, או בצפיפות לא אחידה.</li><li>כל הפיצ'רים נמדדים לפי מרחק אוקלידי — חיוני לבצע Feature Scaling (Standardization) לפני ההרצה.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Clustering (ללא תיוג אמת)</td><td>Silhouette Score, Inertia (Elbow Method)</td></tr><tr><td>Clustering (עם תיוג אמת לבדיקה)</td><td>Adjusted Rand Index (ARI), Normalized Mutual Information (NMI)</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>אלגוריתם</strong></td><td><strong>יתרון עיקרי</strong></td><td><strong>חסרון עיקרי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>Hierarchical Clustering</td><td>לא דורש לקבוע <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> מראש; מספק דנדרוגרם</td><td>איטי יותר (<img class="inline-formula-img" src="/topic-assets/ba9657888d05.png" loading="lazy" alt="formula"> ומעלה)</td><td>דאטה-סט קטן/בינוני, רוצים היררכיה</td></tr><tr><td>DBSCAN</td><td>מוצא אשכולות בצורה שרירותית, מזהה רעש</td><td>רגיש לפרמטרים eps/min_samples; קושי בצפיפות לא אחידה</td><td>אשכולות לא כדוריים, יש outliers</td></tr><tr><td>GMM (EM)</td><td>שיוך הסתברותי (soft), אשכולות אליפטיים</td><td>איטי יותר, רגיש לאתחול</td><td>כשרוצים הסתברות שיוך ולא רק תווית קשה</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+X_scaled = StandardScaler().fit_transform(X)
+kmeans = KMeans(n_clusters=4, init=&amp;quot;k-means++&amp;quot;, n_init=10, random_state=42)
+labels = kmeans.fit_predict(X_scaled)
+print(kmeans.cluster_centers_)   # מרכזי האשכולות
+print(kmeans.inertia_)           # סכום ריבועי המרחקים</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>איך בוחרים את הערך הנכון של </strong><img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"><strong>?</strong></p>
+<p><strong>ת: </strong>בעזרת Elbow Method (גרף Inertia כתלות ב-<img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> ובחירת נקודת ה'מרפק') או Silhouette Score (ערך מקסימלי). אין נוסחה חד-משמעית — משלבים שיטה כמותית עם הבנה עסקית של הבעיה.</p>
+<p><strong>ש: </strong><strong>מדוע K-Means רגיש לאתחול ראשוני, ואיך פותרים את זה?</strong></p>
+<p><strong>ת: </strong>מכיוון שהאלגוריתם ממזער פונקציה לא קמורה, אתחול שונה יכול להוביל למינימום מקומי שונה. פותרים בעזרת K-Means++ (אתחול חכם המרחיק את המרכזים זה מזה) ובעזרת הרצות מרובות (n_init) ובחירת ההרצה עם ה-Inertia הנמוך ביותר.</p>
+<p><strong>ש: </strong><strong>מה ההבדל בין K-Means ל-K-Medoids?</strong></p>
+<p><strong>ת: </strong>K-Means משתמש בממוצע (centroid וירטואלי) ורגיש לאאוטליירים; K-Medoids משתמש בנקודה ממשית מתוך הדאטה כנציג האשכול (medoid), ולכן עמיד יותר לרעש אך איטי יותר לחישוב.</p>

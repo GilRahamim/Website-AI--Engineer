@@ -1,0 +1,35 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>שיפורים על AdaGrad המחליפים את סכום ריבועי הגרדיאנטים המצטבר בממוצע נע אקספוננציאלי (Exponential Moving Average), כדי למנוע מה-learning rate האפקטיבי לדעוך לאפס באימונים ארוכים.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ol><li>מאתחלים ממוצע נע של ריבועי גרדיאנטים E[g2]=0.</li><li>בכל איטרציה מחשבים את הגרדיאנט g_t ומעדכנים את הממוצע הנע שלו.</li><li>מחשבים learning rate אפקטיבי: α חלקי שורש הממוצע הנע (פלוס אפסילון).</li><li>מעדכנים את הפרמטרים (ב-AdaDelta אף לא נדרש α כלל — הוא מוערך מהיחס בין עדכוני העבר לגרדיאנטים).</li></ol>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<p>RMSProp:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/0b994160f9c9.png" loading="lazy" alt="formula"></div>
+<p>עדכון RMSProp:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/e0d3f867fd44.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>אימון רשתות עמוקות לא-קונבקסיות (RMSProp נפוץ מאוד ב-RNN/LSTM)</li><li>כל מקרה שבו AdaGrad מתכנס לאט מדי כי ה-LR שלו דועך</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>פותר את בעיית ה-LR הדועך של AdaGrad</li><li>מתאים learning rate per-parameter בלי לדרוש כיוון ידני</li><li>AdaDelta אף לא דורש בחירת α כלל</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>עדיין יש היפר-פרמטרים לכוון (ρ, ε)</li><li>פחות נפוץ כיום מ-Adam שמשלב גם Momentum</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Classification</td><td>Accuracy, Cross-Entropy Loss</td></tr><tr><td>Sequence Modeling (RNN/LSTM)</td><td>Perplexity, BLEU</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>הבדל מרכזי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>AdaGrad</td><td>מצבר גרדיאנטים גדל ללא הגבלה</td><td>דאטה דליל, אימון קצר</td></tr><tr><td>AdaDelta</td><td>לא דורש learning rate בכלל</td><td>כשרוצים למזער כיוון היפר-פרמטרים</td></tr><tr><td>Adam</td><td>RMSProp + Momentum</td><td>ברירת מחדל מודרנית</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python / PyTorch)</h4>
+<pre class='code-block'><code>import torch
+
+model = torch.nn.Linear(10, 1)
+optimizer = torch.optim.RMSprop(model.parameters(), lr=0.001, alpha=0.9)
+
+for x_batch, y_batch in dataloader:
+    optimizer.zero_grad()
+    loss = torch.nn.functional.mse_loss(model(x_batch), y_batch)
+    loss.backward()
+    optimizer.step()</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>איך RMSProp פותר את בעיית ה-LR הדועך של AdaGrad?</p>
+<p><strong>ת: </strong>במקום סכום מצטבר שגדל ללא הגבלה, RMSProp משתמש בממוצע נע אקספוננציאלי שמאפשר ל-LR האפקטיבי להתאושש אם הגרדיאנטים האחרונים קטנים.</p>
+<p><strong>ש: </strong>מה ההבדל המעשי בין RMSProp ל-AdaDelta?</p>
+<p><strong>ת: </strong>AdaDelta מרחיק לכת צעד נוסף ומבטל את הצורך בלבחור α כלל, על ידי הערכת גודל הצעד מתוך יחס עדכוני העבר לגרדיאנטים.</p>

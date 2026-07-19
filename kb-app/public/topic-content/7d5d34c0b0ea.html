@@ -1,0 +1,26 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מדד דמיון בין שתי קבוצות (לדוגמה — קבוצות המילים הייחודיות בשני מסמכים), המוגדר כגודל החיתוך שלהן חלקי גודל האיחוד שלהן.</p>
+<h4 class='sec-h'>📐 הנוסחה</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/f5b2c5467122.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>דמיון ז'קארד בין קבוצות A ו-B</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/2b5861839112.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>מרחק ז'קארד — המשלים לדמיון</em></p>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>A, B</td><td>שתי הקבוצות (לדוגמה: קבוצות המילים בשני מסמכים)</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/dbb29a04727d.png" loading="lazy" alt="formula"></td><td>החיתוך — איברים המשותפים לשתי הקבוצות</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/24efbef82282.png" loading="lazy" alt="formula"></td><td>האיחוד — כל האיברים בשתי הקבוצות יחד</td></tr></table>
+<h4 class='sec-h'>📊 תכונות חשובות</h4>
+<ul><li>תחום הערכים: 0 ≤ J(A,B) ≤ 1 — כאשר 1 פירושו קבוצות זהות, 0 פירושו קבוצות זרות לחלוטין (ללא חפיפה).</li><li>המדד מתייחס לקבוצות (set-based) ולא לתדירות — שני מסמכים עם מילה משותפת אחת שמופיעה פעם אחת או מאה פעמים נחשבים זהים מבחינת ז'קארד.</li><li>סימטרי: J(A,B) = J(B,A).</li></ul>
+<h4 class='sec-h'>🎯 מתי משתמשים?</h4>
+<ul><li>השוואת קבוצות מילים/n-grams של שני מסמכים, ללא תלות בתדירות.</li><li>זיהוי כפילויות (deduplication) ו-Record Linkage כאשר משווים סטים של תווים/אסימונים.</li><li>מדידת דמיון בין סטים בכלל — לא רק בטקסט (לדוגמה: רשימות מוצרים, תגיות).</li></ul>
+<h4 class='sec-h'>🔄 השוואה לפונקציות דומות</h4>
+<table class='kbtable'><tr><td><strong>פונקציה</strong></td><td><strong>מתי עדיפה</strong></td></tr><tr><td>Jaccard Similarity</td><td>כשמשווים קבוצות/נוכחות בלבד, ללא תדירות</td></tr><tr><td>Cosine Similarity</td><td>כשיש וקטורים משוקללים (תדירות/TF-IDF)</td></tr><tr><td>Levenshtein Distance</td><td>כשחשוב סדר התווים והדמיון התחבירי במחרוזת</td></tr></table>
+<h4 class='sec-h'>💻 מימוש בקוד</h4>
+<pre class='code-block'><code>def jaccard_similarity(set_a, set_b):
+intersection = len(set_a &amp;amp; set_b)
+union = len(set_a | set_b)
+return intersection / union if union else 0.0
+jaccard_similarity({'cat','dog','bird'}, {'dog','bird','fish'})  # 2/4 = 0.5</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מה ההבדל המהותי בין דמיון ז'קארד לדמיון קוסינוס?</strong></p>
+<p><strong>ת: </strong>ז'קארד מתבסס על קבוצות (נוכחות/היעדרות בלבד), בעוד קוסינוס מתבסס על וקטורים משוקללים ולוקח בחשבון תדירות/עוצמה.</p>
+<p><strong>ש: </strong><strong>מה יקרה לדמיון ז'קארד אם שתי הקבוצות זרות לחלוטין?</strong></p>
+<p><strong>ת: </strong>החיתוך יהיה ריק (0), ולכן הדמיון יהיה 0 — המינימום האפשרי.</p>

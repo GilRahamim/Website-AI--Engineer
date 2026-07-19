@@ -1,0 +1,34 @@
+<h4 class='sec-h'>Label Propagation Algorithm (LPA)</h4>
+<p class='formula-label'><em>אלגוריתם פשוט ומהיר לאיתור קהילות בגרפים</em></p>
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Label Propagation הוא אלגוריתם איתור קהילות מהיר ופשוט מאוד: כל צומת מקבל 'תווית' (label) ייחודית בתחילת התהליך, ובכל איטרציה כל צומת מאמץ את התווית הנפוצה ביותר בין שכניו — תהליך שמוביל באופן טבעי להתכנסות צמתים מחוברים-בצפיפות לאותה תווית, ובכך חושף את מבנה הקהילות.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>מאתחלים: לכל צומת <img class="inline-formula-img" src="/topic-assets/df3ec01f900b.png" loading="lazy" alt="formula"> ברשת מקצים תווית ייחודית <img class="inline-formula-img" src="/topic-assets/9e0119ab0e1d.png" loading="lazy" alt="formula">.</li><li>בכל איטרציה, עוברים על הצמתים בסדר אקראי, ולכל צומת בוחנים את התוויות של כל שכניו.</li><li>כל צומת מאמץ את התווית הנפוצה ביותר (majority vote) בין שכניו; אם יש שוויון — נבחרת תווית אקראית מבין המובילות.</li><li>ממשיכים בסבבים עד שכל צומת מחזיק בתווית שהיא הנפוצה ביותר (או שווה) בין שכניו — מצב יציב (convergence). צמתים עם אותה תווית סופית שייכים לאותה קהילה.</li></ul>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<p>כלל העדכון של תווית הצומת <img class="inline-formula-img" src="/topic-assets/df3ec01f900b.png" loading="lazy" alt="formula"> באיטרציה <img class="inline-formula-img" src="/topic-assets/cef8ce719260.png" loading="lazy" alt="formula">:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/d3eb92d02c32.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>איתור קהילות ברשתות עצומות (מיליוני/מיליארדי צמתים) שבהן Louvain עדיין יקר חישובית.</li><li>Semi-Supervised Learning — כשיש תוויות אמת לחלק קטן מהצמתים, האלגוריתם 'מפיץ' אותן לשאר הרשת.</li><li>ניתוח מהיר וגס (quick-and-dirty) של מבנה רשת לפני ניתוח מעמיק יותר.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מהירות חישוב גבוהה ביותר — בסיבוכיות קרובה ל-<img class="inline-formula-img" src="/topic-assets/25c7dc8b5faa.png" loading="lazy" alt="formula"> (לינארית במספר הקשתות) לכל איטרציה.</li><li>פשטות מימוש רבה — אין צורך לכוונן היפרפרמטרים (אין eps, אין <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula">, אין bandwidth).</li><li>לא דורש פונקציית מטרה גלובלית לחישוב (בניגוד ל-Modularity ב-Louvain) — מתבסס רק על מידע מקומי.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>לא דטרמיניסטי — סדר העדכון האקראי וההכרעה במקרי שוויון מובילים לתוצאות שונות בין הרצות שונות.</li><li>עלול להתכנס לפתרון טריוויאלי שבו כל הרשת מקבלת תווית אחת (קהילה אחת גדולה), בעיקר ברשתות צפופות.</li><li>אינו ממקסם מדד גלובלי מוגדר (כמו Modularity) — לכן קשה להעריך/להשוות איכות הפתרון באופן עקבי.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>מדד</strong></td><td><strong>מטרה</strong></td></tr><tr><td>Modularity (לאחר ריצה)</td><td>אפשר לחשב בדיעבד על החלוקה שהתקבלה כדי להעריך איכותה</td></tr><tr><td>יציבות בין הרצות (run-to-run agreement)</td><td>להעריך עד כמה התוצאה אמינה/חזרתית</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>יתרון עיקרי</strong></td><td><strong>חסרון עיקרי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>Louvain</td><td>מקסום ישיר של Modularity, יציב יותר</td><td>איטי יותר מ-LPA (אך עדיין מהיר)</td><td>צריך תוצאה איכותית ועקבית</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>import networkx as nx
+from networkx.algorithms.community import label_propagation_communities
+G = nx.karate_club_graph()
+communities = list(label_propagation_communities(G))
+print(f&amp;quot;מספר קהילות שנמצאו: {len(communities)}&amp;quot;)
+for i, comm in enumerate(communities):
+print(f&amp;quot;קהילה {i}: {sorted(comm)}&amp;quot;)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>למה Label Propagation לא דטרמיניסטי?</strong></p>
+<p><strong>ת: </strong>כי סדר העיבוד של הצמתים בכל איטרציה הוא אקראי, וכאשר יש שוויון בין כמה תוויות מובילות בין השכנים, ההכרעה ביניהן גם היא אקראית. הרצות שונות עם seed שונה יכולות לכן להוביל לחלוקות קהילות שונות במקצת.</p>
+<p><strong>ש: </strong><strong>מתי נעדיף Label Propagation על פני Louvain?</strong></p>
+<p><strong>ת: </strong>כשהרשת עצומה (מיליארדי צמתים/קשתות) ומהירות היא הקריטריון הדומיננטי, ואנחנו מוכנים להתפשר על יציבות/דיוק התוצאה. כש​חשובה לנו תוצאה איכותית ועקבית יותר, Louvain עדיף.</p>
+<p><strong>ש: </strong><strong>מה הסיכון העיקרי באלגוריתם הזה?</strong></p>
+<p><strong>ת: </strong>התכנסות ל'קהילה אחת גדולה' (giant community) שמכילה את כל/רוב הרשת, בפרט ברשתות צפופות מאוד — תוצאה לא אינפורמטיבית שלא משקפת מבנה קהילות אמיתי.</p>

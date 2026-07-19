@@ -1,0 +1,32 @@
+<h4 class='sec-h'>Inertia ושיטת ה-Elbow</h4>
+<p class='formula-label'><em>מדד פנימי להערכת קלסטרינג ובחירת מספר אשכולות</em></p>
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Inertia (גם Within-Cluster Sum of Squares, WCSS) מודד את סכום ריבועי המרחקים בין כל נקודה לבין מרכז האשכול שאליו היא משויכת. Elbow Method היא שיטה גרפית-היוריסטית הבוחנת את ה-Inertia במספר ערכי <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> שונים לאיתור 'נקודת המרפק' — מספר האשכולות שבו השיפור השולי מפסיק להיות משמעותי.</p>
+<h4 class='sec-h'>📐 הנוסחה</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/a4c5267f702a.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"></td><td>מספר האשכולות</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/3369933efb19.png" loading="lazy" alt="formula"></td><td>קבוצת הנקודות באשכול ה-<img class="inline-formula-img" src="/topic-assets/df3ec01f900b.png" loading="lazy" alt="formula"></td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/08db764d8183.png" loading="lazy" alt="formula"></td><td>מרכז (centroid) האשכול ה-<img class="inline-formula-img" src="/topic-assets/df3ec01f900b.png" loading="lazy" alt="formula"></td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/6be0d691c9f8.png" loading="lazy" alt="formula"></td><td>נקודת דאטה</td></tr></table>
+<h4 class='sec-h'>🎯 מתאים לסוג למידה ומשימה</h4>
+<table class='kbtable'><tr><td><strong>סוג למידה</strong></td><td><strong>משימה</strong></td><td><strong>מתאים?</strong></td><td><strong>הערות</strong></td></tr><tr><td>לא מפוקחת</td><td>Clustering (K-Means)</td><td>✅</td><td>המדד הטבעי שה-K-Means עצמו ממזער</td></tr><tr><td>לא מפוקחת</td><td>DBSCAN / Density-based</td><td>❌</td><td>אינו רלוונטי — אין מרכזים (centroids) מוגדרים</td></tr><tr><td>מפוקחת</td><td>Classification / Regression</td><td>❌</td><td>לא רלוונטי כלל למשימות מפוקחות</td></tr></table>
+<h4 class='sec-h'>📊 טווח ערכים ופרשנות</h4>
+<table class='kbtable'><tr><td><strong>ערך</strong></td><td><strong>משמעות</strong></td></tr><tr><td>גבוה</td><td>אשכולות מפוזרים/לא מגובשים — נקודות רחוקות ממרכזיהן</td></tr><tr><td>נמוך</td><td>אשכולות צפופים וקומפקטיים</td></tr><tr><td>שואף ל-0 כש-<img class="inline-formula-img" src="/topic-assets/1a24e92893e9.png" loading="lazy" alt="formula"></td><td>כל נקודה הופכת לאשכול נפרד — לכן לא ניתן להשתמש ב-Inertia לבד לבחירת <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> הגדול ביותר</td></tr></table>
+<h4 class='sec-h'>✅ מתי עדיף על מדדים אחרים?</h4>
+<ul><li>כשרוצים שיטה פשוטה, מהירה וגרפית-אינטואיטיבית לבחירת <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> עבור K-Means.</li><li>כשלב ראשוני וגס לפני בדיקה מעמיקה יותר עם Silhouette Score.</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>Inertia מונוטונית יורדת עם <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> — לכן אי אפשר להשתמש בה למצוא את ה-<img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> ה'אופטימלי' בצורה ישירה, רק לאתר את נקודת ה'מרפק' שבה השיפור מתמתן.</li><li>זיהוי ה'מרפק' הוא לרוב סובייקטיבי-חזותי, ולא תמיד יש מרפק חד וברור בגרף.</li><li>מניחה אשכולות כדוריים (תואמת את הנחות K-Means) — לא רלוונטית לאלגוריתמים מבוססי-צפיפות.</li></ul>
+<h4 class='sec-h'>💻 מימוש בקוד (Python / sklearn)</h4>
+<pre class='code-block'><code>from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+inertias = []
+K_range = range(1, 11)
+for k in K_range:
+km = KMeans(n_clusters=k, random_state=42).fit(X)
+inertias.append(km.inertia_)
+plt.plot(K_range, inertias, marker=&amp;quot;o&amp;quot;)
+plt.xlabel(&amp;quot;k&amp;quot;); plt.ylabel(&amp;quot;Inertia&amp;quot;)
+plt.title(&amp;quot;Elbow Method&amp;quot;)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מדוע לא ניתן לבחור </strong><img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"><strong> פשוט על-ידי מינימום Inertia?</strong></p>
+<p><strong>ת: </strong>כי Inertia יורדת מונוטונית כש-<img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> גדל, ומגיעה ל-0 כש-<img class="inline-formula-img" src="/topic-assets/84c2ce5c4abc.png" loading="lazy" alt="formula"> (כל נקודה אשכול בפני עצמה) — בחירה כזו תהיה חלוקה טריוויאלית וחסרת תועלת. לכן מחפשים את נקודת ה'מרפק' שבה הירידה מתמתנת, ולא את המינימום הגלובלי.</p>
+<p><strong>ש: </strong><strong>מה ההבדל בין Inertia ל-Silhouette Score כשיקול לבחירת </strong><img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"><strong>?</strong></p>
+<p><strong>ת: </strong>Inertia מודדת רק קומפקטיות תוך-אשכולית (אין השוואה לאשכולות אחרים), ויורדת מונוטונית עם <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula">. Silhouette Score משקללת גם הפרדה בין-אשכולית, ויש לה ערך מקסימום מוגדר היטב שמסייע לבחור <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> בצורה פחות סובייקטיבית.</p>

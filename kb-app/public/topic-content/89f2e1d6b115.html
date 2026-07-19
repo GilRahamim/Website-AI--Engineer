@@ -1,0 +1,34 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>טכניקות לקבל מ-LLM פלט בפורמט מבני וניתן-לפרסור (JSON, YAML, טבלאות Markdown) במקום טקסט חופשי, כדי לאפשר אינטגרציה ישירה למסדי נתונים, APIs ולוחות מחוונים.</p>
+<h4 class='sec-h'>🎯 למה זה חשוב</h4>
+<ul><li>פורמט צפוי — נדרש לאינטגרציה אמינה עם מערכות downstream.</li><li>Validation — תפיסת שגיאות לפני שהן שוברות תהליכים בהמשך.</li><li>עקביות — אותם שמות שדות וטיפוסים בכל קריאה.</li></ul>
+<h4 class='sec-h'>⚙️ שיטות להפקת פלט מבני</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>איך עובד</strong></td><td><strong>רמת אכיפה</strong></td></tr><tr><td>Prompt-only</td><td>&quot;החזר תשובה ב-JSON עם השדות: ...&quot;</td><td>חלשה — נוטה ל'סטייה' (drift)</td></tr><tr><td>Model-native schema</td><td>OpenAI Function Calling / Gemini response_schema</td><td>חזקה — אכיפה בזמן היצירה</td></tr><tr><td>Framework tools</td><td>LangChain StructuredTool, Guardrails, Instructor, PydanticAI</td><td>חזקה + שכבת validation מובנית</td></tr></table>
+<h4 class='sec-h'>🛠️ Validation עם Pydantic / PydanticAI</h4>
+<p>PydanticAI משתמש במודלי Pydantic כדי לאמת ולפרסר פלט LLM לאובייקטי Python מטופסים. מבטיח type safety, שדות חובה, הודעות שגיאה ברורות על פלט לא תקין, ותמיכה בסכמות מקוננות.</p>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from pydantic import BaseModel, Field, ValidationError
+import json
+class PatientSummary(BaseModel):
+name: str
+age: int = Field(..., ge=0)
+diagnosis: str
+summary: str
+def validate_output(output: str) -&amp;gt; PatientSummary:
+try:
+data = json.loads(output)
+return PatientSummary.model_validate(data)
+except (json.JSONDecodeError, ValidationError) as e:
+print(&amp;quot;Validation failed:&amp;quot;, e)
+raise</code></pre>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מאפשר pipelines אוטומטיים מלאים: LLM → JSON מאומת → DB/API.</li><li>מצמצם טיפול ידני בשגיאות פרסור (parsing) בהמשך התהליך.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>Prompt-only validation חשוף ל'סטייה' — המודל עלול להחזיר טקסט נוסף סביב ה-JSON.</li><li>אכיפת סכמה מחמירה מדי עלולה לגרום לכשל מלא כשהמודל לא מצליח למלא שדה חובה.</li></ul>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>פלט מבני הוא הבסיס שמאפשר ל-Function Calling ול-Agents לפעול בצורה אמינה — בלי שכבת validation, שגיאות פרסור ישברו את שרשרת הכלים.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: למה model-native schema (function calling) עדיף בדרך כלל על prompt-only?</strong></p>
+<p>ת: כי האכיפה מתבצעת בזמן הדגימה (decoding) של המודל עצמו לפי ה-schema, ולא רק כהוראה בטקסט — מה שמקטין משמעותית את הסיכוי לפלט שלא תואם לפורמט המבוקש.</p>
+<p><strong>ש: מה הערך המוסף של PydanticAI מעבר ל-json.loads רגיל?</strong></p>
+<p>ת: json.loads רק מפרסר טקסט JSON גולמי בלי לבדוק טיפוסים/שדות חובה. PydanticAI מוסיף שכבת type safety מלאה — מאמת טיפוסים, mandatory fields, וטווחי ערכים (כמו age &gt;= 0), עם הודעות שגיאה ברורות לכשל.</p>

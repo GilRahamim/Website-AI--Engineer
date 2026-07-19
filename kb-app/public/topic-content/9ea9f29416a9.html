@@ -1,0 +1,23 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Computer Vision כולל כמה סוגי משימות בסיסיים שמטרתם לחלץ מידע שונה מתמונה — מ'מה יש בתמונה' (classification) ועד 'אילו פיקסלים בדיוק שייכים לאובייקט' (segmentation). YOLO מספק מודלים נפרדים (אך ארכיטקטורה דומה) לכל אחת מהמשימות.</p>
+<h4 class='sec-h'>🔍 ארבעת סוגי המשימות העיקריים</h4>
+<table class='kbtable'><tr><td><strong>משימה</strong></td><td><strong>תפוקה</strong></td></tr><tr><td>Classification</td><td>תווית (label) אחת לכל התמונה (לדוגמה: Dog, Car, Pizza)</td></tr><tr><td>Detection (Localization)</td><td>Bounding box + תווית + ביטחון לכל אובייקט בתמונה</td></tr><tr><td>Segmentation</td><td>מסכה (mask) ברמת פיקסל — הצורה המדויקת של כל אובייקט, לא רק מלבן</td></tr><tr><td>Pose Estimation</td><td>נקודות מפתח (keypoints) על גוף — אף, עיניים, כתפיים, מרפקים, שורשי כף יד, ברכיים, קרסוליים</td></tr></table>
+<h4 class='sec-h'>🔄 Detection לעומת Segmentation</h4>
+<table class='kbtable'><tr><td><strong>מאפיין</strong></td><td><strong>Detection</strong></td><td><strong>Segmentation</strong></td></tr><tr><td>צורת התוצאה</td><td>מלבן (Rectangle)</td><td>צורת האובייקט המדויקת</td></tr><tr><td>מהירות</td><td>מהיר יותר</td><td>מפורט יותר (ויקר יותר חישובית)</td></tr><tr><td>יישומים</td><td>מעקב כללי, ספירה</td><td>נהיגה אוטונומית, הדמיה רפואית, רובוטיקה</td></tr></table>
+<h4 class='sec-h'>💻 Pose Estimation — קוד וזרימה</h4>
+<pre class='code-block'><code>המודל חוזה מיקום אדם וקואורדינטות keypoints, מחבר ביניהן (skeleton), ומאפשר הבנת תנוחה ותנועה. שימושים: fitness tracking, ניתוח ספורט, הכרת תנועות (gesture recognition), מעקב תנועה.
+# 04_pose_estimation.py
+results = model(frame)  # model = YOLO(&amp;quot;yolov8s-pose.pt&amp;quot;)
+keypoints = results[0].keypoints  # nose, eyes, shoulders, elbows, wrists, knees, ankles</code></pre>
+<h4 class='sec-h'>💻 Classification — Top-5 Predictions</h4>
+<p># 05_classification.py</p>
+<p># model = YOLO(&quot;yolov8s-cls.pt&quot;)</p>
+<p>results = model(image)</p>
+<p>top5 = results[0].probs.top5  # predictions + confidence scores</p>
+<h4 class='sec-h'>🎯 שימושים עיקריים לפי סוג משימה</h4>
+<ul><li>Classification: מיון תמונות, autonomous driving, הדמיה רפואית.</li><li>Detection: זיהוי בזמן אמת, ספירת אנשים, אבטחה.</li><li>Segmentation: נהיגה אוטונומית, רפואה, רובוטיקה — כשצורה מדויקת קריטית.</li><li>Pose Estimation: fitness, ספורט, gesture recognition.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מתי תבחרו segmentation על פני detection פשוט, חרף העלות החישובית הגבוהה יותר?</strong></p>
+<p>ת: כשצורת האובייקט המדויקת קריטית למשימה — לדוגמה ברפואה (גבולות גידול מדויקים) או בנהיגה אוטונומית (הבחנה בין מדרכה לכביש בפיקסל). אם רק 'איפה האובייקט בערך' מספיק (כמו ספירת אנשים), detection מהיר יותר ומספיק.</p>
+<p><strong>ש: איך pose estimation 'בונה' על detection במקום להיות משימה נפרדת לחלוטין?</strong></p>
+<p>ת: המודל מזהה תחילה את מיקום האדם (כמו detection רגיל), ואז מוסיף שכבת חיזוי נוספת לקואורדינטות ה-keypoints על גבי אותו אזור — כך שהוא משתמש בעיקרון 'לוקח את ה-bounding box ומעמיק אותו' במקום לפתור מבעיה אחרת.</p>

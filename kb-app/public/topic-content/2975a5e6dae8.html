@@ -1,0 +1,22 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>שיטת שקלול של מטריצת Bag-of-Words, המשלבת את תדירות המונח במסמך (TF) עם נדירותו על פני הקורפוס (IDF), כך שמילים נפוצות בכל הקורפוס מקבלות משקל נמוך, ומילים נדירות ואינפורמטיביות מקבלות משקל גבוה.</p>
+<h4 class='sec-h'>📐 הנוסחה</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/cae2bcfd65aa.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>תדירות מסמכים (Document Frequency) — סכום עמודות מטריצת ההיארעות הבינארית</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/42321f8b2a1f.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>תדירות מסמכים הופכית (IDF) — מודד את 'חשיבות' המונח</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/152344ccf6f9.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>משקל TF-IDF הסופי של מונח t במסמך d</em></p>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/48d1578f1526.png" loading="lazy" alt="formula"></td><td>תדירות המונח t במסמך d (Term Frequency)</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/14eec448e3c9.png" loading="lazy" alt="formula"></td><td>מספר המסמכים שמכילים את המונח t</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/bbee9364ea29.png" loading="lazy" alt="formula"></td><td>מספר המסמכים הכולל בקורפוס</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/1ae6add1143f.png" loading="lazy" alt="formula"></td><td>תדירות הופכית — מודד נדירות/חשיבות</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/8a33a7219588.png" loading="lazy" alt="formula"></td><td>המשקל הסופי של t במסמך d</td></tr></table>
+<h4 class='sec-h'>📊 תכונות חשובות</h4>
+<ul><li>מונחים נפוצים מאוד (מופיעים בכל המסמכים): <img class="inline-formula-img" src="/topic-assets/1ae6add1143f.png" loading="lazy" alt="formula"> שואף ל-0.</li><li>מונחים נדירים (מופיעים במסמך אחד): <img class="inline-formula-img" src="/topic-assets/1ae6add1143f.png" loading="lazy" alt="formula"> שואף ל-log(N).</li><li>TF-IDF הוא מדד היוריסטי — אין לו הצדקה מתמטית פורמלית-הסתברותית, אך הוא עובד היטב בפועל ונחשב לאחד הבייסליינים החזקים ביותר באחזור מידע.</li><li>המשקל גדל גם עם תדירות המונח במסמך וגם עם נדירותו בקורפוס.</li></ul>
+<h4 class='sec-h'>🎯 מתי משתמשים?</h4>
+<ul><li>אחזור מידע ודירוג מסמכים לפי שאילתה (combined with Cosine Similarity).</li><li>כקלט (פיצ'רים) למודלי סיווג טקסט קלאסיים.</li><li>כשלב מקדים לפני TF-IDF המורחב לטיפול ב-Mutual Information / n-grams.</li></ul>
+<h4 class='sec-h'>🔄 השוואה לפונקציות דומות</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>Values</strong></td><td><strong>מתאים ל</strong></td></tr><tr><td>Binary Incidence</td><td>0 / 1</td><td>חיפוש בוליאני מדויק</td></tr><tr><td>Bag-of-Words</td><td>Word count</td><td>ניתוח בסיסי, ספירה גולמית</td></tr><tr><td>TF-IDF</td><td>Weighted score</td><td>אחזור ודירוג מסמכים</td></tr></table>
+<h4 class='sec-h'>💻 מימוש בקוד</h4>
+<pre class='code-block'><code>from sklearn.feature_extraction.text import TfidfVectorizer
+model = TfidfVectorizer()
+tfidf_matrix = model.fit_transform(docs)
+# שווה ערך ל-CountVectorizer + TfidfTransformer בשני שלבים</code></pre>

@@ -1,0 +1,40 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מסמך זה מאגד שלושה יישומים מעשיים הנבנים מעל היכולות הבסיסיות של YOLO (detection ו-pose): ספירת אנשים, טשטוש פרטיות (face blur), וזיהוי על תמונות סטטיות (לא רק וידאו חי).</p>
+<h4 class='sec-h'>👥 ספירת אנשים (People Counting)</h4>
+<p>הרעיון: YOLO מזהה את כל האובייקטים → מסננים רק את class 'person' (ב-COCO: class 0) → סופרים כמה הופיעו בפריים. שימושים: קניונים, תחבורה ציבורית, אירועים, מעקב חכם (smart surveillance).</p>
+<p># 02_people_counting.py</p>
+<p>person_count = sum(1 for box in boxes if int(box.cls[0]) == PERSON_CLASS_ID)</p>
+<h4 class='sec-h'>🔒 טשטוש פנים ו-Privacy AI</h4>
+<p>המערכת מזהה אזורי פנים (מבוססת על keypoints מ-pose estimation), ומפעילה Gaussian blur להגנה על זהויות. שימושים: תאימות GDPR, מעקב חכם, אנליטיקס ציבורי, AI שמשמר פרטיות.</p>
+<p># 08_face_blur.py</p>
+<p>def blur_face_region(frame, keypoints_xy):</p>
+<p>&quot;&quot;&quot;Blur the face area estimated from pose keypoints.&quot;&quot;&quot;</p>
+<p>h, w = frame.shape[:2]</p>
+<p>nose = keypoints_xy[NOSE_INDEX]</p>
+<p>left_ear = keypoints_xy[LEFT_EAR_INDEX]</p>
+<p>right_ear = keypoints_xy[RIGHT_EAR_INDEX]</p>
+<p>cx, cy = int(nose[0]), int(nose[1])</p>
+<p>x1 = max(0, cx - face_width // 2)</p>
+<p>y1 = max(0, cy - face_height // 2)</p>
+<p>x2 = min(w, cx + face_width // 2)</p>
+<p>y2 = min(h, cy + face_height // 2)</p>
+<p>if x2 &gt; x1 and y2 &gt; y1:</p>
+<p>roi = frame[y1:y2, x1:x2]</p>
+<p>blurred = cv2.GaussianBlur(roi, (99, 99), 30)</p>
+<p>result = frame.copy()</p>
+<p>result[y1:y2, x1:x2] = blurred</p>
+<p>return result</p>
+<p>return frame</p>
+<h4 class='sec-h'>🖼️ זיהוי על תמונות סטטיות</h4>
+<p>Computer Vision אינו מוגבל לוידאו חי מ-webcam. זרימה: Load Image → Run Detection → Save Results. שימושים: תמונות רפואיות, צילומי לוויין, batch processing, בקרת איכות בייצור (manufacturing QA).</p>
+<p># 09_static_detection.py</p>
+<p>image_path = sys.argv[1] if len(sys.argv) &gt; 1 else os.path.join(parent_dir, &quot;Image.jpg&quot;)</p>
+<p>output_path = sys.argv[2] if len(sys.argv) &gt; 2 else os.path.join(parent_dir, &quot;output_detected.jpg&quot;)</p>
+<p>model = YOLO(&quot;yolov8s.pt&quot;)</p>
+<p>results = model(image_path)</p>
+<p>cv2.imwrite(output_path, annotated)</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מדוע face blur בדמו זה מבוסס על pose keypoints (אף, אוזניים) ולא על face-detection ייעודי?</strong></p>
+<p>ת: כי המודל כבר מריץ pose estimation לצרכים אחרים (זיהוי גוף) — שימוש בקואורדינטות nose/ears הקיימות חוסך הרצת מודל נפרד לזיהוי פנים, ומספק הערכה 'מספיק טובה' לאזור הפנים לצורך blur, במחיר דיוק גיאומטרי מדויק פחות מ-face detector מיועד.</p>
+<p><strong>ש: מה ההבדל התשתיתי בין pipeline של static image detection ל-real-time webcam detection?</strong></p>
+<p>ת: ב-static image אין לולאת capture רציפה — תמונה בודדת נטענת, מורצת פעם אחת דרך המודל, והתוצאה נשמרת לקובץ (cv2.imwrite). ב-real-time יש לולאת capture-detect-display מתמשכת שמטרתה latency נמוך ו-FPS גבוה, ולא רק דיוק.</p>

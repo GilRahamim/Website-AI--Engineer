@@ -1,0 +1,33 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Sub-agent הוא agent עזר עם חלון קונטקסט נקי משלו, כלים משלו, ו-system prompt משלו, שנקרא על ידי agent הורה (parent) באמצעות כלי ה-Task — ומחזיר סיכום (summary) בלבד להורה, כדי למנוע 'זיהום' קונטקסט בריצות ארוכות.</p>
+<h4 class='sec-h'>🔍 הבעיה שזה פותר</h4>
+<p>ריצות agent ארוכות מזהמות את הקונטקסט: תוצאות כלים ישנות (stale tool results), תוכניות מיושנות, וענפים מתים (dead branches) — כולם נשארים בחלון הקונטקסט ומפריעים להחלטות עתידיות.</p>
+<h4 class='sec-h'>🎯 מקרי שימוש</h4>
+<ul><li>מחקר מקבילי (parallel research) — פתיחת 5 sub-agents במקביל, מיזוג ממצאים.</li><li>קריאות כבדות (heavy reads) — sub-agent עושה grep/read על עץ קבצים גדול, מחזיר פסקה אחת.</li><li>תפקידי מומחה (specialist roles) — reviewer, planner, executor.</li></ul>
+<h4 class='sec-h'>⚙️ איך מגדירים Sub-Agent</h4>
+<p>מוגדר כקובץ markdown בנתיב .claude/agents/*.md עם YAML frontmatter: name, description, tools, model. ה-agent ההורה רואה את הקובץ וקורא לו דרך כלי ה-Task כשה-description תואם את המשימה.</p>
+<h4 class='sec-h'>💻 קוד לדוגמה — הגדרת Sub-Agent</h4>
+<pre class='code-block'><code># .claude/agents/security-reviewer.md
+---
+name: security-reviewer
+description: Reviews code for OWASP-style issues. Use when the user
+asks for a security review or before merging auth code.
+tools: [Read, Grep, Glob]
+model: claude-opus-4-7
+---
+# Security Reviewer
+You are a paranoid security reviewer. Focus on:
+- Injection (SQL, command, path)
+- Authn/authz gaps
+- Secret handling
+- Unsafe deserialization
+Return a punch list. Cite file:line. Under 200 words.</code></pre>
+<h4 class='sec-h'>🛠️ איך פותרים / מטפלים (anti-pattern נפוץ)</h4>
+<ul><li>אנטי-פטרן: לדחוס הכול ל-agent הראשי — הקונטקסט מתנפח (bloats) והמודל סוטה (drifts). הפתרון: לדחוף עבודת מומחה (specialist work) ל-sub-agents.</li><li>Fan-out research: פתיחת N sub-agents במקביל, מיזוג סיכומים — חוסך קונטקסט וזמן-קיר (wall time).</li></ul>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>Sub-agents הם רכיב בתוך Claude Agent SDK Architecture (מסמך 56), ומשתלבים עם Hooks (מסמך 58) ו-Plugins (מסמך 59) בבניית workflows מלאים — לדוגמה demo ה-code-review plugin.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין sub-agent ל-multi-agent (CrewAI/Agent כללי)?</strong></p>
+<p>ת: sub-agent ב-Claude Agent SDK הוא מנגנון בידוד קונטקסט בתוך ריצה אחת של agent הורה — נקרא דרך כלי Task, מחזיר סיכום, וייעודו בעיקר טכני (ניהול זיכרון/קונטקסט). Multi-agent (כמו ב-CrewAI) הוא דגם ארכיטקטוני רחב יותר של אורקסטרציה בין agents עצמאיים עם תפקידים מוגדרים, ולא רק כלי לניהול קונטקסט.</p>
+<p><strong>ש: מדוע sub-agent 'heavy reads' מחזיר פסקה אחת בלבד ולא את כל הקובץ?</strong></p>
+<p>ת: כדי שהקונטקסט של ה-agent ההורה יישאר נקי — אם ה-sub-agent יחזיר את כל תוכן הקריאה הכבדה, המטרה (חיסכון בקונטקסט) מתבטלת; הוא מסכם רק את התובנה הרלוונטית.</p>

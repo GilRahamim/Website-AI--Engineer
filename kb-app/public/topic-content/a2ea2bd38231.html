@@ -1,0 +1,24 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מדדים המודדים עד כמה הפלט המשוחזר (Decoder output) של Autoencoder קרוב לקלט המקורי — משמשים גם כפונקציית Loss לאימון וגם כמדד הערכה לאיכות הדחיסה/שחזור.</p>
+<h4 class='sec-h'>📐 הנוסחה</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/1a381521cc7d.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>x_i</td><td>הקלט המקורי (לדוגמה תמונה או וקטור תכונות)</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/f721fda9ef7d.png" loading="lazy" alt="formula"></td><td>הפלט המשוחזר על ידי ה-Decoder</td></tr><tr><td>n</td><td>מספר דוגמאות / פיקסלים / תכונות</td></tr></table>
+<h4 class='sec-h'>🎯 מתאים לסוג למידה ומשימה</h4>
+<table class='kbtable'><tr><td><strong>סוג למידה</strong></td><td><strong>משימה</strong></td><td><strong>מתאים?</strong></td></tr><tr><td>לא מפוקחת (Self-Supervised)</td><td>דחיסה / שחזור (Autoencoder)</td><td>✅ מדד הליבה לאימון ולהערכה</td></tr><tr><td>לא מפוקחת</td><td>Anomaly Detection</td><td>✅ שגיאת שחזור גבוהה מצביעה על אנומליה</td></tr><tr><td>מפוקחת</td><td>Classification</td><td>❌ לא רלוונטי — אין שחזור קלט</td></tr></table>
+<h4 class='sec-h'>📊 טווח ערכים ופרשנות</h4>
+<table class='kbtable'><tr><td><strong>ערך</strong></td><td><strong>משמעות</strong></td></tr><tr><td>0</td><td>שחזור מושלם — הפלט זהה לקלט</td></tr><tr><td>נמוך</td><td>שחזור טוב — ה-Encoder שומר על המידע החשוב</td></tr><tr><td>גבוה</td><td>שחזור גרוע — ייצוג סמוי לא מספק, או דחיסה אגרסיבית מדי</td></tr></table>
+<h4 class='sec-h'>✅ מתי עדיף על מדדים אחרים?</h4>
+<ul><li>כשרוצים למדוד עד כמה ייצוג סמוי (latent representation) שומר על המידע המקורי</li><li>ב-Anomaly Detection — דוגמאות 'חריגות' (שלא נראו באימון) ייצרו שגיאת שחזור גבוהה במיוחד, ומאפשרות זיהוין</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>לא מודד באופן ישיר את התועלת של הייצוג הסמוי למשימות downstream (כגון סיווג)</li><li>MSE כפונקציית שחזור עלולה לייצר פלט 'מטושטש' (blurry) בתמונות, ולכן בפרקטיקה משתמשים גם במדדים פרספטואליים נוספים</li></ul>
+<h4 class='sec-h'>💻 מימוש בקוד</h4>
+<pre class='code-block'><code>import torch.nn.functional as F
+
+reconstruction = autoencoder(x)
+loss = F.mse_loss(reconstruction, x)   # Reconstruction MSE</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>איך משתמשים בשגיאת שחזור לזיהוי אנומליות (Anomaly Detection)?</p>
+<p><strong>ת: </strong>מאמנים Autoencoder על דוגמאות 'נורמליות' בלבד; בזמן הסקה, דוגמה שמייצרת שגיאת שחזור גבוהה משמעותית מהרגיל (לא נראתה דוגמה דומה באימון) מסומנת כאנומליה.</p>
+<p><strong>ש: </strong>למה Reconstruction MSE לבדה לא מספיקה להערכת איכות Autoencoder במשימות downstream?</p>
+<p><strong>ת: </strong>MSE נמוכה מבטיחה ששחזור הקלט קרוב מאוד למקור, אך לא מבטיחה שהייצוג הסמוי (latent space) מאורגן היטב או שימושי למשימות אחרות כגון סיווג — לכך נדרשת הערכה נפרדת על המשימה הספציפית.</p>

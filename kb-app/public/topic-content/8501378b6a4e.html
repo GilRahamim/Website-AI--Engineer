@@ -1,0 +1,34 @@
+<h4 class='sec-h'>Mean Shift</h4>
+<p class='formula-label'><em>אלגוריתם Clustering מבוסס אומדן צפיפות (Mode-Seeking)</em></p>
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Mean Shift הוא אלגוריתם clustering מבוסס-צפיפות שאינו דורש לקבוע מספר אשכולות מראש: כל נקודה 'נעה' איטרטיבית לכיוון האזור הצפוף ביותר בקרבתה (ה-mode המקומי של פונקציית הצפיפות), ונקודות שמתכנסות לאותו mode משתייכות לאותו אשכול.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>לכל נקודת נתונים, מגדירים חלון (kernel) ברדיוס bandwidth מסביבה.</li><li>מחשבים את וקטור ה'תזוזה' (mean shift vector) — ההפרש בין מרכז המסה של הנקודות בתוך החלון לבין מיקום הנקודה הנוכחי.</li><li>מזיזים את הנקודה לפי וקטור זה, וחוזרים על התהליך עד התכנסות (כשהתזוזה קטנה מסף מסוים).</li><li>נקודות שהתכנסו לאותו מוד (peak) באותו אזור — משויכות לאותו אשכול.</li></ul>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<p>וקטור התזוזה (<img class="inline-formula-img" src="/topic-assets/08fd241fc30a.png" loading="lazy" alt="formula">) מחושב כממוצע משוקלל-קרנל של השכנים בחלון:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/eaa24fc0320c.png" loading="lazy" alt="formula"></div>
+<p>ועם kernel גאוסי לדוגמה:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/de2f12bee2c8.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>מעקב אובייקטים בווידאו (Object Tracking) — שימוש קלאסי בעיבוד תמונה וחזית מחשב.</li><li>סגמנטציית תמונות (Image Segmentation) לפי אזורי צבע/טקסטורה.</li><li>כל בעיה שבה לא ידוע מספר האשכולות הטבעי ורוצים להסיק אותו מהדאטה.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>אינו דורש לקבוע מספר אשכולות <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> מראש — נקבע אוטומטית לפי מספר ה-modes שנמצאו.</li><li>מתאים לאשכולות בצורות שרירותיות (לא רק כדוריות).</li><li>אינו רגיש לאתחול במידה הדומה ל-K-Means (כל הנקודות 'נעות' עצמאית).</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>סיבוכיות חישובית גבוהה (<img class="inline-formula-img" src="/topic-assets/a5f5282bceb8.png" loading="lazy" alt="formula"> בערך) — לא מתאים לדאטה-סטים גדולים.</li><li>רגיש מאוד לבחירת ה-bandwidth: ערך קטן יוצר אשכולות רבים מדי, ערך גדול ממזג אשכולות שונים.</li><li>סובל מ-Curse of Dimensionality — אומדן צפיפות בעזרת kernel נהיה לא יציב בממדים גבוהים.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Clustering</td><td>Silhouette Score</td></tr><tr><td>Object Tracking / Segmentation</td><td>IoU (Intersection over Union), הערכה איכותית חזותית</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>יתרון עיקרי</strong></td><td><strong>חסרון עיקרי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>DBSCAN</td><td>מהיר יותר, מזהה רעש מפורשות</td><td>דורש eps ו-minPts קבועים</td><td>דאטה-סט גדול יותר, יש outliers</td></tr><tr><td>K-Means</td><td>מהיר מאוד, סקלאבילי</td><td>דורש <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> מראש, אשכולות כדוריים בלבד</td><td>דאטה-סט גדול, אשכולות כדוריים</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>from sklearn.cluster import MeanShift, estimate_bandwidth
+bandwidth = estimate_bandwidth(X, quantile=0.2)
+ms = MeanShift(bandwidth=bandwidth)
+labels = ms.fit_predict(X)
+print(ms.cluster_centers_)   # מוקדי הצפיפות (modes) שנמצאו</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מה ההבדל המהותי בין Mean Shift ל-K-Means?</strong></p>
+<p><strong>ת: </strong>K-Means מניח מראש <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> אשכולות כדוריים וממזער מרחק ריבועי; Mean Shift לא מניח מספר אשכולות וצורתם — הוא 'מחפש' את שיאי הצפיפות בנתונים בעצמם, ולכן מתאים גם לצורות לא-כדוריות.</p>
+<p><strong>ש: </strong><strong>מה קורה אם בוחרים bandwidth קטן מדי?</strong></p>
+<p><strong>ת: </strong>כל אזור צפוף קטן יזוהה כ-mode נפרד, וייווצרו אשכולות רבים מדי ומפוצלים מדי — מצב של 'over-segmentation'.</p>
+<p><strong>ש: </strong><strong>מדוע Mean Shift לא מתאים לדאטה-סטים גדולים?</strong></p>
+<p><strong>ת: </strong>כי בכל איטרציה, לכל נקודה צריך לחשב מרחק לכל הנקודות האחרות בתוך החלון — מה שיוצר סיבוכיות חישובית גבוהה (<img class="inline-formula-img" src="/topic-assets/a5f5282bceb8.png" loading="lazy" alt="formula"> לפחות) שלא מתרחבת היטב (scalable) למיליוני נקודות.</p>

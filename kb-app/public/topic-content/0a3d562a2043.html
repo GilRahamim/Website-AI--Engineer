@@ -1,0 +1,15 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>תופעה שבה המודל לומד את דאטה האימון &quot;בעל פה&quot; (כולל רעש ופרטים ספציפיים שלא מתכללים), כך שהוא מציג ביצועים מצוינים על סט האימון אך ביצועים גרועים משמעותית על דאטה חדש (validation/test).</p>
+<h4 class='sec-h'>🔍 מתי זה קורה?</h4>
+<ul><li>המודל מורכב/גדול מדי בהשוואה לכמות דאטה האימון הזמינה.</li><li>אימון יותר מדי epochs בלי עצירה בזמן (early stopping).</li><li>דאטה אימון לא מגוון מספיק או לא מייצג את ההתפלגות האמיתית.</li><li>היעדר רגולריזציה (Dropout, Weight Decay, Data Augmentation).</li></ul>
+<h4 class='sec-h'>⚠️ איך מזהים?</h4>
+<ul><li>פער גדל בין Loss/Accuracy על סט האימון לבין סט ה-Validation — Loss אימון יורד אך Loss validation מתחיל לעלות.</li><li>ביצועים מצוינים על דאטה האימון אך ביצועים חלשים על דאטה לא-נצפה (test).</li><li>עקומת Learning Curve מציגה התרחקות (divergence) בין עקומת האימון לעקומת ה-validation.</li></ul>
+<h4 class='sec-h'>🛠️ איך פותרים / מטפלים?</h4>
+<ul><li>Dropout — כיבוי אקראי של נוירונים בזמן אימון.</li><li>Data Augmentation — הגדלת גיוון דאטה האימון.</li><li>Regularization (L1/L2, Weight Decay) — הגבלת גודל המשקלים.</li><li>Early Stopping — עצירת האימון כשה-validation loss מתחיל לעלות.</li><li>הקטנת מורכבות המודל (פחות פרמטרים/שכבות).</li><li>הגדלת כמות וגיוון דאטה האימון.</li></ul>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>Overfitting הוא הקצה האחד של ה-Bias-Variance Tradeoff (וריאנס גבוה); הקצה השני, Underfitting, מתאר מודל פשוט מדי עם הטיה (bias) גבוהה. Dropout, Batch Normalization ו-Data Augmentation הן הטכניקות הנפוצות ביותר במניעתו ברשתות עמוקות.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>איך מבדילים בין Overfitting ל-Underfitting מתוך עקומות האימון?</p>
+<p><strong>ת: </strong>ב-Overfitting, Loss האימון נמוך אך Loss ה-validation גבוה (פער גדול); ב-Underfitting שני ה-Loss-ים גבוהים ודומים — המודל לא מספיק טוב אפילו על דאטה האימון.</p>
+<p><strong>ש: </strong>מהי הדרך היעילה ביותר להתמודד עם Overfitting כשאין אפשרות לאסוף דאטה נוסף?</p>
+<p><strong>ת: </strong>שילוב של רגולריזציה (Dropout, Weight Decay), Data Augmentation להגדלת גיוון מלאכותי, והקטנת מורכבות המודל, בצירוף Early Stopping למניעת אימון יתר.</p>

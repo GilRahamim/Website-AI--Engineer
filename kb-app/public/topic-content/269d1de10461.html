@@ -1,0 +1,17 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>N-gram הוא רצף רציף של n פריטים (מילים או תווים) מתוך טקסט. Phrase Detection היא הטכניקה לזיהוי אוטומטי אילו רצפי מילים (bigrams/trigrams) מהווים ביטוי קבוע ובעל משמעות עצמאית (כגון &quot;New York&quot;), ולא צירוף מקרי של שתי מילים נפרדות.</p>
+<h4 class='sec-h'>🔍 מתי זה קורה?</h4>
+<ul><li>כשלב מקדים לפני בניית ייצוג BoW/TF-IDF, כדי לשמר משמעות של ביטויים רב-מילתיים שהיו מתפרקים אחרת למילים בודדות חסרות הקשר.</li><li>כשלב מקדים לאימון Word2Vec — תהליך 'word2phrase' מאחד ביטויים נפוצים לטוקן יחיד (לדוגמה &quot;new_york&quot;) לפני האימון, כך שלביטוי יש וקטור משלו.</li></ul>
+<h4 class='sec-h'>⚙️ סוגי N-grams</h4>
+<table class='kbtable'><tr><td><strong>סוג</strong></td><td><strong>n</strong></td><td><strong>דוגמה</strong></td></tr><tr><td>Unigram</td><td>1</td><td>&quot;New&quot;, &quot;York&quot;, &quot;City&quot;</td></tr><tr><td>Bigram</td><td>2</td><td>&quot;New York&quot;, &quot;York City&quot;</td></tr><tr><td>Trigram</td><td>3</td><td>&quot;New York City&quot;</td></tr></table>
+<h4 class='sec-h'>⚠️ איך מזהים ביטוי 'אמיתי' ולא צירוף מקרי?</h4>
+<ul><li>תדירות ההופעה המשולבת של שתי המילים גבוהה משמעותית מהמצופה לפי תדירותן הבודדת (ניתן לבדוק באמצעות PMI).</li><li>הביטוי מופיע באופן עקבי וחזרתי בקורפוס, ולא רק במקרה בודד.</li></ul>
+<h4 class='sec-h'>🛠️ איך פותרים / מטפלים?</h4>
+<ul><li>שיטת gensim Phrases: עוברת על הקורפוס וסופרת תדירויות bigrams; bigram עם ציון (score) מעל סף מוגדר (מבוסס יחס תדירויות, בדומה ל-PMI) מאוחד לטוקן יחיד.</li><li>מריצים את שלב הזיהוי איטרטיבית (Phrases על תוצאת Phrases) כדי לזהות גם trigrams ו-multi-grams ארוכים יותר — זהו עקרון ה-word2phrase.</li><li>מזינים את הטוקנים המעובדים (כולל הביטויים המאוחדים) לשלב הייצוג הווקטורי (BoW/TF-IDF) או לאימון Word2Vec.</li></ul>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>זיהוי ביטויים נשען ישירות על עקרון PMI להחלטה אילו bigrams לאחד. תהליך זה (word2phrase) הוא שלב עיבוד מקדים סטנדרטי לפני אימון Word2Vec ו-FastText, ומשתלב גם בצנרת ה-Text Preprocessing Pipeline הכללית, לפני בניית ייצוגי Bag-of-Words.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>למה חשוב לזהות ביטויים רב-מילתיים לפני אימון Word2Vec?</strong></p>
+<p><strong>ת: </strong>כי בלי זיהוי הביטוי, &quot;New&quot; ו-&quot;York&quot; ילמדו כשני וקטורים נפרדים, ויאבד המשמעות הספציפית של הביטוי המאוחד &quot;New York&quot; שהוא ישות סמנטית שונה מכל אחת מהמילים בנפרד.</p>
+<p><strong>ש: </strong><strong>איזה מדד סטטיסטי משמש בדרך כלל להחליט אם bigram מהווה ביטוי קבוע?</strong></p>
+<p><strong>ת: </strong>PMI (Pointwise Mutual Information) או מדדי ציון דומים המבוססים על יחס תדירות ההופעה המשולבת לתדירויות הבודדות.</p>

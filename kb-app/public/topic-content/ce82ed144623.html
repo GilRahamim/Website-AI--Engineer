@@ -1,0 +1,15 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>MCP (Model Context Protocol) הוא גישה ארכיטקטונית המפרידה (decouple) בין שכבת ה-UI, שכבת ה-Orchestration ושכבת ה-Execution של agent. ההפרדה הזו משפרת תחזוקתיות, סקלאביליות, תצפיתיות (observability) ופריסה מאובטחת. ניתן לחשוב על MCP כ&quot;מתאם אוניברסלי&quot; — במקום לבנות אינטגרציה מותאמת לכל שירות (DB, API, קבצים), MCP מספק פרוטוקול אחד אחיד.</p>
+<h4 class='sec-h'>🏛️ שלוש שכבות הארכיטקטורה</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/fa4fe39248c4.png" loading="lazy" alt="MCP Architecture — ארכיטקטורת Model Context Protocol — architecture diagram" /></div>
+<table class='kbtable'><tr><td><strong>שכבה</strong></td><td><strong>תיאור</strong></td><td><strong>טכנולוגיות נפוצות</strong></td></tr><tr><td>Client (Frontend)</td><td>ה-UI שבו המשתמש מתקשר (chat/form/dashboard). קורא ל-API של ה-backend ומציג תשובות. אופציונלי: WebSocket לסטרימינג.</td><td>Angular, React, Vue</td></tr><tr><td>Processing (Backend/Orchestration)</td><td>חושף API endpoints, מתאם לוגיקת agent (ניתוב שאילתות לכלי/agent הנכון), מטפל בהפעלת כלים, תכנון וביצוע, לוגים ומדדים, caching/session memory.</td><td>FastAPI, Flask</td></tr><tr><td>LLM/Execution Layer</td><td>מטפל בקריאות ה-LLM בפועל ובלוגיקת function calling/tool invocation. כולל code execution agents, retrieval (vector DB ל-RAG), וקריאות API חיצוניות.</td><td>OpenAI, Claude, Gemini</td></tr></table>
+<h4 class='sec-h'>🎯 תחומי שימוש</h4>
+<ul><li>Modularity &amp; Separation of Concerns — הפרדת UI, orchestration ו-LLM משפרת סקלאביליות ותחזוקתיות.</li><li>Multi-Agent Ecosystem — שרתי MCP משתלבים בקלות עם CrewAI, LangChain, AutoGen.</li><li>Production-Oriented — מאפשר authentication, logging, rate-limiting ו-monitoring מהיום הראשון.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>פרוטוקול אחד עקבי במקום אינטגרציות מותאמות לכל שירות.</li><li>כל agent הוא microservice מודולרי עם schema קלט/פלט מוגדר היטב.</li><li>ניתן להתחיל קטן (agent/tool אחד) ולהתרחב לזרימות multi-agent מתואמות.</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>מוסיף שכבת תשתית/תיאום נוספת בהשוואה לקריאת API ישירה ל-LLM.</li><li>MCP מגדיר את הפרוטוקול בלבד — לא את הפריימוורק; דורש בחירת כלים לכל שכבה.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין MCP לבין שימוש ב-API ישיר של LLM?</strong></p>
+<p>ת: MCP מפריד את שכבות ה-UI, ה-orchestration וה-execution לרכיבים נפרדים וניתנים להחלפה, ומאפשר ניהול מרובה-agents, אבטחה, לוגים ותצפיתיות — בניגוד לקריאת API ישירה שמשלבת הכל בקוד אחד.</p>
+<p><strong>ש: מדוע MCP מתואר כ&quot;מתאם אוניברסלי&quot;?</strong></p>
+<p>ת: כי הוא מספק פרוטוקול תקשורת אחד עקבי בין agents/LLM לכלים חיצוניים (DB, API, קבצים), במקום לדרוש אינטגרציה מותאמת לכל שירות בנפרד.</p>

@@ -1,0 +1,32 @@
+<h4 class='sec-h'>Silhouette Score</h4>
+<p class='formula-label'><em>מדד הערכת קלסטרינג המשקלל קומפקטיות והפרדה</em></p>
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Silhouette Score מודד עבור כל נקודה כמה היא 'משתלבת' באשכול שלה בהשוואה לאשכולות האחרים — משקלל גם קומפקטיות תוך-אשכולית וגם הפרדה בין-אשכולית. הערך הממוצע על פני כל הנקודות משמש כמדד גלובלי לאיכות חלוקת ה-clustering כולה.</p>
+<h4 class='sec-h'>📐 הנוסחה</h4>
+<p>לכל נקודה <img class="inline-formula-img" src="/topic-assets/df3ec01f900b.png" loading="lazy" alt="formula">, מגדירים <img class="inline-formula-img" src="/topic-assets/66641b359d40.png" loading="lazy" alt="formula"> — המרחק הממוצע מ-<img class="inline-formula-img" src="/topic-assets/df3ec01f900b.png" loading="lazy" alt="formula"> לכל הנקודות האחרות באותו אשכול, ו-<img class="inline-formula-img" src="/topic-assets/7f40c20b7b07.png" loading="lazy" alt="formula"> — המרחק הממוצע המינימלי מ-<img class="inline-formula-img" src="/topic-assets/df3ec01f900b.png" loading="lazy" alt="formula"> לכל נקודות אשכול אחר (האשכול ה'שני-הטוב-ביותר'). מדד ה-Silhouette לנקודה <img class="inline-formula-img" src="/topic-assets/df3ec01f900b.png" loading="lazy" alt="formula">:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/3519b2d77e5e.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/66641b359d40.png" loading="lazy" alt="formula"></td><td>מרחק ממוצע תוך-אשכולי (קומפקטיות)</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/7f40c20b7b07.png" loading="lazy" alt="formula"></td><td>מרחק ממוצע לאשכול הקרוב ביותר האחר (הפרדה)</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/ce7981f2c5ea.png" loading="lazy" alt="formula"></td><td>ציון Silhouette לנקודה <img class="inline-formula-img" src="/topic-assets/df3ec01f900b.png" loading="lazy" alt="formula">, בין <img class="inline-formula-img" src="/topic-assets/114c81f0bcb2.png" loading="lazy" alt="formula"> ל-<img class="inline-formula-img" src="/topic-assets/a8dfdbd751a0.png" loading="lazy" alt="formula"></td></tr></table>
+<h4 class='sec-h'>🎯 מתאים לסוג למידה ומשימה</h4>
+<table class='kbtable'><tr><td><strong>סוג למידה</strong></td><td><strong>משימה</strong></td><td><strong>מתאים?</strong></td><td><strong>הערות</strong></td></tr><tr><td>לא מפוקחת</td><td>Clustering (כל אלגוריתם)</td><td>✅</td><td>מדד פנימי כללי, לא תלוי באלגוריתם ספציפי</td></tr><tr><td>לא מפוקחת</td><td>Clustering עם הרבה Noise (DBSCAN)</td><td>⚠️</td><td>יש להתעלם מנקודות Noise (תווית -1) בחישוב</td></tr><tr><td>מפוקחת</td><td>Classification / Regression</td><td>❌</td><td>לא רלוונטי — אין צורך במדד פנימי כשיש תוויות אמת</td></tr></table>
+<h4 class='sec-h'>📊 טווח ערכים ופרשנות</h4>
+<table class='kbtable'><tr><td><strong>ערך</strong></td><td><strong>משמעות</strong></td></tr><tr><td>קרוב ל-<img class="inline-formula-img" src="/topic-assets/a8dfdbd751a0.png" loading="lazy" alt="formula"></td><td>הפרדה מצוינת — הנקודה קרובה מאוד לאשכול שלה ורחוקה מאחרים</td></tr><tr><td>קרוב ל-<img class="inline-formula-img" src="/topic-assets/2e8ede81e541.png" loading="lazy" alt="formula"></td><td>הנקודה על הגבול בין שני אשכולות</td></tr><tr><td>קרוב ל-<img class="inline-formula-img" src="/topic-assets/114c81f0bcb2.png" loading="lazy" alt="formula"></td><td>שיוך שגוי כנראה — הנקודה קרובה יותר לאשכול אחר משלה</td></tr></table>
+<h4 class='sec-h'>✅ מתי עדיף על מדדים אחרים?</h4>
+<ul><li>כשרוצים מדד יחיד וברור (בין -1 ל-1) להשוואת מספר חלוקות clustering שונות (ערכי <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> שונים, או אלגוריתמים שונים).</li><li>כשרוצים גם ניתוח פר-נקודה (לא רק ציון גלובלי) — ניתן לזהות נקודות בעייתיות בודדות.</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>חישוב יקר חישובית (<img class="inline-formula-img" src="/topic-assets/a5f5282bceb8.png" loading="lazy" alt="formula">) על דאטה-סטים גדולים מאוד, כיוון שדורש מרחקים בין כל זוגות הנקודות.</li><li>מבוסס בעיקרו על מרחק אוקלידי, ומניח אשכולות פחות או יותר קמורים — פחות אינפורמטיבי לאשכולות בצורות מורכבות מאוד.</li><li>כמו כל מדד פנימי, אינו מעיד בהכרח על 'נכונות' סמנטית של החלוקה מבחינה עסקית.</li></ul>
+<h4 class='sec-h'>💻 מימוש בקוד (Python / sklearn)</h4>
+<pre class='code-block'><code>from sklearn.metrics import silhouette_score, silhouette_samples
+from sklearn.cluster import KMeans
+km = KMeans(n_clusters=4, random_state=42).fit(X)
+labels = km.labels_
+score = silhouette_score(X, labels)              # ציון גלובלי ממוצע
+sample_scores = silhouette_samples(X, labels)     # ציון לכל נקודה בנפרד
+print(f&amp;quot;Silhouette Score: {score:.3f}&amp;quot;)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>איך מחשבים Silhouette Score כשיש נקודות Noise מ-DBSCAN?</strong></p>
+<p><strong>ת: </strong>יש להוציא מהחישוב את הנקודות המתויגות כ-Noise (תווית -1), כי הן אינן משתייכות לאף אשכול ומדד הקומפקטיות/הפרדה לא מוגדר עבורן באופן משמעותי.</p>
+<p><strong>ש: </strong><strong>מה ההבדל המהותי בין Silhouette Score ל-Inertia?</strong></p>
+<p><strong>ת: </strong>Inertia מודדת רק קומפקטיות תוך-אשכולית, ויורדת מונוטונית עם <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula">. Silhouette Score משקללת גם הפרדה מאשכולות אחרים, ולכן יש לה מקסימום מוגדר היטב שמתאים לבחירת <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> אופטימלי, ולא רק נקודת מרפק היוריסטית.</p>
+<p><strong>ש: </strong><strong>מה משמעות ציון Silhouette שלילי לנקודה ספציפית?</strong></p>
+<p><strong>ת: </strong>ציון שלילי מעיד שהמרחק הממוצע של הנקודה לאשכול 'השני-הטוב-ביותר' קטן מהמרחק הממוצע שלה לאשכול שאליו היא שויכה בפועל — כלומר, סביר שהנקודה שויכה לאשכול הלא-נכון.</p>

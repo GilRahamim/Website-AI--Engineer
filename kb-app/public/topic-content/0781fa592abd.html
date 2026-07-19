@@ -1,0 +1,31 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>רשת עצבית מלאה (Fully-Connected) המורכבת משכבות נוירונים, שבה כל נוירון בשכבה מחובר לכל הנוירונים בשכבה הקודמת. משמשת כאבן הבניין הבסיסית של רשתות עצביות עמוקות.</p>
+<h4 class='sec-h'>🏛️ מבנה הרשת</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/37520641272b.png" loading="lazy" alt="MLP — Multi-Layer Perceptron — architecture diagram" /></div>
+<ul><li>שכבת קלט (Input Layer) — מקבלת וקטור פיצ'רים $x \in \mathbb{R}^n$</li><li>שכבות חבויות (Hidden Layers) — כל שכבה מבצעת טרנספורמציה לינארית ולאחריה פונקציית הפעלה לא-לינארית</li><li>שכבת פלט (Output Layer) — מפיקה לוגיטים, הסתברויות (Softmax) או ערך רציף, לפי סוג המשימה</li></ul>
+<h4 class='sec-h'>📐 נוסחאות מפתח</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/0b7256677030.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 תחומי שימוש</h4>
+<ul><li>בעיות סיווג ורגרסיה על נתונים טבלאיים</li><li>שכבות Head בסוף ארכיטקטורות עמוקות יותר (CNN, Transformer)</li><li>Baseline ראשוני לכל בעיית Deep Learning</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>Universal Approximator — עם מספיק נוירונים יכולה לקרב כל פונקציה רציפה</li><li>פשוטה ליישום, להבנה ולאימון</li><li>משמשת כרכיב בסיסי בתוך ארכיטקטורות מורכבות יותר</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>לא שומרת על מבנה מרחבי/זמני — לא מתאימה ישירות לתמונות או רצפים ארוכים</li><li>מספר הפרמטרים גדל מהר עם גודל השכבות (Fully-Connected)</li><li>נוטה ל-Overfitting בנתונים בעלי מימד גבוה ביחס לכמות הדוגמאות</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Classification</td><td>Accuracy, F1, ROC-AUC</td></tr><tr><td>Regression</td><td>MSE, RMSE, R2</td></tr></table>
+<h4 class='sec-h'>🔄 וריאנטים / גרסאות</h4>
+<table class='kbtable'><tr><td><strong>וריאנט</strong></td><td><strong>הבדל מרכזי</strong></td></tr><tr><td>Perceptron</td><td>שכבה אחת בלבד, מסווג לינארי</td></tr><tr><td>Deep MLP</td><td>מספר שכבות חבויות, יכולת ייצוג גבוהה יותר</td></tr><tr><td>Wide MLP</td><td>שכבות רחבות (הרבה נוירונים) במקום עומק</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (PyTorch)</h4>
+<pre class='code-block'><code>import torch.nn as nn
+
+model = nn.Sequential(
+    nn.Linear(784, 256),
+    nn.ReLU(),
+    nn.Linear(256, 64),
+    nn.ReLU(),
+    nn.Linear(64, 10)
+)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>למה צריך פונקציית הפעלה לא-לינארית ב-MLP?</p>
+<p><strong>ת: </strong>בלעדיה, צירוף של שכבות לינאריות הוא עדיין טרנספורמציה לינארית אחת — הרשת לא יכולה ללמוד דפוסים לא-לינאריים.</p>
+<p><strong>ש: </strong>מה ההבדל בין MLP ל-CNN?</p>
+<p><strong>ת: </strong>MLP מחבר כל קלט לכל נוירון (Dense), בעוד CNN משתמש בפילטרים משותפים ומקומיים שמנצלים את המבנה המרחבי של התמונה.</p>

@@ -1,0 +1,25 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>חיפוש סמנטי (Semantic Search) הוא שיטת אחזור מסמכים המתבססת על דמיון במרחב ה-embeddings (ולא על התאמת מילים מדויקת כמו ב-Boolean/BM25), כדי למצוא תוצאות רלוונטיות מבחינת משמעות גם אם אינן חולקות מילות מפתח זהות. RAG (Retrieval-Augmented Generation) היא ארכיטקטורה הבונה על חיפוש סמנטי כדי 'להזין' למודל שפה גדול (LLM) מקטעי טקסט רלוונטיים מתוך מאגר ידע חיצוני, לפני יצירת התשובה — כך משלבים ידע עדכני/פרטי שלא היה חלק מאימון המודל.</p>
+<h4 class='sec-h'>🔍 מתי זה קורה / מתי משתמשים?</h4>
+<ul><li>כשרוצים שתוצאות החיפוש ישקפו כוונה ומשמעות ולא רק מילות מפתח מדויקות — לדוגמה שאילתה &quot;מחשב נייד קל משקל&quot; שתמצא גם מסמכים שמשתמשים במילה &quot;לפטופ&quot;.</li><li>כשבונים מערכת מבוססת LLM שצריכה לענות על שאלות בהתבסס על מאגר מסמכים ספציפי (תיעוד פנים-ארגוני, בסיס ידע) שלא היה חלק מאימון המודל המקורי.</li></ul>
+<h4 class='sec-h'>⚙️ איך זה עובד — צנרת RAG טיפוסית</h4>
+<ul><li>מחלקים את מאגר המסמכים ל'נתחים' (chunks) בגודל סביר.</li><li>מחשבים embedding (וקטור) לכל chunk באמצעות מודל embeddings (Word2Vec/GloVe/Doc2Vec או מודלי sentence-embeddings מתקדמים), ושומרים אותם במסד וקטורי (vector store / index).</li><li>בזמן שאילתה: מחשבים embedding לשאילתת המשתמש, ומאתרים את ה-chunks הקרובים ביותר במרחב הווקטורי (לרוב לפי Cosine Similarity, ב-Approximate Nearest Neighbor index לסקיילביליות).</li><li>מזינים את ה-chunks שאוחזרו כ'הקשר' (context) בתוך ה-prompt למודל השפה, יחד עם שאלת המשתמש.</li><li>המודל מייצר תשובה המבוססת על ההקשר שאוחזר, ולא רק על הידע ה'גלום' בפרמטרים שלו — מה שמפחית הזיות (hallucinations) ומאפשר ציטוט מקורות.</li></ul>
+<h4 class='sec-h'>⚠️ איך מזהים בעיה בצנרת RAG?</h4>
+<ul><li>תוצאות אחזור לא רלוונטיות — לרוב מעיד על chunking לא מתאים (נתחים גדולים/קטנים מדי) או embeddings באיכות נמוכה.</li><li>המודל 'מתעלם' מההקשר שאוחזר וממשיך להזות — לרוב דורש שיפור ב-prompt engineering או בדירוג (re-ranking) של תוצאות האחזור.</li></ul>
+<h4 class='sec-h'>🛠️ איך משפרים?</h4>
+<ul><li>חיפוש היברידי (Hybrid Search) — שילוב חיפוש סמנטי (embeddings) עם חיפוש לקסיקלי קלאסי (BM25/TF-IDF), כדי ליהנות גם מהתאמת מילות מפתח מדויקת וגם מדמיון סמנטי.</li><li>Re-ranking — שלב נוסף שמסדר מחדש את top-K התוצאות שאוחזרו, באמצעות מודל מדויק (ויקר) יותר, לפני שמזינים אותן ל-LLM.</li><li>כוונון גודל ה-chunks וחפיפה (overlap) ביניהם, כדי לשמר הקשר מלא בלי לפצל מידע חשוב לשניים.</li></ul>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>חיפוש סמנטי נשען ישירות על Word Embeddings/Doc2Vec ועל Cosine Similarity לחישוב הדמיון. הוא מהווה אלטרנטיבה (ולרוב משלים) לאחזור הבוליאני/BM25 הקלאסי המתואר ב-Information Retrieval Approaches, ומוערך באמצעות אותם מדדי אחזור (Precision@K, Recall@K, MRR).</p>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from sentence_transformers import SentenceTransformer
+import numpy as np
+model = SentenceTransformer('all-MiniLM-L6-v2')
+doc_embeddings = model.encode(chunks)
+query_embedding = model.encode([query])
+scores = doc_embeddings @ query_embedding.T  # cosine-like similarity
+top_k = np.argsort(scores.ravel())[::-1][:5]</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מה התפקיד של שלב האחזור (Retrieval) בארכיטקטורת RAG?</strong></p>
+<p><strong>ת: </strong>לאתר מתוך מאגר ידע חיצוני את הקטעים הרלוונטיים ביותר לשאלת המשתמש, ולהזין אותם כהקשר ל-LLM — כך המודל יכול לבסס את תשובתו על מידע עדכני/פרטי שלא היה חלק מאימונו, ולהפחית הזיות.</p>
+<p><strong>ש: </strong><strong>מה ההבדל בין חיפוש סמנטי לחיפוש לקסיקלי (כגון BM25)?</strong></p>
+<p><strong>ת: </strong>חיפוש לקסיקלי מתבסס על התאמת מילות מפתח מדויקות, בעוד חיפוש סמנטי מתבסס על דמיון במרחב embeddings ויכול לאתר מסמכים רלוונטיים מבחינה משמעותית גם בלי חפיפת מילים — לעיתים משלבים את שניהם (Hybrid Search) לקבלת התוצאות הטובות ביותר.</p>

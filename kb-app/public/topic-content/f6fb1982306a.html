@@ -1,0 +1,42 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>HNSW הוא אלגוריתם state-of-the-art לחיפוש שכנים קרובים בקירוב (Approximate Nearest Neighbor — ANN), המבוסס על גרף רב-שכבתי (multi-layer proximity graph). הוא עומד בבסיס מנועי החיפוש של FAISS, Qdrant, Weaviate ו-Milvus (Malkov &amp; Yashunin, 2016).</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ol><li>בונים גרף מרובה-שכבות: השכבות העליונות דלילות (long-range links), השכבה התחתונה (Layer 0) צפופה ומכילה את כל הנקודות.</li><li>חיפוש מתחיל בנקודת כניסה (entry point) בשכבה העליונה.</li><li>Greedy descent search — בכל שכבה מתבצע 'דילוג' לשכן הקרוב ביותר, ואז יורדים שכבה ומחזרים על התהליך.</li><li>כשמגיעים ל-Layer 0, מתבצע חיפוש מדויק יותר בין השכנים הקרובים ביותר בפועל.</li><li>תכונת 'עולם קטן' (small-world): קישורים ארוכי-טווח מקצרים את אורך מסלול החיפוש לסדר גודל לוגריתמי.</li></ol>
+<h4 class='sec-h'>📐 נוסחאות וסיבוכיות</h4>
+<p>סיבוכיות החיפוש בתוחלת, הודות לתכונת ה-small-world:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/b2741c5a1306.png" loading="lazy" alt="formula"></div>
+<p>כאשר <em>N</em> הוא מספר הנקודות (וקטורים) באינדקס.</p>
+<h4 class='sec-h'>🔡 פרמטרים מרכזיים</h4>
+<table class='kbtable'><tr><td><strong>פרמטר</strong></td><td><strong>משמעות</strong></td></tr><tr><td>M</td><td>מספר הקשרים המקסימלי לכל צומת בגרף — משפיע על דיוק וזיכרון</td></tr><tr><td>efConstruction</td><td>רוחב החיפוש בעת בניית הגרף — גבוה יותר = גרף מדויק יותר אך בנייה איטית יותר</td></tr><tr><td>efSearch</td><td>רוחב החיפוש בזמן שאילתה — גבוה יותר = recall טוב יותר אך שאילתה איטית יותר</td></tr></table>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>אינדקס לחיפוש סמנטי בקנה מידה גדול (מיליוני וקטורים) בזמן אמת.</li><li>הליבה של מסדי נתונים וקטוריים: FAISS, Qdrant, Weaviate, Milvus, pgvector.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>recall גבוה במהירות חיפוש מהירה ביחס לשיטות ANN אחרות.</li><li>מתאים מאוד לאינדקס שחי כולו בזיכרון (in-RAM).</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>צריכת זיכרון גבוהה — האינדקס חי כולו ב-RAM.</li><li>זמן בנייה (build time) של הגרף יכול להיות משמעותי באוספי דאטה גדולים.</li><li>Trade-off מובנה: recall מהיר מול זיכרון וזמן בנייה.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Retrieval / ANN search</td><td>Recall@k, Latency, QPS (queries per second)</td></tr><tr><td>השוואת אינדקסים</td><td>Recall vs. Latency curve (לפרמטרים שונים של efSearch)</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה לאלגוריתמי ANN אחרים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>יתרון עיקרי</strong></td><td><strong>חסרון עיקרי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>IndexFlatL2 (FAISS)</td><td>מדויק לחלוטין (exact search)</td><td>איטי באוספים גדולים</td><td>אוספים קטנים, צורך בדיוק מושלם</td></tr><tr><td>IVF</td><td>מהיר יותר מ-Flat</td><td>פחות מדויק, צריך אימון (training)</td><td>אוספים גדולים עם תקציב זיכרון מוגבל</td></tr><tr><td>PQ (Product Quantization)</td><td>חוסך זיכרון רבות</td><td>פגיעה בדיוק</td><td>כאשר זיכרון הוא הצוואר בקבוק</td></tr><tr><td>HNSW</td><td>recall מהיר וגבוה</td><td>זיכרון רב, בנייה איטית</td><td>ברירת המחדל למערכות production מודרניות</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (FAISS + Sentence Transformers)</h4>
+<pre class='code-block'><code>from sentence_transformers import SentenceTransformer
+import faiss
+documents = [
+&amp;quot;Crohn's disease is a chronic condition affecting the gut.&amp;quot;,
+&amp;quot;Biologics and steroids are common treatments.&amp;quot;,
+&amp;quot;Dietary fiber can support gut health.&amp;quot;,
+]
+bi_encoder = SentenceTransformer('all-MiniLM-L6-v2')
+doc_embeddings = bi_encoder.encode(documents, convert_to_numpy=True)
+dimension = doc_embeddings.shape[1]
+index = faiss.IndexHNSWFlat(dimension, 32)   # M = 32
+index.hnsw.efConstruction = 200
+index.add(doc_embeddings)
+query_embedding = bi_encoder.encode([&amp;quot;How to treat Crohn's?&amp;quot;], convert_to_numpy=True)
+index.hnsw.efSearch = 64
+D, I = index.search(query_embedding, k=3)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה התפקיד של השכבות העליונות בגרף HNSW?</strong></p>
+<p>ת: הן דלילות ומכילות קישורים ארוכי-טווח, ומאפשרות 'לדלג' מהר על פני המרחב הווקטורי לפני שמתבצע חיפוש מדויק יותר בשכבה התחתונה הצפופה.</p>
+<p><strong>ש: מה ההבדל בין efConstruction ל-efSearch?</strong></p>
+<p>ת: efConstruction קובע את רוחב החיפוש בזמן בניית הגרף (משפיע על איכות האינדקס), בעוד efSearch קובע את רוחב החיפוש בזמן שאילתה (משפיע על recall מול latency בזמן אמת).</p>

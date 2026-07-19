@@ -1,0 +1,31 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מודל שפה מבוסס Transformer Encoder-only, המאומן באופן דו-כיווני (Bidirectional) על משימות Self-Supervised כדי להפיק ייצוגים תלויי-הקשר (Contextual Embeddings) עבור מילים וטקסטים.</p>
+<h4 class='sec-h'>🏛️ מבנה הרשת</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/83dbda1b3538.png" loading="lazy" alt="BERT — Bidirectional Encoder Representations from Transformers — architecture diagram" /></div>
+<ul><li>Stack של Transformer Encoder Layers (12 ב-BERT-Base, 24 ב-BERT-Large)</li><li>Token Embeddings + Segment Embeddings + Positional Embeddings בכניסה</li><li>טוקן [CLS] בתחילת הרצף — ייצוג מסכם לכל הרצף, משמש למשימות סיווג</li><li>טוקן [SEP] — מפריד בין שני משפטים/קטעים בקלט (לדוגמה ב-Next Sentence Prediction)</li></ul>
+<h4 class='sec-h'>📐 נוסחאות מפתח</h4>
+<p>Masked Language Modeling — שני שלבי האימון המקדים העיקריים:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/3721c338cd7a.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 תחומי שימוש</h4>
+<ul><li>חילוץ ייצוגים תלויי-הקשר למשימות הבנת טקסט</li><li>Fine-tuning למשימות Downstream: סיווג טקסט, NER, Question Answering</li><li>בסיס ל-Bi-Encoder Retrieval ולחיפוש סמנטי</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>דו-כיווניות (Bidirectional) — כל טוקן רואה הקשר משני הצדדים, בניגוד למודלים אוטורגרסיביים</li><li>ייצוגים תלויי-הקשר (Contextual) — אותה מילה מקבלת וקטור שונה בהקשרים שונים</li><li>Transfer Learning יעיל — Fine-tuning קצר על משימה ספציפית לאחר Pretraining יקר חד-פעמי</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>לא בנוי ליצירת טקסט (Generation) — מתאים להבנה (Understanding) ולא לדקודינג אוטורגרסיבי</li><li>גודל קלט מוגבל (בד&quot;כ 512 טוקנים)</li><li>Pretraining יקר מאוד מבחינת חישוב ודאטה</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Text Classification</td><td>Accuracy, F1</td></tr><tr><td>NER</td><td>F1 (Token-level)</td></tr><tr><td>QA</td><td>Exact Match, F1</td></tr><tr><td>Semantic Search</td><td>Recall@K, MRR</td></tr></table>
+<h4 class='sec-h'>🔄 וריאנטים / גרסאות</h4>
+<table class='kbtable'><tr><td><strong>וריאנט</strong></td><td><strong>הבדל מרכזי</strong></td></tr><tr><td>BERT-Base / BERT-Large</td><td>12 vs 24 שכבות Encoder</td></tr><tr><td>RoBERTa</td><td>אימון מקדים משופר, ללא Next Sentence Prediction</td></tr><tr><td>DistilBERT</td><td>גרסה מזוקקת (Distillation) — קטנה ומהירה יותר</td></tr><tr><td>Sentence-BERT</td><td>מאומן ספציפית להפקת Embeddings ברמת משפט לחיפוש סמנטי</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (PyTorch)</h4>
+<pre class='code-block'><code>from transformers import BertTokenizer, BertModel
+
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+model = BertModel.from_pretrained('bert-base-uncased')
+
+inputs = tokenizer(&amp;quot;Deep learning is powerful&amp;quot;, return_tensors=&amp;quot;pt&amp;quot;)
+outputs = model(**inputs)
+cls_embedding = outputs.last_hidden_state[:, 0, :]  # [CLS] representation</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה ההבדל בין BERT ל-GPT?</p>
+<p><strong>ת: </strong>BERT הוא Encoder-only ודו-כיווני, מתאים להבנת טקסט; GPT הוא Decoder-only וחד-כיווני (אוטורגרסיבי), מתאים ליצירת טקסט.</p>
+<p><strong>ש: </strong>מה זה Masked Language Modeling (MLM)?</p>
+<p><strong>ת: </strong>משימת אימון מקדים שבה אחוז מהטוקנים ברצף מוסתר (Mask), והמודל מתבקש לחזות אותם מתוך ההקשר משני הצדדים — זה מה שמכריח דו-כיווניות.</p>

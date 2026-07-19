@@ -1,0 +1,43 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Full Fine-Tuning הוא המשך אימון (continued training) על כל משקלי המודל הקדם-מאומן (pretrained), בניגוד ל-LoRA/PEFT שמאמנת רק adapter קטן מעל מודל קפוא. שתי הגישות 'ממשיכות' את הידע הקיים (שפה, דקדוק, תבניות חשיבה) ומתאימות אותו להוראות חדשות, התנהגות ספציפית-לתחום, וסטייל/טון.</p>
+<h4 class='sec-h'>🏛️ מבנה ההשוואה</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/11b9e8fef187.png" loading="lazy" alt="Full Fine-Tuning לעומת LoRA — היקף האימון מחדש — architecture diagram" /></div>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>מה משתנה</strong></td></tr><tr><td>Full Fine-Tuning</td><td>כל משקלי המודל</td></tr><tr><td>LoRA / PEFT</td><td>משקלי adapter קטנים בלבד</td></tr></table>
+<h4 class='sec-h'>✅ יתרונות Full Fine-Tuning</h4>
+<ul><li>הסתגלות מקסימלית (maximum adaptation) — שינוי עומק בכל הפרמטרים.</li><li>התמחות-תחום (domain specialization) טובה יותר.</li><li>שליטה מלאה על ההתנהגות.</li></ul>
+<h4 class='sec-h'>❌ חסרונות Full Fine-Tuning</h4>
+<ul><li>יקר — דורש זיכרון GPU רב יותר ואימון איטי יותר.</li><li>פחות גמיש לתחזוקת כמה גרסאות/תחומים במקביל (לכל גרסה — עותק מלא של המודל).</li></ul>
+<h4 class='sec-h'>🎯 מתי בכל זאת בוחרים Full Fine-Tuning</h4>
+<ul><li>הסתגלות-תחום עמוקה (deep domain adaptation).</li><li>Safety alignment.</li><li>Structured generation עקבי.</li><li>Tool-use behavior מובנה.</li><li>Model distillation למודלים קטנים-מקומיים.</li></ul>
+<h4 class='sec-h'>💻 דמו — Full Fine-Tuning על מודל קטן (Qwen 0.6B, Dolly 15K)</h4>
+<p>זרימת הדמו: Databricks Dolly Dataset → Prompt Formatting → Tokenization → Qwen 0.6B Model → Full Fine-Tuning → Inference / Generation.</p>
+<p>dataset = load_dataset(&quot;databricks/databricks-dolly-15k&quot;, split=&quot;train[:100]&quot;)</p>
+<p># {&quot;instruction&quot;: &quot;Explain gravity&quot;, &quot;response&quot;: &quot;Gravity is a force...&quot;}</p>
+<p>def format_example(example):</p>
+<p>return {&quot;text&quot;: (</p>
+<p>f&quot;### Instruction:\n{example['instruction']}\n\n&quot;</p>
+<p>f&quot;### Response:\n{example['response']}&quot;</p>
+<p>)}</p>
+<p>dataset = dataset.map(format_example)</p>
+<p>MODEL_NAME = &quot;Qwen/Qwen3-0.6B&quot;</p>
+<p>tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)</p>
+<p>model = AutoModelForCausalLM.from_pretrained(</p>
+<p>MODEL_NAME, torch_dtype=torch.bfloat16 if torch.cuda.is_available() else torch.float32)</p>
+<p>training_args = TrainingArguments(</p>
+<p>output_dir=&quot;./qwen_full_finetuned_demo&quot;,</p>
+<p>num_train_epochs=3, per_device_train_batch_size=1,</p>
+<p>gradient_accumulation_steps=4, learning_rate=2e-5,</p>
+<p>gradient_checkpointing=True, bf16=torch.cuda.is_available(),</p>
+<p>)</p>
+<p>trainer = Trainer(model=model, args=training_args,</p>
+<p>train_dataset=tokenized_dataset, data_collator=data_collator)</p>
+<p>trainer.train()</p>
+<p>trainer.save_model(&quot;./qwen_full_finetuned_demo&quot;)</p>
+<h4 class='sec-h'>📊 דרישות GPU לפי גודל מודל</h4>
+<table class='kbtable'><tr><td><strong>מודל</strong></td><td><strong>GPU נדרש</strong></td></tr><tr><td>0.6B</td><td>16-24GB</td></tr><tr><td>7B</td><td>80GB+</td></tr><tr><td>70B</td><td>אשכול multi-node</td></tr></table>
+<h4 class='sec-h'>🔄 מה קורה בכל שלב אימון</h4>
+<ul><li>1. Forward pass.</li><li>2. חישוב Loss.</li><li>3. Backpropagation.</li><li>4. עדכון משקלים (weight update).</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל המרכזי בין Full Fine-Tuning ל-LoRA מבחינת עלות וזיכרון?</strong></p>
+<p>ת: Full FT מעדכן את כל משקלי המודל — דורש לאחסן gradients ו-optimizer states לכל פרמטר, ולכן GPU memory וזמן אימון גדלים באופן ישיר עם גודל המודל. LoRA מקפיאה את המודל הבסיסי ומאמנת רק adapter קטן (מדרגה נמוכה) — חוסכת זיכרון וזמן, אך מספקת 'שינוי התנהגותי קטן' לעומת 'שינוי התנהגותי גדול' של Full FT.</p>
+<p><strong>ש: מתי Full Fine-Tuning הכרחי ולא רק LoRA?</strong></p>
+<p>ת: כשנדרשת הסתגלות-תחום עמוקה ביותר, safety alignment, או תהליך distillation למודל קטן ייעודי — מצבים שבהם 'שינוי קטן' של adapter לא מספיק לשנות את ההתנהגות הבסיסית של המודל.</p>

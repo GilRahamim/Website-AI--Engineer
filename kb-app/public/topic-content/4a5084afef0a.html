@@ -1,0 +1,40 @@
+<h4 class='sec-h'>PCA — Principal Component Analysis</h4>
+<p class='formula-label'><em>שיטה ליניארית להפחתת מימד (Dimensionality Reduction)</em></p>
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>PCA הוא טכניקה ליניארית להפחתת מימד שמוצאת מערכת צירים חדשה (Principal Components) — קומבינציות ליניאריות של הפיצ'רים המקוריים — כך שהציר הראשון לוכד את מירב השונות (Variance) בדאטה, הציר השני את מירב השונות הנותרת בניצוב לראשון, וכן הלאה.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>ממרכזים את הדאטה (מחסרים את הממוצע מכל פיצ'ר), ולרוב גם מבצעים Standardization (חלוקה בסטיית התקן).</li><li>מחשבים את מטריצת הקוואריאנס (Covariance Matrix) של הפיצ'רים.</li><li>מבצעים פירוק לערכים עצמיים ווקטורים עצמיים (Eigendecomposition) של מטריצת הקוואריאנס, או לחלופין SVD על מטריצת הדאטה.</li><li>הווקטורים העצמיים (Eigenvectors) הם הצירים הראשיים (Principal Components); הערכים העצמיים (Eigenvalues) מציינים כמה שונות נלכדת בכל ציר.</li><li>בוחרים את ה-<img class="inline-formula-img" src="/topic-assets/41dd053e8543.png" loading="lazy" alt="formula"> צירים הראשיים בעלי הערך העצמי הגבוה ביותר ומטילים (project) את הדאטה עליהם — כך מקבלים ייצוג חד-מימדי-נמוך יותר.</li></ul>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<p>מטריצת הקוואריאנס של דאטה ממורכז <img class="inline-formula-img" src="/topic-assets/02c7779a28dd.png" loading="lazy" alt="formula"> (גודל <img class="inline-formula-img" src="/topic-assets/561b3869021d.png" loading="lazy" alt="formula">):</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/f273739650c5.png" loading="lazy" alt="formula"></div>
+<p>פירוק לערכים עצמיים:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/34cd8733236a.png" loading="lazy" alt="formula"></div>
+<p>הטלת הדאטה על <img class="inline-formula-img" src="/topic-assets/41dd053e8543.png" loading="lazy" alt="formula"> הרכיבים הראשיים:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/60b02913a0ec.png" loading="lazy" alt="formula"></div>
+<p>ואחוז השונות המוסברת (Explained Variance Ratio) על-ידי הרכיב ה-<img class="inline-formula-img" src="/topic-assets/df3ec01f900b.png" loading="lazy" alt="formula">:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/f5e238f07724.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>ויזואליזציה של דאטה רב-מימדי בשני/שלושה צירים — לדוגמה הטלת מערך IRIS או ספרות כתב-יד (MNIST) למישור דו-מימדי.</li><li>דחיסת נתונים (compression) והפחתת רעש לפני שלבי עיבוד נוספים.</li><li>ניתוח דאטה פוליטי/חברתי — לדוגמה הטלת תוצאות הצבעה (כמו בחירות בכנסת) על שני צירים מרכזיים המסבירים את מירב השונות בין הצבעות.</li><li>טרום-עיבוד לפני אלגוריתמי Clustering כדי להתמודד עם Curse of Dimensionality.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>שיטה ליניארית פשוטה, מהירה, ובעלת בסיס מתמטי מוצק (אלגברה לינארית).</li><li>מסירה רדונדנסיה (correlation) בין פיצ'רים ויוצרת צירים אורתוגונליים (בלתי-מתואמים).</li><li>מספקת מדד כמותי (Explained Variance Ratio) לכמה מידע נשמר בכל מספר רכיבים.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>לוכדת רק קשרים ליניאריים — נכשלת בלכידת מבנים לא-ליניאריים מורכבים (manifolds מעוקלים).</li><li>הרכיבים הראשיים הם קומבינציה ליניארית של כל הפיצ'רים המקוריים — לעיתים קשה לפרש את משמעותם.</li><li>רגישה לסקאלה של הפיצ'רים — חיוני לבצע Standardization לפני ההרצה.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>מדד</strong></td><td><strong>מטרה</strong></td></tr><tr><td>Explained Variance Ratio (מצטבר)</td><td>לבחור כמה רכיבים לשמור (לדוגמה עד 95% שונות מוסברת)</td></tr><tr><td>Reconstruction Error</td><td>לבדוק כמה מידע אבד בהטלה ובשחזור חזרה</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>סוג</strong></td><td><strong>יתרון עיקרי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>t-SNE</td><td>לא-ליניארי</td><td>שומר מבנה מקומי, מצוין לוויזואליזציה</td><td>ויזואליזציה בלבד, לא לצינור ML</td></tr><tr><td>UMAP</td><td>לא-ליניארי</td><td>מהיר יותר מ-t-SNE, שומר גם מבנה גלובלי</td><td>ויזואליזציה + שימוש כ-feature מאוחר</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+X_scaled = StandardScaler().fit_transform(X)
+pca = PCA(n_components=2)
+Z = pca.fit_transform(X_scaled)
+print(pca.explained_variance_ratio_)   # אחוז שונות מוסברת לכל רכיב
+print(pca.explained_variance_ratio_.cumsum())  # מצטבר</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מה ההבדל בין Eigenvectors ל-Eigenvalues בהקשר של PCA?</strong></p>
+<p><strong>ת: </strong>ה-Eigenvectors של מטריצת הקוואריאנס מגדירים את כיווני הצירים הראשיים החדשים; ה-Eigenvalues המתאימים מציינים כמה שונות (variance) נלכדת בכיוון אותו ציר. ציר עם Eigenvalue גבוה יותר 'חשוב' יותר לשמירת המידע.</p>
+<p><strong>ש: </strong><strong>מדוע חשוב לבצע Standardization לפני PCA?</strong></p>
+<p><strong>ת: </strong>כי PCA מבוסס על שונות (variance), ופיצ'ר בסקאלה גדולה (לדוגמה הכנסה בש''ח) ישלוט על מטריצת הקוואריאנס לעומת פיצ'ר בסקאלה קטנה (לדוגמה גיל), גם אם אינו אינפורמטיבי יותר באמת. Standardization מאזן בין הפיצ'רים.</p>
+<p><strong>ש: </strong><strong>איך בוחרים כמה רכיבים (</strong><img class="inline-formula-img" src="/topic-assets/41dd053e8543.png" loading="lazy" alt="formula"><strong>) לשמור?</strong></p>
+<p><strong>ת: </strong>מסתכלים על Explained Variance Ratio המצטבר וגרף Scree Plot, ובוחרים <img class="inline-formula-img" src="/topic-assets/41dd053e8543.png" loading="lazy" alt="formula"> כך שנשמר אחוז גבוה מהשונות (לדוגמה 90%-95%) — או, אם המטרה ויזואליזציה, פשוט בוחרים <img class="inline-formula-img" src="/topic-assets/86949976d1a3.png" loading="lazy" alt="formula"> או <img class="inline-formula-img" src="/topic-assets/381a70287a79.png" loading="lazy" alt="formula">.</p>

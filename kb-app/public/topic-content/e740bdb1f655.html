@@ -1,0 +1,35 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>פונקציית ניקוד לדירוג מסמכים לפי רלוונטיות לשאילתה, המהווה שיפור הסתברותי על TF-IDF. BM25 הופך עם השנים לסטנדרט דה-פקטו במנועי חיפוש (Elasticsearch, Lucene) ולשלב ה-Retrieval הראשוני בצנרות RAG.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>מחשבים IDF מוחלק (smoothed) לכל מונח בשאילתה — דומה ל-IDF הסטנדרטי אך עם תיקון המונע ערכים שליליים.</li><li>מחשבים תדירות מונח מנורמלת (Adjusted TF) עם פרמטר ריווי (saturation) <img class="inline-formula-img" src="/topic-assets/47ae8d02efaa.png" loading="lazy" alt="formula"> — תדירות מילה עולה מתדלקת את הניקוד אך עם החזרי פוחתים.</li><li>מנרמלים לפי אורך המסמך היחסי ל-<img class="inline-formula-img" src="/topic-assets/d21703c0351c.png" loading="lazy" alt="formula"> (אורך מסמך ממוצע בקורפוס), בעזרת פרמטר <img class="inline-formula-img" src="/topic-assets/c0396251b7a6.png" loading="lazy" alt="formula">.</li><li>מסכמים את התרומה של כל מונח בשאילתה לקבלת ניקוד סופי למסמך.</li></ul>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/cd051cb381c6.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>IDF מוחלק (smoothed) — מונע ערכים שליליים למונחים נפוצים</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/56f1b2e9172a.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>גורם נרמול אורך המסמך</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/8c3acfbc26cc.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>נוסחת הניקוד המלאה של BM25</em></p>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/7ded5afa5974.png" loading="lazy" alt="formula"></td><td>תדירות המונח t במסמך d</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/14eec448e3c9.png" loading="lazy" alt="formula"></td><td>מספר המסמכים שמכילים את המונח t</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/06f57694f9f0.png" loading="lazy" alt="formula"></td><td>מספר המסמכים הכולל בקורפוס</td></tr><tr><td></td><td>אורך המסמך (במספר מילים)</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/d21703c0351c.png" loading="lazy" alt="formula"></td><td>אורך מסמך ממוצע בקורפוס</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/47ae8d02efaa.png" loading="lazy" alt="formula"></td><td>פרמטר ריווי (saturation) של תדירות המונח, בד&quot;כ סביב 1.2-2.0</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/c0396251b7a6.png" loading="lazy" alt="formula"></td><td>פרמטר נרמול אורך מסמך (0 עד 1), בד&quot;כ סביב 0.75</td></tr></table>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>מנועי חיפוש קלאסיים (Elasticsearch, Lucene, Solr).</li><li>Sparse Retrieval בשלב הראשון של צנרת RAG, לפני שלב ה-re-ranking וההזנה ל-LLM.</li><li>בעיות דירוג (ranking) שבהן יש צורך בביצועים יציבים ושקופים מבלי לאמן מודל.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>יציב, מהיר, שקוף — לא דורש אימון, ולכן 'הבחירה הראשונה' בדירוג מסמכים.</li><li>מתחשב גם בתדירות המונח וגם באורך המסמך, ללא הבעיות של TF-IDF הגולמי.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>מבוסס התאמה לקסיקלית (מילים מדויקות) — סובל מ-vocabulary mismatch.</li><li>דורש כיוונון פרמטרים (<img class="inline-formula-img" src="/topic-assets/47ae8d02efaa.png" loading="lazy" alt="formula">, <img class="inline-formula-img" src="/topic-assets/c0396251b7a6.png" loading="lazy" alt="formula">) לקורפוס הספציפי.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Retrieval</td><td>Recall@K, MRR</td></tr><tr><td>Ranking</td><td>Precision@K, NDCG</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>יתרון עיקרי</strong></td><td><strong>חסרון עיקרי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>TF-IDF + Cosine</td><td>פשוט להבנה</td><td>אינו מנרמל אורך מסמך כמו BM25</td><td>בייסליין מהיר</td></tr><tr><td>BM25</td><td>תקן זהב לדירוג לקסיקלי</td><td>דורש כיוונון פרמטרים</td><td>Retrieval לפני RAG / חיפוש</td></tr><tr><td>Embeddings + Cosine</td><td>תופס דמיון סמנטי</td><td>יקר חישובית, black-box</td><td>חיפוש סמנטי / Vocabulary mismatch</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from rank_bm25 import BM25Okapi
+bm25 = BM25Okapi(tokenized_corpus, k1=1.5, b=0.75)
+scores = bm25.get_scores(tokenized_query)
+top_docs = bm25.get_top_n(tokenized_query, corpus, n=5)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מה ההבדל המהותי בין TF-IDF ל-BM25?</strong></p>
+<p><strong>ת: </strong>BM25 מוסיף ריווי (saturation) לתדירות המונח כך שתדירות גבוהה מאוד לא מנפחת את הניקוד באופן בלתי מבוקר, ומוסיף נרמול לפי אורך מסמך יחסי לאורך הממוצע בקורפוס — שני דברים שאין ב-TF-IDF הגולמי.</p>
+<p><strong>ש: </strong><strong>מה קורה לניקוד BM25 כש-k1 שואף ל-0?</strong></p>
+<p><strong>ת: </strong>התרומה של תדירות המונח (f(t,d)) הופכת לבינארית בפועל — בהמשך לכך הניקוד מתקרב להתנהגות דמוית-בוליאנית, ללא תוספת משמעותית מהופעות חזרתיות של המונח.</p>
+<p><strong>ש: </strong><strong>מהו תפקיד BM25 בצנרת RAG?</strong></p>
+<p><strong>ת: </strong>BM25 משמש כשלב ה-Retrieval הראשוני (Sparse Retrieval) להבאת מסמכים מועמדים, ולעיתים אף משולב עם re-ranking לפני שהמסמכים הטובים ביותר נשלחים ל-LLM.</p>

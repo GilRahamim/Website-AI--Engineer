@@ -1,0 +1,26 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>ארכיטקטורת רשת עצבית המעבדת רצפים (Sequences) על ידי שמירת מצב חבוי (Hidden State) שמתעדכן בכל צעד זמן, ומאפשר לרשת &quot;לזכור&quot; מידע מצעדים קודמים.</p>
+<h4 class='sec-h'>🏛️ מבנה הרשת</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/5653303e60ae.png" loading="lazy" alt="RNN — Recurrent Neural Network — architecture diagram" /></div>
+<ul><li>תא חבוי (Hidden State) $h_t$ — מתעדכן בכל צעד זמן על בסיס הקלט הנוכחי והמצב הקודם</li><li>משקולות משותפות (Shared Weights) — אותם $W_h, W_x$ משמשים בכל צעדי הזמן</li><li>פלט בכל צעד או רק בסוף הרצף, בהתאם למשימה (Many-to-Many / Many-to-One)</li></ul>
+<h4 class='sec-h'>📐 נוסחאות מפתח</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/fbc0e959ba4e.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 תחומי שימוש</h4>
+<ul><li>מודלים שפתיים (Language Modeling)</li><li>תרגום מכונה וניתוח רגשות על טקסט (לפני עידן ה-Transformer)</li><li>חיזוי סדרות זמן (Time Series Forecasting)</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מטפלת ברצפים באורך משתנה באופן טבעי</li><li>משקולות משותפות בין צעדי הזמן — יעיל בפרמטרים</li><li>יכולה לעבד מידע באופן Online, צעד אחר צעד</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>סובלת מ-Vanishing/Exploding Gradients ברצפים ארוכים</li><li>קושי בלכידת תלויות ארוכות טווח (Long-Range Dependencies)</li><li>אימון סדרתי — קשה לבצע Parallelization על פני צעדי הזמן</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Sequence Classification</td><td>Accuracy, F1</td></tr><tr><td>Language Modeling</td><td>Perplexity</td></tr><tr><td>Time Series</td><td>MSE, MAE</td></tr></table>
+<h4 class='sec-h'>🔄 וריאנטים / גרסאות</h4>
+<table class='kbtable'><tr><td><strong>וריאנט</strong></td><td><strong>הבדל מרכזי</strong></td></tr><tr><td>Vanilla RNN</td><td>מצב חבוי בסיסי, סובל מ-Vanishing Gradients</td></tr><tr><td>LSTM</td><td>מנגנון שערים (Gates) ו-Cell State לזכירה ארוכת טווח</td></tr><tr><td>GRU</td><td>גרסה מפושטת של LSTM עם פחות שערים</td></tr><tr><td>Bidirectional RNN</td><td>מעבד את הרצף גם מקדימה וגם מאחורה</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (PyTorch)</h4>
+<pre class='code-block'><code>import torch.nn as nn
+
+rnn = nn.RNN(input_size=128, hidden_size=256, num_layers=1, batch_first=True)
+output, h_n = rnn(x)  # x: (batch, seq_len, input_size)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>למה RNN סובלת מ-Vanishing Gradients?</p>
+<p><strong>ת: </strong>בזמן Backpropagation Through Time, הגרדיאנט מוכפל שוב ושוב באותן משקולות; אם הערכים קטנים מ-1 הגרדיאנט שואף לאפס לאורך רצף ארוך.</p>
+<p><strong>ש: </strong>מה ההבדל בין Many-to-One ל-Many-to-Many ב-RNN?</p>
+<p><strong>ת: </strong>Many-to-One משתמש בכל הרצף ומפיק פלט אחד בסוף (למשל סיווג); Many-to-Many מפיק פלט בכל צעד זמן (למשל תיוג רצפים).</p>

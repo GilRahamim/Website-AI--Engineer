@@ -1,0 +1,36 @@
+<h4 class='sec-h'>DBSCAN</h4>
+<p class='formula-label'><em>Density-Based Spatial Clustering of Applications with Noise</em></p>
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>DBSCAN הוא אלגוריתם clustering מבוסס-צפיפות (Density-Based): אשכול מוגדר כאזור צפוף של נקודות המופרד מאשכולות אחרים על-ידי אזורים בעלי צפיפות נמוכה. האלגוריתם מזהה גם נקודות רעש (Noise) שאינן משתייכות לאף אשכול.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>מגדירים שני פרמטרים: <img class="inline-formula-img" src="/topic-assets/38c8fc0de8ac.png" loading="lazy" alt="formula"> (eps) — רדיוס השכונה, ו-<img class="inline-formula-img" src="/topic-assets/5e292e5e02ea.png" loading="lazy" alt="formula"> — מספר נקודות מינימלי בשכונה כדי להיחשב 'צפוף'.</li><li>לכל נקודה בודקים כמה נקודות נמצאות במרחק <img class="inline-formula-img" src="/topic-assets/38c8fc0de8ac.png" loading="lazy" alt="formula"> ממנה. אם יש לפחות <img class="inline-formula-img" src="/topic-assets/5e292e5e02ea.png" loading="lazy" alt="formula"> — הנקודה מסוג Core Point.</li><li>נקודה שאינה Core אך נמצאת בשכונה של Core Point מסוג Border Point; נקודה שאינה אף אחת מהן מסוג Noise.</li><li>מחברים Core Points הקרובים זה לזה (density-reachable) לאשכול אחד מחובר, ומצרפים אליהם את ה-Border Points הגובלים.</li></ul>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<p>שכונת <img class="inline-formula-img" src="/topic-assets/38c8fc0de8ac.png" loading="lazy" alt="formula"> של נקודה <img class="inline-formula-img" src="/topic-assets/916f42417e1c.png" loading="lazy" alt="formula"> מוגדרת כ:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/ad06f14de843.png" loading="lazy" alt="formula"></div>
+<p>ותנאי Core Point:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/c993f5a4188d.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>זיהוי אנומליות (Anomaly Detection) — נקודות Noise הן בעצם חריגות.</li><li>ניתוח גיאוגרפי/מרחבי — איתור 'הצטברויות' (hotspots) בנתוני מיקום (GPS).</li><li>אשכולות בצורות לא-כדוריות (לדוגמה צורת 'חצי-סהר' או טבעת) שבהן K-Means נכשל.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>לא דורש לקבוע מספר אשכולות <img class="inline-formula-img" src="/topic-assets/4896d33faf5b.png" loading="lazy" alt="formula"> מראש — נקבע אוטומטית לפי הצפיפות.</li><li>מזהה אשכולות בכל צורה גאומטרית שרירותית, ולא רק כדורית.</li><li>עמיד לאאוטליירים — מסמן אותם כ-Noise במקום לכפות אותם לאשכול.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>רגיש מאוד לבחירת הפרמטרים <img class="inline-formula-img" src="/topic-assets/38c8fc0de8ac.png" loading="lazy" alt="formula"> ו-<img class="inline-formula-img" src="/topic-assets/5e292e5e02ea.png" loading="lazy" alt="formula">; ערך לא מתאים מוביל לאשכול אחד גדול או לכולם כ-Noise.</li><li>מתקשה כשיש אשכולות בצפיפויות שונות מאוד באותו דאטה-סט (פרמטר <img class="inline-formula-img" src="/topic-assets/38c8fc0de8ac.png" loading="lazy" alt="formula"> קבוע אחד לא מתאים לכולם) — לשם כך פותחו הרחבות כמו HDBSCAN ו-OPTICS שמתמודדות עם צפיפות משתנה, ו-STING (Wang, Yang &amp; Muntz, VLDB 1997) שמבוססת על חלוקת המרחב לרשת (grid) היררכית.</li><li>ב-Curse of Dimensionality מושג המרחק נהיה פחות אינפורמטיבי, ולכן DBSCAN נפגע בממדים גבוהים.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Clustering עם רעש</td><td>Silhouette Score (בהתעלם מ-Noise), Adjusted Rand Index</td></tr><tr><td>Anomaly Detection</td><td>אחוז נקודות Noise, Precision/Recall אם יש תיוג אמת</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>יתרון עיקרי</strong></td><td><strong>חסרון עיקרי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>K-Means</td><td>מהיר, פשוט</td><td>מניח אשכולות כדוריים, לא מזהה רעש</td><td>אשכולות כדוריים, אין outliers משמעותיים</td></tr><tr><td>HDBSCAN</td><td>מתמודד עם צפיפות משתנה, פחות רגיש לפרמטרים</td><td>מורכב יותר להבנה ולכיוון</td><td>צפיפות לא אחידה באשכולות</td></tr><tr><td>OPTICS</td><td>מפיק 'סדר הישגיות' שמאפשר לבחור eps אחרי ההרצה</td><td>איטי יותר מ-DBSCAN רגיל</td><td>לא בטוחים מה ה-eps האידיאלי</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>from sklearn.cluster import DBSCAN
+from sklearn.preprocessing import StandardScaler
+X_scaled = StandardScaler().fit_transform(X)
+db = DBSCAN(eps=0.5, min_samples=5)
+labels = db.fit_predict(X_scaled)
+n_noise = (labels == -1).sum()   # -1 מסמן נקודות Noise
+n_clusters = len(set(labels)) - (1 if -1 in labels else 0)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>איך בוחרים את </strong><img class="inline-formula-img" src="/topic-assets/38c8fc0de8ac.png" loading="lazy" alt="formula"><strong> בפועל?</strong></p>
+<p><strong>ת: </strong>שיטה נפוצה היא k-distance graph: מחשבים את המרחק לשכן ה-k הקרוב לכל נקודה (k=minPts), ממיינים, ומחפשים את ה'מרפק' בגרף — נקודה זו מצביעה על מעבר בין אזורים צפופים לדלילים.</p>
+<p><strong>ש: </strong><strong>מה ההבדל בין Core, Border ו-Noise Point?</strong></p>
+<p><strong>ת: </strong>Core Point יש לה לפחות minPts שכנים ברדיוס eps. Border Point נמצאת בשכונה של Core Point אך אין לה עצמה מספיק שכנים. Noise Point אינה אף אחת מהשתיים — אינה משתייכת לשום אשכול.</p>
+<p><strong>ש: </strong><strong>למה DBSCAN מתקשה כשיש אשכולות בצפיפויות שונות?</strong></p>
+<p><strong>ת: </strong>כי <img class="inline-formula-img" src="/topic-assets/38c8fc0de8ac.png" loading="lazy" alt="formula"> קבוע אחד מניח רמת צפיפות אחידה. אשכול צפוף ייחתך לחלקים קטנים ואשכול דליל יסומן כ-Noise. HDBSCAN פותר זאת בעזרת היררכיה של ערכי eps שונים.</p>

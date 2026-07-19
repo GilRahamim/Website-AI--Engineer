@@ -1,0 +1,17 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Anthropic Skills ושרתי MCP הם שני primitives משלימים להרחבת יכולות Claude: Skill הוא חוברת הוראות מקומית שנטענת לפי-דרישה, ו-MCP הוא שרת חיצוני שחושף כלים/משאבים בפרוטוקול סטנדרטי. הבחירה הנכונה תלויה במידת ה-statefulness, השיתוף הנדרש, ורמת ה-typing.</p>
+<h4 class='sec-h'>🔄 השוואה צד-לצד</h4>
+<table class='kbtable'><tr><td><strong>מאפיין</strong></td><td><strong>Anthropic Skills</strong></td><td><strong>MCP Servers</strong></td></tr><tr><td>מה זה</td><td>תיקייה של הוראות + סקריפטים</td><td>שרת רץ שחושף tools/resources</td></tr><tr><td>הפעלה</td><td>Model-invoked — לפי התאמת description</td><td>Protocol-invoked — לפי סכמות tool</td></tr><tr><td>Transport</td><td>ללא — קבצים מקומיים</td><td>stdio / HTTP / SSE</td></tr><tr><td>State</td><td>Stateless; סקריפטים רצים per-call</td><td>יכול להיות stateful (sessions, caches)</td></tr><tr><td>טעינה</td><td>Progressive (name → body → files)</td><td>כל סכמות הכלים נטענות מראש</td></tr><tr><td>מתאים ל</td><td>פרוצדורות, playbooks, תבניות</td><td>אינטגרציות חיות, DB, שירותים משותפים</td></tr><tr><td>כתיבה</td><td>כתיבת markdown + הוספת סקריפטים</td><td>בניית שרת, הגדרת tools, פריסה</td></tr><tr><td>שיתוף</td><td>העתקת תיקייה / git repo</td><td>הרצת שירות, מתן endpoint</td></tr></table>
+<h4 class='sec-h'>🎯 מתי לבחור Skill</h4>
+<ul><li>המשימה היא פרוצדורה חזרתית — &quot;איך עושים X כאן?&quot;</li><li>רוצים לשלוח הוראות + כמה סקריפטים יחד, בלי שירות נפרד.</li><li>הלוגיקה מקומית וחסרת-state.</li><li>רוצים אפס תשתית לתחזוקה.</li></ul>
+<h4 class='sec-h'>🎯 מתי לבחור MCP</h4>
+<ul><li>צריך אינטגרציה חיה (Slack, Jira, DB פנימי, API פרודקשן).</li><li>מספר agents/IDEs/משתמשים משתפים את אותה משטח-כלים.</li><li>נדרש auth, rate limits, תצפיתיות, או session state.</li><li>סכמות הכלים צריכות להיות typed ומאומתות באופן מחמיר.</li></ul>
+<h4 class='sec-h'>🏛️ הרכבה: Skills + Agents + MCP</h4>
+<p>השלושה מרכיבים יחד stack מלא: שכבת Skill מספקת playbooks (SKILL.md, סקריפטים, תבניות), שכבת Agent מריצה את הלופ (נימוק → קריאת כלי → תצפית → חזור), ושכבת Tool (כולל שרתי MCP, Bash, file tools, web fetch) מבצעת את העבודה בפועל. Skill אומר ל-agent מה לעשות; ה-agent מחליט מתי; הכלים (כולל MCP) מבצעים.</p>
+<h4 class='sec-h'>✅ עקרון מרכזי</h4>
+<p>Skills ו-MCP אינם תחרותיים אלא משלימים: Skill = playbook, MCP = live tools. לרוב התשובה הנכונה היא לשלב את שניהם. Skill יכול לקרוא לכלי MCP, ושרת MCP יכול לכלול תיקיית Skills.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מתי הרכבת Skills+MCP טובה יותר משימוש באחד בלבד?</strong></p>
+<p>ת: כשה-playbook (סדר הפעולות, פורמט התשובה) הוא לוגי-מקומי וחזרתי, אבל חלק מהשלבים דורשים גישה לאינטגרציה חיה ומאובטחת (כגון DB פרודקשן) — Skill מנהל את הפרוצדורה ו-MCP מספק את הגישה החיה לנתונים/שירותים.</p>
+<p><strong>ש: מדוע MCP פחות מתאים למאות כלים בהשוואה ל-Skills?</strong></p>
+<p>ת: MCP טוען את כל סכמות הכלים מראש, כך שעלות ה-token גדלה לינארית עם מספר הכלים. Skills טוענים רק name+description בכל עת, וגוף ההוראות נטען רק לפי דרישה — מאפשר עשרות Skills בעומס מינימלי.</p>

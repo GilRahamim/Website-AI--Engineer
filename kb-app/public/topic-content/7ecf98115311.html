@@ -1,0 +1,35 @@
+<h4 class='sec-h'>Louvain Algorithm</h4>
+<p class='formula-label'><em>אלגוריתם מהיר לאיתור קהילות (Community Detection) בגרפים</em></p>
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Louvain (Blondel et al., 2008) הוא אלגוריתם גרידי ויעיל מאוד לחלוקת גרף לקהילות (community detection) — קבוצות צמתים (nodes) המחוברות בצפיפות גבוהה ביניהן ובדלילות לשאר הגרף — על-ידי מקסום איטרטיבי של מדד ה-Modularity.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>שלב 1 (Local Moving): מתחילים עם כל צומת בקהילה נפרדת. עוברים על כל הצמתים ובודקים אם העברת הצומת לקהילה של אחד משכניו משפרת את ה-Modularity הכוללת; אם כן — מבצעים את ההעברה.</li><li>חוזרים על שלב 1 עד שאין שינוי שמשפר את ה-Modularity (התכנסות מקומית).</li><li>שלב 2 (Aggregation): 'מקפלים' כל קהילה שהתקבלה לצומת-על (super-node) בודד, יוצרים גרף חדש ומקטן שבו הקשתות ביניהם משוקללות לפי מספר/משקל הקשתות בין הקהילות המקוריות.</li><li>חוזרים על שלב 1 ו-2 על הגרף המקטן, וכך הלאה, עד שאין שיפור נוסף ב-Modularity — מתקבלת היררכיית קהילות מרובת-רמות.</li></ul>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<p>מדד ה-Modularity (<img class="inline-formula-img" src="/topic-assets/9219b8f1594c.png" loading="lazy" alt="formula">) שהאלגוריתם ממקסם:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/e964bc3cfe40.png" loading="lazy" alt="formula"></div>
+<p>כאשר <img class="inline-formula-img" src="/topic-assets/0f4a737e4177.png" loading="lazy" alt="formula"> הוא משקל הקשת בין צומת <img class="inline-formula-img" src="/topic-assets/df3ec01f900b.png" loading="lazy" alt="formula"> ו-<img class="inline-formula-img" src="/topic-assets/8ddbd9873b43.png" loading="lazy" alt="formula">, <img class="inline-formula-img" src="/topic-assets/4b728d43bc5d.png" loading="lazy" alt="formula"> דרגת הצומת <img class="inline-formula-img" src="/topic-assets/df3ec01f900b.png" loading="lazy" alt="formula">, <img class="inline-formula-img" src="/topic-assets/70a97711b713.png" loading="lazy" alt="formula"> סך משקל הקשתות בגרף, ו-<img class="inline-formula-img" src="/topic-assets/b3f32f90183d.png" loading="lazy" alt="formula"> אם שני הצמתים באותה קהילה. השיפור ב-Modularity מהעברת צומת בודד <img class="inline-formula-img" src="/topic-assets/df3ec01f900b.png" loading="lazy" alt="formula"> לקהילה <img class="inline-formula-img" src="/topic-assets/4fa9ad76481f.png" loading="lazy" alt="formula"> מחושב ביעילות בעזרת:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/dac962a234ff.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>ניתוח רשתות חברתיות — איתור קבוצות חברים/קהילות (לדוגמה ברשת Zachary Karate Club או רשת הדמויות ב-Les Misérables).</li><li>ניתוח רשתות ביולוגיות (רשתות חלבון-חלבון) לאיתור מודולים פונקציונליים.</li><li>זיהוי מבנה ארגוני/קבוצתי ברשתות תקשורת או רשתות דירקטורים-חברות (board-director networks).</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>יעיל מאוד חישובית (<img class="inline-formula-img" src="/topic-assets/6558b971c22c.png" loading="lazy" alt="formula"> בקירוב) — מתאים לרשתות גדולות עם מיליוני צמתים.</li><li>מפיק היררכיה מולטי-רמתית של קהילות (מבנה דמוי-דנדרוגרם), לא רק חלוקה שטוחה אחת.</li><li>אינו דורש לקבוע מספר קהילות מראש — נקבע אוטומטית ממקסום ה-Modularity.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>שיטה גרידית — עלולה להיתקע במקסימום מקומי של ה-Modularity ולא להגיע לחלוקה האופטימלית הגלובלית.</li><li>סובל מ'בעיית הרזולוציה' (Resolution Limit) — נוטה להתעלם מקהילות קטנות מאוד בתוך רשתות גדולות.</li><li>התוצאה תלויה מעט בסדר העיבוד של הצמתים (אם כי בפועל ההבדלים קטנים).</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>מדד</strong></td><td><strong>מטרה</strong></td></tr><tr><td>Modularity (<img class="inline-formula-img" src="/topic-assets/9219b8f1594c.png" loading="lazy" alt="formula">)</td><td>מדד האיכות העיקרי — ערך גבוה יותר מעיד על חלוקה לקהילות טובה יותר</td></tr><tr><td>NMI / ARI (אם יש תיוג אמת)</td><td>השוואת החלוקה שהתקבלה לחלוקה אמיתית ידועה</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>יתרון עיקרי</strong></td><td><strong>חסרון עיקרי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>Label Propagation</td><td>מהיר עוד יותר, פשוט מאוד למימוש</td><td>לא דטרמיניסטי, תוצאות לא עקביות בין הרצות</td><td>רשת ענקית, מהירות קריטית</td></tr><tr><td>Girvan-Newman</td><td>מבוסס עקרון אינטואיטיבי (הסרת קשתות 'גשר')</td><td>איטי מאוד (<img class="inline-formula-img" src="/topic-assets/6a7bc1d110d8.png" loading="lazy" alt="formula">) — לא סקלאבילי</td><td>רשתות קטנות, צריך הסבר אינטואיטיבי</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>import networkx as nx
+import community as community_louvain   # pip install python-louvain
+G = nx.karate_club_graph()
+partition = community_louvain.best_partition(G)   # dict: node -&amp;gt; community id
+modularity = community_louvain.modularity(partition, G)
+print(f&amp;quot;Modularity: {modularity:.3f}&amp;quot;)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מה ההבדל בין שלב ה-Local Moving לשלב ה-Aggregation באלגוריתם Louvain?</strong></p>
+<p><strong>ת: </strong>Local Moving מזיז צמתים בודדים בין קהילות קיימות כדי לשפר Modularity. Aggregation 'מקפל' קהילות שלמות לצמתי-על בודדים, ויוצר גרף מקטן וחדש שעליו חוזר התהליך — כך נוצרת היררכיה מרובת-רמות בריצה יעילה.</p>
+<p><strong>ש: </strong><strong>מה זו 'בעיית הרזולוציה' (Resolution Limit) ב-Louvain?</strong></p>
+<p><strong>ת: </strong>ב-Modularity, המכנה <img class="inline-formula-img" src="/topic-assets/c0b4faf5f9b8.png" loading="lazy" alt="formula"> (סך משקל הקשתות בגרף) גדל עם גודל הרשת, מה שגורם לאלגוריתם לפעמים 'לבלוע' קהילות קטנות-יחסית בתוך קהילות גדולות יותר ברשתות עצומות, גם אם מבחינה מבנית הן נפרדות באמת.</p>
+<p><strong>ש: </strong><strong>מדוע Louvain יעיל כך כך לרשתות גדולות?</strong></p>
+<p><strong>ת: </strong>כי שלב ה-Aggregation מקטין בהדרגה את גודל הגרף שעליו פועלים, ושלב ה-Local Moving מחשב שינוי ב-Modularity (<img class="inline-formula-img" src="/topic-assets/53aed4a04fd8.png" loading="lazy" alt="formula">) באופן מקומי ויעיל לכל צומת, בלי לחשב את כל מדד ה-Modularity מהתחלה בכל פעם.</p>

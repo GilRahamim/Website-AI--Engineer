@@ -1,0 +1,29 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>שני מדדי הערכה סטנדרטיים למערכות אחזור/דירוג (Retrieval/Ranking): Recall@K בודק כמה מהתוצאות הרלוונטיות אותרו בתוך K התוצאות המובילות, ו-MRR (Mean Reciprocal Rank) בודק באיזה מיקום ממוקמת התוצאה הרלוונטית הראשונה, בממוצע על פני שאילתות.</p>
+<h4 class='sec-h'>📐 הנוסחה</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/6495e71dd35b.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>Recall@K — שיעור התוצאות הרלוונטיות שנמצאו בתוך top-K</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/a7f82fa16204.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>Mean Reciprocal Rank — ממוצע ההופכי של מיקום התשובה הנכונה הראשונה</em></p>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/ed392e0cc907.png" loading="lazy" alt="formula"></td><td>מספר התוצאות המובילות שנבדקות</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/7b1a152d34ba.png" loading="lazy" alt="formula"></td><td>מספר השאילתות בסט הבדיקה</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/7ec49b434185.png" loading="lazy" alt="formula"></td><td>המיקום (rank) של התוצאה הרלוונטית הראשונה עבור שאילתה i</td></tr></table>
+<h4 class='sec-h'>🎯 מתאים לסוג למידה ומשימה</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מתאים?</strong></td><td><strong>הערות</strong></td></tr><tr><td>Retrieval / Search</td><td>✅</td><td>המדד הסטנדרטי להערכת מנועי חיפוש</td></tr><tr><td>RAG (שלב Retrieval)</td><td>✅</td><td>קובע אם המסמכים הרלוונטיים בכלל הגיעו ל-LLM</td></tr><tr><td>Classification</td><td>❌</td><td>אין מושג של 'דירוג תוצאות' — יש להשתמש ב-Accuracy/F1</td></tr></table>
+<h4 class='sec-h'>📊 טווח ערכים ופרשנות</h4>
+<table class='kbtable'><tr><td><strong>ערך</strong></td><td><strong>משמעות</strong></td></tr><tr><td>1.0 (Recall@K)</td><td>כל התוצאות הרלוונטיות נמצאות בתוך top-K</td></tr><tr><td>1.0 (MRR)</td><td>התשובה הנכונה הראשונה הייתה תמיד במקום הראשון</td></tr><tr><td>0.0</td><td>אף תוצאה רלוונטית לא נמצאה / לא אותרה אף תשובה נכונה</td></tr></table>
+<h4 class='sec-h'>✅ מתי עדיף על מדדים אחרים?</h4>
+<ul><li>Recall@K מתאים כשמעניינות אותנו כל התוצאות הרלוונטיות בתוך חלון תוצאות נתון (לדוגמה — חלון ה-Retrieval לפני re-ranking ב-RAG).</li><li>MRR מתאים כשיש בדרך כלל תשובה נכונה אחת ומעניין מתי היא מופיעה לראשונה (לדוגמה — מנוע חיפוש שמציג תוצאה אחת בעיקר).</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>שני המדדים דורשים Ground Truth — צריך לדעת מראש מהן התשובות הנכונות, גם כאשר המודל עצמו הוא Unsupervised.</li><li>MRR מתמקד רק בתוצאה הרלוונטית הראשונה ומתעלם משאר התוצאות הרלוונטיות.</li><li>Recall@K אינו מתחשב בסדר הפנימי של התוצאות בתוך top-K (בניגוד למדדים כמו NDCG).</li></ul>
+<h4 class='sec-h'>💻 מימוש בקוד</h4>
+<pre class='code-block'><code>def recall_at_k(retrieved, relevant, k):
+top_k = set(retrieved[:k])
+return len(top_k &amp;amp; set(relevant)) / len(relevant)
+def mrr(rank_list):
+# rank_list: rank of first relevant result per query
+return sum(1.0 / r for r in rank_list) / len(rank_list)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>אם נמצאו 3 מתוך 4 תוצאות רלוונטיות בתוך top-10, מה Recall@10?</strong></p>
+<p><strong>ת: </strong>3/4 = 0.75.</p>
+<p><strong>ש: </strong><strong>מה ההבדל בין Recall@K ל-MRR מבחינת מה שהם מודדים?</strong></p>
+<p><strong>ת: </strong>Recall@K מודד שלמות (כמה תוצאות רלוונטיות נמצאו), בעוד MRR מודד מיקום (כמה מהר הופיעה התשובה הנכונה הראשונה).</p>

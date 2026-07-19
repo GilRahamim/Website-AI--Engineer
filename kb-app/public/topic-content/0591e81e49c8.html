@@ -1,0 +1,39 @@
+<h4 class='sec-h'>t-SNE, UMAP ו-PaCMAP</h4>
+<p class='formula-label'><em>שיטות לא-ליניאריות להפחתת מימד לצורכי ויזואליזציה (Manifold Learning)</em></p>
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>t-SNE, UMAP ו-PaCMAP הן שיטות לא-ליניאריות להפחתת מימד (בניגוד ל-PCA הליניארי) ששומרות בעיקר על מבנה השכנות (neighborhood structure) של הדאטה במרחב המקורי, ומיועדות בעיקר לוויזואליזציה דו/תלת-מימדית של דאטה רב-מימדי.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>t-SNE (t-Distributed Stochastic Neighbor Embedding): מחשב הסתברויות דמיון בין נקודות במרחב המקורי (גאוסי) ובמרחב המוטל (התפלגות t עם 'זנבות כבדים'), ומזעיר את ה-KL Divergence בין שתי ההתפלגויות באמצעות gradient descent.</li><li>UMAP (Uniform Manifold Approximation and Projection): בונה גרף שכנים-קרובים (k-NN graph) משוקלל המבוסס על תיאוריה טופולוגית (Riemannian geometry / fuzzy simplicial sets), ואז ממטב פריסה דו-מימדית ששומרת על מבנה הגרף הזה — מהיר יותר מ-t-SNE ושומר טוב יותר על מבנה גלובלי.</li><li>PaCMAP (Pairwise Controlled Manifold Approximation): משתמש בשלושה סוגי זוגות נקודות (near-pairs, mid-near pairs, further-pairs) במהלך האימון בשלבים שונים, כדי לאזן בין שמירת מבנה מקומי וגלובלי בו-זמנית.</li></ul>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<p>ב-t-SNE, ההסתברות שנקודה <img class="inline-formula-img" src="/topic-assets/8ddbd9873b43.png" loading="lazy" alt="formula"> היא 'שכנה' של <img class="inline-formula-img" src="/topic-assets/df3ec01f900b.png" loading="lazy" alt="formula"> במרחב המקורי:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/a5e52c71ec09.png" loading="lazy" alt="formula"></div>
+<p>וההסתברות המתאימה במרחב המוטל (התפלגות t עם דרגת חופש 1):</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/b8c8883b4c1d.png" loading="lazy" alt="formula"></div>
+<p>ופונקציית המטרה שמוזערת — KL Divergence בין ההתפלגויות:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/e396a2786de6.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>ויזואליזציה של embeddings רב-מימדיים (לדוגמה ייצוגי מילים, תמונות, או ספרות MNIST) במישור דו-מימדי לבדיקה חזותית של אשכולות.</li><li>בדיקת איכות ייצוגים (representations) שנלמדו על-ידי רשתות נוירונים עמוקות.</li><li>חיפוש תבניות/אשכולות חבויים בדאטה לפני בחירת אלגוריתם clustering מתאים.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מצוינות בלכידת מבנים לא-ליניאריים מורכבים (manifolds) שבהם PCA נכשל.</li><li>UMAP ו-PaCMAP מהירים משמעותית מ-t-SNE ומתרחבים (scale) טוב יותר לדאטה-סטים גדולים.</li><li>UMAP שומר טוב יותר על יחסי מרחק גלובליים בין אשכולות, ולא רק על שכנות מקומית.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>t-SNE איטי במיוחד על דאטה-סטים גדולים, ורגיש מאוד לפרמטר perplexity.</li><li>המרחקים בין אשכולות בתמונת t-SNE/UMAP אינם בהכרח אינפורמטיביים (אסור 'לקרוא' מרחק גלובלי כעוצמת קשר אמיתית) — בעיקר ב-t-SNE.</li><li>כל השיטות הללו אינן דטרמיניסטיות לגמרי (תלויות באתחול אקראי) — הרצות שונות עלולות לתת תמונות שונות מעט.</li><li>פחות מתאימות כשלב טרום-עיבוד למודל נוסף (לעומת PCA) — מיועדות בעיקר לוויזואליזציה ולא לשימוש כ-features ב-pipeline.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>מדד</strong></td><td><strong>מטרה</strong></td></tr><tr><td>Trustworthiness / Continuity</td><td>לבדוק כמה השכנות במרחב המוטל נאמנה למרחב המקורי</td></tr><tr><td>הערכה איכותית-חזותית</td><td>בדיקת הפרדת אשכולות ידועים בתמונה המוטלת</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>מהירות</strong></td><td><strong>שומר מבנה גלובלי?</strong></td><td><strong>מתאים ל-pipeline נוסף?</strong></td></tr><tr><td>PCA</td><td>מהיר ביותר</td><td>כן (ליניארי)</td><td>כן — נפוץ מאוד</td></tr><tr><td>t-SNE</td><td>איטי</td><td>חלש</td><td>לא מומלץ</td></tr><tr><td>UMAP</td><td>מהיר</td><td>טוב</td><td>אפשרי, בזהירות</td></tr><tr><td>PaCMAP</td><td>מהיר</td><td>טוב מאוד (מאוזן)</td><td>אפשרי</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>from sklearn.manifold import TSNE
+import umap   # pip install umap-learn
+# t-SNE
+tsne = TSNE(n_components=2, perplexity=30, random_state=42)
+Z_tsne = tsne.fit_transform(X)
+# UMAP
+reducer = umap.UMAP(n_neighbors=15, min_dist=0.1, random_state=42)
+Z_umap = reducer.fit_transform(X)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מתי נעדיף UMAP על פני t-SNE?</strong></p>
+<p><strong>ת: </strong>כאשר הדאטה-סט גדול (UMAP הרבה יותר מהיר), וכאשר חשוב לנו לשמר גם מרחקים/יחסים גלובליים בין אשכולות ולא רק שכנות מקומית — UMAP נחשב טוב יותר בכך לפי מאמרים שונים (כולל סקירה ב-JMLR 2021).</p>
+<p><strong>ש: </strong><strong>האם ניתן להסיק מרחק אמיתי בין שני אשכולות בתמונת t-SNE?</strong></p>
+<p><strong>ת: </strong>לא בצורה ישירה ומדויקת — t-SNE שומר בעיקר על שכנות מקומית, והמרחק הגלובלי בין אשכולות בתמונה לא תמיד משקף את המרחק האמיתי במרחב המקורי. יש להתייחס בזהירות לפרשנות מרחקים גלובליים, בפרט ב-t-SNE.</p>
+<p><strong>ש: </strong><strong>מה היתרון הייחודי של PaCMAP?</strong></p>
+<p><strong>ת: </strong>PaCMAP משתמש בשלושה סוגי זוגות נקודות (קרובים, אמצעיים-קרובים, רחוקים) בשלבי אימון שונים, מה שמאפשר לו לאזן בין שמירת מבנה מקומי (כמו t-SNE) לבין שמירת מבנה גלובלי (כמו UMAP) בו-זמנית, ובמהירות גבוהה.</p>

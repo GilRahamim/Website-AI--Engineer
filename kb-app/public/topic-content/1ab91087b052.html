@@ -1,0 +1,31 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>שיטה ללימוד Word Embeddings המבוססת על פירוק (factorization) של מטריצת co-occurrence גלובלית של הקורפוס — בניגוד ל-Word2Vec שמתבסס על חלונות קונטקסט מקומיים, GloVe מנצל סטטיסטיקה גלובלית של הקורפוס כולו.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>בונים מטריצת co-occurrence X בגודל V×V (V = גודל אוצר המילים) — כל תא X_ij סופר כמה פעמים מילה j הופיעה בחלון קונטקסט סביב מילה i, על פני הקורפוס כולו.</li><li>מפרקים את המטריצה לשני וקטורי-מילים (target ו-context) כך שהמכפלה הפנימית שלהם תשוחזר את הלוגריתם של תדירות ה-co-occurrence, באמצעות אופטימיזציה (לא SVD ישיר).</li><li>מוסיפים פונקציית 'החלקה' (weighting function) שמפחיתה את המשקל של זוגות מילים נדירים מאוד או נפוצים מאוד — כדי שלא ישלטו באופן בלתי פרופורציוני באופטימיזציה.</li></ul>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/373517b35066.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>הקירוב הבסיסי: מטריצת co-occurrence R מפורקת לשני וקטורי-מילים Z ו-W</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/5521f1901ca9.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>פונקציית המטרה (Loss) של GloVe — סכום שגיאות ריבועיות משוקללות על פני זוגות מילים</em></p>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>R</td><td>מטריצת co-occurrence הגלובלית (n×n)</td></tr><tr><td>Z, W</td><td>מטריצות וקטורי המילים (target ו-context) שנלמדות</td></tr><tr><td>X_ij</td><td>תדירות ה-co-occurrence של מילים i ו-j</td></tr><tr><td>f(X_ij)</td><td>פונקציית משקול — מפחיתה השפעה של זוגות נדירים/נפוצים מאוד</td></tr><tr><td>b_i, b̃_j</td><td>איברי הטיה (bias) למילה i ולמילת ההקשר j</td></tr></table>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>ייצור Word Embeddings כלליים מאומנים-מראש על קורפוסים גדולים (Wikipedia, Common Crawl, Twitter).</li><li>קלט לכל משימת NLP downstream — סיווג, אשכולות, חיפוש סמנטי.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מנצל סטטיסטיקה גלובלית של הקורפוס כולו, ולא רק חלונות מקומיים — לעיתים תופס יחסים סמנטיים גלובליים טוב יותר.</li><li>יציב ומהיר לאימון יחסית, ומבוסס על אופטימיזציה קמורה-יחסית (least squares משוקלל).</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>דורש בניית מטריצת co-occurrence בגודל V×V — יקר בזיכרון לאוצרות מילים גדולים מאוד.</li><li>כמו Word2Vec — אינו מתמודד טוב עם מילים שלא נראו באימון (OOV); FastText עדיף בהקשר זה.</li><li>וקטור יחיד לכל מילה — אינו מבחין בין משמעויות שונות של אותה מילה (polysemy).</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Embedding Quality</td><td>Word Similarity, Analogy Tests (Intrinsic); Classification/Clustering Accuracy (Extrinsic)</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>איך לומדים</strong></td><td><strong>יתרון מרכזי</strong></td><td><strong>חסרון/אזהרה</strong></td></tr><tr><td>GloVe</td><td>פירוק מטריצת co-occurrence גלובלית</td><td>מנצל סטטיסטיקה גלובלית של הקורפוס</td><td>יקר בזיכרון לאוצר מילים גדול, לא טוב ל-OOV</td></tr><tr><td>Word2Vec</td><td>חיזוי הקשר מקומי (Skip-gram/CBOW)</td><td>יעיל, סקיילבילי, מהיר לאימון</td><td>לא טוב ל-OOV, מתקשה עם מורפולוגיה</td></tr><tr><td>FastText</td><td>character n-grams + הקשר מקומי</td><td>מטפל ב-OOV ובמורפולוגיה</td><td>וקטורים גדולים יותר בזיכרון</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>import gensim.downloader as api
+glove = api.load('glove-wiki-gigaword-100')
+glove.most_similar('king')
+glove.similarity('king', 'queen')</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מה ההבדל המהותי בין GloVe ל-Word2Vec בדרך הלמידה?</strong></p>
+<p><strong>ת: </strong>GloVe מפרק מטריצת co-occurrence גלובלית של הקורפוס כולו, בעוד Word2Vec לומד מתוך חלונות קונטקסט מקומיים על-ידי חיזוי מילים שכנות (Skip-gram/CBOW), בלי לבנות מטריצה גלובלית מפורשת.</p>
+<p><strong>ש: </strong><strong>מדוע יש צורך בפונקציית משקול (weighting function) בפונקציית המטרה של GloVe?</strong></p>
+<p><strong>ת: </strong>כדי למנוע מצמדי מילים נדירים מאוד או נפוצים מאוד לשלוט באופן בלתי פרופורציוני באופטימיזציה — משקלול מאזן את התרומה היחסית של זוגות מילים שונים.</p>

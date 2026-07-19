@@ -1,0 +1,15 @@
+<h4 class='sec-h'>Community Detection — סקירה כללית</h4>
+<p class='formula-label'><em>איתור קהילות ברשתות/גרפים</em></p>
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Community Detection הוא תהליך זיהוי קבוצות צמתים (קהילות) ברשת, כך שצמתים בתוך אותה קהילה מחוברים בצפיפות גבוהה ביניהם, בעוד שהחיבורים בין קהילות שונות דלילים יותר באופן יחסי — למעשה, גרסת ה-'clustering' של עולם הגרפים.</p>
+<h4 class='sec-h'>🔍 מתי זה קורה / מתי זה רלוונטי</h4>
+<ul><li>כשיש דאטה המיוצג כגרף (לא וקטורים במרחב אוקלידי) ורוצים לחלק אותו לקבוצות בעלות מבנה קישוריות דומה.</li><li>ניתוח רשתות חברתיות, רשתות ביולוגיות, רשתות תחבורה ועוד.</li></ul>
+<h4 class='sec-h'>🔄 השוואה</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>עיקרון</strong></td><td><strong>סיבוכיות</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>Louvain</td><td>מקסום גרידי+היררכי של Modularity</td><td>מהיר (<img class="inline-formula-img" src="/topic-assets/6558b971c22c.png" loading="lazy" alt="formula">)</td><td>ברירת מחדל לרוב המקרים, רשתות גדולות</td></tr><tr><td>Label Propagation</td><td>הפצת תוויות לפי רוב שכנים</td><td>מהיר ביותר (<img class="inline-formula-img" src="/topic-assets/25c7dc8b5faa.png" loading="lazy" alt="formula">)</td><td>רשתות עצומות, צריך מהירות קיצונית</td></tr><tr><td>Girvan-Newman</td><td>הסרה איטרטיבית של קשתות 'גשר' (high betweenness)</td><td>איטי (<img class="inline-formula-img" src="/topic-assets/6a7bc1d110d8.png" loading="lazy" alt="formula">)</td><td>רשתות קטנות, רוצים אינטואיציה פשוטה</td></tr></table>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<ul><li>Modularity הוא מדד ההערכה המרכזי המשמש להשוואת איכות חלוקות שונות לקהילות, וגם פונקציית המטרה שאלגוריתם Louvain ממקסם.</li><li>מבוסס על אותם מושגי יסוד (צמתים, קשתות, דרגה) שמופיעים ב-Graphs ו-Networks Basics.</li><li>מקביל מבחינה רעיונית ל-clustering 'רגיל' (K-Means, DBSCAN) — אך עובד על מבנה גרף מפורש (קשתות) ולא על מרחק במרחב וקטורי.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>במה Community Detection שונה מ-clustering 'קלאסי' כמו K-Means?</strong></p>
+<p><strong>ת: </strong>K-Means עובד על נקודות במרחב וקטורי ומשתמש במרחק אוקלידי. Community Detection עובד על גרף מפורש עם קשתות בין צמתים, ומסתמך על מבנה הקישוריות (מי מחובר למי) ולא על מיקום במרחב רציף.</p>
+<p><strong>ש: </strong><strong>מהי קהילה (community) ברשת, באופן אינטואיטיבי?</strong></p>
+<p><strong>ת: </strong>קבוצת צמתים שמחוברים זה לזה בצפיפות גבוהה משמעותית בהשוואה לחיבורים שלהם לשאר הרשת — כלומר, 'יותר חברים בפנים מאשר בחוץ'.</p>

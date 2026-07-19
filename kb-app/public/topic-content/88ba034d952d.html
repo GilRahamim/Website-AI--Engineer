@@ -1,0 +1,17 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מעבר מ-RAG בסביבת מחקר/POC לסביבת פרודקשן דורש התייחסות לשיקולי latency, עלות, עדכניות נתונים ואמינות — מעבר ללוגיקת ה-retrieval/generation הבסיסית.</p>
+<h4 class='sec-h'>🔍 שיקולי פרודקשן מרכזיים</h4>
+<ul><li>Caching — שמירת תשובות/embeddings לשאילתות נפוצות כדי לחסוך latency ועלות חזרתית.</li><li>Dynamic Chunk Sizing — התאמת גודל ה-chunk לפי סוג המסמך/השאילתה במקום גודל קבוע אחד לכולם.</li><li>Metadata Filtering — סינון מוקדם של מועמדי retrieval לפי שדות מטא-דאטה (תאריך, מקור, הרשאה) לפני/בנוסף לחיפוש הסמנטי.</li></ul>
+<h4 class='sec-h'>⚠️ מלכודות נפוצות (Pitfalls)</h4>
+<ul><li>התעלמות מאיכות chunking — chunks גרועים פוגעים בכל הפייפליין, ללא קשר לאיכות ה-generator.</li><li>אי-עדכון האינדקס — מסד וקטורי &quot;מקובע בזמן&quot; מוביל לתשובות מיושנות.</li><li>הזרקת הקשר רב מדי (over-retrieval) — מנפח את ה-prompt, מעלה עלות/latency ועלול לבלבל את ה-LLM.</li><li>התעלמות מהרשאות/אבטחת מידע — retrieval חוצה-משתמשים בלי סינון לפי הרשאות.</li><li>אי-ביצוע הערכה שיטתית — פריסה לפרודקשן בלי Faithfulness/RAGAS baseline לפני ואחרי שינויים.</li></ul>
+<h4 class='sec-h'>🛠️ Best Practices</h4>
+<ul><li>להגדיר baseline למדדי retrieval ו-generation (Recall@k, Faithfulness) לפני שינויי פייפליין.</li><li>לבדוק chunking ו-retrieval באופן נפרד מהגנרציה לצורך איתור תקלות (debugging) ממוקד.</li><li>ליישם caching ו-metadata filtering לפני אופטימיזציה של ה-LLM עצמו.</li><li>לנטר drift באיכות לאורך זמן (במיוחד כשמקור הנתונים מתעדכן).</li></ul>
+<h4 class='sec-h'>🧰 Frameworks וכלים נפוצים</h4>
+<table class='kbtable'><tr><td><strong>כלי</strong></td><td><strong>תפקיד</strong></td></tr><tr><td>LangChain</td><td>אורקסטרציה של שרשראות RAG, agents, memory</td></tr><tr><td>LlamaIndex</td><td>אינדוקס וניהול מסמכים, data connectors, query engines</td></tr><tr><td>Haystack</td><td>פייפליינים מודולריים ל-RAG ו-search ברמת production</td></tr><tr><td>LangSmith</td><td>ניטור, debugging ו-tracing של שרשראות LLM/RAG</td></tr><tr><td>RAGAS</td><td>הערכה אוטומטית של Faithfulness, Answer Relevancy ועוד</td></tr><tr><td>DSPy</td><td>אופטימיזציה פרוגרמטית של prompts ופייפליינים מבוססי-LLM</td></tr><tr><td>RAGflow</td><td>פלטפורמת RAG end-to-end עם ממשק ניהול מסמכים</td></tr></table>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>שיקולי הפרודקשן הללו חלים על כל וריאנט RAG שנסקר (סטנדרטי, שיחתי, ReAct, multi-hop, streaming) — הם שכבת תפעול אופקית ולא וריאנט נוסף.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה הסיכון המרכזי ב-over-retrieval (הזרקת הקשר רב מדי)?</strong></p>
+<p>ת: מנפח את חלון ה-context, מעלה עלות וlatency, ויכול לבלבל את ה-LLM עם מידע לא רלוונטי שמדלל את האיתות הרלוונטי — מה שעלול לפגוע ב-Faithfulness בפועל.</p>
+<p><strong>ש: למה Metadata Filtering חשוב באבטחת מידע ב-RAG?</strong></p>
+<p>ת: בלעדיו, חיפוש סמנטי עלול לשלוף מסמכים שהמשתמש הנוכחי לא מורשה לראות (מסמכים של ארגונים/משתמשים אחרים) — סינון לפי הרשאות/מטא-דאטה לפני/אחרי ה-retrieval מונע חשיפת מידע לא מורשית.</p>

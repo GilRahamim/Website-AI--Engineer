@@ -1,0 +1,26 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>פעולה מתמטית המעבירה פילטר (kernel) קטן על פני התמונה/האות, ומחשבת בכל מיקום סכום משוקלל מקומי — כך מחלצים תכונות מקומיות (כגון קצוות, טקסטורות) תוך שמירה על מבנה המקום (spatial structure).</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ol><li>בוחרים גודל kernel (לדוגמה 3x3) ומספר ערוצי פלט (filters).</li><li>מציבים את ה-kernel בפינת הקלט (התמונה / מפת התכונות).</li><li>מחשבים מכפלה איבר-איבר בין ה-kernel לאזור המקביל בקלט, וסוכמים את התוצאה (+ bias).</li><li>מזיזים (slide) את ה-kernel לפי stride קבוע ומחזרים על החישוב לכל מיקום.</li><li>חוזרים על התהליך לכל פילטר, ומקבלים מפת תכונות (feature map) חדשה לכל פילטר.</li></ol>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/a35772785b39.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>Computer Vision — חילוץ תכונות מקומיות בתמונות (קצוות, טקסטורות, צורות)</li><li>עיבוד אותות חד-מימדיים (אודיו, סיגנלים)</li><li>אבן הבניין הבסיסית של CNN</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>משתף משקלים (weight sharing) — אותו kernel משמש בכל מקום בתמונה, מה שמקטין דרסטית את מספר הפרמטרים</li><li>שומר על מבנה מרחבי (spatial locality) של הקלט</li><li>Invariant חלקית להעתקה (translation) של אובייקטים בתמונה</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>טווח קליטה (receptive field) מוגבל לכל שכבה בודדת — צריך לערום שכבות כדי &quot;לראות&quot; הקשר גלובלי</li><li>רגיש לגודל kernel ול-stride — בחירה לא נכונה פוגעת בדיוק חילוץ התכונות</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Image Classification</td><td>Accuracy, Top-5 Accuracy</td></tr><tr><td>Object Detection</td><td>mAP, IoU</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>מושג</strong></td><td><strong>הבדל מרכזי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>Max Pooling</td><td>מקטין מימד ובוחר ערך מקסימלי, אינו לומד משקלים</td><td>אחרי שכבות קונבולוציה, להקטנת רזולוציה</td></tr><tr><td>Fully-Connected</td><td>מחבר כל קלט לכל פלט, ללא שיתוף משקלים</td><td>שכבות סופיות לאחר חילוץ תכונות</td></tr><tr><td>Dilated Convolution</td><td>מרחיב את ה-receptive field בלי להגדיל פרמטרים</td><td>כשנדרש הקשר מרחבי רחב יותר</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python / PyTorch)</h4>
+<pre class='code-block'><code>import torch.nn as nn
+
+conv = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3, stride=1, padding=1)
+output = conv(input_image)  # input_image בגודל [batch, 3, H, W]</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>למה Convolution יעיל יותר מ-Fully-Connected לתמונות?</p>
+<p><strong>ת: </strong>כי הוא משתף משקלים על פני כל מיקום בתמונה (weight sharing) ומתמקד באזורים מקומיים, מה שמקטין דרסטית את מספר הפרמטרים ומנצל את המבנה המרחבי של התמונה.</p>
+<p><strong>ש: </strong>מה זה receptive field ואיך הוא גדל עם עומק הרשת?</p>
+<p><strong>ת: </strong>זה האזור בקלט המקורי שמשפיע על ערך נתון במפת התכונות; הוא גדל עם כל שכבת קונבולוציה נוספת (וגם עם pooling), כך ששכבות עמוקות יותר &quot;רואות&quot; הקשר גלובלי יותר.</p>

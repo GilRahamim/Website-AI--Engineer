@@ -1,0 +1,25 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Object Tracking מוסיף 'זיכרון' מעל detection — במקום לעבד כל פריים (frame) באופן עצמאי, המערכת משייכת ID קבוע (persistent ID) לכל אובייקט ועוקבת אחריו על פני רצף פריימים. ByteTrack הוא אלגוריתם tracking נפוץ המשולב עם YOLO.</p>
+<h4 class='sec-h'>🔄 Detection לעומת Tracking</h4>
+<table class='kbtable'><tr><td><strong>מאפיין</strong></td><td><strong>Detection</strong></td><td><strong>Tracking</strong></td></tr><tr><td>עיבוד</td><td>כל פריים עצמאי</td><td>המערכת זוכרת אובייקטים על פני פריימים</td></tr><tr><td>תוצאה אופיינית</td><td>&quot;3 people&quot;</td><td>&quot;Person #7 moved left&quot;</td></tr></table>
+<h4 class='sec-h'>⚙️ איך ByteTrack עובד</h4>
+<ul><li>ByteTrack מחבר (connects) detections בין פריימים עוקבים — משייך זיהוי בפריים <em>t</em> לזיהוי תואם בפריים <em>t</em>+1 על בסיס מיקום/IoU/תנועה צפויה.</li><li>מספק: IDs קבועים, רציפות תנועה (motion continuity), מעקב מרובה-אובייקטים (multi-object tracking).</li></ul>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code># 06_object_tracking.py
+results = model.track(frame, persist=True, tracker=&amp;quot;bytetrack.yaml&amp;quot;, verbose=False)
+if results[0].boxes.id is not None:
+track_ids = results[0].boxes.id.cpu().numpy().astype(int)
+classes = results[0].boxes.cls.cpu().numpy().astype(int)
+names = results[0].names
+for tid, cls in zip(track_ids, classes):
+unique_ids.add(tid)
+print(f&amp;quot; Track ID: {tid:3d} | Class: {names[cls]:15s} | Class ID: {cls}&amp;quot;)</code></pre>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>CCTV ואבטחה.</li><li>ניתוח קמעונאות (retail analytics).</li><li>ניתוח ספורט.</li><li>מערכות אוטונומיות.</li></ul>
+<h4 class='sec-h'>❌ אתגרים</h4>
+<ul><li>חפיפה (Occlusion) — אובייקט נחסם זמנית מאחורי אחר.</li><li>תנועה מהירה — קושי לשייך detection לאותו ID בין פריימים.</li><li>תנועת מצלמה (camera motion).</li><li>סצנות צפופות (crowded scenes) — קושי בהבחנה בין אובייקטים סמוכים.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מדוע לא מספיק להריץ YOLO detection על כל פריים בנפרד כדי לעקוב אחרי אדם בווידאו?</strong></p>
+<p>ת: כי detection בלבד לא משייך זהות בין פריימים — בכל פריים האדם מזוהה מחדש כ'אובייקט חדש' בלי קשר לזיהוי הקודם. Tracking (כמו ByteTrack) מוסיף שכבת שיוך (association) שמקשרת detections עוקבות לאותו ID, ומאפשרת לדעת ש'זה אותו אדם' ולא רק 'יש אדם'.</p>
+<p><strong>ש: מהם שני האתגרים המרכזיים שגורמים ל-ByteTrack 'לאבד' מעקב אחר אובייקט?</strong></p>
+<p>ת: Occlusion (האובייקט נחסם זמנית, אין detection לשייך) ותנועה מהירה/crowded scenes (קשה להבחין איזה detection בפריים החדש שייך לאיזה ID קיים, כי המרחק/חפיפה בין אובייקטים גדלה).</p>

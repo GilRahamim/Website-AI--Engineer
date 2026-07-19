@@ -1,0 +1,15 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>תופעה ברשתות עמוקות (במיוחד RNN עמוקות) שבה הגרדיאנט המחושב ב-Backpropagation נעשה קטן מאוד (דועך לאפס) או גדול מאוד (מתפוצץ) כשהוא מועבר אחורה דרך שכבות רבות, מה שמונע אימון יציב.</p>
+<h4 class='sec-h'>🔍 מתי זה קורה?</h4>
+<ul><li>ברשתות עמוקות מאוד, כשהגרדיאנט מחושב כמכפלה של נגזרות רבות (כלל השרשרת) — אם כל נגזרת קטנה מ-1, המכפלה דועכת אקספוננציאלית (Vanishing); אם גדולה מ-1, היא מתפוצצת (Exploding).</li><li>שימוש בפונקציות הפעלה כגון Sigmoid/Tanh שהנגזרת שלהן קטנה מ-1 ברוב הטווח.</li><li>ברשתות רקורסיביות (RNN) על רצפים ארוכים — הגרדיאנט מועבר אחורה גם בזמן (BPTT), מה שמחמיר את הבעיה.</li></ul>
+<h4 class='sec-h'>⚠️ איך מזהים?</h4>
+<ul><li>Vanishing: המשקלים בשכבות הראשונות (הקרובות לקלט) כמעט לא מתעדכנים; ה-Loss נתקע ולא משתפר.</li><li>Exploding: ה-Loss מקבל ערכי NaN/Inf, או מזנק בצורה לא יציבה בין איטרציות.</li><li>מעקב אחר נורם (norm) הגרדיאנטים בכל שכבה במהלך אימון — ערכים קטנים מאוד או גדולים מאוד מצביעים על הבעיה.</li></ul>
+<h4 class='sec-h'>🛠️ איך פותרים / מטפלים?</h4>
+<ul><li>Gradient Clipping — חיתוך הגרדיאנט לטווח/נורם מקסימלי, פותר Exploding Gradients.</li><li>החלפת Sigmoid/Tanh ב-ReLU (ונגזרותיו) — הנגזרת לא דועכת לאפס לערכים חיוביים.</li><li>Batch Normalization — מייצב את התפלגות האקטיבציות, מסייע גם בבעיית הגרדיאנטים.</li><li>Residual Connections (כמו ב-ResNet, Transformer) — מספקים &quot;קיצור דרך&quot; לגרדיאנט שמדלג על שכבות.</li><li>ארכיטקטורות LSTM/GRU עם Gates — נועדו במיוחד לפתור Vanishing Gradients ב-RNN.</li><li>אתחול משקלים נכון (Xavier/He Initialization).</li></ul>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>הבעיה היא הגורם המרכזי לפיתוח LSTM (עם Gating Mechanism) ושל Residual Connections ב-CNN/Transformer; Batch Normalization שפותחה במקור לייצוב אימון CNN מסייעת גם כאן.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>איך LSTM פותר את בעיית Vanishing Gradients ש-RNN רגיל סובל ממנה?</p>
+<p><strong>ת: </strong>LSTM מוסיף Cell State עם מסילת &quot;קיצור דרך&quot; לינארית (ללא Tanh ישיר על המסילה הראשית) ו-Gates (Forget/Input/Output) השולטים על זרימת המידע, כך שהגרדיאנט יכול לזרום אחורה הרבה זמן בלי לדעוך אקספוננציאלית.</p>
+<p><strong>ש: </strong>מה ההבדל בין הטיפול ב-Vanishing Gradients לבין הטיפול ב-Exploding Gradients?</p>
+<p><strong>ת: </strong>ל-Vanishing פותרים בעיקר על ידי שינוי ארכיטקטורה/אקטיבציה (ReLU, LSTM, Residual Connections); ל-Exploding פותרים בעיקר עם Gradient Clipping — חיתוך ישיר של גודל הגרדיאנט בזמן האימון.</p>

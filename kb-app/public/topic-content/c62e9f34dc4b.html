@@ -1,0 +1,33 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>שיטת אופטימיזציה המוסיפה ל-SGD &quot;זיכרון&quot; של כיווני העדכון הקודמים, כך שהעדכון הנוכחי הוא ממוצע ממושקל (אקספוננציאלי) של הגרדיאנטים הקודמים ולא רק הגרדיאנט הנוכחי — בדומה לכדור המתגלגל במורד עם תנע.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ol><li>מאתחלים משתנה תנע v=0.</li><li>בכל איטרציה מחשבים את הגרדיאנט הנוכחי g_t.</li><li>מעדכנים את התנע: משקללים את התנע הקודם עם הגרדיאנט הנוכחי.</li><li>מעדכנים את המשקלים בכיוון התנע (ולא בכיוון הגרדיאנט הגולמי בלבד).</li></ol>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/deda821e4949.png" loading="lazy" alt="formula"></div>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/0804f36a292c.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>אימון רשתות עמוקות עם נוף Loss בעל &quot;קניונים&quot; צרים (ravine) שגורמים ל-SGD להתנדנד</li><li>שיפור מהירות התכנסות בכל אימון deep learning סטנדרטי</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מאיץ התכנסות בכיוונים עקביים ומדכא תנודות בכיוונים לא עקביים</li><li>מסייע לברוח ממינימה מקומיים שטוחים (saddle points)</li><li>פשוט להוספה מעל SGD קיים</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>מוסיף היפר-פרמטר נוסף (β) שיש לכוון</li><li>יכול &quot;לדלג&quot; מעל מינימום טוב אם התנע גבוה מדי (overshooting)</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Classification</td><td>Accuracy, Cross-Entropy Loss</td></tr><tr><td>Regression</td><td>MSE, RMSE</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>הבדל מרכזי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>SGD רגיל</td><td>אין זיכרון של עדכונים קודמים</td><td>בייסליין פשוט</td></tr><tr><td>Nesterov Momentum</td><td>&quot;מציץ קדימה&quot; לפני חישוב הגרדיאנט</td><td>כשנדרשת התכנסות מהירה יותר מ-Momentum רגיל</td></tr><tr><td>Adam</td><td>משלב Momentum + Adaptive LR</td><td>ברירת מחדל מודרנית</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python / PyTorch)</h4>
+<pre class='code-block'><code>import torch
+
+model = torch.nn.Linear(10, 1)
+optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+
+for x_batch, y_batch in dataloader:
+    optimizer.zero_grad()
+    loss = torch.nn.functional.mse_loss(model(x_batch), y_batch)
+    loss.backward()
+    optimizer.step()   # v = beta*v + (1-beta)*grad ; theta -= alpha*v</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>איך Momentum עוזר להתכנסות מהירה יותר?</p>
+<p><strong>ת: </strong>הוא ממוצע את הגרדיאנטים על פני זמן, כך שתנודות בכיוונים לא-עקביים מתבטלות וההתקדמות בכיוון העקבי (לעבר המינימום) מואצת.</p>
+<p><strong>ש: </strong>מה ההבדל בין Momentum רגיל ל-Nesterov Momentum?</p>
+<p><strong>ת: </strong>Nesterov מחשב את הגרדיאנט בנקודה המשוערת לאחר הצעד הבא (lookahead), מה שמאפשר תיקון מהיר יותר ומפחית overshooting.</p>

@@ -1,0 +1,24 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>פונקציות המודדות את הפער בין התפלגות ההסתברות החזויה לבין התווית האמיתית במשימות סיווג, ומשמשות לאימון המודל על ידי מזעור הפער הזה.</p>
+<h4 class='sec-h'>📐 הנוסחאות</h4>
+<p><strong>Binary Cross-Entropy (BCE)</strong></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/098784a94587.png" loading="lazy" alt="formula"></div>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>y</td><td>תווית אמיתית (0 או 1)</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/58b4b334811d.png" loading="lazy" alt="formula"></td><td>הסתברות חזויה למחלקה 1 (לאחר Sigmoid)</td></tr></table>
+<p>משמשת לסיווג בינארי; מענישה בחריפות תחזיות בטוחות אך שגויות (ככל ש-ŷ קרוב יותר ל-0 או 1 בכיוון הלא נכון, הלוס גדל מאוד).</p>
+<p><strong>Cross-Entropy (Multi-Class)</strong></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/3be6e067b34d.png" loading="lazy" alt="formula"></div>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>y_i</td><td>תווית אמיתית one-hot למחלקה i</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/6566a7b7dfbf.png" loading="lazy" alt="formula"></td><td>הסתברות חזויה למחלקה i (לאחר Softmax)</td></tr></table>
+<p>משמשת לסיווג מרובה-מחלקות; משולבת תמיד עם Softmax בשכבת הפלט.</p>
+<p><strong>Focal Loss</strong></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/4c49b9a641b7.png" loading="lazy" alt="formula"></div>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/58b4b334811d.png" loading="lazy" alt="formula"></td><td>הסתברות חזויה למחלקה הנכונה</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/3a3b2afe82e8.png" loading="lazy" alt="formula"></td><td>פרמטר המתמקד בדוגמאות קשות (γ&gt;0)</td></tr></table>
+<p>מרחיב את Cross-Entropy על ידי הקטנת המשקל של דוגמאות 'קלות' (שכבר מסווגות נכון בביטחון) — שימושי בבעיות עם חוסר איזון חד בין מחלקות (class imbalance).</p>
+<h4 class='sec-h'>🎯 מתי משתמשים?</h4>
+<ul><li>BCE — סיווג בינארי (שתי מחלקות), עם שכבת פלט Sigmoid</li><li>Cross-Entropy — סיווג מרובה-מחלקות, עם שכבת פלט Softmax</li><li>Focal Loss — כשיש חוסר איזון חד בין מחלקות (לדוגמה זיהוי אובייקטים נדירים בתמונה)</li></ul>
+<h4 class='sec-h'>🔄 השוואה בין הפונקציות</h4>
+<table class='kbtable'><tr><td><strong>פונקציה</strong></td><td><strong>מתי עדיפה</strong></td></tr><tr><td>BCE</td><td>סיווג בינארי או multi-label (כמה תוויות בו-זמנית)</td></tr><tr><td>Cross-Entropy</td><td>סיווג מרובה-מחלקות סטנדרטי (מחלקה אחת נכונה מבין כמה)</td></tr><tr><td>Focal Loss</td><td>חוסר איזון חד בין מחלקות, רוצים להתמקד בדוגמאות קשות</td></tr></table>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה הקשר בין Cross-Entropy ל-Softmax בשכבת הפלט?</p>
+<p><strong>ת: </strong>Softmax הופך את הלוגיטים להתפלגות הסתברות חוקית (סכום=1); Cross-Entropy מודד את ה'מרחק' בין ההתפלגות החזויה הזו להתפלגות האמיתית (one-hot) — שני הרכיבים פועלים תמיד יחד בשכבת הפלט לסיווג מרובה-מחלקות.</p>
+<p><strong>ש: </strong>מתי Focal Loss עדיף על Cross-Entropy רגיל?</p>
+<p><strong>ת: </strong>כשיש חוסר איזון חד בין מחלקות (לדוגמה הרבה דוגמאות 'רקע' ומעט דוגמאות 'אובייקט'); Focal Loss מקטין את המשקל של דוגמאות הרקע הקלות שכבר מסווגות נכון בביטחון, ומאפשר למודל להתמקד בדוגמאות הקשות והנדירות.</p>

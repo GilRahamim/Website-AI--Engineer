@@ -1,0 +1,35 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Plan Mode הוא permission mode שבו ה-agent יכול רק לקרוא — אין edits, אין writes, אין Bash הרסני. ה-agent סוקר את הקוד, מציע תוכנית (plan), והמשתמש מאשר אותה — רק לאחר מכן מתחיל ביצוע בפועל.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>ב-SDK: permission_mode='plan'.</li><li>ה-agent מציע תוכנית; המשתמש מאשר; ה-runtime משדרג הרשאות ל-acceptEdits (או דומה) באמצעות כלי ExitPlanMode.</li></ul>
+<h4 class='sec-h'>🎯 למה זה חשוב</h4>
+<ul><li>מונע מהמודל 'לתקוף' תיקון שגוי לפני בדיקה.</li><li>איטרציה זולה על הגישה (approach) לפני תשלום על edits בפועל.</li><li>audit trail — התוכנית היא 'חוזה' (contract) שניתן לעיין בו אחר כך.</li></ul>
+<p><strong>💻 דמו מלא — Code-Review Plugin (Skill + Sub-Agents + Hook + Plan Mode)</strong></p>
+<p>Plugin המריץ סקירת PR מלאה: Skill review-pr (נוהל אורקסטרציה) → מפזר ל-2 sub-agents (security-reviewer, style-reviewer) שכל אחד קורא diff בקונטקסט מבודד ומחזיר punch list → Hook מסוג PreToolUse חוסם כתיבה ל-main → Command /review הוא נקודת הכניסה. ה-agent ההורה ממזג את שני ה-punch lists לסקירה מאוחדת.</p>
+<p># run_review.py</p>
+<p>import anyio</p>
+<p>from claude_agent_sdk import query, ClaudeAgentOptions</p>
+<p>options = ClaudeAgentOptions(</p>
+<p>model='claude-opus-4-7',</p>
+<p>allowed_tools=['Read', 'Grep', 'Glob', 'Bash', 'Task'],</p>
+<p>permission_mode='plan',</p>
+<p>setting_sources=['project'],   # load .claude/agents + hooks</p>
+<p>plugins=['./code-review-plugin'],</p>
+<p>)</p>
+<p>PROMPT = &quot;&quot;&quot;Review PR #482. Dispatch security-reviewer AND</p>
+<p>style-reviewer in parallel via Task. Merge their punch lists.&quot;&quot;&quot;</p>
+<p>async def main():</p>
+<p>async for msg in query(prompt=PROMPT, options=options):</p>
+<p>if msg.type == 'assistant':</p>
+<p>print(msg.content)</p>
+<p>anyio.run(main)</p>
+<h4 class='sec-h'>🏛️ מחסנית ה-Agent המלאה (Full Agent Stack)</h4>
+<table class='kbtable'><tr><td><strong>שכבה</strong></td><td><strong>תיאור</strong></td></tr><tr><td>Plugin layer</td><td>חבילה מנוהלת-גרסאות: skills + agents + hooks + commands</td></tr><tr><td>Skill layer</td><td>Playbooks: SKILL.md, scripts, templates</td></tr><tr><td>Sub-agent layer</td><td>חלונות קונטקסט מבודדים, תפקידי מומחה</td></tr><tr><td>SDK / Runtime</td><td>לולאת query(), hooks, permission mode, streaming</td></tr><tr><td>Tool layer</td><td>Bash, Read, Edit, MCP servers, web fetch</td></tr></table>
+<p>Hooks חוצים את כל השכבות — guardrails דטרמיניסטיים מעל מודל non-deterministic.</p>
+<h4 class='sec-h'>🛠️ דפוסים ואנטי-דפוסים (Patterns &amp; Anti-Patterns)</h4>
+<ul><li>Fan-out research — פתיחת N sub-agents במקביל, מיזוג סיכומים. חוסך קונטקסט וזמן-קיר.</li><li>Deterministic gate — hook מסוג PreToolUse שמריץ typecheck לפני כל Edit; חוסם commits שבורים.</li><li>Plan-then-execute — permission_mode='plan' → אישור משתמש → שדרוג ל-acceptEdits. זול לתקן כיוון.</li><li>Plugin per workflow — plugin אחד לכל job הנדסי חזרתי (review, release, onboard). מנוהל-גרסאות, ניתן לשיתוף.</li><li>❌ אנטי-פטרן: לדחוס הכול ל-agent הראשי — הקונטקסט מתנפח, המודל סוטה.</li><li>❌ אנטי-פטרן: לסמוך על hooks לביצוע לוגיקה עסקית — הם שומרים (guards), לא features.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ה-ExitPlanMode tool עושה בדיוק בתהליך plan-then-execute?</strong></p>
+<p>ת: הוא המנגנון שבו ה-agent 'מציע' את התוכנית למשתמש; לאחר אישור המשתמש, ה-runtime משדרג את permission mode מ-'plan' (read-only) למצב שמתיר edits — כך שהביצוע בפועל מתחיל רק אחרי אישור מפורש.</p>
+<p><strong>ש: בדמו ה-code-review plugin, מי מבצע את המיזוג הסופי של שני ה-punch lists?</strong></p>
+<p>ת: ה-agent ההורה (parent) — לאחר ששני ה-sub-agents (security-reviewer, style-reviewer) מחזירים כל אחד סיכום קצר בקונטקסט המבודד שלו, ה-agent ההורה ממזג את שניהם לסקירה מאוחדת אחת ופועל לפי הוראת ה-PROMPT.</p>

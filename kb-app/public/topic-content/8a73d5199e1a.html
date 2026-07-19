@@ -1,0 +1,29 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Query Rewrite היא טכניקת עיבוד-מקדים (pre-retrieval) שבה LLM מנסח מחדש שאילתת משתמש מעורפלת או חלקית, כך שתהיה ספציפית וברורה יותר לפני ביצוע ה-retrieval — היא לא RAG בעצמה, אלא שלב המשפר את איכות ה-retrieval.</p>
+<h4 class='sec-h'>🔍 מתי זה קורה?</h4>
+<ul><li>שאילתות מעורפלות (לדוגמה: &quot;מה קרה עם האינסולין?&quot;).</li><li>שאילתות קצרות או חסרות הקשר.</li><li>סוכנים שיחתיים (conversational agents).</li><li>מקרים שבהם retrieval ראשוני נכשל.</li></ul>
+<h4 class='sec-h'>⚠️ איך זה עובד</h4>
+<ol><li>המשתמש מקליד שאילתה.</li><li>השאילתה מנוסחת מחדש על ידי LLM.</li><li>השאילתה המנוסחת-מחדש משמשת לחיפוש דמיון וקטורי.</li><li>ה-chunks שנשלפו מוזרקים ל-prompt ליצירת התשובה.</li></ol>
+<h4 class='sec-h'>🛠️ מתי להשתמש / מתי להימנע</h4>
+<ul><li>להשתמש: פורטלי חיפוש ארגוניים, בוטים בריאות/פיננסים עם שאלות חלקיות, אחזור משפטי/compliance.</li><li>להימנע: שאילתות שכבר מנוסחות היטב וספציפיות לדומיין, או מערכות עם דרישת latency קשיחה (real-time).</li></ul>
+<h4 class='sec-h'>💰 השפעת latency ועלות</h4>
+<table class='kbtable'><tr><td><strong>היבט</strong></td><td><strong>השפעה</strong></td></tr><tr><td>Latency</td><td>בינונית — מוסיף קריאת LLM אחת לפני ה-retrieval</td></tr><tr><td>עלות</td><td>מעט גבוהה יותר עקב קריאת LLM נוספת</td></tr></table>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>Query Rewrite משתלב כשלב מקדים לכל וריאנט RAG אחר — Conversational RAG, Multi-hop Retrieval וכו' — ומשפר את הקלט לפני שמתבצע חיפוש סמנטי.</p>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from langchain_openai import OpenAI
+from langchain.prompts import PromptTemplate
+def rewrite_query(original_query: str) -&amp;gt; str:
+llm = OpenAI(temperature=0.3)
+prompt = PromptTemplate.from_template(
+&amp;quot;Rewrite the following question for better retrieval: {query}&amp;quot;
+)
+return llm(prompt.format(query=original_query))
+# Example:
+# Input:  &amp;quot;What happened with insulin?&amp;quot;
+# Output: &amp;quot;What was the outcome of insulin [pricing policy]?&amp;quot;</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מתי Query Rewrite לא משתלם?</strong></p>
+<p>ת: כשהשאילתות כבר ספציפיות וברורות, או כשתקציב ה-latency קשיח (למשל מערכות real-time) — הקריאה הנוספת ל-LLM לא מצדיקה את העלות.</p>
+<p><strong>ש: מה ההבדל בין Query Rewrite ל-Conversational RAG?</strong></p>
+<p>ת: Query Rewrite משנה ניסוח שאילתה בודדת לשיפור retrieval; Conversational RAG משתמש בהיסטוריית שיחה שלמה כדי להבין הקשר רב-תורי.</p>

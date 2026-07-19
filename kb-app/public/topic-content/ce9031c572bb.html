@@ -1,0 +1,43 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>CrewAI Flows הם דרך מובנית לבנות workflows רב-שלביים מבוססי-אירועים, המתאמים בין tasks ו-Crews. Flows מנהלים סדר ביצוע, state ולוגיקה, ומאפשרים אוטומציות AI גמישות וניתנות להרחבה.</p>
+<h4 class='sec-h'>🏛️ יכולות מפתח</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/adfe4829bb75.png" loading="lazy" alt="CrewAI Flows — Workflows מבוססי-אירועים — architecture diagram" /></div>
+<ul><li>Workflow Orchestration — שרשור מספר tasks ו-Crews בצורה חלקה.</li><li>State Management — שיתוף ושימור state בין שלבים, באמצעות dict גמיש או מודל Pydantic מבני.</li><li>Event-Driven Design — תגובה דינמית ל-triggers ואירועים, באמצעות decorators: @start(), @listen(), @router().</li><li>Flexible Control Flow — תנאים, לופים, ו-branching מובנים (or_, and_, @router()).</li></ul>
+<h4 class='sec-h'>⚙️ Decorators מרכזיים</h4>
+<table class='kbtable'><tr><td><strong>Decorator</strong></td><td><strong>תפקיד</strong></td></tr><tr><td>@start()</td><td>מסמן את שלב הפתיחה של ה-Flow</td></tr><tr><td>@listen(method)</td><td>מריץ method כשה-method שהוא מאזין לו מסתיים</td></tr><tr><td>@router(method)</td><td>מנתב לתנאים שונים לפי הפלט של method</td></tr><tr><td>or_(m1, m2)</td><td>מאזין למספר methods, מופעל כשאחד מהם מסתיים</td></tr><tr><td>and_(m1, m2)</td><td>מאזין למספר methods, מופעל רק כששניהם הסתיימו</td></tr></table>
+<h4 class='sec-h'>🔄 Hierarchical מול Sequential Process</h4>
+<table class='kbtable'><tr><td><strong>Process</strong></td><td><strong>תיאור</strong></td><td><strong>מתי להשתמש</strong></td></tr><tr><td>Sequential</td><td>ברירת המחדל — agents פועלים בזה-אחר-זה, ללא מנהל</td><td>משימות פשוטות, זרימה לינארית ברורה</td></tr><tr><td>Hierarchical</td><td>Manager Agent מתאם, מאציל סמכויות, ומאשר תוצרים</td><td>משימות מורכבות הדורשות בקרת איכות וניתוב דינמי</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה — Flow פשוט עם Router</h4>
+<pre class='code-block'><code>from crewai.flow.flow import Flow, start, listen, router
+import random
+class RouterFlow(Flow):
+@start()
+def start_method(self):
+self.state[&amp;quot;success_flag&amp;quot;] = random.choice([True, False])
+@router(start_method)
+def second_method(self):
+return &amp;quot;success&amp;quot; if self.state[&amp;quot;success_flag&amp;quot;] else &amp;quot;failed&amp;quot;
+@listen(&amp;quot;success&amp;quot;)
+def third_method(self):
+print(&amp;quot;Third method running&amp;quot;)
+@listen(&amp;quot;failed&amp;quot;)
+def fourth_method(self):
+print(&amp;quot;Fourth method running&amp;quot;)</code></pre>
+<h4 class='sec-h'>💻 קוד לדוגמה — שילוב Hierarchical + Sequential ב-Flow</h4>
+<pre class='code-block'><code>hierarchical_crew = Crew(agents=[researcher, pitch_writer], tasks=[research_task, pitch_task],
+manager_agent=manager, process=Process.hierarchical, verbose=True)
+sequential_crew = Crew(agents=[editor, reviewer], tasks=[edit_task, review_task],
+process=Process.sequential, verbose=True)
+class StartupPitchFlow(Flow):
+@listen(initialize)
+def run_hierarchical_crew(self):
+&amp;quot;&amp;quot;&amp;quot;Stage 1: Research and create pitch draft&amp;quot;&amp;quot;&amp;quot;
+return hierarchical_crew.kickoff()
+@listen(run_hierarchical_crew)
+def run_sequential_crew(self):
+&amp;quot;&amp;quot;&amp;quot;Stage 2: Edit and review the pitch&amp;quot;&amp;quot;&amp;quot;
+return sequential_crew.kickoff()</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין or_ ל-and_ ב-CrewAI Flows?</strong></p>
+<p>ת: or_(m1, m2) מפעיל את ה-listener כאשר אחת מהשיטות מסתיימת (הראשונה שמסתיימת מפעילה); and_(m1, m2) ממתין ששתי השיטות יסתיימו לפני הפעלת ה-listener.</p>
+<p><strong>ש: מתי תשלב Hierarchical ו-Sequential Crews בתוך אותו Flow?</strong></p>
+<p>ת: כשחלק מהתהליך דורש בקרת איכות ותיאום בין מספר תפקידים מתמחים (שלב מחקר/כתיבה עם manager) וחלק אחר הוא שרשרת לינארית פשוטה (ערכית/בדיקה) שלא דורשת ניהול — Flow מאפשר לשלב את שני סוגי ה-Process באותו pipeline.</p>

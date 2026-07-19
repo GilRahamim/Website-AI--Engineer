@@ -1,0 +1,29 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Multi-hop Retrieval היא טכניקת RAG שבה מענה על שאלה מחייב שרשור של מספר פיסות עדות ממסמכים שונים — מדמה חשיבה צעד-אחר-צעד, כאשר תוצאת ה-retrieval הראשון מכוונת את ה-retrieval הבא.</p>
+<h4 class='sec-h'>🔍 מתי זה קורה?</h4>
+<ul><li>שאלה הדורשת שילוב עובדות ממספר מקורות (סיבה-תוצאה, השוואה).</li><li>מאגרי ידע גדולים או graphs של ידע מבוזר בין מקורות רבים.</li></ul>
+<h4 class='sec-h'>⚠️ איך זה עובד</h4>
+<ol><li>שאילתה ראשונית משמשת ל-retrieval ראשון (hop 1).</li><li>ה-LLM קורא את הקשר מה-hop הראשון ומייצר שאלת המשך / מילות מפתח.</li><li>השאלה החדשה משמשת ל-retrieval שני (hop 2).</li><li>ההקשר המשולב משני ה-hops מועבר ל-generator לתשובה מעוגנת אחת.</li></ol>
+<h4 class='sec-h'>🛠️ מתי להשתמש / מתי להימנע</h4>
+<ul><li>להשתמש: שאלות הדורשות שילוב עובדות, knowledge graphs, קורפוסים גדולים עם מידע מבוזר.</li><li>להימנע: שאלות חד-hop פשוטות, מקרים שדורשים latency מתחת לשנייה (עוזרי קול).</li></ul>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>Multi-hop Retrieval משלים ReAct + RAG — ReAct מספק את לוגיקת ההחלטה (האם להמשיך ל-hop נוסף), ו-Multi-hop היא הטכניקה הספציפית לשרשור retrieval על פני מספר שלבים.</p>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from langchain.chains import RetrievalQA
+from langchain_openai import ChatOpenAI
+qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever, chain_type=&amp;quot;stuff&amp;quot;)
+# Hop 1
+first_answer = qa_chain.run(&amp;quot;What legislation affected insulin pricing?&amp;quot;)
+# Hop 2 - follow-up derived from hop 1
+second_answer = qa_chain.run(&amp;quot;What did the Inflation Reduction Act do in healthcare?&amp;quot;)
+# Final synthesis using both hops
+final_prompt = f&amp;quot;&amp;quot;&amp;quot;Using this information:
+- {first_answer}
+- {second_answer}
+Summarize how U.S. legislation affected insulin pricing.&amp;quot;&amp;quot;&amp;quot;
+final_response = llm.predict(final_prompt)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: למה Multi-hop Retrieval נחוץ כשיש Knowledge Graph?</strong></p>
+<p>ת: מידע ב-KG מבוזר לעיתים על פני צמתים/קשרים מרובים — תשובה מלאה דורשת לעבור (&quot;hop&quot;) בין מספר צמתים, ולא ניתן להשיג אותה ב-retrieval יחיד.</p>
+<p><strong>ש: מהו ה-trade-off המרכזי של Multi-hop Retrieval?</strong></p>
+<p>ת: דיוק ועומק תשובה גבוהים יותר על חשבון latency ועלות גבוהות — כל hop נוסף מצריך retrieval וקריאת LLM נוספת.</p>

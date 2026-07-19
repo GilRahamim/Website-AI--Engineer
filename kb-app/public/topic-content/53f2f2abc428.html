@@ -1,0 +1,21 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מדד דמיון בין שני וקטורים, המבוסס על הזווית שביניהם במרחב הווקטורי — ולא על גודלם (norm). שני וקטורים המצביעים לאותו כיוון יקבלו דמיון גבוה גם אם עוצמתם שונה.</p>
+<h4 class='sec-h'>📐 הנוסחה</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/2f6a936d7012.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>דמיון קוסינוס בין שני וקטורים A ו-B</em></p>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>A, B</td><td>שני וקטורי המסמכים/מילים להשוואה (לדוגמה — וקטורי TF-IDF)</td></tr><tr><td>Ai, Bi</td><td>הערך בתא ה-i של כל וקטור</td></tr></table>
+<h4 class='sec-h'>📊 תכונות חשובות</h4>
+<ul><li>תחום ערכים (לוקטורים אי-שליליים, כמו TF-IDF): 0 ≤ sim ≤ 1; באופן כללי הטווח הוא [-1, 1].</li><li>1 — הווקטורים זהים בכיוון (A ו-B מקבילים).</li><li>0 — הווקטורים אורתוגונליים (אין דמיון).</li><li>1 — הווקטורים מנוגדים בכיוון.</li><li>בניגוד למרחק אוקלידי, דמיון קוסינוס אינו מושפע מאורך המסמך — חשוב במיוחד כשמשווים מסמכים בגדלים שונים.</li></ul>
+<h4 class='sec-h'>🎯 מתי משתמשים?</h4>
+<ul><li>דירוג מסמכים לפי דמיון לשאילתה (במודל Vector-Space / TF-IDF).</li><li>חיפוש סמנטי (Semantic Search) — דמיון בין embeddings.</li><li>מערכות המלצה — דמיון בין וקטור משתמש/מוצר (לדוגמה ב-LDA / Doc2Vec).</li></ul>
+<h4 class='sec-h'>🔄 השוואה לפונקציות דומות</h4>
+<table class='kbtable'><tr><td><strong>פונקציה</strong></td><td><strong>מתי עדיפה</strong></td></tr><tr><td>Cosine Similarity</td><td>וקטורים משוקללים, רגישות לכיוון ולא לעוצמה</td></tr><tr><td>Jaccard Similarity</td><td>קבוצות בינאריות, ללא תדירות</td></tr><tr><td>Euclidean Distance</td><td>כשגודל הווקטור (norm) רלוונטי גם הוא</td></tr></table>
+<h4 class='sec-h'>💻 מימוש בקוד</h4>
+<pre class='code-block'><code>from sklearn.metrics.pairwise import cosine_similarity
+cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מדוע דמיון קוסינוס מועדף על פני מרחק אוקלידי בהשוואת מסמכים?</strong></p>
+<p><strong>ת: </strong>מכיוון שהוא מתעלם מאורך הווקטור (גודל המסמך) ומתמקד רק בכיוון — כך שני מסמכים דומים בתוכן אך בגדלים שונים עדיין יקבלו דמיון גבוה.</p>
+<p><strong>ש: </strong><strong>באיזה טווח נמצא דמיון קוסינוס בין שני וקטורי TF-IDF?</strong></p>
+<p><strong>ת: </strong>בין 0 ל-1, מכיוון שערכי TF-IDF הם אי-שליליים.</p>

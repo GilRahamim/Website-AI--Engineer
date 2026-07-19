@@ -1,0 +1,17 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>תבנית התקשורת של מערכת agents — Agent בודד (Single Agent) מול ארכיטקטורת Supervisor + Agents מתמחים (Multi-Agent) — קובעת עד כמה המערכת modular, ניתנת להרחבה, ועמידה בפני מורכבות גוברת.</p>
+<h4 class='sec-h'>🏛️ Single Agent</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/fbba17c46cad.png" loading="lazy" alt="Multi-Agent Communication Patterns — architecture diagram" /></div>
+<ul><li>Agent בודד מבוסס-LLM, מבצע task decomposition בעצמו.</li><li>מנתב לכלים שונים העומדים לרשותו.</li><li>מתאים ל-use cases פשוטים.</li></ul>
+<h4 class='sec-h'>❌ אתגרי Single Agent</h4>
+<ul><li>Agent בודד יכול &quot;להתבלבל&quot; כשהמורכבות עולה.</li><li>פחות modular — שינוי בשירות אחד יכול להשפיע על תחומים מרובים (כמו ב-monolith לעומת microservices).</li></ul>
+<h4 class='sec-h'>🏛️ Supervisor + Specialized Agents (Multi-Agent)</h4>
+<ul><li>Supervisor Agent — מנתב בין agents מתמחים.</li><li>Specialized Agents — כל אחד עם משימה ספציפית.</li><li>Tools Calling — כלים נפרדים לכל Agent.</li><li>Inter-Agent Communication — שיתוף memory בין agents.</li><li>Guardrails — מיושמים בכל agent / בשכבת ה-supervisor.</li></ul>
+<h4 class='sec-h'>🔄 השוואה</h4>
+<table class='kbtable'><tr><td><strong>היבט</strong></td><td><strong>Single Agent</strong></td><td><strong>Multi-Agent (Supervisor)</strong></td></tr><tr><td>מורכבות נתמכת</td><td>נמוכה-בינונית</td><td>גבוהה</td></tr><tr><td>Modularity</td><td>נמוכה (כמו monolith)</td><td>גבוהה (כמו microservices)</td></tr><tr><td>תחזוקה</td><td>פשוטה למשימות קטנות, מסתבכת בקנה מידה</td><td>כל agent ניתן לפיתוח/תחזוקה בנפרד</td></tr><tr><td>Latency</td><td>נמוכה יותר (פחות קריאות LLM)</td><td>גבוהה יותר (תקשורת בין agents)</td></tr></table>
+<h4 class='sec-h'>🎯 מתי להשתמש</h4>
+<ul><li>Single Agent: משימות צרות, latency קריטי, תחזוקה מינימלית.</li><li>Multi-Agent: משימות מורכבות הדורשות מספר תחומי מומחיות (research, writing, editing, QA).</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: למה Multi-Agent עם Supervisor מדומה ל-microservices ולא ל-monolith?</strong></p>
+<p>ת: כל Agent מתמחה הוא יחידה עצמאית עם תפקיד מוגדר (כמו service) — שינוי בלוגיקה של agent אחד לא דורש לשנות agents אחרים, בדיוק כמו ששינוי ב-microservice אחד לא דורש redeploy של כל המערכת.</p>
+<p><strong>ש: מהו ה-trade-off המרכזי בבחירת Multi-Agent על פני Single Agent?</strong></p>
+<p>ת: מודולריות ויכולת התמחות גבוהות יותר, אך במחיר latency ועלות גבוהים יותר עקב תקשורת בין-agent וקריאות LLM מרובות.</p>

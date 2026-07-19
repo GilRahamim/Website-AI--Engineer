@@ -1,0 +1,34 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Plugin הוא תיקייה מנוהלת-גרסאות (versioned folder) שמאגדת skills, sub-agents, hooks, slash commands, ו-MCP servers ליחידה אחת להתקנה — כך שיכולות agent הופכות לאקוסיסטם חבילות (package ecosystem), בדומה למודול npm.</p>
+<h4 class='sec-h'>🏛️ מבנה Plugin</h4>
+<ul><li>plugin.json — מטא-דאטה, גרסה, נקודות כניסה (entry points).</li><li>תיקיות: skills/, agents/, commands/, hooks/.</li><li>התקנה ממרקטפלייס: /plugin marketplace add ולאחר מכן /plugin install &lt;name&gt;.</li><li>עובד גם ב-Claude Code וגם ב-SDK (אופציית plugins).</li></ul>
+<h4 class='sec-h'>💻 קוד לדוגמה — plugin.json</h4>
+<pre class='code-block'><code># code-review-plugin/plugin.json
+{
+&amp;quot;name&amp;quot;: &amp;quot;code-review&amp;quot;,
+&amp;quot;version&amp;quot;: &amp;quot;1.2.0&amp;quot;,
+&amp;quot;description&amp;quot;: &amp;quot;PR review with security + style sub-agents&amp;quot;,
+&amp;quot;author&amp;quot;: &amp;quot;zvi@everoakinnovations.com&amp;quot;,
+&amp;quot;skills&amp;quot;: [&amp;quot;skills/review-pr&amp;quot;],
+&amp;quot;agents&amp;quot;: [&amp;quot;agents/security-reviewer.md&amp;quot;,
+&amp;quot;agents/style-reviewer.md&amp;quot;],
+&amp;quot;commands&amp;quot;: [&amp;quot;commands/review.md&amp;quot;],
+&amp;quot;hooks&amp;quot;: &amp;quot;hooks/hooks.json&amp;quot;,
+&amp;quot;mcpServers&amp;quot;: {
+&amp;quot;github&amp;quot;: { &amp;quot;command&amp;quot;: &amp;quot;npx&amp;quot;,
+&amp;quot;args&amp;quot;: [&amp;quot;-y&amp;quot;, &amp;quot;@modelcontextprotocol/server-github&amp;quot;] }
+}
+}</code></pre>
+<h4 class='sec-h'>🎯 מתי לבחור Plugin</h4>
+<ul><li>כשיש workflow הנדסי חזרתי (review, release, onboard) שרוצים לארוז ולשתף כיחידה אחת.</li><li>כשרוצים ניהול גרסאות (versioning) ויכולת שיתוף קלה בין צוותים/פרויקטים.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מאגד את כל מה שצריך (skills+agents+hooks+commands+MCP) ליחידה אחת מותקנת.</li><li>ניהול גרסאות מובנה — אפשר לעדכן/לשחזר גרסת plugin.</li><li>ניתן לשיתוף כמו מודול תוכנה רגיל (git repo, marketplace).</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>תוספת שכבת abstraction — דורש הבנה של כל תת-הרכיבים (skills/agents/hooks/MCP) כדי לתחזק plugin.</li></ul>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>Plugin הוא שכבת-העל (top layer) במחסנית ה-agent המלאה: Plugin layer → Skill layer → Sub-agent layer → SDK/Runtime → Tool layer. Hooks חוצים את כל השכבות כ-guardrails דטרמיניסטיים.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין Plugin ל-Skill בודד?</strong></p>
+<p>ת: Skill הוא יחידת ידע/נוהל בודדת (SKILL.md + קבצים). Plugin הוא יחידת חבילה גבוהה יותר שיכולה לאגד כמה skills, sub-agents, hooks, ו-MCP servers יחד כ-workflow מלא, עם ניהול גרסאות והתקנה דרך marketplace.</p>
+<p><strong>ש: מדוע plugin.json מכיל הגדרת mcpServers ולא רק skills/agents?</strong></p>
+<p>ת: כי plugin שלם מאגד את כל הרכיבים הדרושים להפעלת workflow — אם ה-workflow צריך גישה חיה ל-GitHub API למשל, ה-MCP server הרלוונטי מוגדר בתוך אותו plugin כך שההתקנה תיתן את כל התלויות בפעולה אחת.</p>

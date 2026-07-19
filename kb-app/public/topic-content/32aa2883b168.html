@@ -1,0 +1,33 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>גרסה מתקדמת של RNN המוסיפה מנגנון שערים (Gates) ו-Cell State נפרד, המאפשרים לרשת לזכור מידע לאורך רצפים ארוכים בלי לסבול מ-Vanishing Gradients באותה חדות.</p>
+<h4 class='sec-h'>🏛️ מבנה הרשת</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/48cd9388ad06.png" loading="lazy" alt="LSTM — Long Short-Term Memory — architecture diagram" /></div>
+<ul><li>Forget Gate — קובע אילו פרטים מה-Cell State הקודם לשכוח</li><li>Input Gate — קובע אילו פרטים חדשים להוסיף ל-Cell State</li><li>Cell State $C_t$ — &quot;זיכרון&quot; ארוך-טווח שעובר בין צעדי הזמן עם מעט שינוי</li><li>Output Gate — קובע מה מתוך ה-Cell State ייחשף כ-Hidden State הנוכחי</li></ul>
+<h4 class='sec-h'>📐 נוסחאות מפתח</h4>
+<p>Forget Gate:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/6a2ec7d95329.png" loading="lazy" alt="formula"></div>
+<p>Input Gate:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/d84ee0737329.png" loading="lazy" alt="formula"></div>
+<p>עדכון Cell State:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/1b38c0967f24.png" loading="lazy" alt="formula"></div>
+<p>Output Gate:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/f6b29fdbcb99.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 תחומי שימוש</h4>
+<ul><li>תרגום מכונה ומודלים שפתיים לפני עידן ה-Transformer</li><li>חיזוי סדרות זמן ארוכות (פיננסים, חיישנים)</li><li>זיהוי דיבור (Speech Recognition)</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מתמודדת טוב בהרבה מ-Vanilla RNN עם תלויות ארוכות טווח</li><li>מנגנון השערים מאפשר שליטה מפורשת על זרימת המידע</li><li>עדיין רלוונטית למשימות רצפיות עם משאבים מוגבלים</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>מורכבת חישובית יותר מ-RNN רגילה (יותר פרמטרים)</li><li>עדיין סדרתית באופייה — איטית יותר מ-Transformer בזמן אימון</li><li>הוחלפה ברוב משימות ה-NLP המודרניות על ידי ארכיטקטורות מבוססות Attention</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Sequence Classification</td><td>Accuracy, F1</td></tr><tr><td>Language Modeling</td><td>Perplexity</td></tr><tr><td>Time Series</td><td>MSE, MAE</td></tr></table>
+<h4 class='sec-h'>🔄 וריאנטים / גרסאות</h4>
+<table class='kbtable'><tr><td><strong>וריאנט</strong></td><td><strong>הבדל מרכזי</strong></td></tr><tr><td>Vanilla LSTM</td><td>3 שערים + Cell State, כמתואר לעיל</td></tr><tr><td>GRU</td><td>מאחד Forget/Input לשער עדכון אחד, ללא Cell State נפרד — מהיר יותר</td></tr><tr><td>Bidirectional LSTM</td><td>שתי רשתות LSTM — קדימה ואחורה — מאוחדות לייצוג אחד</td></tr><tr><td>Peephole LSTM</td><td>השערים &quot;מציצים&quot; גם ב-Cell State הנוכחי</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (PyTorch)</h4>
+<pre class='code-block'><code>import torch.nn as nn
+
+lstm = nn.LSTM(input_size=128, hidden_size=256, num_layers=1, batch_first=True)
+output, (h_n, c_n) = lstm(x)  # x: (batch, seq_len, input_size)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה ההבדל המרכזי בין LSTM ל-RNN רגילה?</p>
+<p><strong>ת: </strong>LSTM מוסיפה Cell State נפרד ומנגנון שערים (Forget/Input/Output) שמאפשרים לרשת לשמור או למחוק מידע באופן מבוקר, ובכך להתמודד טוב יותר עם תלויות ארוכות טווח.</p>
+<p><strong>ש: </strong>מה ההבדל בין LSTM ל-GRU?</p>
+<p><strong>ת: </strong>GRU מאחדת את Forget ו-Input Gate לשער עדכון יחיד ומבטלת את ה-Cell State הנפרד — פחות פרמטרים ומהירה יותר, אך לעיתים פחות מבטאת ביצועים מ-LSTM במשימות מורכבות.</p>

@@ -1,0 +1,26 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>פעולת דגימה-יתר (downsampling) המחלקת את מפת התכונות לחלונות קטנים (לדוגמה 2x2) ובוחרת מכל חלון את הערך המקסימלי בלבד — מקטינה את הרזולוציה המרחבית ומדגישה את התכונות הבולטות ביותר.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ol><li>בוחרים גודל חלון (לדוגמה 2x2) ו-stride (בדרך כלל שווה לגודל החלון).</li><li>מחלקים את מפת התכונות לחלונות לא-חופפים (או חופפים, בהתאם ל-stride).</li><li>מכל חלון בוחרים את הערך המקסימלי כפלט.</li><li>מחזרים על התהליך לכל הערוצים (channels) במפת התכונות, ומקבלים מפה מוקטנת.</li></ol>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/3ceb9731ed2c.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>Computer Vision — אחרי שכבות קונבולוציה ב-CNN, להקטנת רזולוציה והגדלת receptive field</li><li>כל ארכיטקטורה שדורשת invariance חלקית להעתקה קטנה (translation) של תכונות</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מקטין את מספר הפרמטרים והחישוב בשכבות הבאות</li><li>מספק invariance חלקית להעתקות קטנות של האובייקט בתמונה</li><li>אין פרמטרים נלמדים — זול חישובית</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>מאבד מידע מרחבי מדויק (downsampling אגרסיבי)</li><li>לא מתאים תמיד למשימות הדורשות דיוק מיקום גבוה (כגון segmentation מדויק)</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Image Classification</td><td>Accuracy</td></tr><tr><td>Object Detection / Segmentation</td><td>mAP, IoU</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>הבדל מרכזי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>Average Pooling</td><td>לוקח ממוצע ולא מקסימום מהחלון</td><td>כשרוצים שמירה חלקה יותר על מידע</td></tr><tr><td>Global Average Pooling</td><td>ממצע על כל מפת התכונות לערך יחיד לכל ערוץ</td><td>לפני שכבת Fully-Connected סופית</td></tr><tr><td>Strided Convolution</td><td>מקטין רזולוציה עם קונבולוציה לומדת במקום max</td><td>כשרוצים downsampling לומד</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python / PyTorch)</h4>
+<pre class='code-block'><code>import torch.nn as nn
+
+pool = nn.MaxPool2d(kernel_size=2, stride=2)
+output = pool(feature_map)  # מקטין H,W בחצי, שומר את הערך המקסימלי מכל 2x2</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה ההבדל בין Max Pooling ל-Average Pooling?</p>
+<p><strong>ת: </strong>Max Pooling בוחר את הערך הבולט ביותר בכל חלון (מדגיש תכונות חזקות), בעוד Average Pooling ממצע את כל הערכים בחלון (מחליק את המידע).</p>
+<p><strong>ש: </strong>איך Max Pooling תורם ל-translation invariance?</p>
+<p><strong>ת: </strong>אם תכונה זזה במעט בתוך החלון, הערך המקסימלי בחלון עדיין נשאר זהה לרוב, כך שהפלט לא משתנה משינויים קטנים במיקום.</p>

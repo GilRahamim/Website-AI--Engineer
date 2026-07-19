@@ -1,0 +1,28 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>YOLO (You Only Look Once) הוא משפחת מודלי Deep Learning לזיהוי אובייקטים (object detection) בזמן אמת. הרעיון המרכזי: המודל 'מסתכל' על התמונה פעם אחת בלבד, ומחזיר במעבר יחיד מה קיים בתמונה, היכן הוא ממוקם (bounding box), ומה רמת הביטחון (confidence) — ללא צורך בסריקה אזורית מרובת-שלבים כמו בגישות זיהוי קלאסיות יותר.</p>
+<h4 class='sec-h'>🏛️ מבנה ויכולות</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/6e567e0d04b9.png" loading="lazy" alt="YOLO — You Only Look Once: ארכיטקטורת זיהוי אובייקטים — architecture diagram" /></div>
+<ul><li>מהיר ביותר — תוכנן לעבודה ב-real time.</li><li>תומך במשימות מרובות מאותה ארכיטקטורת בסיס: Detection, Segmentation, Pose Estimation, Classification, Tracking.</li><li>Ultralytics (היצרן) מפיץ YOLOv8 כקוד פתוח, עם רישוי AGPL לתרחישי שימוש מסוימים בגרסאות החדשות יותר.</li></ul>
+<h4 class='sec-h'>⚙️ Setup והרצה בסיסית</h4>
+<p>pip install ultralytics opencv-python</p>
+<p>from ultralytics import YOLO</p>
+<p>model = YOLO(&quot;yolov8s.pt&quot;)</p>
+<h4 class='sec-h'>📊 וריאנטי מודל לפי משימה</h4>
+<table class='kbtable'><tr><td><strong>מודל</strong></td><td><strong>מטרה</strong></td></tr><tr><td>yolov8s.pt</td><td>Object Detection</td></tr><tr><td>yolov8s-seg.pt</td><td>Segmentation</td></tr><tr><td>yolov8s-pose.pt</td><td>Pose Estimation</td></tr><tr><td>yolov8s-cls.pt</td><td>Classification</td></tr></table>
+<h4 class='sec-h'>📚 דאטהסט COCO (Common Objects in Context)</h4>
+<p>COCO הוא אחד מדאטהסטי ה-Computer Vision החשובים ביותר — כולל 80 קטגוריות אובייקטים, מיליוני annotations, bounding boxes, segmentation masks, ו-human keypoints. דוגמאות קטגוריות: Person (class 0 ב-COCO), Car, Dog, Laptop, Bottle.</p>
+<h4 class='sec-h'>💻 קוד לדוגמה — זיהוי אובייקטים מ-webcam</h4>
+<pre class='code-block'><code>זרימת העבודה: Camera → YOLO → Detection → Drawing → Display.
+# 01_object_detection.py
+results = model(frame)
+annotated = results[0].plot()</code></pre>
+<h4 class='sec-h'>⚖️ FPS וטרייד-אוף מהירות/דיוק</h4>
+<p>FPS (Frames Per Second) מודד כמה תמונות בשנייה המודל מעבד. מודלים קטנים יותר → מהירים יותר; מודלים גדולים יותר → מדויקים יותר. בחירת גודל המודל (s/m/l/x) היא החלטת trade-off ישירה בין latency לאיכות detection.</p>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מהירות real-time — מתאים ליישומי וידאו חיים.</li><li>ארכיטקטורה אחת מספקת בסיס למספר משימות CV (detection/seg/pose/cls/tracking).</li><li>קל לשימוש — API פשוט (model(frame)) עם הדמיה מובנית (.plot()).</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>טרייד-אוף מהירות/דיוק — לא ניתן למקסם את שניהם בו-זמנית עם אותו מודל.</li><li>ביצועים נפגעים בתאורה גרועה, חפיפה (occlusion), טשטוש תנועה, ואובייקטים קטנים.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל המהותי בין YOLO לגישות detection ישנות יותר (כגון two-stage detectors)?</strong></p>
+<p>ת: YOLO מבצע single-pass — חוזה bounding boxes ו-class probabilities במעבר רשת יחיד על כל התמונה. גישות two-stage (כמו R-CNN המקורי) מפרידות בין שלב הצעת אזורים (region proposal) לשלב סיווג — מדויקות יותר היסטורית אך איטיות בהרבה, ולכן לא מתאימות ל-real time.</p>
+<p><strong>ש: מדוע COCO הוא דאטהסט הבנצ'מארק הסטנדרטי להערכת מודלי detection?</strong></p>
+<p>ת: כי הוא מספק annotations עשירים (bounding boxes, masks, keypoints) על פני 80 קטגוריות מגוונות ומיליוני דוגמאות — מאפשר השוואה הוגנת ועקבית בין מודלים שונים על משימות detection, segmentation, ו-pose.</p>

@@ -1,0 +1,27 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Guardrails הם מכניזמים המגבילים ומכוונים את התנהגות ה-Agent כדי לבנות אפליקציות AI אחראיות — מונעים תוכן רעיל, חוסר רלוונטיות לדומיין, ו-hallucinations.</p>
+<h4 class='sec-h'>🔍 שלושה סוגי Guardrails מרכזיים</h4>
+<table class='kbtable'><tr><td><strong>סוג</strong></td><td><strong>תיאור</strong></td><td><strong>תרחיש</strong></td></tr><tr><td>Domain Relevance</td><td>מענה רק על שאלות רלוונטיות לדומיין ה-Agent (ביטוח, בנקאות וכו')</td><td>Agent בנקאי שמתבקש לכתוב שיר על חתולים → מסרב ומכוון לשאלות פיננסיות</td></tr><tr><td>Toxicity Control</td><td>זיהוי וסינון תוכן פוגעני/לא הולם</td><td>תמיכה שמקבלת קללה → de-escalation במקום להחזיר/להגביר את העלבון</td></tr><tr><td>Hallucination Prevention</td><td>מניעת תשובות מפוברקות-אך-משכנעות</td><td>&quot;מה היתרה בחשבון שלי?&quot; → ניתוב ל-API מאובטח, לא ניחוש מספר</td></tr></table>
+<h4 class='sec-h'>⚠️ זיהוי הצורך ב-Guardrails</h4>
+<ul><li>Agent חשוף לקלט משתמש לא מבוקר (UGC) — סיכון לתוכן רעיל/הזרקת prompt.</li><li>Agent נדרש לדייקנות עובדתית גבוהה (כספים, רפואה, משפט) — סיכון hallucination גבוה.</li><li>Agent פועל בדומיין צר (תמיכה ספציפית-מוצר) ועלול &quot;לסטות&quot; לנושאים לא רלוונטיים.</li></ul>
+<h4 class='sec-h'>🛠️ איך מיישמים</h4>
+<ul><li>רשימת topics מורשים/חסומים (banned_topics / allowed_topics) שנבדקת לפני מענה.</li><li>הודעת סירוב אחידה ועקבית (refusal_message) למקרים חסומים.</li><li>ניתוב שאלות עובדתיות-קריטיות ל-API מאובטח במקום לתת ל-LLM &quot;לנחש&quot;.</li></ul>
+<h4 class='sec-h'>💻 קוד לדוגמה — חסימת נושאים ב-CrewAI</h4>
+<pre class='code-block'><code># guardrails_topics_policy.yaml
+banned_topics:
+- politics
+refusal_message: &amp;gt;
+Sorry — I can't discuss politics. Please ask about another topic
+(e.g., MCP, RAG, CrewAI, SMART-on-FHIR, IBD, ME/CFS, Fibromyalgia).
+@agent
+def researcher(self) -&amp;gt; Agent:
+return Agent(
+config=self.agents_config['researcher'],
+verbose=True,
+tools=[TopicsRefusalTool()],
+)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין Domain Relevance ל-Hallucination Prevention?</strong></p>
+<p>ת: Domain Relevance בודק אם השאלה בכלל רלוונטית לתחום ה-Agent (לפני יצירת תשובה); Hallucination Prevention מבטיח שתשובות עובדתיות מבוססות במקור אמין (API/מסמך) ולא מפוברקות — שתי שכבות הגנה שונות לחלוטין.</p>
+<p><strong>ש: מדוע de-escalation עדיף על התעלמות/חסימה מוחלטת בתרחיש Toxicity?</strong></p>
+<p>ת: התעלמות מוחלטת עלולה להשאיר את המשתמש מתוסכל ולתפוס כחוסר-מענה; de-escalation מכיר בתחושת המשתמש בלי להגיב לעלבון עצמו, ומכוון אותו חזרה לפתרון בעיה — שומר על חוויית שירות תקינה.</p>

@@ -1,0 +1,24 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>פונקציות המודדות את הפער בין הערך החזוי (ŷ) לערך האמיתי (y) במשימות רגרסיה (חיזוי ערך רציף), ומשמשות לאימון המודל על ידי מזעור הפער הזה.</p>
+<h4 class='sec-h'>📐 הנוסחאות</h4>
+<p><strong>MSE — Mean Squared Error</strong></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/b3eee5e9b101.png" loading="lazy" alt="formula"></div>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>y_i</td><td>ערך אמיתי</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/6566a7b7dfbf.png" loading="lazy" alt="formula"></td><td>ערך חזוי</td></tr><tr><td>n</td><td>מספר דוגמאות</td></tr></table>
+<p>מענישה שגיאות גדולות בצורה ריבועית (חזקה) — רגישה מאוד ל-Outliers; דיפרנציאבילית בכל מקום.</p>
+<p><strong>MAE — Mean Absolute Error</strong></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/5bd2b495566f.png" loading="lazy" alt="formula"></div>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>y_i</td><td>ערך אמיתי</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/6566a7b7dfbf.png" loading="lazy" alt="formula"></td><td>ערך חזוי</td></tr><tr><td>n</td><td>מספר דוגמאות</td></tr></table>
+<p>מענישה את כל השגיאות באופן לינארי — robust הרבה יותר ל-Outliers מ-MSE; אך לא דיפרנציאבילית ב-0 (נגזרת לא רציפה).</p>
+<p><strong>Huber Loss</strong></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/85612d387551.png" loading="lazy" alt="formula"></div>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/373857bca4c3.png" loading="lazy" alt="formula"></td><td>סף המעבר בין ריבועי ללינארי</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/0fa811302f87.png" loading="lazy" alt="formula"></td><td>ערך אמיתי וחזוי</td></tr></table>
+<p>פשרה בין MSE ל-MAE: ריבועית סביב אפס (חלקה ודיפרנציאבילית) ולינארית בשגיאות גדולות (robust ל-Outliers).</p>
+<h4 class='sec-h'>🎯 מתי משתמשים?</h4>
+<ul><li>MSE — ברירת מחדל לרגרסיה כשאין הרבה Outliers בדאטה</li><li>MAE — כשהדאטה מכיל הרבה ערכים חריגים (Outliers) שלא רוצים שישפיעו יתר על המידה</li><li>Huber Loss — פשרה כשרוצים גם רגישות לשגיאות קטנות וגם robustness ל-Outliers</li></ul>
+<h4 class='sec-h'>🔄 השוואה בין הפונקציות</h4>
+<table class='kbtable'><tr><td><strong>פונקציה</strong></td><td><strong>מתי עדיפה</strong></td></tr><tr><td>MSE</td><td>דאטה נקי יחסית, רוצים להעניש שגיאות גדולות בחריפות</td></tr><tr><td>MAE</td><td>דאטה עם הרבה Outliers, רוצים robustness</td></tr><tr><td>Huber</td><td>רוצים שילוב של שני העולמות — נפוץ ב-Reinforcement Learning ורגרסיה robust</td></tr></table>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>למה MSE רגישה יותר ל-Outliers מ-MAE?</p>
+<p><strong>ת: </strong>MSE מעלה את השגיאה בריבוע, כך ששגיאה גדולה (Outlier) מקבלת משקל חזק הרבה יותר בלוס הכולל לעומת שגיאות קטנות; MAE מענישה את כל השגיאות באופן לינארי, כך שOutlier בודד משפיע פחות יחסית.</p>
+<p><strong>ש: </strong>מתי הייתם בוחרים ב-Huber Loss על פני MSE או MAE?</p>
+<p><strong>ת: </strong>כשיש בדאטה גם שגיאות קטנות (שרוצים טיפול חלק ודיפרנציאבילי כמו MSE) וגם Outliers (שרוצים שלא ישפיעו יתר על המידה כמו ב-MAE) — Huber נותן את שני היתרונות.</p>

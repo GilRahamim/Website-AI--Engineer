@@ -1,0 +1,38 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>RAG היא ארכיטקטורה היברידית המשלבת שני רכיבים: Retriever ששולף מסמכים/chunks רלוונטיים ממסד ידע, ו-Generator (LLM) שמייצר תשובה מעוגנת (grounded) בהתבסס על המסמכים שנשלפו. הוצגה לראשונה על ידי Facebook AI Research (Lewis et al., 2020) במאמר &quot;Retrieval-Augmented Generation for Knowledge-Intensive NLP&quot;.</p>
+<h4 class='sec-h'>🏛️ מבנה הפייפליין</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/93f7496c62b4.png" loading="lazy" alt="RAG — Retrieval-Augmented Generation: ארכיטקטורת הליבה — architecture diagram" /></div>
+<p>שלב האינדוקס (Indexing Stage — חד-פעמי / batch):</p>
+<ul><li>Parse → Chunk → Embed → Store</li></ul>
+<p>שלב זמן-הריצה (Runtime Stage — לכל שאילתה):</p>
+<ul><li>Query → Retrieve → Inject → Generate</li></ul>
+<h4 class='sec-h'>⚙️ זרימת השאילתה (Runtime Query Flow)</h4>
+<ol><li>קבלת שאילתת המשתמש.</li><li>הטמעת השאילתה (embedding) באמצעות אותו מודל ששימש לאינדוקס הקורפוס.</li><li>חיפוש במסד הווקטורי אחר top-k ה-chunks הרלוונטיים ביותר.</li><li>שילוב השאילתה + ה-chunks לתוך prompt מובנה.</li><li>העברת ה-prompt ל-LLM ליצירת תשובה מעוגנת.</li></ol>
+<h4 class='sec-h'>🎯 למה צריך RAG?</h4>
+<ul><li>LLMs מוגבלים ל-knowledge cutoff — המידע שלהם קפוא מרגע סיום האימון.</li><li>ארגונים צריכים להשתמש בנתונים פנימיים/חסויים שה-LLM מעולם לא אומן עליהם.</li><li>LLMs סגורים נוטים ל-hallucination בביטחון רב — בעיה קריטית בדומיינים בסיכון גבוה (רפואה, משפט).</li></ul>
+<h4 class='sec-h'>🔄 RAG מול Fine-Tuning — שתי דרכים ל-AI חכם יותר</h4>
+<table class='kbtable'><tr><td><strong>קריטריון</strong></td><td><strong>RAG</strong></td><td><strong>Fine-Tuning</strong></td></tr><tr><td>מטרה</td><td>להעניק ל-LLM כללי ידע עדכני/ספציפי-דומיין בזמן ריצה</td><td>להתאים את ה-LLM הבסיסי למשימה/דומיין ספציפי</td></tr><tr><td>מתאים ל</td><td>נתונים משתנים/חסויים, צורך בדיוק עובדתי וביקורתיות</td><td>משימות צרות וחזרתיות, נתונים סטטיים</td></tr><tr><td>יתרון מרכזי</td><td>אין צורך באימון מחדש, גמיש להקשרים חדשים</td><td>latency נמוך יותר בפריסה, ביצועים גבוהים על ידע סטטי</td></tr><tr><td>חיסרון</td><td>תלוי באיכות ה-retrieval, יכול להוסיף latency</td><td>דורש אימון מחדש כשהידע משתנה, פחות גמיש</td></tr></table>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>תשובות מעוגנות (grounded) — מפחית hallucination ומגביר דיוק עובדתי.</li><li>אינטגרציה מאובטחת עם ידע פנימי בלי לאמן מחדש את המודל.</li><li>התאמה אישית (personalization) — הזרקת הקשר ספציפי-משתמש/משימה.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>תלוי באיכות ה-retrieval — retrieval גרוע מוביל לתשובות שגויות (&quot;garbage in, garbage out&quot;).</li><li>מוסיף latency וסיבוכיות תפעולית בהשוואה ל-LLM &quot;וניל&quot;.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>שלב</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Retrieval</td><td>Recall@k, Precision@k, MRR, nDCG, Context Relevance</td></tr><tr><td>Generation</td><td>Faithfulness, Answer Relevancy, RAGAS</td></tr></table>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>משפט — גישה לתקדימים וסעיפי חוק רלוונטיים.</li><li>רפואה — שליפת הנחיות קליניות עדכניות או נתוני מעבדה.</li><li>שירות לקוחות — שליפת מדריכי פתרון תקלות בזמן אמת.</li><li>ארגוני — חיפוש בוויקי פנימי או מסמכי compliance.</li></ul>
+<h4 class='sec-h'>💻 קוד לדוגמה — RAG בסיסי</h4>
+<pre class='code-block'><code>from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_openai import OpenAI
+embedding_fn = HuggingFaceEmbeddings(model_name=&amp;quot;all-MiniLM-L6-v2&amp;quot;)
+vectorstore = FAISS.from_texts(texts=documents, embedding=embedding_fn)
+def rag_qa(query: str, k: int = 3) -&amp;gt; str:
+docs = vectorstore.similarity_search(query, k=k)
+context = &amp;quot;\n&amp;quot;.join(doc.page_content for doc in docs)
+llm = OpenAI(temperature=0.3)
+prompt = f&amp;quot;Given the following context:\n{context}\n\nAnswer the question: {query}&amp;quot;
+return llm(prompt)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מהם שני הרכיבים המרכזיים של RAG, ומה תפקיד כל אחד מהם?</strong></p>
+<p>ת: Retriever — שולף מסמכים/chunks רלוונטיים ממסד ידע באמצעות חיפוש סמנטי; Generator (LLM) — מייצר תשובה מעוגנת על בסיס השאילתה והמסמכים שנשלפו.</p>
+<p><strong>ש: מתי תבחר RAG על פני Fine-Tuning?</strong></p>
+<p>ת: כשהנתונים משתנים תדיר או חסויים, כשצריך דיוק עובדתי גבוה וניתן לבקרה (auditability), וכשלא ניתן/רוצים להימנע מאימון מחדש של המודל.</p>

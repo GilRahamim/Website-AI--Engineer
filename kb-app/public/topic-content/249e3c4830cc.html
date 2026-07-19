@@ -1,0 +1,30 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>ארכיטקטורה כללית למיפוי רצף קלט לרצף פלט באורך שונה, המורכבת משני רכיבים: Encoder שמקודד את הקלט לייצוג קבוע, ו-Decoder שמייצר את הפלט צעד-צעד מתוך ייצוג זה.</p>
+<h4 class='sec-h'>🏛️ מבנה הרשת</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/ca11c17eeab7.png" loading="lazy" alt="Seq2Seq — Sequence-to-Sequence (Encoder-Decoder) — architecture diagram" /></div>
+<ul><li>Encoder — רשת (RNN/LSTM/Transformer) הקוראת את כל רצף הקלט ומפיקה ייצוג סיכום (Context Vector) או רצף מצבים חבויים</li><li>Context Vector — &quot;גשר המידע&quot; בין ה-Encoder ל-Decoder</li><li>Decoder — רשת אוטורגרסיבית המייצרת את רצף הפלט מילה-מילה, מותנית בייצוג ה-Encoder ובמילים שכבר נוצרו</li><li>מנגנון Attention (אופציונלי אך נפוץ) — מאפשר ל-Decoder &quot;להביט&quot; בכל מצבי ה-Encoder ולא רק בווקטור יחיד</li></ul>
+<h4 class='sec-h'>📐 נוסחאות מפתח</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/0176447b0853.png" loading="lazy" alt="formula"></div>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/7681b1b4f48f.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 תחומי שימוש</h4>
+<ul><li>תרגום מכונה (Machine Translation)</li><li>סיכום טקסט (Text Summarization)</li><li>כיתוב תמונות (Image Captioning) — Encoder על תמונה, Decoder טקסטואלי</li><li>זיהוי דיבור והמרת דיבור לטקסט</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מטפל באופן טבעי במיפוי קלט-פלט באורכים שונים</li><li>ארכיטקטורה כללית — ה-Encoder/Decoder יכולים להיות RNN, LSTM או Transformer</li><li>בסיס למודלים מודרניים של יצירת טקסט וייצור שפה</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>ה-Context Vector היחיד (בלי Attention) הוא Bottleneck מידעי לרצפים ארוכים</li><li>אימון סדרתי ב-Decoder (אוטורגרסיה) — איטי בזמן הסקה</li><li>רגיש ל-Exposure Bias — פער בין אימון (Teacher Forcing) להסקה</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Machine Translation</td><td>BLEU Score</td></tr><tr><td>Summarization</td><td>ROUGE</td></tr><tr><td>Captioning</td><td>BLEU, CIDEr</td></tr></table>
+<h4 class='sec-h'>🔄 וריאנטים / גרסאות</h4>
+<table class='kbtable'><tr><td><strong>וריאנט</strong></td><td><strong>הבדל מרכזי</strong></td></tr><tr><td>Vanilla Seq2Seq (RNN)</td><td>Context Vector יחיד, ללא Attention</td></tr><tr><td>Seq2Seq + Attention</td><td>Decoder מביט בכל מצבי ה-Encoder בכל צעד</td></tr><tr><td>Transformer Seq2Seq</td><td>Encoder/Decoder מבוססי Self-Attention במקום RNN</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (PyTorch)</h4>
+<pre class='code-block'><code>import torch.nn as nn
+
+encoder = nn.LSTM(input_size=128, hidden_size=256, batch_first=True)
+decoder = nn.LSTM(input_size=128, hidden_size=256, batch_first=True)
+
+_, (h_n, c_n) = encoder(src)               # encode source sequence
+dec_out, _ = decoder(tgt, (h_n, c_n))      # decode conditioned on encoder state</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה הבעיה ב-Seq2Seq בלי Attention, ואיך Attention פותר אותה?</p>
+<p><strong>ת: </strong>כל המידע מהקלט נדחס לווקטור Context יחיד, שמהווה Bottleneck לרצפים ארוכים. Attention מאפשר ל-Decoder לגשת ישירות לכל מצבי ה-Encoder, וכך לשמר מידע טוב יותר.</p>
+<p><strong>ש: </strong>מה זה Exposure Bias ב-Seq2Seq?</p>
+<p><strong>ת: </strong>באימון משתמשים ב-Teacher Forcing (מזינים את הפלט האמיתי), אך בהסקה ה-Decoder מקבל את הפלט שהוא עצמו ייצר; טעויות מצטברות מהר יותר מהמצב שאומן עליו.</p>

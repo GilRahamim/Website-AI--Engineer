@@ -1,0 +1,17 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מסגרת מעשית להחלטה היכן בצנרת (pipeline) לתקן כשל: בשלב האחזור (embeddings), בשלב ההתנהגות (LLM adapter/full), או בכלל לא לבצע fine-tuning ולהישאר עם RAG. ההבחנה המרכזית: embeddings קובעים מה המודל רואה; LLM קובע איך הוא מגיב — אותה צנרת, שני failure modes שונים.</p>
+<h4 class='sec-h'>🔍 איך מאתרים את מקור הכשל</h4>
+<table class='kbtable'><tr><td><strong>תקלה (Problem)</strong></td><td><strong>פתרון (Solution)</strong></td></tr><tr><td>מאוחזרים מסמכים שגויים</td><td>Embedding Fine-Tuning</td></tr><tr><td>סטייל/התנהגות תשובה שגויים</td><td>LoRA Fine-Tuning</td></tr><tr><td>חסר ידע עדכני</td><td>RAG</td></tr><tr><td>הסתגלות-תחום עמוקה</td><td>Full Fine-Tuning</td></tr></table>
+<h4 class='sec-h'>📊 טבלת בחירה מלאה</h4>
+<table class='kbtable'><tr><td><strong>גישה</strong></td><td><strong>מה משתפר</strong></td><td><strong>מה משתנה</strong></td><td><strong>עלות חישוב</strong></td><td><strong>הכי מתאים ל</strong></td></tr><tr><td>Pretrained (ללא שינוי)</td><td>היגיון כללי (general reasoning)</td><td>שום דבר</td><td>None</td><td>משימות one-shot, טקסט גנרי</td></tr><tr><td>Fine-Tuned Embeddings</td><td>איכות retrieval</td><td>מודל ה-embedding</td><td>Low-Medium</td><td>חיפוש ספציפי-לתחום, RAG</td></tr><tr><td>Fine-Tuned LLM (LoRA/Adapters)</td><td>התנהגות הפלט (output behavior)</td><td>משקלי adapter קטנים</td><td>Medium</td><td>סטייל ומבנה עקביים</td></tr><tr><td>Full Fine-Tuned LLM</td><td>הסתגלות התנהגותית ותחומית עמוקה</td><td>כל משקלי ה-LLM</td><td>High</td><td>עוזרים מתמחים, מומחיות תחומית</td></tr><tr><td>RAG</td><td>ביסוס עובדתי (factual grounding)</td><td>ה-context המאוחזר</td><td>Low בזמן inference</td><td>ידע פרטי או עדכני</td></tr></table>
+<h4 class='sec-h'>❌ מתי לא לבצע Fine-Tuning</h4>
+<ul><li>כשנדרש רק ידע עדכני (fresh knowledge) — RAG מתאים יותר.</li><li>כשהדאטה משתנה לעיתים קרובות — fine-tuning דורש אימון מחדש בכל שינוי.</li><li>כשprompt engineering בלבד פותר את הבעיה.</li><li>כשיש מעט מאוד דוגמאות (small examples) — לא מספיק ל-fine-tuning יציב.</li><li>כשה-retrieval הוא ה-bottleneck האמיתי (לא ה-generation).</li></ul>
+<h4 class='sec-h'>🛠️ סדר עבודה מומלץ ב-production</h4>
+<ul><li>1. תקנו את ה-retrieval תחילה (embeddings → context טוב יותר).</li><li>2. רק אז תקנו את ה-generation (LLM fine-tuning → תשובות טובות יותר).</li><li>רוב המערכות בפועל זקוקות לשני השלבים יחד: embeddings מאומנים מספקים inputs טובים יותר; LLM מאומן מספק outputs טובים יותר.</li></ul>
+<h4 class='sec-h'>🔄 קשר למסגרת הבחירה הכוללת</h4>
+<p>מסגרת זו מעמיקה בתוך הקטגוריה 'Fine-Tuning' של AI Architecture Decision Framework (מסמך 01) — ומפרקת אותה לשלוש תת-החלטות: embeddings מול LLM, ו-LoRA מול Full FT.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מערכת RAG מחזירה chunks לא רלוונטיים אבל מנסחת תשובות יפה כשמקבלת context טוב — מה לתקן?</strong></p>
+<p>ת: זה כשל retrieval, לא generation — הפתרון הוא Embedding Fine-Tuning (לשנות מה נחשב 'דומה'), לא LoRA או Full FT על ה-LLM, ולא בהכרח RAG חדש (ה-RAG כבר במקום — הבעיה ב-embedding שמזין אותו).</p>
+<p><strong>ש: מדוע 'fix retrieval first, then generation' הוא סדר מומלץ ולא שרירותי?</strong></p>
+<p>ת: כי אם ה-context שמוזן ל-LLM שגוי, אין כמות fine-tuning של ה-LLM שתפצה על מידע חסר/שגוי — תיקון ה-generation על בסיס context שבור משקיע משאבים על הסימפטום הלא נכון.</p>

@@ -1,0 +1,33 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>שיטת אחזור מידע מבוססת על מטריצת היארעות בינארית (Binary Term-Document Incidence Matrix), שבה כל תא מציין אם מילה מסוימת מופיעה במסמך נתון. שאילתות מנוסחות באמצעות אופרטורים בוליאניים — AND, OR, NOT.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>בונים מילון (Dictionary/Lexicon) של כל המילים הייחודיות בקורפוס.</li><li>בונים מטריצה <img class="inline-formula-img" src="/topic-assets/cd85b5877f83.png" loading="lazy" alt="formula"> — שורה לכל מילה, עמודה לכל מסמך; הערך 1 אם המילה מופיעה במסמך, 0 אחרת.</li><li>שאילתה מנוסחת כביטוי בוליאני, לדוגמה: <img class="inline-formula-img" src="/topic-assets/9e407e3364aa.png" loading="lazy" alt="formula"></li><li>מבצעים פעולות AND/OR/NOT בין שורות המטריצה (פעולות סט על וקטורי הביטים) ומחזירים את כל המסמכים שמקיימים את הביטוי.</li></ul>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/cd85b5877f83.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>מטריצת היארעות בינארית: ערך 1/0 לכל זוג (מונח, מסמך)</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/9e407e3364aa.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>דוגמה לשאילתה בוליאנית: &quot;t1 וגם t2 ולא t3&quot;</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/cae2bcfd65aa.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>תדירות מסמכים (df) של מונח — סכום עמודות המטריצה הבינארית</em></p>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>מנועי חיפוש קלאסיים ומערכות משפטיות/ספרייתיות בהן הדיוק החיפושי קריטי.</li><li>כל מקרה שבו יש צורך בהתאמה מדויקת של מונחים (exact match), ולא בדירוג לפי רלוונטיות.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>פשוט מאוד ליישום, ומהיר — אפשר להשתמש בכלי בסיס-נתונים סטנדרטיים.</li><li>שקיפות מלאה: קל להבין למה מסמך הוחזר או לא הוחזר.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>תוצאה בינארית בלבד — מסמכים מתאימים או לא, בלי שום דירוג לפי רלוונטיות.</li><li>עלול להחזיר יותר מדי תוצאות (לדוגמה כל מסמך שמכיל את המילה 'Egypt').</li><li>אינו מתחשב במספר ההופעות של מילה במסמך ולא בגודל המסמך/השאילתה.</li><li>עלול לפספס תוצאות שלא משתמשות במונח המדויק (vocabulary mismatch).</li><li>בזבזני במקום: יש לשמור רשומה לכל מילה ייחודית בכל מסמך.</li><li>מחייב את המשתמש לכתוב שאילתות בוליאניות מפורשות ולא בשפה חופשית.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Retrieval (binary match)</td><td>Precision, Recall</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>יתרון עיקרי</strong></td><td><strong>חסרון עיקרי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>Boolean Retrieval</td><td>מהיר, שקוף, מדויק</td><td>אין דירוג, ללא ניואנס</td><td>התאמה מדויקת/משפטית</td></tr><tr><td>Bag-of-Words + Cosine</td><td>מאפשר דירוג לפי דמיון</td><td>אין מודעות לנדירות מונח</td><td>שאילתות חופשיות</td></tr><tr><td>BM25</td><td>דירוג סטטיסטי חזק</td><td>דורש כיוונון פרמטרים</td><td>מנועי חיפוש מודרניים</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from sklearn.feature_extraction.text import CountVectorizer
+model = CountVectorizer(binary=True)
+matrix = model.fit_transform(docs)  # binary incidence matrix
+# שאילתה: t1 AND t2 AND NOT t3
+result = matrix[:, t1_idx].multiply(matrix[:, t2_idx])
+result = result.multiply(1 - matrix[:, t3_idx].toarray())</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מה החיסרון המרכזי של מודל האחזור הבוליאני בהשוואה למודלים מבוססי-דירוג?</strong></p>
+<p><strong>ת: </strong>הוא מחזיר התאמה בינארית בלבד (מתאים/לא מתאים) ללא יכולת לדרג את התוצאות לפי רלוונטיות.</p>
+<p><strong>ש: </strong><strong>איך מחשבים את תדירות המסמכים (df) של מונח ממטריצת ההיארעות?</strong></p>
+<p><strong>ת: </strong>סוכמים את העמודה המתאימה למונח במטריצה הבינארית — כמה מסמכים מכילים את אותו מונח.</p>

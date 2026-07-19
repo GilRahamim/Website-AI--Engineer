@@ -1,0 +1,39 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Hybrid Search משלב חיפוש מילות-מפתח (BM25) עם חיפוש סמנטי וקטורי, כדי לכסות גם התאמות מדויקות (מזהים, שמות תרופות, קודי שגיאה) וגם ניסוחים שונים באותה משמעות (paraphrases), ולשפר recall מבלי לפגוע ב-precision.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד (Late Fusion)</h4>
+<ol><li>שליפת top-N מועמדים באמצעות BM25 (מבוסס מילות מפתח).</li><li>שליפת top-M מועמדים באמצעות חיפוש וקטורי (embedding similarity).</li><li>מיזוג (merge) והסרת כפילויות (deduplication) בין שתי הרשימות.</li><li>Re-ranking של הקבוצה המאוחדת (Cross-Encoder או MMR) ובחירת top-k סופי.</li></ol>
+<h4 class='sec-h'>📐 נוסחאות — אופציות לאיחוד ציונים</h4>
+<p>מיזוג משוקלל (Weighted blend), עם <em>α</em>=0.5 כברירת מחדל:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/7ccf85bf0075.png" loading="lazy" alt="formula"></div>
+<p>Reciprocal Rank Fusion (RRF) — שיטה עמידה יותר בין סקאלות שונות:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/5647209dd034.png" loading="lazy" alt="formula"></div>
+<p>כאשר ranki(d) הוא הדירוג של המסמך <em>d</em> ברשימה ה-<em>i</em>-ית (BM25 או סמנטית), ו-<em>k</em> הוא קבוע (לרוב <em>k</em>=60).</p>
+<h4 class='sec-h'>🎯 מתי להשתמש</h4>
+<ul><li>שאילתות אמביגואליות, אוצר מילים מעורב, מסמכים ארוכים.</li><li>תחומים בעלי דרישת recall גבוהה (רפואה, משפט, compliance).</li><li>קורפוסים הטרוגניים (דוחות + FAQ + פניות תמיכה).</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מכסה גם התאמה מדויקת (BM25) וגם הבנה סמנטית (vectors) — recall גבוה יותר מכל שיטה בנפרד.</li><li>RRF עמיד לסקאלות ציונים שונות, ולא דורש כיול ידני מורכב.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות ומלכודות</h4>
+<ul><li>ממוצע של ציונים גולמיים בסקאלות שונות (BM25 מול cosine) ללא נורמליזציה נותן תוצאה שגויה.</li><li>ללא deduplication, כפילויות 'תופסות מקום' ומפחיתות גיוון בתוצאות.</li><li>אם N,M (גודל ה-retrieval הראשוני) קטנים מדי, re-ranking על קבוצה חסרה לא יעזור.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Hybrid Retrieval</td><td>Recall@k, Precision@k, nDCG</td></tr><tr><td>השוואת שיטות מיזוג (Weighted vs RRF)</td><td>MRR, nDCG על אותה קבוצת שאילתות בנצ'מארק</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה לשיטות retrieval אחרות</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>יתרון עיקרי</strong></td><td><strong>חסרון עיקרי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>BM25 בלבד</td><td>מדויק על מילות מפתח/מזהים</td><td>מפספס ניסוחים שונים (paraphrasing)</td><td>שאילתות עם מזהים/מונחים מדויקים</td></tr><tr><td>חיפוש סמנטי בלבד</td><td>מבין משמעות ופרפראזות</td><td>מפספס התאמות מדויקות (שמות, קודים)</td><td>שאילתות בשפה טבעית פתוחה</td></tr><tr><td>Hybrid (BM25+Vector)</td><td>כיסוי גבוה משני הסוגים</td><td>מורכבות תפעולית נוספת</td><td>ברירת מחדל למקרים בסיכון גבוה</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from rank_bm25 import BM25Okapi
+from sentence_transformers import SentenceTransformer, util
+import numpy as np
+tokenized_docs = [doc.split() for doc in documents]
+bm25 = BM25Okapi(tokenized_docs)
+model = SentenceTransformer('all-MiniLM-L6-v2')
+doc_embeddings = model.encode(documents, convert_to_tensor=True)
+query = &amp;quot;treatment for Crohn's&amp;quot;
+bm25_scores = bm25.get_scores(query.split())
+query_embedding = model.encode(query, convert_to_tensor=True)
+cosine_scores = util.cos_sim(query_embedding, doc_embeddings)[0].cpu().numpy()
+hybrid_scores = (bm25_scores + cosine_scores) / 2   # normalize first in practice
+top_idx = np.argsort(hybrid_scores)[::-1][:3]</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה היתרון של RRF על פני מיזוג משוקלל פשוט?</strong></p>
+<p>ת: RRF מתבסס על דירוג (rank) ולא על הציון הגולמי, ולכן הוא עמיד בפני הבדלי סקאלה בין BM25 לקוסינוס — אין צורך בנורמליזציה עדינה.</p>
+<p><strong>ש: מתי Hybrid Search קריטי במיוחד?</strong></p>
+<p>ת: כשהשאילתות כוללות גם מונחים מדויקים (מזהים, שמות) וגם צורך בהבנה סמנטית — למשל 'מספר תיק FHIR 12345' לצד 'איך מאתרים מידע מטופל מ-FHIR'.</p>

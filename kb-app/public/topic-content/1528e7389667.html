@@ -1,0 +1,38 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>ReAct (Reasoning + Acting) הוא framework המאפשר ל-LLM לא רק לייצר תשובות, אלא גם להחליט מתי לבצע פעולה (כגון שאילתה ל-retriever) ולחשוב צעד-אחר-צעד. בשילוב עם RAG, המודל יכול לשלב חשיבה, קריאה לכלים (tools), והטמעת ידע משוּלף באמצע תהליך החשיבה.</p>
+<h4 class='sec-h'>🏛️ איך זה עובד</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/761801ba2f82.png" loading="lazy" alt="ReAct + RAG — architecture diagram" /></div>
+<ul><li>ה-LLM מקבל prompt עם שאלה וממשק פעולות (כגון &quot;Search&quot;, &quot;Lookup&quot;).</li><li>ה-LLM מחליט, לפי חשיבה, האם לבצע retrieval.</li><li>מסמכים שנשלפו מוזרקים בחזרה לתוך ה-prompt באמצע השרשרת (mid-chain).</li><li>ה-LLM מייצר תשובה סופית המעוגנת בעדות חיצונית.</li><li>מומש לרוב באמצעות LangChain AgentExecutor עם retriever tool.</li></ul>
+<h4 class='sec-h'>🎯 תחומי שימוש</h4>
+<ul><li>שאילתות הדורשות החלטה על שימוש בכלים (tool-use decision-making).</li><li>שאילתות מורכבות/multi-hop הדורשות חשיבה על פני עובדות מרובות.</li><li>מקרים בהם לא בטוח אם retrieval חיצוני נדרש כלל.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>משלב חשיבה (reasoning) עם פעולה (acting) — גמיש יותר מ-RAG סטטי.</li><li>יכול להחליט באופן דינמי האם ומתי לשלוף ידע חיצוני.</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>Latency גבוהה — חשיבה איטרטיבית ולעיתים קריאות מרובות לכלים.</li><li>עלות גבוהה — קריאות LLM ו-retriever מרובות לכל שאילתה.</li><li>לא מתאים למשימות פשוטות/שאילתות עובדתיות ישירות, או מקרים שבהם אי אפשר לשלם על קריאות מודל מרובות.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>ReAct + RAG (multi-step)</td><td>Faithfulness, Answer Correctness, Task Success Rate</td></tr><tr><td>יעילות שימוש בכלים</td><td>מספר קריאות tool ממוצע, latency כוללת</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה לוריאנטים אחרים</h4>
+<table class='kbtable'><tr><td><strong>וריאנט</strong></td><td><strong>הבדל מרכזי</strong></td></tr><tr><td>RAG סטטי</td><td>retrieval תמיד מתבצע, לפי תור קבוע, ללא החלטה דינמית</td></tr><tr><td>ReAct + RAG</td><td>ה-LLM מחליט באופן דינמי האם/מתי לקרוא ל-retriever, יכול לשלב כלים נוספים (מחשבון וכו')</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from langchain.agents import initialize_agent
+from langchain.agents.agent_types import AgentType
+from langchain.tools.retriever import create_retriever_tool
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_openai import ChatOpenAI
+embedding_fn = HuggingFaceEmbeddings(model_name=&amp;quot;all-MiniLM-L6-v2&amp;quot;)
+vectorstore = FAISS.from_texts(texts=documents, embedding=embedding_fn)
+retriever = vectorstore.as_retriever()
+retriever_tool = create_retriever_tool(
+retriever=retriever,
+name=&amp;quot;insight_search&amp;quot;,
+description=&amp;quot;Searches the document base for medical and pricing information.&amp;quot;
+)
+llm = ChatOpenAI(temperature=0.3, model_name=&amp;quot;gpt-3.5-turbo&amp;quot;)
+agent = initialize_agent(tools=[retriever_tool], llm=llm,
+agent=AgentType.OPENAI_FUNCTIONS, verbose=True)
+response = agent.run(&amp;quot;What are the new insulin pricing changes announced in 2023?&amp;quot;)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל המהותי בין RAG רגיל ל-ReAct + RAG?</strong></p>
+<p>ת: ב-RAG רגיל ה-retrieval מתבצע תמיד באופן קבוע; ב-ReAct + RAG ה-LLM מחליט דינמית, מתוך חשיבה, מתי ואם בכלל לבצע retrieval, ויכול לשלב מספר קריאות tool במהלך תהליך החשיבה.</p>
+<p><strong>ש: מתי ReAct + RAG לא משתלם?</strong></p>
+<p>ת: במשימות פשוטות עם שאלות עובדתיות ישירות, או כשתקציב ה-latency/עלות לא מאפשר קריאות LLM ו-retriever מרובות.</p>

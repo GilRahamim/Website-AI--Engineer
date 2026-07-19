@@ -1,0 +1,28 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>פונקציות לא-לינאריות המופעלות על הפלט של כל נוירון ברשת עצבית, ומאפשרות לרשת ללמוד קשרים לא-לינאריים מורכבים — בלעדיהן הרשת הייתה שקולה למודל לינארי אחד, ללא תלות במספר השכבות.</p>
+<h4 class='sec-h'>📐 הנוסחאות</h4>
+<p><strong>Sigmoid</strong></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/88ea1af0c5ff.png" loading="lazy" alt="formula"></div>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>x</td><td>קלט הנוירון (לפני הפעלה)</td></tr></table>
+<p>תחום ערכים (0,1); נגזרת מקסימלית 0.25 ב-x=0 ודועכת לאפס בקצוות — גורם מרכזי ל-Vanishing Gradients ברשתות עמוקות.</p>
+<p><strong>Tanh</strong></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/eedc2ac75d8f.png" loading="lazy" alt="formula"></div>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>x</td><td>קלט הנוירון</td></tr></table>
+<p>תחום ערכים (-1,1), ממורכז באפס (לעומת Sigmoid) — מתכנס מהר יותר בפרקטיקה, אך עדיין סובל מ-Vanishing Gradients בקצוות.</p>
+<p><strong>ReLU</strong></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/7d57e6357265.png" loading="lazy" alt="formula"></div>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>x</td><td>קלט הנוירון</td></tr></table>
+<p>תחום ערכים [0,∞); נגזרת קבועה (0 או 1) — פותר במידה רבה את בעיית ה-Vanishing Gradients; חיסרון: 'Dying ReLU' כשנוירונים נתקעים באפס לצמיתות.</p>
+<p><strong>Softmax</strong></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/014534a1ee3e.png" loading="lazy" alt="formula"></div>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>x_i</td><td>ערך הלוגיט עבור מחלקה i</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/78060bf9a92e.png" loading="lazy" alt="formula"></td><td>סכום על כל המחלקות, לנרמול</td></tr></table>
+<p>מנרמלת וקטור לוגיטים להתפלגות הסתברות (סכום=1); משמשת בשכבת הפלט של בעיות סיווג מרובה-מחלקות.</p>
+<h4 class='sec-h'>🎯 מתי משתמשים?</h4>
+<ul><li>שכבות נסתרות (Hidden Layers) — ReLU (וגרסאותיו) הוא הבחירה הסטנדרטית כיום</li><li>שכבת פלט לסיווג בינארי — Sigmoid</li><li>שכבת פלט לסיווג מרובה-מחלקות — Softmax</li><li>רשתות רקורסיביות (RNN/LSTM) — Tanh נפוץ ב-Gates ובמצב הנסתר</li></ul>
+<h4 class='sec-h'>🔄 השוואה בין הפונקציות</h4>
+<table class='kbtable'><tr><td><strong>פונקציה</strong></td><td><strong>מתי עדיפה</strong></td></tr><tr><td>ReLU</td><td>ברירת מחדל לשכבות נסתרות ברשתות עמוקות — מהירה ופותרת Vanishing Gradients</td></tr><tr><td>Sigmoid</td><td>שכבת פלט לסיווג בינארי, או Gates ב-LSTM</td></tr><tr><td>Tanh</td><td>מצב נסתר ב-RNN/LSTM; כשרוצים פלט ממורכז באפס</td></tr><tr><td>Softmax</td><td>שכבת פלט לסיווג מרובה-מחלקות (יחד עם Cross-Entropy Loss)</td></tr></table>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>למה ReLU עדיפה על Sigmoid/Tanh בשכבות נסתרות של רשתות עמוקות?</p>
+<p><strong>ת: </strong>הנגזרת של ReLU קבועה (1) לכל x חיובי, כך שאינה דועכת לאפס כמו Sigmoid/Tanh, מה שמקטין משמעותית את בעיית ה-Vanishing Gradients ומאפשר אימון רשתות עמוקות יותר.</p>
+<p><strong>ש: </strong>מה הבעיה של 'Dying ReLU' וכיצד מתמודדים איתה?</p>
+<p><strong>ת: </strong>כשנוירון מגיע למשקלים שגורמים לו לפלוט תמיד ערך שלילי, הגרדיאנט שלו הופך לאפס לצמיתות והוא 'מת'. פותרים זאת עם וריאנטים כגון Leaky ReLU או Parametric ReLU, שמאפשרים שיפוע קטן ושונה מאפס גם בתחום השלילי.</p>

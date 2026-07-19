@@ -1,0 +1,40 @@
+<h4 class='sec-h'>‏📋 הגדרה</h4>
+<p>‏שיטת למידה מונחית לבעיות סיווג (Classification), בעיקר בינארי, החוזה את ההסתברות שדגימה משתייכת למחלקה מסוימת, על ידי העברת קומבינציה לינארית של הפיצ'רים בפונקציית Sigmoid.</p>
+<h4 class='sec-h'>‏⚙️ איך זה עובד</h4>
+<ul><li>‏1. מחשבים קומבינציה לינארית של הפיצ'רים: z = β0 + β1x1 + ... + βnxn (בדיוק כמו ב-Linear Regression).</li><li>‏2. מעבירים את z בפונקציית Sigmoid (Logistic) כדי לקבל הסתברות בין 0 ל-1.</li><li>‏3. קובעים סף הכרעה (Threshold, בדרך כלל 0.5): מעל הסף → מחלקה 1, מתחת → מחלקה 0.</li><li>‏4. מאמנים את המקדמים β על ידי מקסום ה-Likelihood (כלומר מינימום פונקציית ה-Log Loss) באמצעות Gradient Descent.</li></ul>
+<h4 class='sec-h'>‏📐 נוסחאות</h4>
+<p class='formula-label'><em>‏קומבינציה לינארית</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="z={\beta}_{0}+{\beta}_{1}x_{1}+…+{\beta}_{n}x_{n}">z=β_0+β_1x_1+…+β_nx_n</span></div>
+<p class='formula-label'><em>‏</em><em>Sigmoid</em><em> (</em><em>Logistic Function</em><em>)</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="\phi(z)=\frac{1}{1+e^{-z}}">φ(z)=(1)/(1+e^{-z})</span></div>
+<p class='formula-label'><em>‏פונקציית עלות — </em><em>Log Loss / Binary Cross-Entropy</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="J(\beta)=-\frac{1}{n}\sum_{i=1}^{n} \left[y_{i}\log({\hat{y}}_{i})+(1-y_{i})\log(1-{\hat{y}}_{i})\right]">J(β)=-(1)/(n)∑_{i=1}^n[y_ilog(ŷ_i)+(1-y_i)log(1-ŷ_i)]</span></div>
+<p class='formula-label'><em>‏</em><em>Accuracy</em><em> (מתוך </em><em>Confusion Matrix</em><em>)</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="Accuracy=\frac{TP+TN}{TP+TN+FP+FN}">Accuracy=(TP+TN)/(TP+TN+FP+FN)</span></div>
+<p class='formula-label'><em>‏</em><em>Misclassification Rate</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="Error=\frac{FP+FN}{TP+TN+FP+FN}">Error=(FP+FN)/(TP+TN+FP+FN)</span></div>
+<h4 class='sec-h'>‏🎯 שימושים עיקריים</h4>
+<ul><li>‏סיווג ספאם מול דואר לגיטימי (Spam vs. Ham).</li><li>‏חיזוי כשל בהחזר הלוואה (Loan Default — כן/לא).</li><li>‏אבחון מחלות (חולה/לא חולה) וכל בעיית סיווג בינארי אחרת.</li></ul>
+<h4 class='sec-h'>‏✅ יתרונות</h4>
+<ul><li>‏פשוט, מהיר לאימון ופרשני — המקדמים מתורגמים ל-log-odds.</li><li>‏מחזיר הסתברות (לא רק תווית), שמאפשרת קביעת סף לפי הצורך.</li><li>‏עובד טוב כ-baseline חזק לבעיות סיווג בינארי.</li></ul>
+<h4 class='sec-h'>‏❌ חסרונות / מגבלות</h4>
+<ul><li>‏מניח גבול הכרעה (Decision Boundary) לינארי בין המחלקות.</li><li>‏רגיש למשתנים בלתי-תלויים מתואמים ביניהם (Multicollinearity).</li><li>‏פחות מתאים למבני נתונים מורכבים/לא-לינאריים בהשוואה למודלים כמו עצים או רשתות נוירונים.</li></ul>
+<h4 class='sec-h'>‏📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>‏סוג משימה</strong></td><td><strong>‏מדדים מומלצים</strong></td></tr><tr><td>‏Classification</td><td>‏Accuracy, Precision, Recall, F1, ROC-AUC, Confusion Matrix</td></tr></table>
+<p>‏</p>
+<h4 class='sec-h'>‏🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>‏אלגוריתם</strong></td><td><strong>‏יתרון עיקרי</strong></td><td><strong>‏חסרון עיקרי</strong></td><td><strong>‏מתי לבחור</strong></td></tr><tr><td>‏Logistic Regression</td><td>‏פרשני, מהיר, מחזיר הסתברות</td><td>‏גבול הכרעה לינארי</td><td>‏סיווג בינארי עם קשר כמעט-לינארי</td></tr><tr><td>‏SVM</td><td>‏טוב במרחבים high-dimensional</td><td>‏פחות פרשני, לא מחזיר הסתברות ישירות</td><td>‏הפרדה מורכבת בין מחלקות</td></tr><tr><td>‏Decision Tree</td><td>‏תופס קשרים לא-לינאריים</td><td>‏נוטה ל-overfitting</td><td>‏צריך הסבר חוקים ברור</td></tr></table>
+<p>‏</p>
+<h4 class='sec-h'>‏💻 קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>from sklearn.linear_model import LogisticRegression
+model = LogisticRegression()
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)
+probabilities = model.predict_proba(X_test)</code></pre>
+<h4 class='sec-h'>‏🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: ‏למה לא להשתמש ב-</strong><strong>Linear Regression</strong><strong> לבעיית סיווג בינארי?</strong></p>
+<p><strong>ת: </strong>‏כי היא יכולה להחזיר ערכים מתחת ל-0 או מעל 1, שאינם הסתברויות תקפות, ואין לה גבול הכרעה מובנה. פונקציית ה-Sigmoid פותרת זאת על ידי &quot;דחיסת&quot; הפלט לטווח [0,1].</p>
+<p><strong>ש: ‏מה ההבדל בין </strong><strong>Accuracy</strong><strong> ל-</strong><strong>Misclassification Rate</strong><strong>?</strong></p>
+<p><strong>ת: </strong>‏Accuracy = (TP+TN)/Total מודדת כמה פעמים המודל צדק; Misclassification Rate = (FP+FN)/Total מודדת כמה פעמים טעה. שתיהן משלימות ל-1.</p>
+<p><strong>ש: ‏מה עושה ה-</strong><strong>Threshold</strong><strong> של </strong><strong>0.5</strong><strong>, ולמה לפעמים משנים אותו?</strong></p>
+<p><strong>ת: </strong>‏ה-Threshold קובע מאיזו הסתברות ומעלה מסווגים לדגימה כ-Class 1. משנים אותו (למשל ל-0.3) כשעלות False Negative גבוהה מ-False Positive, כמו באבחון מחלות.</p>

@@ -1,0 +1,37 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>משפחת מודלים ללימוד Word Embeddings על-ידי אימון רשת נוירונים פשוטה (שכבה אחת) לחיזוי מילים מתוך הקשרן המקומי בטקסט. שני ארכיטקטורות מרכזיות: Skip-gram (חיזוי מילות ההקשר מתוך מילת המטרה) ו-CBOW (חיזוי מילת המטרה מתוך מילות ההקשר).</p>
+<h4 class='sec-h'>⚙️ איך זה עובד (Skip-gram)</h4>
+<ul><li>עבור כל מילת מטרה (target word) בטקסט, מגדירים חלון קונטקסט בגודל קבוע (לדוגמה ±5 מילים) סביבה.</li><li>המודל מאומן לחזות, מתוך וקטור מילת המטרה, את ההסתברות שכל אחת ממילות ההקשר תופיע בחלון — באמצעות Softmax על פני כל אוצר המילים.</li><li>מאחר ש-Softmax על אוצר מילים גדול יקר חישובית, משתמשים ב-Negative Sampling: לכל זוג (מטרה, הקשר) אמיתי, דוגמים כמה זוגות 'שליליים' אקראיים, והמודל לומד להפריד בין זוגות אמיתיים לשליליים.</li><li>מילים נפוצות מאוד עוברות Subsampling (הסתברות מוגברת להידלג עליהן), כדי לא 'להציף' את האימון במילים כמו 'the'.</li></ul>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/4ad0e7198e9e.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>פונקציית המטרה של Skip-gram — מקסום סבירות-לוג של מילות הקשר בהינתן מילת המטרה</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/fe87bea11490.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>Softmax — ההסתברות שמילת הקשר wc תופיע בהינתן מילת המטרה wt</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/0704d63a4569.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>התפלגות הדגימה השלילית (unigram מועצם בחזקת 3/4, מפחית דומיננטיות של מילים שכיחות מאוד)</em></p>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>wt</td><td>מילת המטרה (target word)</td></tr><tr><td>wc, Ct</td><td>מילת הקשר, וקבוצת כל מילות ההקשר בחלון סביב wt</td></tr><tr><td>xt, vc</td><td>וקטור ההטמעה של מילת המטרה ושל מילת ההקשר</td></tr><tr><td>z(wi)</td><td>תדירות מילה wi בקורפוס (unigram frequency)</td></tr></table>
+<h4 class='sec-h'>🛠️ שלבים נוספים</h4>
+<ul><li>word2phrase: שלב עיבוד מקדים המאחד ביטויים נפוצים (bigrams/trigrams) לטוקן יחיד לפני האימון, כך שלביטוי כולו יהיה וקטור משלו — ראו N-grams and Phrase Detection.</li></ul>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>ייצור Word Embeddings איכותיים ויעילים מקורפוס גדול.</li><li>תשתית לבניית Doc2Vec ולמשימות NLP downstream רבות.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>יעיל וסקיילבילי — ניתן לאמן על קורפוסים עצומים (מיליארדי מילים) בזמן סביר, בעיקר תודות ל-Negative Sampling.</li><li>תופס יחסים סמנטיים ולשוניים, כולל יחסי אנלוגיה לינאריים.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>אינו מתמודד עם מילים שלא נראו באימון (Out-Of-Vocabulary) — אין שום מנגנון להרכיב וקטור למילה חדשה.</li><li>אינו מנצל מבנה מורפולוגי של המילה — מתקשה עם שפות עשירות מורפולוגית (לדוגמה עברית, ערבית) ועם וריאציות נדירות של מילה.</li><li>וקטור יחיד וקבוע לכל מילה — אינו מבחין בין הקשרים/משמעויות שונים (אין רגישות לפולisemy).</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Embedding Quality</td><td>Similarity Tests, Analogy Tests (Intrinsic); Accuracy/ARI (Extrinsic)</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>ארכיטקטורה</strong></td><td><strong>מנגנון</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>Skip-gram</td><td>מילת מטרה ⇒ חיזוי מילות הקשר</td><td>קורפוסים קטנים-בינוניים, מילים נדירות</td></tr><tr><td>CBOW</td><td>מילות הקשר ⇒ חיזוי מילת המטרה</td><td>קורפוסים גדולים, מהיר יותר לאימון</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from gensim.models import Word2Vec
+model = Word2Vec(sentences=tokenized_docs, vector_size=100,
+window=5, sg=1, negative=10, min_count=5)
+model.wv.most_similar('king')</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>למה משתמשים ב-Negative Sampling במקום Softmax מלא?</strong></p>
+<p><strong>ת: </strong>Softmax מלא דורש חישוב על פני כל אוצר המילים בכל עדכון — יקר מאוד לאוצר מילים גדול. Negative Sampling מקרב את הבעיה כסיווג בינארי בין דוגמאות אמיתיות לדוגמאות שליליות אקראיות, מה שמהיר משמעותית.</p>
+<p><strong>ש: </strong><strong>מה ההבדל בין Skip-gram ל-CBOW?</strong></p>
+<p><strong>ת: </strong>Skip-gram לומד לחזות את מילות ההקשר מתוך מילת המטרה (טוב יותר למילים נדירות), בעוד CBOW לומד לחזות את מילת המטרה מתוך ממוצע מילות ההקשר (מהיר יותר לאימון על קורפוסים גדולים).</p>
+<p><strong>ש: </strong><strong>מהי המגבלה המרכזית של Word2Vec לעומת FastText?</strong></p>
+<p><strong>ת: </strong>Word2Vec אינו יכול לייצר וקטור למילה שלא נראתה באימון (OOV) ואינו מנצל מבנה מורפולוגי, בעוד FastText פותר את שתי הבעיות באמצעות הרכבת המילה מתת-יחידות (character n-grams).</p>

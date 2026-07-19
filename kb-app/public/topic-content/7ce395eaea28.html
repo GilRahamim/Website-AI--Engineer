@@ -1,0 +1,35 @@
+<h4 class='sec-h'>‏📋 הגדרה</h4>
+<p>‏שיטת למידה מונחית לסיווג (וגם רגרסיה) המוצאת את ה-Hyperplane המפריד בין מחלקות, כך שהשוליים (Margin) בינו לבין הדגימות הקרובות ביותר משתי המחלקות יהיו רחבים ביותר.</p>
+<h4 class='sec-h'>‏⚙️ איך זה עובד</h4>
+<ul><li>‏1. מציבים את הדגימות כנקודות במרחב הפיצ'רים.</li><li>‏2. מחפשים Hyperplane המפריד באופן מושלם (או טוב ביותר) בין שתי המחלקות.</li><li>‏3. מבין כל ה-Hyperplanes האפשריים, בוחרים את זה שממקסם את המרחק (Margin) לנקודות הקרובות ביותר משתי המחלקות.</li><li>‏4. הדגימות שעל קווי השוליים נקראות Support Vectors — הן אלו שקובעות את מיקום ה-Hyperplane.</li><li>‏5. לדאטה שאינה לינארית-מופרדת: משתמשים ב-Kernel Trick כדי למפות (וירטואלית) למרחב בעל מימד גבוה יותר, שבו ניתן להפריד לינארית.</li></ul>
+<h4 class='sec-h'>‏📐 נוסחאות</h4>
+<p class='formula-label'><em>‏</em><em>פונקציית ההכרעה (</em><em>Decision Function</em><em>)</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="f(x)=w⋅x+b">f(x)=w⋅x+b</span></div>
+<p class='formula-label'><em>‏</em><em>בעיית האופטימיזציה — מקסום ה-</em><em>Margin</em><em> (</em><em>Hard Margin</em><em>)</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="min_{w,b}\frac{1}{2}\Vert w{\Vert }^{2}\ s.t.\ y_{i}(w⋅x_{i}+b)≥1\ \ ∀i">min_{w,b}(1)/(2)∥w∥^2 s.t. y_i(w⋅x_i+b)≥1  ∀i</span></div>
+<p class='formula-label'><em>‏</em><em>Kernel Trick</em><em> — לדוגמה </em><em>RBF Kernel</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="K(x_{i},x_{j})=\exp\left(−\gamma\Vert x_{i}−x_{j}{\Vert }^{2}\right)">K(x_i,x_j)=exp(−γ∥x_i−x_j∥^2)</span></div>
+<h4 class='sec-h'>‏🎯 שימושים עיקריים</h4>
+<ul><li>‏סיווג טקסט (לדוגמה Spam Detection) עם מספר רב של פיצ'רים.</li><li>‏בעיות עם מספר פיצ'רים גבוה יחסית למספר הדגימות.</li><li>‏בעיות עם הפרדה לא-לינארית בין המחלקות, בעזרת Kernel מתאים.</li></ul>
+<h4 class='sec-h'>‏✅ יתרונות</h4>
+<ul><li>‏יעיל מאוד במרחבי features high-dimensional.</li><li>‏עמיד (robust) ל-Overfitting כאשר ה-Margin רחב.</li><li>‏גמיש — אפשר להשתמש ב-Kernels שונים (Linear, Polynomial, RBF) להתאמה לסוגי דאטה שונים.</li></ul>
+<h4 class='sec-h'>‏❌ חסרונות / מגבלות</h4>
+<ul><li>‏לא יעיל (איטי) על סטי דאטה גדולים מאוד.</li><li>‏רגיש לבחירת ה-Kernel וה-hyperparameters (כמו C ו-γ).</li><li>‏לא מספק הסתברויות ישירות (בניגוד ל-Logistic Regression).</li></ul>
+<h4 class='sec-h'>‏📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>‏</strong><strong>סוג משימה</strong></td><td><strong>‏</strong><strong>מדדים מומלצים</strong></td></tr><tr><td>‏Classification</td><td>‏Accuracy, F1, ROC-AUC</td></tr></table>
+<p>‏</p>
+<h4 class='sec-h'>‏🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>‏</strong><strong>אלגוריתם</strong></td><td><strong>‏</strong><strong>יתרון עיקרי</strong></td><td><strong>‏</strong><strong>חסרון עיקרי</strong></td><td><strong>‏</strong><strong>מתי לבחור</strong></td></tr><tr><td>‏SVM</td><td>‏יעיל ב-high-dimensional, margin רחב</td><td>‏איטי על דאטה גדול, לא פרשני</td><td>‏פיצ'רים רבים, הפרדה מורכבת</td></tr><tr><td>‏Logistic Regression</td><td>‏פרשני, מחזיר הסתברות</td><td>‏גבול הכרעה לינארי בלבד</td><td>‏סיווג בינארי פשוט</td></tr><tr><td>‏KNN</td><td>‏פשוט, ללא הנחות על המודל</td><td>‏איטי בחיזוי על דאטה גדול</td><td>‏גבול הכרעה לא-רגולרי</td></tr></table>
+<p>‏</p>
+<h4 class='sec-h'>‏💻 קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>from sklearn.svm import SVC
+model = SVC(kernel='rbf', C=1.0, gamma='scale')
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)</code></pre>
+<h4 class='sec-h'>‏🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>‏</strong><strong>מה זה </strong><strong>Support Vectors</strong><strong>?</strong></p>
+<p><strong>ת: </strong>‏הדגימות הקרובות ביותר ל-Hyperplane המפריד, הנמצאות בדיוק על קווי השוליים (margin) — הן אלו שקובעות את מיקומו וכיוונו של ה-Hyperplane; שאר הנקודות לא משפיעות עליו.</p>
+<p><strong>ש: </strong><strong>‏</strong><strong>מה עושה ה-</strong><strong>Kernel Trick</strong><strong>?</strong></p>
+<p><strong>ת: </strong>‏מאפשר להפריד דאטה שאינה לינארית-מופרדת על ידי מיפוי וירטואלי למרחב בעל מימד גבוה יותר — בלי לחשב בפועל את הקואורדינטות החדשות, אלא רק את מכפלת הפנים (inner product) ביניהן, מה שחוסך משאבי חישוב.</p>
+<p><strong>ש: </strong><strong>‏</strong><strong>מה ההבדל בין </strong><strong>Hard Margin</strong><strong> ל-</strong><strong>Soft Margin SVM</strong><strong>?</strong></p>
+<p><strong>ת: </strong>‏Hard Margin מניח שהדאטה לינארית-מופרדת באופן מושלם וללא טעויות. Soft Margin (עם פרמטר C) מאפשר טעויות סיווג מבוקרות כדי להתמודד עם דאטה לא-מושלם או חופף בין מחלקות.</p>

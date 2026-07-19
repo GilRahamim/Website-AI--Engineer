@@ -1,0 +1,29 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>ארכיטקטורה המבוססת כולה על מנגנון Self-Attention, ללא רכיבים סדרתיים (RNN/LSTM), המאפשרת לכל מיקום ברצף להתייחס במישרין לכל מיקום אחר, ומאפשרת Parallelization מלא בזמן האימון.</p>
+<h4 class='sec-h'>🏛️ מבנה הרשת</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/6d4a729a842c.png" loading="lazy" alt="Transformer — architecture diagram" /></div>
+<ul><li>Embedding + Positional Encoding — ממיר טוקנים לוקטורים ומוסיף מידע על מיקום ברצף</li><li>Multi-Head Self-Attention — כל טוקן &quot;מביט&quot; בכל הטוקנים האחרים ומחשב משקלים לפי רלוונטיות</li><li>Feed-Forward Network (FFN) — שכבת MLP הפועלת על כל מיקום בנפרד אחרי ה-Attention</li><li>Residual Connections + Layer Normalization — סביב כל תת-שכבה, מייצבים את האימון ברשתות עמוקות</li><li>מבנה Encoder-Decoder (במודלים כמו תרגום) או Encoder-only / Decoder-only (BERT / GPT)</li></ul>
+<h4 class='sec-h'>📐 נוסחאות מפתח</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/d1e4f27b3a82.png" loading="lazy" alt="formula"></div>
+<p>Multi-Head:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/de2348c4d9ed.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 תחומי שימוש</h4>
+<ul><li>NLP — תרגום, סיכום, מענה לשאלות, מודלים שפתיים גדולים (GPT, BERT)</li><li>Computer Vision — Vision Transformer (ViT)</li><li>ביואינפורמטיקה ותחומים נוספים עם נתונים רצפיים/מבניים</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מאפשר Parallelization מלא באימון (בניגוד ל-RNN הסדרתי)</li><li>לוכד תלויות ארוכות-טווח טוב יותר מ-RNN/LSTM, ללא בעיית Vanishing Gradient המסורתית</li><li>מתקנן (Scales) טוב מאוד עם נתונים ופרמטרים — בסיס למודלי השפה הגדולים (LLMs)</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>מורכבות חישובית של Self-Attention היא $O(n^2)$ באורך הרצף — יקר לרצפים ארוכים מאוד</li><li>דורש כמות גדולה של דאטה לאימון מאפס</li><li>חסר הטיה אינדוקטיבית מרחבית/סדרתית טבעית — נדרש Positional Encoding מפורש</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Translation</td><td>BLEU Score</td></tr><tr><td>Language Modeling</td><td>Perplexity</td></tr><tr><td>Classification (Fine-tuned)</td><td>Accuracy, F1</td></tr></table>
+<h4 class='sec-h'>🔄 וריאנטים / גרסאות</h4>
+<table class='kbtable'><tr><td><strong>וריאנט</strong></td><td><strong>הבדל מרכזי</strong></td></tr><tr><td>Encoder-Decoder (Original Transformer)</td><td>למשימות Seq2Seq כמו תרגום</td></tr><tr><td>Encoder-only (BERT)</td><td>מתמחה בהבנת טקסט (Representation), לא ביצירה</td></tr><tr><td>Decoder-only (GPT)</td><td>מתמחה ביצירת טקסט אוטורגרסיבית</td></tr><tr><td>Vision Transformer (ViT)</td><td>מפצל תמונה ל-Patches ומטפל בהם כברצף טוקנים</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (PyTorch)</h4>
+<pre class='code-block'><code>import torch.nn as nn
+
+encoder_layer = nn.TransformerEncoderLayer(d_model=512, nhead=8)
+encoder = nn.TransformerEncoder(encoder_layer, num_layers=6)
+output = encoder(src)  # src: (seq_len, batch, d_model)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>למה צריך Positional Encoding ב-Transformer?</p>
+<p><strong>ת: </strong>Self-Attention עצמו אינו רגיש לסדר הטוקנים (סימטרי לפרמוטציה); Positional Encoding מזריק מידע על המיקום היחסי/מוחלט של כל טוקן ברצף.</p>
+<p><strong>ש: </strong>למה Multi-Head Attention עדיף על Single-Head?</p>
+<p><strong>ת: </strong>כל ראש (Head) יכול ללמוד &quot;להביט&quot; על סוג קשר שונה (תחבירי, סמנטי, מרחק קצר/ארוך); שילוב הראשים מעניק ייצוג עשיר יותר מראש בודד באותו מימד כולל.</p>

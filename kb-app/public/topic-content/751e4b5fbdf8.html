@@ -1,0 +1,33 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>משפחת שיטות למדידת דמיון בין מחרוזות שאינן זהות במדויק, באמצעות 'מרחק עריכה' (Edit Distance) — מספר הפעולות המינימלי הדרוש להמיר מחרוזת אחת לאחרת — או באמצעות ייצוג וקטורי של רצפי תווים (character n-grams).</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>שיטת Levenshtein Distance: מחשבים את מספר פעולות העריכה המינימלי (הוספה / מחיקה / החלפה) הדרוש להמרת מחרוזת אחת לשנייה, באמצעות תכנון דינמי.</li><li>Damerau-Levenshtein מוסיף גם פעולת 'הצלבה' (transposition) של שני תווים סמוכים — שגיאת הקלדה נפוצה.</li><li>לקנה מידה גדול (מיליוני רשומות): מפרקים כל מחרוזת ל-character n-grams, בונים וקטור TF-IDF על בסיס ה-n-grams, ומשתמשים ב-Cosine Similarity למציאת התאמות מקורבות במהירות.</li></ul>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/f7fd2f7c3df6.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>נוסחת הנסיגה (recurrence) של מרחק העריכה Levenshtein</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/750dc106a7d2.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>עלות ההחלפה — 0 אם התווים זהים, אחרת 1</em></p>
+<h4 class='sec-h'>🔡 טבלת עלויות פעולות</h4>
+<table class='kbtable'><tr><td><strong>פעולה</strong></td><td><strong>עלות טיפוסית</strong></td></tr><tr><td>הוספה (Insertion)</td><td>1</td></tr><tr><td>מחיקה (Deletion)</td><td>1</td></tr><tr><td>החלפה (Substitution)</td><td>1</td></tr><tr><td>הצלבה (Transposition) — רק ב-Damerau-Levenshtein</td><td>1</td></tr></table>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>Record Linkage / Entity Resolution — זיהוי רשומות כפולות עם שגיאות כתיב.</li><li>בדיקת איות (spell-checking) ותיקון אוטומטי.</li><li>חיפוש קירוב (approximate search) בשמות, כתובות ומזהים.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>אינו דורש התאמה מדויקת — עמיד לשגיאות הקלדה קטנות.</li><li>ניתן להרחבה לקנה מידה גדול בעזרת n-grams + TF-IDF + Cosine (במקום חישוב Edit Distance לכל זוג).</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>חישוב Levenshtein מדויק יקר חישובית: סדר גודל O(n·m) לכל זוג מחרוזות — לא סקיילבילי להשוואת כל הזוגות בדאטה גדול.</li><li>אינו מתחשב במשמעות — שתי מחרוזות יכולות להיות קרובות בעריכה אך שונות במשמעות (ולהפך).</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Matching / Deduplication</td><td>Precision, Recall, F1</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>יתרון עיקרי</strong></td><td><strong>חסרון עיקרי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>Levenshtein Distance</td><td>מדויק, תופס סדר תווים</td><td>יקר חישובית בקנה מידה גדול</td><td>השוואת זוגות מועטים</td></tr><tr><td>n-gram TF-IDF + Cosine</td><td>סקיילבילי למיליוני רשומות</td><td>פחות מדויק ברמת התו הבודד</td><td>Record Linkage בקנה מידה גדול</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>import Levenshtein
+Levenshtein.distance('John Smith', 'Jon Smith')  # 1
+# גישה סקיילבילית: character n-grams + TF-IDF + cosine
+from sklearn.feature_extraction.text import TfidfVectorizer
+vectorizer = TfidfVectorizer(analyzer='char', ngram_range=(2,3))
+X = vectorizer.fit_transform(names)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מתי כדאי להשתמש ב-character n-grams + TF-IDF במקום Levenshtein ישיר?</strong></p>
+<p><strong>ת: </strong>כשיש כמות גדולה מאוד של רשומות להשוואה — חישוב Levenshtein לכל זוג אינו סקיילבילי, בעוד ייצוג וקטורי מאפשר חיפוש מהיר (approximate nearest neighbor).</p>
+<p><strong>ש: </strong><strong>מה ההבדל בין Levenshtein לבין Damerau-Levenshtein?</strong></p>
+<p><strong>ת: </strong>Damerau-Levenshtein מוסיף פעולת הצלבה (transposition) של שני תווים סמוכים, שמתאימה לשגיאת הקלדה נפוצה שאינה נתפסת היטב על ידי הוספה/מחיקה/החלפה בלבד.</p>

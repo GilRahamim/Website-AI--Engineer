@@ -1,0 +1,24 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מדדי הערכה ל-object detection בודקים גם אם האובייקט זוהה (כמו classification) וגם אם מיקומו (bounding box) מדויק — מדד IoU (Intersection over Union) מכמת חפיפה גיאומטרית, ו-mAP (mean Average Precision) משקלל את הדיוק על פני קטגוריות וספי-IoU שונים.</p>
+<h4 class='sec-h'>📐 הנוסחה — IoU (Intersection over Union)</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/bd0f6561bc76.png" loading="lazy" alt="formula"></div>
+<p>כאשר <em>B</em>pred הוא ה-bounding box שהמודל חזה, ו-<em>B</em>gt הוא ה-bounding box האמיתי (ground truth). חיזוי נחשב 'נכון' אם IoU עובר סף מוגדר (לדוגמה 0.5).</p>
+<h4 class='sec-h'>📐 הנוסחה — mAP (mean Average Precision)</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/f30f4f762955.png" loading="lazy" alt="formula"></div>
+<p>כאשר APi הוא Average Precision (השטח מתחת לעקומת Precision-Recall) לקטגוריה <em>i</em>, ו-<em>N</em> הוא מספר הקטגוריות.</p>
+<h4 class='sec-h'>🔡 פירוש המדדים</h4>
+<table class='kbtable'><tr><td><strong>מדד</strong></td><td><strong>משמעות</strong></td></tr><tr><td>Precision</td><td>כמה מה-detections היו נכונים (ראו גם מסמך 21)</td></tr><tr><td>Recall</td><td>כמה מהאובייקטים האמיתיים זוהו (ראו גם מסמך 21)</td></tr><tr><td>mAP50</td><td>איכות detection בסף IoU = 50%</td></tr><tr><td>mAP50-95</td><td>איכות detection מחושבת בממוצע על פני ספי IoU שונים (50%–95%) — מדד מחמיר יותר</td></tr></table>
+<h4 class='sec-h'>💻 מימוש בקוד</h4>
+<pre class='code-block'><code># 10_train_yolo.py
+metrics = model.val()
+print(metrics.box.map50)   # mAP at IoU=0.50
+print(metrics.box.map)     # mAP averaged over IoU=0.50:0.95</code></pre>
+<h4 class='sec-h'>✅ מתי עדיף איזה מדד</h4>
+<ul><li>mAP50 — הערכה 'סלחנית' יותר; שימושית כשמיקום משוער מספיק (לדוגמה ספירת אנשים).</li><li>mAP50-95 — מדד תקני ומחמיר יותר להשוואת מודלים (כמו בבנצ'מארק COCO) — דורש דיוק גיאומטרי גבוה יותר במגוון ספי IoU.</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>mAP אינו מבחין בין סוגי שגיאה (false positive לעומת false negative) — לכך משמשים Precision/Recall בנפרד.</li><li>תלוי בבחירת סף IoU — סף שונה יכול לשנות את הדירוג היחסי בין מודלים.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מדוע mAP50-95 נחשב מדד מחמיר יותר מ-mAP50?</strong></p>
+<p>ת: כי mAP50 בודק התאמה רק בסף IoU אחד (50% חפיפה) — חיזוי 'בערך נכון' עובר. mAP50-95 ממצע את ה-AP על פני טווח ספי IoU (50% עד 95% בקפיצות), כך שמודל צריך להיות מדויק גיאומטרית גם בספים מחמירים (כגון 90% חפיפה) כדי לקבל ציון גבוה — מענישה bounding boxes 'משוערים בערך'.</p>
+<p><strong>ש: אם מודל מקבל mAP50 גבוה אך mAP50-95 נמוך בהרבה, מה זה מעיד?</strong></p>
+<p>ת: שהמודל מזהה נכון את נוכחות האובייקטים (classification טוב) אך ה-bounding boxes שלו לא ממוקמים בדיוק גבוה — חפיפה מספקת רק לספים נמוכים. הבעיה היא בלוקליזציה (localization), לא בזיהוי הקטגוריה.</p>

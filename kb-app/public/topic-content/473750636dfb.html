@@ -1,0 +1,18 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>חלוקה בסיסית של משימות למידת מכונה לפי קיום (או אי-קיום) משתנה מטרה (target variable) מתויג, ומיפוי של סוגי המשימות הנפוצות בכל קטגוריה.</p>
+<h4 class='sec-h'>⚙️ השאלה המרכזית לסיווג</h4>
+<ul><li>האם יש משתנה מטרה ספציפי? (Is there a specific target variable?)</li><li>האם יש נתונים מתויגים על משתנה המטרה הזה?</li></ul>
+<p>אם התשובה כן לשתי השאלות — המשימה Supervised. אם לא — Unsupervised.</p>
+<h4 class='sec-h'>🎯 משימות Supervised</h4>
+<ul><li>Classification — לכל פרט בקבוצה, לאיזו מחלקה (מתוך קבוצה קטנה וסגורה) הוא משתייך.</li><li>Class Probability Estimation / Scoring — הסתברות/ציון השתייכות של הפרט לכל קטגוריה (לא רק תווית בודדת).</li><li>Regression (Value Estimation) — חיזוי ערך מספרי רציף עבור פרט.</li></ul>
+<h4 class='sec-h'>🧩 משימות Unsupervised</h4>
+<ul><li>Clustering — קיבוץ פרטים לפי דמיון, בלי מטרה/משתנה ספציפי מנחה.</li><li>Similarity Matching — איתור פרטים דומים זה לזה על בסיס הנתונים הידועים עליהם (לשימוש ישיר, לא רק לקיבוץ).</li><li>Co-occurrence Grouping (Association Rule / Market-Basket Analysis) — איתור קשרים בין ישויות שמופיעות יחד בעסקאות.</li><li>Profiling (Behavior Description) — אפיון ההתנהגות הטיפוסית של פרט/קבוצה/אוכלוסייה.</li><li>Link Prediction — חיזוי קשרים עתידיים/חסרים בין ישויות (למשל הצעת קשרים ברשת חברתית).</li><li>Data Reduction — החלפת סט נתונים גדול בסט קטן יותר ששומר על רוב המידע החשוב.</li></ul>
+<h4 class='sec-h'>📊 טבלת סיווג</h4>
+<table class='kbtable'><tr><td><strong>משימה</strong></td><td><strong>סוג למידה</strong></td><td><strong>תפוקה אופיינית</strong></td></tr><tr><td>Classification</td><td>Supervised</td><td>תווית קטגוריאלית</td></tr><tr><td>Regression</td><td>Supervised</td><td>ערך מספרי רציף</td></tr><tr><td>Clustering</td><td>Unsupervised</td><td>קיבוצים (clusters)</td></tr><tr><td>Similarity Matching</td><td>Unsupervised</td><td>רשימת פרטים דומים</td></tr><tr><td>Co-occurrence Grouping</td><td>Unsupervised</td><td>כללי שיוך (association rules)</td></tr><tr><td>Profiling</td><td>Unsupervised</td><td>תיאור התנהגות טיפוסית</td></tr><tr><td>Link Prediction</td><td>Unsupervised</td><td>קשרים חסרים/עתידיים</td></tr><tr><td>Data Reduction</td><td>Unsupervised</td><td>סט נתונים קטן יותר</td></tr></table>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>הסיווג הזה הוא הבסיס להבנת מתי כדאי מודל קלאסי/מתמחה לעומת LLM גנרי — ראו 'מודלים מתמחים מול LLM גנרי'. בחירת מדדי ההערכה (Accuracy/F1 ל-Classification, RMSE/R2 ל-Regression, Silhouette ל-Clustering) תלויה ישירות בסוג המשימה.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין Clustering ל-Classification?</strong></p>
+<p>ת: Classification הוא Supervised — יש קבוצת תוויות ידועה מראש ומודל לומד למפות אליה מתוך דוגמאות מתויגות. Clustering הוא Unsupervised — אין תוויות, והאלגוריתם מגלה קיבוצים מהמבנה הטבעי של הנתונים בלבד.</p>
+<p><strong>ש: מתי Similarity Matching שונה מ-Clustering?</strong></p>
+<p>ת: Clustering מחפש חלוקה גלובלית של כל האוכלוסייה לקבוצות. Similarity Matching לא בהכרח מקבץ את כל האוכלוסייה — הוא עונה על שאלה ממוקדת: 'מי הפרטים הדומים ביותר לפרט X הזה?' (כמו ב-retrieval של RAG).</p>

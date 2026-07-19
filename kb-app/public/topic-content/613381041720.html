@@ -1,0 +1,28 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>תהליך מקצה-לקצה להפיכת מסמכי טקסט גולמיים לתוויות מסווגות (לדוגמה: ספאם/לא-ספאם, סנטימנט חיובי/שלילי, קטגוריית חדשות) — המשלב עיבוד מקדים, ייצוג וקטורי, ומודל סיווג. זהו אחד היישומים השכיחים ביותר של כל הכלים שנסקרו לאורך הנושא (BoW, TF-IDF, Word/Doc Embeddings).</p>
+<h4 class='sec-h'>🔍 מתי זה קורה?</h4>
+<ul><li>כשהמטרה היא להקצות תווית (label) דיסקרטית למסמך — סיווג בינארי או רב-מחלקתי.</li><li>דוגמאות נפוצות: זיהוי ספאם, ניתוח סנטימנט, מיון תלונות לקוחות, זיהוי שאלות כפולות (Duplicate Questions).</li></ul>
+<h4 class='sec-h'>⚙️ שלבי הצנרת</h4>
+<ul><li>עיבוד מקדים — ראו Text Preprocessing Pipeline (טוקניזציה, ניקוי, נרמול מורפולוגי).</li><li>ייצוג וקטורי — בחירה בין Bag of Words / TF-IDF (פשוט, שקוף, יעיל לקורפוסים קטנים-בינוניים) לבין Word/Doc Embeddings (תופס דמיון סמנטי, יעיל יותר לקורפוסים גדולים ולמשימות מורכבות).</li><li>בחירת מודל סיווג — מהמודלים הקלאסיים (Logistic Regression, Naive Bayes, SVM) ועד מודלים מורכבים יותר, בהתאם לגודל הדאטה ולמורכבות המשימה.</li><li>אימון והערכה — חלוקה ל-Train/Validation/Test, ומדידת ביצועים באמצעות Accuracy, F1 ומדדים נוספים בהתאם לאיזון המחלקות.</li></ul>
+<h4 class='sec-h'>⚠️ איך מזהים בעיה בצנרת?</h4>
+<ul><li>ביצועים גבוהים בסט האימון ונמוכים בסט הבדיקה — סימן ל-overfitting, לרוב כתוצאה מממד פיצ'רים גבוה מאוד (BoW על אוצר מילים גדול) יחסית לכמות הדגימות.</li><li>ביצועים נמוכים בכלל — ייתכן שהעיבוד המקדים לא מתאים (לדוגמה הסרת מילת שלילה חשובה כמו 'not' בניתוח סנטימנט), או שהייצוג הווקטורי לא תופס את האיתות הרלוונטי למשימה.</li><li>מחלקות לא מאוזנות (class imbalance) — Accuracy לבדה עלולה להטעות; יש להסתכל גם על F1/Precision/Recall לפי מחלקה.</li></ul>
+<h4 class='sec-h'>🛠️ איך פותרים / משפרים?</h4>
+<ul><li>מעבר מ-BoW/TF-IDF ל-Embeddings (ממוצע וקטורי Word2Vec/GloVe, או Doc2Vec) כשהקורפוס גדול והמשימה דורשת רגישות סמנטית.</li><li>טיוב היפר-פרמטרים של המודל (regularization, וכד') ובדיקת מספר ארכיטקטורות שונות.</li><li>טיפול מפורש בחוסר איזון מחלקות — משקלול מחדש (class weights), Oversampling/Undersampling, או בחירת מדד הערכה מתאים (F1 ולא Accuracy בלבד).</li></ul>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>צנרת הסיווג היא הצרכן הסופי הטיפוסי של כל ייצוגי הטקסט שנלמדו בנושא: Bag of Words, TF-IDF, Word Embeddings, ו-Doc2Vec. גם הערכת Embeddings (Embedding Evaluation, Extrinsic) נשענת על אותה תבנית — אימון מסווג קל ובדיקת Accuracy/F1.</p>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.2)
+vec = TfidfVectorizer()
+X_train_vec = vec.fit_transform(X_train)
+X_test_vec = vec.transform(X_test)
+clf = LogisticRegression(max_iter=1000).fit(X_train_vec, y_train)
+print(classification_report(y_test, clf.predict(X_test_vec)))</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מתי תעדיף TF-IDF על פני Word Embeddings בצנרת סיווג טקסט?</strong></p>
+<p><strong>ת: </strong>כשהדאטה קטן-בינוני, כשחשובה פרשנות (interpretability) של המודל (לדוגמה לדעת אילו מילים השפיעו על ההחלטה), או כשהמשימה מתבססת בעיקר על מילות מפתח מדויקות ולא על דמיון סמנטי עמוק.</p>
+<p><strong>ש: </strong><strong>מה הבעיה בשימוש ב-Accuracy בלבד כשיש חוסר איזון בין המחלקות?</strong></p>
+<p><strong>ת: </strong>Accuracy יכול להיות מטעה — מודל שתמיד מנחש את המחלקה השכיחה יקבל Accuracy גבוה בלי שיהיה שימושי בפועל; F1 (וה-Precision/Recall לפי מחלקה) משקפים טוב יותר את הביצועים האמיתיים על מחלקות מיעוט.</p>

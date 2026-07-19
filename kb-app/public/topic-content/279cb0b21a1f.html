@@ -1,0 +1,28 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>סדרת שלבי עיבוד שמטרתם להמיר טקסט גולמי וחופשי (raw text) לצורה נקייה ואחידה, המתאימה להזנה לאלגוריתמי NLP — בין אם מודל קלאסי מבוסס BoW/TF-IDF ובין אם מודל מבוסס embeddings.</p>
+<h4 class='sec-h'>🔍 מתי זה קורה?</h4>
+<ul><li>תמיד נדרש כשלב ראשון בכל צנרת NLP, לפני בניית ייצוג וקטורי (BoW, TF-IDF) או אימון מודל embeddings.</li><li>קריטי במיוחד כשמקור הטקסט 'מלוכלך' — רשתות חברתיות, סקרים פתוחים, OCR, תמלולים.</li></ul>
+<h4 class='sec-h'>⚙️ שלבים נפוצים</h4>
+<ul><li>Tokenization — פירוק הטקסט לטוקנים (מילים / תת-מילים / תווים).</li><li>Lowercasing — הפיכת כל הטקסט לאותיות קטנות, כדי ש-&quot;Dog&quot; ו-&quot;dog&quot; יחשבו לאותו טוקן.</li><li>הסרת סימני פיסוק (Punctuation Removal) ותווים מיוחדים שאינם תורמים משמעות.</li><li>הסרת מילות עצירה (Stopword Removal) — מילים נפוצות מאוד וחסרות תוכן (&quot;the&quot;, &quot;is&quot;, &quot;של&quot;, &quot;את&quot;) שלעיתים מוסרות בהתאם למשימה.</li><li>נרמול מורפולוגי: Stemming (קיצוץ גס של סיומות, מהיר אך פחות מדויק) או Lemmatization (החזרה לצורת המקור הדקדוקית, מדויק יותר אך יקר חישובית).</li><li>טיפול במספרים, אמוג'ים, קישורים (URLs) ותגי HTML — לרוב מוחזרים לפי הצורך הספציפי של המשימה.</li></ul>
+<h4 class='sec-h'>⚠️ איך מזהים בעיה בעיבוד מקדים?</h4>
+<ul><li>אוצר מילים (vocabulary) גדול ומתפוצץ באופן בלתי סביר — סימן שייתכן שצריך נרמול מורפולוגי טוב יותר.</li><li>מודל מתקשה למצוא דמיון בין מסמכים דומים מבחינה תוכנית אך כתובים בסגנון שונה.</li><li>המודל הסופי מתבסס יותר מהצפוי על מילים שכיחות-אך-לא-אינפורמטיביות.</li></ul>
+<h4 class='sec-h'>🛠️ איך פותרים / מטפלים?</h4>
+<ul><li>בדיקה שיטתית של אוצר המילים שמתקבל לאחר עיבוד — האם יש כפילויות מורפולוגיות שלא טופלו?</li><li>התאמת רשימת מילות העצירה למשימה הספציפית (לדוגמה — אין להסיר 'not' במשימת ניתוח סנטימנט).</li><li>שילוב n-grams / phrase detection לפני הייצוג הווקטורי, כדי לשמור ביטויים רב-מילתיים חשובים (לדוגמה &quot;New York&quot;).</li></ul>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>העיבוד המקדים הוא תנאי הכרחי לפני בניית ייצוגי Bag-of-Words, TF-IDF, ואימון LDA. גם ב-N-grams &amp; Phrase Detection מתבססים על אותו טוקניזציה בסיסית. לעומת זאת, מודלי הקשר עמוקים (Word2Vec/FastText) רגישים פחות לחלק מהשלבים (כמו הסרת מילות עצירה), אך עדיין דורשים טוקניזציה עקבית.</p>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>import re
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+def preprocess(text):
+text = text.lower()
+text = re.sub(r'[^a-z0-9\s]', '', text)
+tokens = text.split()
+tokens = [t for t in tokens if t not in stopwords.words('english')]
+lemmatizer = WordNetLemmatizer()
+return [lemmatizer.lemmatize(t) for t in tokens]</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מה ההבדל בין Stemming ל-Lemmatization?</strong></p>
+<p><strong>ת: </strong>Stemming מקצץ סיומות באופן מכני/היוריסטי (מהיר אך עלול להפיק צורות לא תקינות), בעוד Lemmatization מחזיר את המילה לצורת המקור הדקדוקית הנכונה (precise יותר, אך יקר חישובית ודורש מילון/מודל שפה).</p>
+<p><strong>ש: </strong><strong>מתי כדאי להימנע מהסרת מילות עצירה?</strong></p>
+<p><strong>ת: </strong>במשימות שבהן מילות עצירה נושאות משמעות קריטית — לדוגמה ניתוח סנטימנט, בו 'not good' שונה מהותית מ-'good', או במודלי שפה/embeddings שמרוויחים מהקשר תחבירי מלא.</p>

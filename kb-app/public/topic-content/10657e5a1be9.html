@@ -1,0 +1,11 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מודל שפה מודרני עובר בדרך כלל כמה שלבי אימון נפרדים, שכל אחד מהם נותן יכולת אחרת: Pretraining בונה ידע שפה כללי, Fine-Tuning מתאים למשימה ספציפית, ו-Instruction-Tuning מלמד את המודל לפעול לפי הוראות בשיחה.</p>
+<h4 class='sec-h'>📊 השוואת שלבי האימון</h4>
+<table class='kbtable'><tr><td><strong>שלב</strong></td><td><strong>סוג נתונים</strong></td><td><strong>מטרה</strong></td><td><strong>עלות יחסית</strong></td></tr><tr><td>Pretraining</td><td>טקסט גולמי עצום מהאינטרנט</td><td>למידת שפה, עולם ידע כללי (next-token prediction)</td><td>גבוהה מאוד</td></tr><tr><td>Fine-Tuning</td><td>דאטה מתויג ספציפי למשימה/דומיין</td><td>התאמת המודל למשימה צרה</td><td>בינונית</td></tr><tr><td>Instruction-Tuning</td><td>זוגות הוראה→תשובה איכותיים</td><td>ללמד את המודל לעקוב אחרי הוראות בפורמט שיחה</td><td>בינונית-נמוכה</td></tr></table>
+<h4 class='sec-h'>🛠️ RLHF כשלב משלים</h4>
+<p>לאחר Instruction-Tuning, מודלים שיחתיים מודרניים עוברים בנוסף RLHF (Reinforcement Learning from Human Feedback) שמיישר את התנהגות המודל להעדפות אנושיות — מפורט בנושא הייעודי RLHF.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מה ההבדל בין Fine-Tuning רגיל ל-Instruction-Tuning?</strong></p>
+<p><strong>ת: </strong>Fine-Tuning רגיל מתאים את המודל למשימה ספציפית (כמו סיווג סנטימנט), בעוד Instruction-Tuning מלמד התנהגות כללית של 'מעקב אחר הוראות' בפורמט שיחה, ומכין את המודל להיות שימושי כעוזר כללי.</p>
+<p><strong>ש: </strong><strong>למה לא מספיק Pretraining בלבד למודל שיחתי שימושי?</strong></p>
+<p><strong>ת: </strong>מודל שעבר רק Pretraining חוזה את הטוקן הסטטיסטית הסביר ביותר על בסיס דפוסי האינטרנט — לא מותאם לפרמט שיחה, לעקוב אחר הוראות, או להעדיף תשובות מועילות ובטוחות; אלו נלמדים ב-Instruction-Tuning וב-RLHF.</p>

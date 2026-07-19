@@ -1,0 +1,68 @@
+<h4 class='sec-h'>‏Machine Learning Overview — מבוא ללמידת מכונה</h4>
+<p><em>‏הערה: מצגת זה היא סקירה רב-נושאית (97 עמודים) המכסה כמה מושגי יסוד בלמידת מכונה. בהתאם לכלל 6 ב-skill, נבחרה תבנית 'מושג תיאורטי' כתבנית המתאימה ביותר, והמסמך מאורגן כמסמך מסכם יחיד לכל תתי-הנושאים שבמצגת.</em></p>
+<h4 class='sec-h'>‏📋 הגדרה</h4>
+<p>‏Machine Learning (למידת מכונה) הוא תחום ב-AI שבו מערכת לומדת לבצע משימה מתוך דוגמאות (Data) ושיפור עצמי על בסיס ניסיון, במקום להיות מתוכנתת באופן מפורש לכל מקרה. Deep Learning הוא תת-תחום של ML המבוסס על רשתות נוירונים עמוקות (Neural Networks) בעלות מספר שכבות נסתרות, המאפשרות למידת תכונות (features) מורכבות ישירות מהדאטה הגולמי.</p>
+<h4 class='sec-h'>‏Supervised Learning (למידה מונחית)</h4>
+<p>‏המודל מאומן על דאטה מתויג (labeled data) — כל דוגמה מגיעה עם תווית/תוצאה ידועה (y). המודל לומד מיפוי מתכונות הקלט (X) לתווית הפלט (y).</p>
+<ul><li>‏Classification — חיזוי קטגוריה/מחלקה (לדוגמה: כלב מול חתול, חולה מול בריא)</li><li>‏Regression — חיזוי ערך רציף (לדוגמה: מחיר בית, טמפרטורה)</li></ul>
+<h4 class='sec-h'>‏Unsupervised Learning (למידה לא מונחית)</h4>
+<p>‏המודל מאומן על דאטה לא מתויג ומחפש מבנה, דמיון או חריגות בדאטה בעצמו, ללא תוצאה ידועה מראש.</p>
+<ul><li>‏Clustering — קיבוץ דוגמאות דומות לקבוצות (clusters)</li><li>‏Anomaly Detection — איתור דוגמאות חריגות/לא טיפוסיות</li><li>‏Dimensionality Reduction — הקטנת מספר התכונות בדאטה תוך שמירה על המידע המשמעותי</li></ul>
+<h4 class='sec-h'>‏⚙️ תהליך העבודה (ML Process)</h4>
+<p>‏תהליך בניית מודל ML עובר בדרך כלל את השלבים הבאים:</p>
+<ul><li>‏1. Data Acquisition — איסוף הדאטה הרלוונטי למשימה</li><li>‏2. Data Cleaning — ניקוי, טיפול בערכים חסרים וחריגים, נרמול</li><li>‏3. Train / Validation / Test Split — חלוקת הדאטה לאימון, כיוונון והערכה</li><li>‏4. Training &amp; Building — אימון המודל על קבוצת ה-Train</li><li>‏5. Testing — הערכת ביצועי המודל על קבוצת ה-Test שלא נראתה באימון</li><li>‏6. Deployment — פריסת המודל לסביבת production</li></ul>
+<p>‏המטרה בחלוקה ל-Train/Validation/Test היא לאמוד את יכולת ההכללה (generalization) של המודל על דאטה שהוא לא ראה, ולמנוע הערכת-יתר אופטימית של הביצועים.</p>
+<h4 class='sec-h'>‏Underfitting (התאמת-חסר)</h4>
+<p>‏המודל פשוט מכדי ללכוד את התבנית בדאטה — שגיאה גבוהה גם על Train וגם על Test.</p>
+<h4 class='sec-h'>‏Overfitting (התאמת-יתר)</h4>
+<p>‏המודל 'משנן' את דאטה האימון (כולל רעש) במקום ללמוד הכללה — שגיאת Train נמוכה אך שגיאת Test/Validation גבוהה ועולה.</p>
+<p>‏בגרף שגיאה לפי epoch: Underfitting מתבטא בשגיאת Train ו-Test גבוהות שלא משתפרות; Overfitting מתבטא בפיצול בין השגיאות — שגיאת Train יורדת ברציפות בעוד שגיאת Validation מתחילה לעלות מנקודה מסוימת.</p>
+<h4 class='sec-h'>‏📊 מדדי הערכה — Classification</h4>
+<p>‏כל המדדים מבוססים על Confusion Matrix: TP (True Positive), TN (True Negative), FP (False Positive), FN (False Negative).</p>
+<p class='formula-label'><em>‏Accuracy:</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="Accuracy=\frac{TP+TN}{TP+TN+FP+FN}">Accuracy=(TP+TN)/(TP+TN+FP+FN)</span></div>
+<p class='formula-label'><em>‏Precision:</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="Precision=\frac{TP}{TP+FP}">Precision=(TP)/(TP+FP)</span></div>
+<p class='formula-label'><em>‏Recall:</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="Recall=\frac{TP}{TP+FN}">Recall=(TP)/(TP+FN)</span></div>
+<p class='formula-label'><em>‏F1-Score:</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="F_{1}=2⋅\frac{Precision⋅Recall}{Precision+Recall}">F_1=2⋅(Precision⋅Recall)/(Precision+Recall)</span></div>
+<p>‏Precision חשוב כשמחיר ה-False Positive גבוה (לדוגמה: דוא&quot;ל ספאם); Recall חשוב כשמחיר ה-False Negative גבוה (לדוגמה: אבחון מחלה). F1 הוא ממוצע הרמוני המאזן בין השניים, ושימושי כשהדאטה לא מאוזן (imbalanced).</p>
+<h4 class='sec-h'>‏📊 מדדי הערכה — Regression</h4>
+<p class='formula-label'><em>‏MAE (Mean Absolute Error):</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="MAE=\frac{1}{n}\sum_{i=1}^{n} |y_{i}−{\hat{y}}_{i}|">MAE=(1)/(n)∑_{i=1}^n|y_i−ŷ_i|</span></div>
+<p class='formula-label'><em>‏MSE (Mean Squared Error):</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="MSE=\frac{1}{n}\sum_{i=1}^{n} (y_{i}−{\hat{y}}_{i})^{2}">MSE=(1)/(n)∑_{i=1}^n(y_i−ŷ_i)^2</span></div>
+<p class='formula-label'><em>‏RMSE (Root Mean Squared Error):</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="RMSE=\sqrt{MSE}">RMSE=√(MSE)</span></div>
+<p>‏MSE/RMSE מענישים שגיאות גדולות בצורה חזקה יותר (בריבוע) מ-MAE, ולכן רגישים יותר ל-outliers. RMSE נמצא באותן יחידות כמו המשתנה החזוי, מה שמקל על הפרשנות.</p>
+<table class='kbtable'><tr><td><strong>‏מדד</strong></td><td><strong>‏סוג בעיה</strong></td><td><strong>‏רגישות ל-Outliers</strong></td><td><strong>‏מתי להשתמש</strong></td></tr><tr><td>‏MAE</td><td>‏Regression</td><td>‏נמוכה</td><td>‏כשרוצים מדד פשוט וקריא</td></tr><tr><td>‏MSE</td><td>‏Regression</td><td>‏גבוהה</td><td>‏כשרוצים להעניש שגיאות גדולות</td></tr><tr><td>‏RMSE</td><td>‏Regression</td><td>‏גבוהה</td><td>‏כשרוצים יחידות מקוריות + עונש לשגיאות גדולות</td></tr><tr><td>‏Accuracy</td><td>‏Classification</td><td>‏—</td><td>‏דאטה מאוזן בלבד</td></tr><tr><td>‏F1-Score</td><td>‏Classification</td><td>‏—</td><td>‏דאטה לא מאוזן (imbalanced)</td></tr></table>
+<h4 class='sec-h'>‏Clustering</h4>
+<p>‏חלוקת דוגמאות לקבוצות (clusters) על בסיס דמיון, ללא תוויות מראש. אלגוריתם נפוץ: K-Means.</p>
+<h4 class='sec-h'>‏Anomaly Detection</h4>
+<p>‏איתור דוגמאות שאינן תואמות את ההתפלגות הכללית של הדאטה — שימושי לאיתור הונאות, תקלות חיישנים, ועוד.</p>
+<h4 class='sec-h'>‏Dimensionality Reduction</h4>
+<p>‏הקטנת מספר התכונות (features) בדאטה (למשל PCA) — שימושית להדמיה, להפחתת רעש ולשיפור יעילות אימון.</p>
+<h4 class='sec-h'>‏💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+import numpy as np
+# Train / Validation / Test split
+X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.4, random_state=42)
+X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
+# Classification metrics
+acc = accuracy_score(y_test, y_pred)
+f1 = f1_score(y_test, y_pred)
+# Regression metrics
+mae = mean_absolute_error(y_test, y_pred)
+rmse = np.sqrt(mean_squared_error(y_test, y_pred))</code></pre>
+<h4 class='sec-h'>‏🧠 שאלות ראיון נפוצות</h4>
+<p><strong>‏ש: מה ההבדל בין Supervised ל-Unsupervised Learning?</strong></p>
+<p><strong>‏ת: ב-Supervised יש דאטה מתויג (X,y) והמודל לומד מיפוי לחיזוי y; ב-Unsupervised אין תוויות והמודל מחפש מבנה/דמיון/חריגות בדאטה בעצמו.</strong></p>
+<p><strong>‏ש: מתי תעדיף להשתמש ב-Precision ומתי ב-Recall?</strong></p>
+<p><strong>‏ת: Precision כשמחיר False Positive גבוה (למשל סינון ספאם תקין שמסומן כספאם); Recall כשמחיר False Negative גבוה (למשל פספוס אבחון מחלה).</strong></p>
+<p><strong>‏ש: איך מאבחנים Overfitting מתוך גרף Learning Curve?</strong></p>
+<p><strong>‏ת: כאשר שגיאת ה-Train ממשיכה לרדת אך שגיאת ה-Validation מתחילה לעלות או נשארת גבוהה — זהו סימן ל-Overfitting.</strong></p>
+<p><strong>‏ש: למה משתמשים ב-RMSE ולא רק ב-MSE?</strong></p>
+<p><strong>‏ת: RMSE הוא שורש של MSE, ולכן חזרה לאותן יחידות של המשתנה המקורי, מה שמקל על הפרשנות העסקית של גודל השגיאה.</strong></p>

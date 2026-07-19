@@ -1,0 +1,36 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>שיטת רגולריזציה המכבה (מאפסת) באופן אקראי אחוז מסוים מהנוירונים בכל מעבר אימון, כדי למנוע מהרשת להסתמך יתר על המידה על נוירונים בודדים ולשפר הכללה (generalization).</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ol><li>בוחרים הסתברות p לכיבוי נוירון (לדוגמה p=0.5).</li><li>בכל מעבר אימון (Forward Pass) מגרילים מסכה בינארית אקראית לכל נוירון בשכבה.</li><li>מאפסים את הפלט של הנוירונים שנבחרו לכיבוי, ומשנים קנה מידה (scale) לשאר לפי 1/(1-p).</li><li>בזמן Inference מבטלים את ה-Dropout ומשתמשים בכל הנוירונים (ללא כיבוי אקראי).</li></ol>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<p>מסכת Dropout:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/906721ae94fe.png" loading="lazy" alt="formula"></div>
+<p>שינוי קנה מידה (Inverted Dropout):</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/cb27aa4fd60a.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>מניעת Overfitting ברשתות עמוקות עם הרבה פרמטרים (MLP, CNN)</li><li>שיפור robustness של המודל כשדאטה האימון מוגבל</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מפחית Overfitting ביעילות וזול חישובית</li><li>פועל כסוג של Ensemble מרומז (כל מעבר אימון &quot;מאמן&quot; תת-רשת אחרת)</li><li>קל להוספה לכל שכבה קיימת</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>מאריך את זמן ההתכנסות (נדרשות יותר epochs)</li><li>לא יעיל באותה מידה בשכבות Convolution כמו בשכבות Fully-Connected</li><li>צריך לזכור להשבית אותו ב-Inference (model.eval())</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Classification</td><td>Accuracy, F1</td></tr><tr><td>Regression</td><td>MSE, RMSE</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>הבדל מרכזי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>Batch Normalization</td><td>מנרמל את ההתפלגות של האקטיבציות, לא מכבה נוירונים</td><td>ניתן לשלב גם וגם</td></tr><tr><td>L2 Regularization (Weight Decay)</td><td>מגביל את גודל המשקלים ולא את הנוירונים הפעילים</td><td>כשרוצים רגולריזציה &quot;חלקה&quot; יותר</td></tr><tr><td>Data Augmentation</td><td>מגדיל גיוון בדאטה במקום ברשת</td><td>כשהדאטה מוגבל בכמות</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python / PyTorch)</h4>
+<pre class='code-block'><code>import torch.nn as nn
+
+model = nn.Sequential(
+    nn.Linear(784, 256),
+    nn.ReLU(),
+    nn.Dropout(p=0.5),   # מכבה 50% מהנוירונים בזמן אימון
+    nn.Linear(256, 10),
+)
+
+model.train()  # Dropout פעיל
+model.eval()   # Dropout מושבת — נדרש לפני Inference</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>למה Dropout צריך scaling ב-1/(1-p) בזמן אימון?</p>
+<p><strong>ת: </strong>כדי שהציפייה (expected value) של הפלט תישאר זהה בין אימון להסקה, ולכן בזמן הסקה (כש-Dropout מושבת) אין צורך לבצע נרמול נוסף.</p>
+<p><strong>ש: </strong>למה חשוב לקרוא ל-model.eval() לפני הערכת המודל?</p>
+<p><strong>ת: </strong>כי זה משבית את ה-Dropout (ואת ה-Batch Norm במצב running stats), כך שההסקה דטרמיניסטית ומשתמשת בכל הרשת המלאה.</p>

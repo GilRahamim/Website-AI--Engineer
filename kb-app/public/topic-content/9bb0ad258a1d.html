@@ -1,0 +1,31 @@
+<h4 class='sec-h'>‏📋 הגדרה</h4>
+<p>‏אלגוריתם סיווג (וגם רגרסיה) מבוסס-מופע (Instance-Based / Lazy Learning), הקובע את התווית של דגימה חדשה לפי התווית הנפוצה ביותר בקרב k השכנים הקרובים אליה במרחב הפיצ'רים.</p>
+<h4 class='sec-h'>‏⚙️ איך זה עובד</h4>
+<ul><li>‏1. שלב האימון (Training): שמירת כל נתוני האימון בלבד — אין תהליך אימון אמיתי ('Lazy Learning').</li><li>‏2. שלב החיזוי (Prediction), עבור דגימה חדשה x: מחשבים את המרחק מ-x לכל הנקודות בדאטה.</li><li>‏3. ממיינים את הנקודות לפי מרחק עולה מ-x.</li><li>‏4. מנבאים את תווית הרוב (Majority Vote) מבין k הנקודות הקרובות ביותר.</li></ul>
+<h4 class='sec-h'>‏📐 נוסחאות</h4>
+<p class='formula-label'><em>‏מרחק אוקלידי (</em><em>Euclidean Distance</em><em>) — מדד המרחק הנפוץ ביותר</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="d(x,y)=\sqrt{\sum_{i=1}^{n} (x_{i}-y_{i})^{2}}">d(x,y)=√(∑_{i=1}^n(x_i-y_i)^2)</span></div>
+<h4 class='sec-h'>‏🎯 שימושים עיקריים</h4>
+<ul><li>‏מערכות הצעה (Recommendation Systems) המבוססות על דמיון.</li><li>‏בעיות סיווג עם גבול הכרעה לא-רגולרי ולא-לינארי.</li><li>‏Baseline מהיר ליישום כשאין צורך באימון מורכב.</li></ul>
+<h4 class='sec-h'>‏✅ יתרונות</h4>
+<ul><li>‏פשוט מאוד להבנה וליישום.</li><li>‏שלב אימון טריוויאלי (רק שמירת הדאטה).</li><li>‏עובד עם כל מספר של מחלקות, וקל להוסיף דאטה חדש בלי לאמן מחדש.</li><li>‏מעט hyperparameters: K ומדד המרחק.</li></ul>
+<h4 class='sec-h'>‏❌ חסרונות / מגבלות</h4>
+<ul><li>‏עלות חיזוי (Prediction Cost) גבוהה — גרועה יותר ככל שהדאטה גדול יותר.</li><li>‏לא מתאים טוב לדאטה high-dimensional ('Curse of Dimensionality').</li><li>‏פיצ'רים קטגוריאליים לא עובדים איתו טוב (צריך קידוד וטיפול במרחק).</li></ul>
+<h4 class='sec-h'>‏📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>‏סוג משימה</strong></td><td><strong>‏מדדים מומלצים</strong></td></tr><tr><td>‏Classification</td><td>‏Accuracy, F1, ROC-AUC</td></tr></table>
+<p>‏</p>
+<h4 class='sec-h'>‏🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>‏אלגוריתם</strong></td><td><strong>‏יתרון עיקרי</strong></td><td><strong>‏חסרון עיקרי</strong></td><td><strong>‏מתי לבחור</strong></td></tr><tr><td>‏KNN</td><td>‏פשוט, ללא הנחות על צורת הגבול</td><td>‏איטי בחיזוי על דאטה גדול</td><td>‏דאטה קטן/בינוני, גבול לא-רגולרי</td></tr><tr><td>‏SVM</td><td>‏יעיל ב-high-dimensional</td><td>‏פחות פרשני, איטי לאימון על דאטה גדול</td><td>‏פיצ'רים רבים</td></tr><tr><td>‏Decision Tree</td><td>‏מהיר, פרשני</td><td>‏Overfitting קל</td><td>‏צריך הסבר חוקים</td></tr></table>
+<p>‏</p>
+<h4 class='sec-h'>‏💻 קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>from sklearn.neighbors import KNeighborsClassifier
+model = KNeighborsClassifier(n_neighbors=5)
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)</code></pre>
+<h4 class='sec-h'>‏🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: ‏למה </strong><strong>KNN</strong><strong> נקרא '</strong><strong>Lazy Learner</strong><strong>'?</strong></p>
+<p><strong>ת: </strong>‏כי אין שלב אימון אמיתי — המודל רק שומר את כל הדאטה ('Store all the Data'), וכל החישוב (מרחקים, מיון, הצבעת רוב) מתבצע בזמן החיזוי (prediction time) ולא בזמן האימון.</p>
+<p><strong>ש: ‏איך בחירת </strong><strong>K</strong><strong> משפיעה על המודל?</strong></p>
+<p><strong>ת: </strong>‏K קטן מאוד הופך את המודל רגיש לרעש (Variance גבוה, Overfitting); K גדול מאוד מחליק יותר את גבול ההכרעה אך עלול לגרום ל-Underfitting (Bias גבוה). זו דוגמה נוספת ל-Bias-Variance Tradeoff.</p>
+<p><strong>ש: ‏למה </strong><strong>KNN</strong><strong> מתקשה בדאטה </strong><strong>high-dimensional</strong><strong>?</strong></p>
+<p><strong>ת: </strong>‏ב'תופעת הממדיות הגבוהה' (Curse of Dimensionality), כשמספר הפיצ'רים גדל, כל הנקודות הופכות 'רחוקות' זו מזו בצורה דומה, ומושג ה'שכנים הקרובים' מאבד משמעות.</p>

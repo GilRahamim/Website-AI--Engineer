@@ -1,0 +1,29 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>הרחבה של Scaled Dot-Product Attention שבה מריצים כמה &quot;ראשי&quot; Attention במקביל, כל אחד במרחב תת-מימדי שונה, ולאחר מכן משרשרים (concat) ומשליכים (project) את כל הראשים לפלט אחד — מאפשר ללכוד סוגי קשרים שונים בין טוקנים בו-זמנית.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ol><li>מקרינים (linear projection) את Q, K, V ל-h מרחבים שונים בעזרת h סטים נפרדים של מטריצות משקל.</li><li>מריצים Scaled Dot-Product Attention באופן עצמאי בכל אחד מ-h הראשים.</li><li>משרשרים (concatenate) את פלטי כל הראשים לווקטור אחד.</li><li>מקרינים את הווקטור המשורשר בעזרת מטריצת משקל סופית W^O לקבלת הפלט הסופי.</li></ol>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<p>ראש בודד:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/1f59b230bcb9.png" loading="lazy" alt="formula"></div>
+<p>שרשור והשלכה:</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/de2348c4d9ed.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>ארכיטקטורת Transformer — הרכיב המרכזי בכל שכבת Encoder/Decoder</li><li>מודלים כגון BERT, GPT, Vision Transformer (ViT)</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מאפשר למודל ללכוד כמה סוגי קשרים בין טוקנים בו-זמנית (לדוגמה: קשר תחבירי בראש אחד, קשר סמנטי בראש אחר)</li><li>ניתן לחישוב מקביל לחלוטין (בניגוד ל-RNN הרקורסיבי)</li><li>מגדיל את כושר הביטוי של המודל בלי להגדיל את עומק הרשת</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>יקר חישובית ובזיכרון — סקלת ב-O(n2) עם אורך הרצף n</li><li>כל ראש לומד תת-מרחב קטן יותר, מה שיכול להגביל את הביטוי של ראש בודד</li><li>דורש כיוון של מספר הראשים (h) כהיפר-פרמטר</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>NLP (Translation, Classification)</td><td>BLEU, Accuracy, F1</td></tr><tr><td>Computer Vision (ViT)</td><td>Accuracy, mAP</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>הבדל מרכזי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>Scaled Dot-Product Attention (ראש בודד)</td><td>מריץ Attention אחד בלבד, ללא שרשור ראשים</td><td>מקרים פשוטים, או כרכיב הבסיס של Multi-Head</td></tr><tr><td>Self-Attention</td><td>Q,K,V מגיעים מאותו רצף קלט</td><td>Encoder/Decoder של Transformer</td></tr><tr><td>Cross-Attention</td><td>Q מגיע מרצף אחד, K/V מרצף אחר</td><td>Decoder שמתייחס לפלט ה-Encoder</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python / PyTorch)</h4>
+<pre class='code-block'><code>import torch.nn as nn
+
+mha = nn.MultiheadAttention(embed_dim=512, num_heads=8, batch_first=True)
+output, attn_weights = mha(query, key, value)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה היתרון של Multi-Head Attention על פני ראש Attention בודד?</p>
+<p><strong>ת: </strong>כל ראש לומד להתמקד בסוג קשר אחר בין טוקנים (לדוגמה תחבירי, סמנטי, מיקומי), כך שהמודל יכול ללכוד מספר סוגי תלות במקביל, מה שמגדיל את כושר הביטוי שלו.</p>
+<p><strong>ש: </strong>איך מתחלק המימד הכולל (embedding dimension) בין הראשים?</p>
+<p><strong>ת: </strong>מימד ה-embedding d_model מתחלק ל-h ראשים, כך שלכל ראש יש מימד d_k = d_model/h; כך העלות החישובית הכוללת נשארת דומה לראש בודד בגודל d_model, אך עם גיוון רב יותר.</p>

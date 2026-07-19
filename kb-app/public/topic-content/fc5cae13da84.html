@@ -1,0 +1,37 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>אלגוריתם Topic Modeling לא-מפוקח, המניח שכל מסמך הוא תמהיל (mixture) של כמה נושאים סמויים (topics), וכל נושא הוא התפלגות על פני מילות אוצר המילים. המטרה: לגלות את הנושאים הסמויים ואת ההתפלגות שלהם בכל מסמך, ישירות מהדאטה (Unsupervised).</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>הקלט הוא מטריצת Bag-of-Words (Document-Term Matrix). בוחרים מראש מספר נושאים K.</li><li>LDA מניח תהליך גנרטיבי: לכל מסמך נדגמת התפלגות נושאים מתוך התפלגות Dirichlet עם פרמטר α; לכל נושא נדגמת התפלגות מילים מתוך Dirichlet עם פרמטר β.</li><li>האלגוריתם מסיק (infer) את הפרמטרים הסמויים בעזרת Gibbs Sampling — שיטת דגימה איטרטיבית.</li><li>התוצר: שתי מטריצות — Document-Topic (כמה כל מסמך 'שייך' לכל נושא) ו-Topic-Word (אילו מילים מאפיינות כל נושא).</li></ul>
+<h4 class='sec-h'>🔁 שלבי Gibbs Sampling (בקצרה)</h4>
+<ul><li>מאתחלים הקצאת נושא אקראית לכל מילה בכל מסמך.</li><li>עוברים על כל מילה במסמך, ומסירים אותה זמנית מההקצאה הנוכחית.</li><li>מחשבים את ההסתברות שהמילה משויכת לכל אחד מ-K הנושאים, בהתבסס על שאר ההקצאות במסמך ובקורפוס.</li><li>דוגמים נושא חדש למילה לפי ההסתברויות שחושבו, ומעדכנים את ההקצאה.</li><li>חוזרים על שלבים 2-4 עבור כל המילים, על פני מספר רב של איטרציות, עד להתכנסות.</li></ul>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/68ae0b1a05b8.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>וקטור Document-Topic — התפלגות הנושאים של מסמך d</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/e9403b26b991.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>ערך Topic-Word — הסתברות מילה w בהינתן נושא k</em></p>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>α (alpha)</td><td>פרמטר Dirichlet לפיזור הנושאים במסמך — α קטן ⇒ כל מסמך 'מתרכז' בפחות נושאים</td></tr><tr><td>β (beta)</td><td>פרמטר Dirichlet לפיזור המילים בנושא — β קטן ⇒ כל נושא 'מתרכז' בפחות מילים</td></tr><tr><td><img class="cell-formula-img" src="/topic-assets/ed392e0cc907.png" loading="lazy" alt="formula"></td><td>מספר הנושאים שנבחר מראש (היפר-פרמטר)</td></tr></table>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>גילוי נושאים סמויים בקורפוס טקסט גדול (חדשות, ביקורות, מחקרים).</li><li>מערכות המלצה — ייצוג מסמכים/פריטים כווקטורי נושאים והשוואה בעזרת Cosine Similarity (לדוגמה מומלץ סרטים על בסיס תקצירים, עם K~20 נושאים).</li><li>Partially Labeled LDA — גרסה מודרכת-חלקית כאשר יש תיוג חלקי של נושאים מראש.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>פותר את מגבלת הממד הגבוה והספארסיות של Bag-of-Words — כל מסמך מתואר בווקטור קומפקטי באורך K בלבד.</li><li>כל מסמך יכול 'להשתייך' למספר נושאים בו-זמנית במידות שונות — ייצוג רך (soft) ולא קשיח.</li><li>לא דורש תיוג (labels) — לומד ישירות מהדאטה.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>חשוב להבין: LDA אינו אלגוריתם Clustering — כל מסמך משתייך (במידה מסוימת) לכל הנושאים הקיימים, ולא לנושא בודד.</li><li>יש לבחור מראש את מספר הנושאים K — אין דרך אוטומטית מובנית; לכן בודקים כמה ערכי K ומשווים לפי Topic Coherence.</li><li>התוצאה רגישה לפרמטרים α, β ולאיכות העיבוד המקדים (הסרת מילות עצירה, lemmatization).</li><li>הנושאים שמתקבלים דורשים פרשנות אנושית — אין שם מובנה לנושא, רק רשימת מילים מאפיינות.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Topic Modeling</td><td>Topic Coherence (c_v, UMass)</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>יתרון עיקרי</strong></td><td><strong>חסרון עיקרי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>LDA</td><td>ייצוג רך, מפורש (interpretable)</td><td>דורש בחירת K, לא לוכד דמיון סמנטי עמוק</td><td>גילוי נושאים בקורפוס גדול</td></tr><tr><td>K-Means על TF-IDF</td><td>פשוט, מהיר</td><td>הקצאה קשיחה בלבד (cluster אחד)</td><td>חלוקה קשיחה למקבצים</td></tr><tr><td>Embeddings + Clustering</td><td>תופס דמיון סמנטי טוב יותר</td><td>פחות מפורש (less interpretable)</td><td>כשחשובה דיוק סמנטי</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from gensim.models import LdaModel
+from gensim.corpora import Dictionary
+dictionary = Dictionary(tokenized_docs)
+corpus = [dictionary.doc2bow(doc) for doc in tokenized_docs]
+lda = LdaModel(corpus, num_topics=20, id2word=dictionary, passes=10)
+lda.print_topics(num_words=5)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מדוע LDA אינו אלגוריתם Clustering קלאסי?</strong></p>
+<p><strong>ת: </strong>מכיוון שכל מסמך משתייך, במידה כלשהי, לכל הנושאים הקיימים בו-זמנית — ייצוג רך (soft membership) ולא הקצאה בלעדית לאשכול אחד.</p>
+<p><strong>ש: </strong><strong>איך בוחרים את מספר הנושאים K באופן שאינו שרירותי?</strong></p>
+<p><strong>ת: </strong>מאמנים מספר מודלים עם ערכי K שונים, ומשווים את ציון Topic Coherence של כל מודל — בוחרים את K שמקסם את הקוהרנטיות.</p>
+<p><strong>ש: </strong><strong>מה תפקיד פרמטר ה-α (alpha) ב-LDA?</strong></p>
+<p><strong>ת: </strong>α קובע כיצד מפוזרת התפלגות הנושאים בתוך מסמך בודד — ערך α קטן יוביל למסמכים שמתרכזים במספר קטן יותר של נושאים.</p>

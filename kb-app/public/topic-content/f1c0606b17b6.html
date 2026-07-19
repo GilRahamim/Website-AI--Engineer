@@ -1,0 +1,33 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Bi-Encoder ו-Cross-Encoder הם שני ארכיטיפים של ארכיטקטורות לקידוד טקסט לצורך השוואת דמיון בין שאילתה למסמך — הראשון מקודד כל צד בנפרד (מהיר, ניתן לסקיילינג), השני מקודד את שניהם יחד (מדויק, איטי).</p>
+<h4 class='sec-h'>🏛️ מבנה ועקרון העבודה</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/2540a5650e8f.png" loading="lazy" alt="Bi-Encoder לעומת Cross-Encoder — architecture diagram" /></div>
+<ul><li>Bi-Encoder: השאילתה והמסמך מקודדים בנפרד על ידי אותו encoder, מייצרים שני וקטורים שמשווים ביניהם (cosine similarity / dot product). הווקטורים של המסמכים מאונדקסים מראש.</li><li>Cross-Encoder: השאילתה והמסמך מוזנים יחד לתוך מודל Transformer יחיד, שמחשב ציון רלוונטיות ישיר מתוך אינטראקציה מלאה בין שניהם — אין אינדוקס מקדים.</li></ul>
+<h4 class='sec-h'>📐 נוסחאות מפתח</h4>
+<p>ציון הדמיון ב-Bi-Encoder (cosine similarity):</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/214dc48acfb3.png" loading="lazy" alt="formula"></div>
+<p>ציון הרלוונטיות ב-Cross-Encoder (פלט יחיד מהמודל המשולב):</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/85a29e9169af.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 תחומי שימוש</h4>
+<table class='kbtable'><tr><td><strong>מקרה שימוש</strong></td><td><strong>ארכיטקטורה מתאימה</strong></td></tr><tr><td>קורפוס גדול, retrieval בזמן אמת</td><td>Bi-Encoder</td></tr><tr><td>Re-ranking של top-k מועמדים</td><td>Cross-Encoder</td></tr><tr><td>fine-tuning offline</td><td>Cross-Encoder</td></tr><tr><td>pipeline production מלא</td><td>היברידי — Bi-Encoder ואז Cross-Encoder</td></tr></table>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>Bi-Encoder: מהיר מאוד ב-retrieval, ניתן לסקיילינג למיליוני מסמכים (אינדוקס מראש).</li><li>Cross-Encoder: דיוק גבוה משמעותית — מבין ניואנסים בקשר בין שאילתה למסמך.</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>Bi-Encoder: דיוק נמוך יותר — אין אינטראקציה בין השאילתה למסמך בזמן הקידוד.</li><li>Cross-Encoder: איטי מאוד בזמן הרצה, לא ניתן לאינדוקס מראש — לא סקיילבילי לקורפוס שלם.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Retrieval (Bi-Encoder)</td><td>Recall@k, MRR, Latency</td></tr><tr><td>Re-ranking (Cross-Encoder)</td><td>nDCG, Precision@k</td></tr></table>
+<h4 class='sec-h'>🔄 וריאנטים</h4>
+<table class='kbtable'><tr><td><strong>וריאנט</strong></td><td><strong>הבדל מרכזי</strong></td></tr><tr><td>Bi-Encoder בלבד</td><td>מהיר, מתאים ל-retrieval ראשוני בלבד</td></tr><tr><td>Cross-Encoder בלבד</td><td>מדויק, אך לא סקיילבילי כשיטה ראשונית</td></tr><tr><td>Hybrid (Bi + Cross)</td><td>Best practice: Bi-Encoder ל-retrieval, Cross-Encoder ל-rerank של top-k</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from sentence_transformers import SentenceTransformer, CrossEncoder
+# Bi-Encoder: retrieval
+bi_encoder = SentenceTransformer('all-MiniLM-L6-v2')
+doc_embeddings = bi_encoder.encode(documents)
+# Cross-Encoder: re-ranking top-k candidates
+cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
+pairs = [[query, doc] for doc in candidate_texts]
+scores = cross_encoder.predict(pairs)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מדוע לא נשתמש ב-Cross-Encoder לכל הקורפוס מההתחלה?</strong></p>
+<p>ת: Cross-Encoder מחשב ציון רק כשיש לו את שני הצדדים יחד — לא ניתן לאנדקס מראש, ולכן הרצתו על כל הקורפוס לכל שאילתה היא יקרה מדי ואיטית בקנה מידה גדול.</p>
+<p><strong>ש: מה ה-best practice המומלץ לשילוב בין שני הסוגים?</strong></p>
+<p>ת: Bi-Encoder ל-retrieval ראשוני מהיר (top-N), ואז Cross-Encoder ל-rerank מדויק רק על אותם N מועמדים.</p>

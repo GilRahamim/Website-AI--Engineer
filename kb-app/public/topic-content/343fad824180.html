@@ -1,0 +1,13 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מערכות Computer Vision בפרודקשן ניצבות בפני שלושה סוגי אתגרים מובחנים: אתגרי ראייה (תנאי צילום), אתגרי הנדסה (תשתית/חישוב), ואתגרי AI (איכות החיזוי עצמו).</p>
+<h4 class='sec-h'>🔍 שלושת סוגי האתגרים</h4>
+<table class='kbtable'><tr><td><strong>קטגוריה</strong></td><td><strong>אתגרים</strong></td></tr><tr><td>Vision Challenges</td><td>תאורה גרועה, חפיפה (occlusion), טשטוש תנועה (motion blur), אובייקטים קטנים</td></tr><tr><td>Engineering Challenges</td><td>עלות GPU, latency, scaling, פריסת edge (edge deployment)</td></tr><tr><td>AI Challenges</td><td>False positives, הטיית דאטהסט (dataset bias)</td></tr></table>
+<h4 class='sec-h'>🛠️ איך מתמודדים</h4>
+<ul><li>תאורה/אובייקטים קטנים — augmentation בזמן אימון, רזולוציית קלט גבוהה יותר (imgsz).</li><li>Occlusion ותנועה מהירה — שילוב tracking (ByteTrack) שמתמודד עם 'חורים' זמניים בזיהוי.</li><li>עלות GPU/latency — בחירת model size מתאים (s/m/l/x), quantization, פריסת edge devices.</li><li>False positives — סף confidence מותאם, ולידציה על דאטה מגוון.</li><li>Dataset bias — איסוף דאטה מגוון יותר; בדיקת ביצועים על תתי-אוכלוסיות שונות לפני production.</li></ul>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>אתגרי 'Engineering' (GPU cost, latency, scaling, edge) מקבילים לאתגרי production שנדונו ב-Agent Security Evaluation Pitfalls (מסמך 40) — בשני התחומים latency ועלות חישוב הם צירי decision מרכזיים בבחירת גודל/מורכבות המודל.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מדוע dataset bias מסווג כ'אתגר AI' ולא 'אתגר vision' או 'אתגר הנדסי'?</strong></p>
+<p>ת: כי הבעיה אינה בתנאי הצילום (vision) ולא בתשתית/חישוב (engineering) — היא בהרכב הדאטה שעליו אומן המודל. אם הדאטהסט לא מייצג את התפלגות התרחישים האמיתיים בפרודקשן (לדוגמה זוויות מצלמה, גזע, תאורה), המודל 'לומד' הטיה שמתבטאת בביצועים לא-אחידים — זו תקלה ברמת האלגוריתם/דאטה, ולכן מסווגת כאתגר AI.</p>
+<p><strong>ש: כיצד edge deployment (פריסה על מכשיר קצה) מחריף את הטרייד-אוף מהירות/דיוק שנדון במסמך 61?</strong></p>
+<p>ת: במכשיר edge (מצלמת אבטחה, רכב, מובייל) משאבי החישוב מוגבלים בהרבה מ-GPU שרת — כך שבוחרים כמעט תמיד מודל קטן יותר (yolov8n/s) על חשבון דיוק, ולעיתים מוסיפים quantization נוספת. הטרייד-אוף הופך לאילוץ קשיח (hard constraint) ולא רק העדפה.</p>

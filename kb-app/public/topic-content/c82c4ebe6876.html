@@ -1,0 +1,29 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Embedding API הוא שירות שמהפוך טקסט לוקטור מספרי בעל ממד גבוה (high-dimensional vector), כך שמשמעות סמנטית של הטקסט נשמרת במרחב הווקטורי — טקסטים בעלי משמעות קרובה יקבלו וקטורים קרובים.</p>
+<h4 class='sec-h'>🔍 השירותים המרכזיים</h4>
+<ul><li>OpenAI — text-embedding-3-small (זול, מהיר, איכותי) ו-text-embedding-3-large (טוב יותר למסמכים ארוכים ורב-לשוניים).</li><li>Cohere — embed-v3, מותאם ל-retrieval ול-classification, תמיכה רב-לשונית.</li><li>Voyage AI — embeddings מותאמים לתעשייה, ביצועים מובילים.</li><li>HuggingFace — מודלים open-source כמו all-MiniLM-L6-v2, bge-base, intfloat/e5-base, להרצה מקומית.</li></ul>
+<h4 class='sec-h'>📊 טבלת השוואת מודלים</h4>
+<table class='kbtable'><tr><td><strong>מודל</strong></td><td><strong>מימד</strong></td><td><strong>ספק</strong></td><td><strong>חוזקות</strong></td><td><strong>טרייד-אופים</strong></td></tr><tr><td>text-embedding-3-small</td><td>1536</td><td>OpenAI</td><td>זול, איכותי, מהיר, תומך הקטנת מימד</td><td>קוד סגור</td></tr><tr><td>text-embedding-3-large</td><td>3072</td><td>OpenAI</td><td>טוב למסמכים ארוכים ורב-לשוניים</td><td>יקר ואיטי יותר, קוד סגור</td></tr><tr><td>gemini-embedding-001</td><td>3072</td><td>Google</td><td>מצוין באנגלית, רב-לשוני וקוד, מותאם RAG</td><td>מימד גבוה = יותר אחסון/חישוב</td></tr><tr><td>embed-v3</td><td>1024</td><td>Cohere</td><td>מצוין ל-retrieval/classification, רב-לשוני</td><td>פחות טוב בדומיינים נישתיים</td></tr><tr><td>all-MiniLM-L6-v2</td><td>384</td><td>HuggingFace</td><td>קל, מהיר, open-source</td><td>לא מתאים למסמכים ארוכים (&gt;256 מילים)</td></tr><tr><td>bge-base-en-v1.5</td><td>768</td><td>HuggingFace</td><td>דיוק גבוה באנגלית</td><td>איטי יותר מ-MiniLM</td></tr><tr><td>intfloat/e5-base</td><td>768</td><td>HuggingFace</td><td>מותאם לשאילתות מסוג instruction</td><td>זיכרון רב, עד 512 טוקנים</td></tr><tr><td>voyage-3-large</td><td>2048</td><td>Voyage AI</td><td>דיוק מוביל, retrieval כללי</td><td>קוד סגור</td></tr></table>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>חיפוש סמנטי (semantic search) ושאלות-תשובה על מסמכים (RAG).</li><li>סיווג טקסטים, clustering, ומציאת דמיון בין מסמכים.</li></ul>
+<h4 class='sec-h'>💻 קוד לדוגמה — OpenAI Embedding API</h4>
+<pre class='code-block'><code>import os
+from openai import OpenAI
+client = OpenAI(api_key=os.getenv(&amp;quot;OPENAI_API_KEY&amp;quot;))
+response = client.embeddings.create(
+model=&amp;quot;text-embedding-3-small&amp;quot;,
+input=&amp;quot;Crohn's disease management&amp;quot;
+)
+embedding = response.data[0].embedding
+print(&amp;quot;Embedding len:&amp;quot;, len(embedding))  # 1536</code></pre>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מאפשר חיפוש לפי משמעות ולא רק לפי מילות מפתח.</li><li>ניתן להשתמש במודלים מקומיים (open-source) לסביבות ללא אינטרנט / רגישות פרטיות.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>חובה להשתמש באותו מודל embedding לשאילתה ולמסמכים — אי-עקביות פוגעת בדיוק.</li><li>מודלים פרופריטריים (OpenAI, Cohere, Voyage) תלויים ב-API חיצוני ויוצרים עלות שוטפת.</li></ul>
+<h4 class='sec-h'>🔄 השוואה — מתי לבחור מה</h4>
+<table class='kbtable'><tr><td><strong>צורך</strong></td><td><strong>מודל מומלץ</strong></td></tr><tr><td>פרוטוטייפ מקומי מהיר</td><td>HuggingFace + FAISS (offline, open-source)</td></tr><tr><td>איכות גבוהה רב-לשונית</td><td>OpenAI text-embedding-3-large / Voyage AI</td></tr><tr><td>עלות נמוכה, ביצועים טובים</td><td>text-embedding-3-small / BGE-small</td></tr><tr><td>סביבה ללא חיבור לאינטרנט</td><td>HuggingFace + FAISS מקומי בלבד</td></tr></table>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה קורה אם נשתמש במודל embedding אחד לשאילתה ובמודל אחר למסמכים?</strong></p>
+<p>ת: וקטורים ממודלים שונים חיים במרחבים גאומטריים שונים — דמיון קוסינוס בין שניהם לא משקף משמעות אמיתית, וה-retrieval יהיה שגוי.</p>
+<p><strong>ש: מתי תבחר מודל embedding מקומי (HuggingFace) על פני API בתשלום?</strong></p>
+<p>ת: בסביבות עם רגישות פרטיות, air-gapped, או כשעלות/latency של API חיצוני אינם מתאימים לקנה המידה.</p>

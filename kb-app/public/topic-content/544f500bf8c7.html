@@ -1,0 +1,32 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>שיטה שבה משתמשים במודל שכבר אומן על משימה/דאטה-סט גדול (לדוגמה ImageNet או קורפוס טקסט עצום), ומתאימים אותו (fine-tuning) למשימה חדשה עם פחות דאטה ייעודי, במקום לאמן רשת מאפס.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ol><li>בוחרים מודל מאומן מראש (pretrained) המתאים לדומיין (לדוגמה ResNet לתמונות, BERT לטקסט).</li><li>מסירים או מחליפים את שכבת הפלט (head) המקורית בשכבה מתאימה למשימה החדשה.</li><li>מקפיאים (freeze) חלק מהשכבות הראשונות (שלמדו תכונות כלליות) — אופציונלי.</li><li>מאמנים (fine-tune) את השכבות שלא הוקפאו על הדאטה הייעודי למשימה החדשה, בלמידה איטית יותר (learning rate נמוך).</li></ol>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/3ff0835b890c.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>Computer Vision — fine-tuning של ResNet/EfficientNet שאומנו על ImageNet</li><li>NLP — fine-tuning של BERT/GPT שאומנו על קורפוס טקסט עצום</li><li>כל משימה עם דאטה ייעודי מוגבל בכמות</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מאפשר תוצאות טובות עם הרבה פחות דאטה ושעות אימון</li><li>מנצל ידע כללי (general features) שנלמד ממאגרי דאטה עצומים</li><li>מקצר זמן פיתוח ומפחית עלות חישובית</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>המודל המקורי חייב להיות רלוונטי לדומיין החדש (domain gap גדול יפגע בביצועים)</li><li>Fine-tuning שגוי (learning rate גבוה מדי) יכול &quot;לשכוח&quot; את הידע שנלמד (catastrophic forgetting)</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Classification</td><td>Accuracy, F1</td></tr><tr><td>NLP Tasks</td><td>Accuracy, F1, Perplexity</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>הבדל מרכזי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>Feature Extraction</td><td>מקפיאים את כל הרשת המאומנת, מאמנים רק head חדש</td><td>דאטה ייעודי מועט מאוד</td></tr><tr><td>Fine-Tuning מלא</td><td>מאמנים את כל הרשת (או רובה) על הדאטה החדש</td><td>דאטה ייעודי מספיק וזמן/חשב מספיקים</td></tr><tr><td>Training from Scratch</td><td>אין שימוש בידע קודם כלל</td><td>כשיש דאטה רב וייחודי מאוד לדומיין</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python / PyTorch)</h4>
+<pre class='code-block'><code>import torchvision.models as models
+import torch.nn as nn
+
+model = models.resnet18(weights=&amp;quot;IMAGENET1K_V1&amp;quot;)
+
+for param in model.parameters():
+    param.requires_grad = False   # מקפיאים את הרשת המאומנת מראש
+
+model.fc = nn.Linear(model.fc.in_features, num_classes)  # head חדש למשימה שלנו
+# מאמנים רק את model.fc (Feature Extraction) או משחררים שכבות נוספות ל-fine-tuning</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה ההבדל בין Feature Extraction ל-Fine-Tuning ב-Transfer Learning?</p>
+<p><strong>ת: </strong>ב-Feature Extraction מקפיאים את כל המשקלים המאומנים מראש ומאמנים רק head חדש; ב-Fine-Tuning משחררים גם חלק/כל השכבות הקודמות ומעדכנים אותן עם learning rate נמוך על הדאטה החדש.</p>
+<p><strong>ש: </strong>מה זה catastrophic forgetting ואיך נמנעים ממנו ב-Transfer Learning?</p>
+<p><strong>ת: </strong>זו תופעה שבה fine-tuning עם learning rate גבוה מדי &quot;מוחק&quot; את הידע הכללי שנלמד קודם; נמנעים ממנו עם learning rate נמוך, הקפאת שכבות ראשונות, ולפעמים warm-up.</p>

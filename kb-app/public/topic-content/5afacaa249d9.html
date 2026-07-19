@@ -1,0 +1,70 @@
+<h4 class='sec-h'>‏Model Optimization &amp; Validation — אופטימיזציה ואימות מודלים</h4>
+<p class='formula-label'><em>‏הערה: מצגת זו (20 עמודים) מכסה כמה נושאים משלימים בתחום שיפור והערכת מודלים. בהתאם לכלל 6 ב-skill, נבחרה תבנית 'מושג תיאורטי' כתבנית המתאימה ביותר עבור מסמך מסכם יחיד לכל תתי-הנושאים.</em></p>
+<h4 class='sec-h'>‏📋 הגדרה</h4>
+<p>‏מסמך זה מכנס שיטות לשיפור ביצועי מודל (Polynomial Regression), לחלוקה נכונה של הדאטה ולאימות אמין שלו (Train/Validation/Test, Cross-Validation), למניעת Overfitting (Regularization), ולכיוון אוטומטי של היפר-פרמטרים (Hyperparameter Search).</p>
+<h4 class='sec-h'>‏🧮 Polynomial Regression</h4>
+<p>‏הרחבה של Linear Regression שמוסיפה חזקות ואינטראקציות של התכונות (features), ומאפשרת למודל ללכוד קשרים לא-לינאריים בין X ל-y תוך שמירה על מודל לינארי במשתנים החדשים.</p>
+<p class='formula-label'><em>‏דרגה 1 (לינארי, שני features):</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="y=w_{0}+w_{1}x_{1}+w_{2}x_{2}">y=w_0+w_1x_1+w_2x_2</span></div>
+<p class='formula-label'><em>‏דרגה 2 (שני features):</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="y=w_{0}+w_{1}x_{1}+w_{2}x_{2}+w_{3}x_{1}^{2}+w_{4}x_{2}^{2}+w_{5}x_{1}x_{2}">y=w_0+w_1x_1+w_2x_2+w_3x_1^2+w_4x_2^2+w_5x_1x_2</span></div>
+<p class='formula-label'><em>‏דרגה 3 (שני features):</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="y=w_{0}+w_{1}x_{1}+w_{2}x_{2}+w_{3}x_{1}^{2}+w_{4}x_{2}^{2}+w_{5}x_{1}x_{2}+w_{6}x_{1}^{3}+w_{7}x_{2}^{3}">y=w_0+w_1x_1+w_2x_2+w_3x_1^2+w_4x_2^2+w_5x_1x_2+w_6x_1^3+w_7x_2^3</span></div>
+<p>‏דרגה גבוהה יותר מאפשרת התאמה מורכבת יותר, אך מעלה את הסיכון ל-Overfitting — יש לבחור את הדרגה תוך הסתכלות על ביצועי Validation, לא רק Train.</p>
+<h4 class='sec-h'>‏✂️ Train – Validation – Test Split</h4>
+<p>‏חלוקת הדאטה לשלוש קבוצות: Train (לאימון), Validation (לכיוונון היפר-פרמטרים ובחירת מודל), ו-Test (להערכה סופית בלתי-מוטה).</p>
+<table class='kbtable'><tr><td><strong>‏סוג</strong></td><td><strong>‏Train</strong></td><td><strong>‏Validation</strong></td><td><strong>‏Test</strong></td></tr><tr><td>‏Classic ML</td><td>‏60%</td><td>‏20%</td><td>‏20%</td></tr><tr><td>‏Deep Learning (דאטה גדול)</td><td>‏98%</td><td>‏1%</td><td>‏1%</td></tr></table>
+<p>‏ב-Deep Learning הדאטה גדול בהרבה, ולכן גם אחוז קטן (1%) מספיק לקבל הערכה אמינה סטטיסטית, ומאפשר להקצות יותר דאטה לאימון.</p>
+<h4 class='sec-h'>‏תבניות אבחון ב-Learning Curves</h4>
+<ul><li>‏Train ו-Validation מתכנסים לשגיאה נמוכה — מודל טוב (good fit)</li><li>‏Train ו-Validation גבוהים ולא משתפרים — Underfitting</li><li>‏Train נמוך מאוד, Validation גבוה ולא מתכנס — Overfitting</li><li>‏פער גדול ויציב בין Train ל-Validation — High Variance</li><li>‏שני העקומות גבוהות וקרובות זו לזו — High Bias</li><li>‏Validation ממשיך לרדת עם יותר דאטה — מעיד שצריך עוד דאטה לאימון</li></ul>
+<h4 class='sec-h'>‏K-Fold Cross-Validation</h4>
+<p>‏הדאטה מחולק ל-K חלקים (folds); בכל איטרציה fold אחד משמש כ-Validation והשאר לאימון. התוצאה הסופית היא ממוצע הביצועים על כל ה-folds — מקטין את התלות בחלוקה אקראית בודדת.</p>
+<h4 class='sec-h'>‏Stratified K-Fold</h4>
+<p>‏כמו K-Fold, אך שומר על יחס המחלקות (class distribution) זהה בכל fold — חשוב במיוחד בדאטה לא מאוזן (imbalanced classification).</p>
+<h4 class='sec-h'>‏Time-Series Cross-Validation</h4>
+<p>‏עבור דאטה סדרתי-זמן: ה-folds נבחרים תוך שמירה על סדר כרונולוגי — האימון נעשה רק על דאטה שקדם בזמן ל-Validation, כדי למנוע 'הדלפת מידע' (data leakage) מהעתיד לעבר.</p>
+<h4 class='sec-h'>‏🛡️ Weight Regularization</h4>
+<p>‏טכניקות שמוסיפות איבר עונשין (penalty) על גודל המשקלים בפונקציית ה-Loss, כדי לצמצם Overfitting.</p>
+<p class='formula-label'><em>‏Ridge (L2):</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="{Loss}_{Ridge}=Loss+\lambda\sum_{i=1}^{n} w_{i}^{2}">Loss_{Ridge}=Loss+λ∑_{i=1}^nw_i^2</span></div>
+<p>‏מקטין את גודל המשקלים בצורה הדרגתית (shrinkage), אך כמעט אף פעם לא מאפס אותם לחלוטין.</p>
+<p class='formula-label'><em>‏Lasso (L1):</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="{Loss}_{Lasso}=Loss+\lambda\sum_{i=1}^{n} |w_{i}|">Loss_{Lasso}=Loss+λ∑_{i=1}^n|w_i|</span></div>
+<p>‏יכול לאפס משקלים לחלוטין (sparsity) — שימושי גם כבחירת features אוטומטית.</p>
+<p class='formula-label'><em>‏ElasticNet (L1 + L2):</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="{Loss}_{ElasticNet}=Loss+{\lambda}_{1}\sum_{i=1}^{n} |w_{i}|+{\lambda}_{2}\sum_{i=1}^{n} w_{i}^{2}">Loss_{ElasticNet}=Loss+λ_1∑_{i=1}^n|w_i|+λ_2∑_{i=1}^nw_i^2</span></div>
+<p>‏משלב את שני העונשין — sparsity של L1 עם יציבות ה-shrinkage של L2.</p>
+<h4 class='sec-h'>‏Grid Search</h4>
+<p>‏בודק את כל הקומבינציות האפשריות מתוך רשת ערכים נתונה לכל היפר-פרמטר. מקיף אך יקר חישובית כשיש הרבה פרמטרים/ערכים.</p>
+<h4 class='sec-h'>‏Random Search</h4>
+<p>‏בודק קומבינציות אקראיות מתוך טווחי ערכים — יעיל יותר מ-Grid Search כשמרחב החיפוש גדול, ובדרך כלל מגיע לתוצאות טובות בפחות ניסיונות.</p>
+<h4 class='sec-h'>‏Bayesian Optimization</h4>
+<p>‏בונה מודל הסתברותי (surrogate model) על תוצאות ניסיונות קודמים, ובוחר את הניסיון הבא תוך איזון בין exploration ל-exploitation — יעיל יותר ב-budget נמוך מ-Grid/Random.</p>
+<table class='kbtable'><tr><td><strong>‏שיטה</strong></td><td><strong>‏יתרון עיקרי</strong></td><td><strong>‏חסרון עיקרי</strong></td><td><strong>‏מתי לבחור</strong></td></tr><tr><td>‏Grid Search</td><td>‏מקיף, ודאי</td><td>‏יקר חישובית</td><td>‏מעט פרמטרים/ערכים</td></tr><tr><td>‏Random Search</td><td>‏יעיל, פשוט</td><td>‏לא מובטח אופטימלי</td><td>‏מרחב חיפוש גדול</td></tr><tr><td>‏Bayesian Optimization</td><td>‏חסכוני ב-budget</td><td>‏מורכב יותר ליישום</td><td>‏אימון יקר (זמן/עלות)</td></tr></table>
+<h4 class='sec-h'>‏💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import Ridge, Lasso, ElasticNet
+from sklearn.model_selection import KFold, StratifiedKFold, TimeSeriesSplit
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+# Polynomial features (degree 2)
+poly = PolynomialFeatures(degree=2)
+X_poly = poly.fit_transform(X)
+# Regularized regression
+ridge = Ridge(alpha=1.0)   # L2
+lasso = Lasso(alpha=0.1)   # L1
+elastic = ElasticNet(alpha=0.1, l1_ratio=0.5)
+# K-Fold cross-validation
+kf = KFold(n_splits=5, shuffle=True, random_state=42)
+# Grid search over hyperparameters
+param_grid = {'alpha': [0.01, 0.1, 1.0, 10.0]}
+grid = GridSearchCV(Ridge(), param_grid, cv=kf, scoring='neg_mean_squared_error')
+grid.fit(X_poly, y)</code></pre>
+<h4 class='sec-h'>‏🧠 שאלות ראיון נפוצות</h4>
+<p><strong>‏ש: מה ההבדל בין L1 (Lasso) ל-L2 (Ridge) Regularization?</strong></p>
+<p><strong>‏ת: L1 מוסיף עונשין על |w| ויכול לאפס משקלים לחלוטין (sparsity, בחירת features); L2 מוסיף עונשין על w2 ומקטין משקלים בהדרגה אך לא מאפס אותם.</strong></p>
+<p><strong>‏ש: למה משתמשים ב-Stratified K-Fold ולא ב-K-Fold רגיל?</strong></p>
+<p><strong>‏ת: Stratified K-Fold שומר על יחס המחלקות בכל fold, חשוב במיוחד כשהדאטה לא מאוזן, כדי שכל fold ייצג נכון את ההתפלגות.</strong></p>
+<p><strong>‏ש: מתי Random Search עדיף על Grid Search?</strong></p>
+<p><strong>‏ת: כשמרחב החיפוש גדול (הרבה פרמטרים/ערכים) — Random Search מכסה יותר שטח אפקטיבי באותו budget של ניסיונות, ובדרך כלל מגיע לתוצאות דומות או טובות יותר ביעילות גבוהה יותר.</strong></p>
+<p><strong>‏ש: למה לא ניתן להשתמש ב-K-Fold רגיל על דאטה סדרת-זמן?</strong></p>
+<p><strong>‏ת: K-Fold רגיל מערבב את הסדר הכרונולוגי ועלול לאמן על דאטה 'מהעתיד' כדי לחזות 'עבר' — data leakage. Time-Series CV שומר על סדר כרונולוגי באימון/אימות.</strong></p>

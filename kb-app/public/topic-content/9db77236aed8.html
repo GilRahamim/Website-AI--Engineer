@@ -1,0 +1,29 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>פיצול מסמכים ארוכים ל'נתחים' (chunks) קטנים יותר, כדי להתאים לחלון הקונטקסט של LLM, לשפר את דיוק ה-retrieval ב-RAG, ולהפחית הזיות.</p>
+<h4 class='sec-h'>🎯 למה צריך Chunking</h4>
+<ul><li>התאמה לחלון הקונטקסט המוגבל של LLM.</li><li>שיפור דיוק ה-retrieval — חיפוש סמנטי בגרנולריות של פסקה/אידאה, לא מסמך שלם.</li><li>הפחתת הזיות — ה-LLM מקבל קונטקסט רלוונטי וקוהרנטי.</li><li>מאפשר עדכון/embedding חלקי (chunk שהשתנה בלבד) ו-re-ranking ברמת דיוק גבוהה.</li></ul>
+<h4 class='sec-h'>⚙️ אסטרטגיות עיקריות</h4>
+<ul><li>Fixed-size chunking — פיצול לפי מספר טוקנים קבוע (למשל 512). מהיר ודטרמיניסטי, אך עלול לחתוך קונטקסט חשוב.</li><li>Overlapping chunking — חפיפה של 10–30% בין chunks סמוכים, כדי לשמר רצף קונטקסט כשהתשובה חולשת על גבול chunk.</li><li>Semantic chunking — פיצול לפי כותרות/גבולות נושא (heading-aware, LLM-assisted) — איכותי יותר אך יקר ואיטי יותר.</li><li>Layout-aware chunking — מתחשב במבנה חזותי של PDF/HTML (טבלאות, רשימות, כותרות) — חשוב למסמכים סרוקים/מורכבים.</li></ul>
+<h4 class='sec-h'>📊 טבלת השוואה</h4>
+<table class='kbtable'><tr><td><strong>אסטרטגיה</strong></td><td><strong>איך עובד</strong></td><td><strong>יתרון</strong></td><td><strong>חיסרון</strong></td></tr><tr><td>Fixed Chunking</td><td>פיצול לבלוקים קבועים (למשל 300 טוקן)</td><td>מהיר, פשוט, דטרמיניסטי</td><td>עלול לחתוך קונטקסט/גבולות משפט</td></tr><tr><td>Overlapping</td><td>חפיפה חלקית בין chunks (20–30%)</td><td>שומר רצף קונטקסט, משפר continuity</td><td>מגדיל מספר טוקנים, תוכן חופף</td></tr><tr><td>Semantic Chunking</td><td>פיצול לפי גבולות נושא/משמעות (LLM/heading)</td><td>זרימה לוגית, פחות הזיות</td><td>איטי יותר, דורש LLM/API, גודל לא אחיד</td></tr></table>
+<h4 class='sec-h'>📐 טווח גודל מומלץ</h4>
+<ul><li>256 טוקנים — דיוק גבוה, רעש נמוך; עלול לפספס קונטקסט.</li><li>512 טוקנים — איזון בין קונטקסט וגודל.</li><li>1024+ טוקנים — קונטקסט עשיר יותר אך embedding איטי ויקר יותר.</li></ul>
+<p>נקודת התחלה מומלצת בפועל: 500–800 טוקנים עם 10–20% חפיפה; לעבור ל-LLM-assisted/layout-aware כשהדיוק קריטי.</p>
+<h4 class='sec-h'>🏷️ העשרת Chunks (Chunk Enrichment)</h4>
+<p>הוספת מטא-דאטה לכל chunk כדי להפוך אותו לניתן לחיפוש, ביקורת, ודירוג:</p>
+<table class='kbtable'><tr><td><strong>שדה</strong></td><td><strong>תפקיד</strong></td></tr><tr><td>doc_id / rev_id</td><td>מעקב גרסה וזהות מקור</td></tr><tr><td>chunk_id</td><td>זהות יציבה לדה-דופליקציה ועדכונים</td></tr><tr><td>location</td><td>מספר עמוד, char_start/char_end, bbox</td></tr><tr><td>structure</td><td>היררכיית כותרות (H1›H2›H3), סעיף הורה</td></tr><tr><td>provenance</td><td>מקור, כלי החילוץ, תאריך</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (LangChain)</h4>
+<pre class='code-block'><code>from langchain.text_splitter import RecursiveCharacterTextSplitter
+splitter = RecursiveCharacterTextSplitter(
+chunk_size=500,
+chunk_overlap=100,
+separators=[&amp;quot;\n\n&amp;quot;, &amp;quot;\n&amp;quot;, &amp;quot;.&amp;quot;, &amp;quot;!&amp;quot;, &amp;quot;?&amp;quot;],
+)
+chunks = splitter.split_documents(documents)</code></pre>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<p>Chunking הוא שלב הקדם-עיבוד הקריטי של כל RAG pipeline — ראו Embedding Strategies &amp; Retrieval Pipelines ו-RAG Architecture &amp; Variants. בחירת גודל ה-chunk משפיעה ישירות על איכות ה-embeddings וה-retrieval.</p>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מתי תבחר ב-overlapping chunking על פני fixed chunking?</strong></p>
+<p>ת: כשתשובות אפשריות 'חולשות' על גבול שבין שני chunks — חפיפה מבטיחה שלא תאבד קונטקסט שמתחלק בין שני נתחים סמוכים, במחיר עליה במספר הטוקנים הכולל.</p>
+<p><strong>ש: מה החיסרון המרכזי של semantic chunking בפרודקשן?</strong></p>
+<p>ת: עלות וזמן — דורש קריאה ל-LLM/API לכל מסמך בזמן ה-indexing, וגודלי ה-chunks אינם אחידים, מה שמסבך תכנון תקציב טוקנים מראש.</p>

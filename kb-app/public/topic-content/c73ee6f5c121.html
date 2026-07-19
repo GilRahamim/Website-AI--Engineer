@@ -1,0 +1,28 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Recall@k מודד את שיעור הפריטים הרלוונטיים (expected entities) שמופיעים בתוך k התוצאות המאוחזרות הראשונות. בהקשר KG-RAG, משתמשים בו להשוואת ביצועי שיטות אחזור שונות (keyword/vector/graph) על שאלות multi-hop.</p>
+<h4 class='sec-h'>📐 הנוסחה</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/911618a1437a.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🔡 פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>משתנה</strong></td><td><strong>משמעות</strong></td></tr><tr><td>Expected Entities</td><td>קבוצת הישויות הנכונות שאמורות להופיע בתשובה (ground truth)</td></tr><tr><td>Top-k Retrieved</td><td>k התוצאות (משפטים/ישויות) הראשונות שהאחזור החזיר</td></tr><tr><td>k</td><td>גודל החלון הנבדק (לדוגמה k=5)</td></tr></table>
+<h4 class='sec-h'>💻 מימוש בקוד</h4>
+<pre class='code-block'><code>test_cases = [
+{&amp;quot;query&amp;quot;: &amp;quot;What technology backbone underpins Lamborghini's brand network?&amp;quot;,
+&amp;quot;expected&amp;quot;: {&amp;quot;meb&amp;quot;}},
+{&amp;quot;query&amp;quot;: &amp;quot;Which vehicle models depend on CATL?&amp;quot;,
+&amp;quot;expected&amp;quot;: {&amp;quot;i4&amp;quot;, &amp;quot;ix&amp;quot;, &amp;quot;model 3&amp;quot;, &amp;quot;model y&amp;quot;}},
+]
+def recall_at_k(sentences, expected, k=5):
+text = &amp;quot; &amp;quot;.join(sentences[:k]).lower()
+found = sum(1 for e in expected if e in text)
+return found / len(expected)</code></pre>
+<h4 class='sec-h'>🎯 מתאים לסוג אחזור ומשימה</h4>
+<table class='kbtable'><tr><td><strong>שיטת אחזור</strong></td><td><strong>Multi-hop Reasoning</strong></td><td><strong>הערות</strong></td></tr><tr><td>Keyword</td><td>❌</td><td>חפיפת token מדויקת — לא מוצא ישויות בניסוח שונה</td></tr><tr><td>Vector</td><td>⚠️</td><td>מוצא ישויות רלוונטיות סמנטית, אך לא יחסים בין-ישותיים</td></tr><tr><td>Graph</td><td>✅</td><td>עוקב אחר קשתות מוטיפסות בין ישויות — הכי טוב לשאלות חיתוך/multi-hop</td></tr></table>
+<h4 class='sec-h'>✅ מתי KG-RAG עדיף</h4>
+<ul><li>שאלות &quot;מי מחובר ל-X?&quot; ו&quot;מה החפיפה בין A ל-B?&quot;</li><li>מידע מבוזר בין מספר מסמכים הדורש שרשור עובדות (multi-hop chaining).</li><li>תחומים עם ישויות וקשרים מוגדרים-היטב (שרשרת אספקה, בעלות תאגידית, רגולציה).</li></ul>
+<h4 class='sec-h'>❌ מתי לא להשתמש ב-KG-RAG</h4>
+<ul><li>Q&amp;A פשוט — RAG וקטורי מספיק וקל יותר לתחזוקה.</li><li>טקסט לא-מבני ללא ישויות/יחסים ברורים — KG מוסיף overhead מבלי תועלת.</li><li>אין entities/relations ברורים בתחום — ערך נמוך.</li><li>צורך באב-טיפוס מהיר (fast prototyping) — בניית KG מאטה את התהליך.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מדוע Recall@k מתאים במיוחד להערכת KG-RAG ולא רק accuracy פשוט?</strong></p>
+<p>ת: Recall@k בודק אם כל הישויות הצפויות (לעיתים כמה ישויות בו-זמנית, כגון רשימת ספקים) מופיעות בחלון התוצאות — מתאים לשאלות multi-hop שבהן יש קבוצת תשובות נכונות, לא תשובה בודדת.</p>
+<p><strong>ש: מה הקריטריון המרכזי להחליט בין vector RAG ל-KG-RAG?</strong></p>
+<p>ת: האם השאלה דורשת נימוק מבני (חיתוך, מסלול, קשרי סיבה-תוצאה) בין ישויות מרובות, או שמספיק דמיון סמנטי לטקסט בודד. אם נדרש נימוק מבני — KG-RAG; אם לא — vector RAG פשוט יותר ומספיק.</p>

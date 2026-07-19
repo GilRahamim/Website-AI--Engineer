@@ -1,0 +1,37 @@
+<h4 class='sec-h'>‏📋 הגדרה</h4>
+<p>‏שיטת למידה מונחית (Supervised Learning) לחיזוי ערך רציף (Regression), המתאימה קו (או מישור) לינארי בין משתנים בלתי-תלויים (features) למשתנה תלוי (target).</p>
+<h4 class='sec-h'>‏⚙️ איך זה עובד</h4>
+<ul><li>‏1. מגדירים מודל לינארי שמשקלל את הפיצ'רים: ŷ = β0 + β1x1 + ... + βnxn.</li><li>‏2. מגדירים פונקציית עלות (Cost Function) המבוססת על סכום ריבועי השאריות (Sum of Squared Errors).</li><li>‏3. מוצאים את המקדמים β שמינימזים את פונקציית העלות — Least Squares Method, דרך Normal Equation או Gradient Descent.</li><li>‏4. משתמשים במודל המתאים כדי לחזות ערכים חדשים על דאטה שלא נראה באימון.</li></ul>
+<h4 class='sec-h'>‏📐 נוסחאות</h4>
+<p class='formula-label'><em>‏מודל לינארי</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="\hat{y}={\beta}_{0}+{\beta}_{1}x_{1}+…+{\beta}_{n}x_{n}">ŷ=β_0+β_1x_1+…+β_nx_n</span></div>
+<p class='formula-label'><em>‏שארית (</em><em>Residual</em><em>) — ההפרש בין הערך שנמדד לערך שניבא הקו</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="e_{i}=y_{i}-{\hat{y}}_{i}">e_i=y_i-ŷ_i</span></div>
+<p class='formula-label'><em>‏פונקציית עלות — </em><em>Sum of Squared Errors</em><em> (</em><em>Least Squares</em><em>)</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="SSE=\sum_{i=1}^{n} (y_{i}-{\hat{y}}_{i})^{2}">SSE=∑_{i=1}^n(y_i-ŷ_i)^2</span></div>
+<p class='formula-label'><em>‏פתרון סגור — </em><em>Normal Equation</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="\beta=(X^{T}X)^{-1}X^{T}y">β=(X^TX)^{-1}X^Ty</span></div>
+<h4 class='sec-h'>‏🎯 שימושים עיקריים</h4>
+<ul><li>‏חיזוי מחירים (נדל&quot;ן, החזרי אשראי, מניות).</li><li>‏חיזוי כל ערך מספרי רציף בהינתן מאפיינים נומריים/קטגוריאליים.</li><li>‏מודל Baseline פשוט וקל לפרשנות לפני מעבר למודלים מורכבים יותר.</li></ul>
+<h4 class='sec-h'>‏✅ יתרונות</h4>
+<ul><li>‏פשוט להבנה, ליישום ולפרשנות — כל מקדם β מבטא את השפעת הפיצ'ר התואם.</li><li>‏מהיר לאימון, גם על כמויות דאטה גדולות.</li><li>‏יש לו פתרון אנליטי סגור (Normal Equation), לא חייבים אופטימיזציה איטרטיבית.</li></ul>
+<h4 class='sec-h'>‏❌ חסרונות / מגבלות</h4>
+<ul><li>‏מניח קשר לינארי בין הפיצ'רים למשתנה התלוי — לא מתאים לקשרים לא-לינאריים מורכבים.</li><li>‏רגיש מאוד לערכים חריגים (Outliers), שיכולים להטות משמעותית את הקו.</li><li>‏רגיש למשתנים מתואמים בין עצמם (Multicollinearity).</li></ul>
+<h4 class='sec-h'>‏📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>‏סוג משימה</strong></td><td><strong>‏מדדים מומלצים</strong></td></tr><tr><td>‏Regression</td><td>‏MSE, RMSE, R2, MAE</td></tr></table>
+<p>‏</p>
+<h4 class='sec-h'>‏🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>‏אלגוריתם</strong></td><td><strong>‏יתרון עיקרי</strong></td><td><strong>‏חסרון עיקרי</strong></td><td><strong>‏מתי לבחור</strong></td></tr><tr><td>‏Linear Regression</td><td>‏פשטות ופרשנות מלאה</td><td>‏מניח קשר לינארי</td><td>‏קשר לינארי ידוע / baseline</td></tr><tr><td>‏Logistic Regression</td><td>‏מתאים לבעיות סיווג</td><td>‏לא מתאים לערך רציף</td><td>‏בעיות סיווג בינארי</td></tr><tr><td>‏Polynomial Regression</td><td>‏תופס קשרים לא-לינאריים</td><td>‏overfitting בקלות</td><td>‏קשר לא-לינארי ידוע מראש</td></tr></table>
+<p>‏</p>
+<h4 class='sec-h'>‏💻 קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)</code></pre>
+<h4 class='sec-h'>‏🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: ‏מה ההבדל בין </strong><strong>Linear Regression</strong><strong> ל-</strong><strong>Logistic Regression</strong><strong>?</strong></p>
+<p><strong>ת: </strong>‏Linear Regression מחזירה ערך רציף; Logistic Regression מחזירה הסתברות לשיוך למחלקה (סיווג) על ידי העברת התחזית הלינארית בפונקציית Sigmoid.</p>
+<p><strong>ש: ‏מה המטרה של </strong><strong>Least Squares Method</strong><strong>?</strong></p>
+<p><strong>ת: </strong>‏למצוא את הקו שממזער את סכום ריבועי המרחקים (Residuals) בין הנקודות בפועל לבין הקו שהמודל מציע.</p>
+<p><strong>ש: ‏מה הקשר בין </strong><strong>Linear Regression</strong><strong> ל-</strong><strong>Bias-Variance </strong><strong>Tradeoff</strong><strong>?</strong></p>
+<p><strong>ת: </strong>‏מודל לינארי פשוט עלול לסבול מ-Bias גבוה (underfitting) אם הקשר האמיתי אינו לינארי; הוספת features או דרגות פולינום מגדילה את ה-Variance.</p>

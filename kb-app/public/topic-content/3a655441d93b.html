@@ -1,0 +1,31 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Vector Store הוא מסד נתונים המתמחה באחסון ושאילתה של וקטורים בעלי ממד גבוה (embeddings), ומאפשר חיפוש סמנטי באמצעות מדדי דמיון (כגון cosine similarity) ואינדוקס ANN (Approximate Nearest Neighbor) כמו FAISS, Annoy או HNSW, במקום סריקה מלאה.</p>
+<h4 class='sec-h'>🔍 למה לא מסד נתונים רגיל?</h4>
+<ul><li>מסדי SQL מסורתיים אינם מאופטמים לחיפוש דמיון וקטורי מהיר.</li><li>Vector DB מספק אינדוקס ANN לסקיילביליות על פני מיליוני מסמכים, וכן סינון מטא-דאטה (לפי סוג מסמך, תאריך וכו').</li></ul>
+<h4 class='sec-h'>📊 השוואת כלים מרכזיים</h4>
+<table class='kbtable'><tr><td><strong>כלי</strong></td><td><strong>סוג</strong></td><td><strong>חוזקות</strong></td><td><strong>טרייד-אופים</strong></td></tr><tr><td>FAISS</td><td>ספריית ANN מקומית (Facebook)</td><td>מהיר, חינמי, שליטה מדויקת ב-recall/latency, GPU support</td><td>אין DB מובנה — צריך מטא-דאטה בנפרד</td></tr><tr><td>ChromaDB</td><td>DB מקומי, Python-native</td><td>API פשוט, persistence מובנה, אינטגרציה חזקה עם LangChain</td><td>פחות מתאים לקני-מידה גדולים מאוד</td></tr><tr><td>Pinecone</td><td>מנוהל בענן (managed SaaS)</td><td>latency נמוך, זמינות גבוהה, סינון מובנה</td><td>ענן בלבד, עלות שוטפת</td></tr><tr><td>Qdrant</td><td>open-source, מקומי או בענן</td><td>תמיכת HNSW, REST/gRPC, סינון מטא-דאטה חזק</td><td>דורש ניהול תפעולי אם מורץ עצמאית</td></tr><tr><td>Weaviate</td><td>cloud-native / מקומי</td><td>hybrid search מובנה (BM25 + סמנטי), GraphQL API</td><td>מורכבות תפעולית גבוהה יותר</td></tr></table>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>ליבת ה-retrieval בכל מערכת RAG.</li><li>חיפוש סמנטי על פני בסיסי ידע גדולים, מערכות שאלות-תשובה, מנועי המלצה.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מאפשר חיפוש דמיון מהיר בקנה מידה של מיליוני וקטורים.</li><li>תומך בסינון מטא-דאטה לשיפור דיוק (domain/source/date).</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>בחירה לא נכונה (כלי מקומי לעומס production) עלולה לגרום לבעיות סקייל.</li><li>צריך לדאוג לעקביות בין מודל ה-embedding לשאילתה ולמסמכים.</li></ul>
+<h4 class='sec-h'>🔄 מתי להשתמש במה</h4>
+<table class='kbtable'><tr><td><strong>צורך</strong></td><td><strong>כלי מומלץ</strong></td></tr><tr><td>פרוטוטייפ מקומי מהיר</td><td>FAISS + HuggingFace embeddings</td></tr><tr><td>שילוב LLM + RAG demo</td><td>ChromaDB (Python-native, LangChain-native)</td></tr><tr><td>production בקנה מידה גדול</td><td>Pinecone, Qdrant, Weaviate (cloud-managed)</td></tr><tr><td>חיפוש היברידי (BM25 + סמנטי)</td><td>Weaviate, Elasticsearch/OpenSearch, Qdrant</td></tr><tr><td>סביבה ללא חיבור לאינטרנט</td><td>FAISS + HuggingFace, מקומי בלבד</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה — ChromaDB</h4>
+<pre class='code-block'><code>from langchain_community.vectorstores import Chroma
+from langchain_huggingface import HuggingFaceEmbeddings
+documents = [
+&amp;quot;Crohn's disease is a chronic condition affecting the gut.&amp;quot;,
+&amp;quot;Biologics and steroids are common treatments.&amp;quot;,
+]
+embedding_fn = HuggingFaceEmbeddings(model_name=&amp;quot;all-MiniLM-L6-v2&amp;quot;)
+db = Chroma.from_texts(texts=documents, embedding=embedding_fn)
+results = db.similarity_search(&amp;quot;IBD treatment&amp;quot;, k=3)
+for res in results:
+print(res.page_content)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל המהותי בין FAISS ל-ChromaDB?</strong></p>
+<p>ת: FAISS היא ספריית ANN בלבד (אין לה DB מובנה — צריך לנהל מטא-דאטה בנפרד), בעוד ChromaDB הוא מסד נתונים מלא עם collections, סינון מטא-דאטה, ו-persistence מובנה.</p>
+<p><strong>ש: מתי תבחר במסד נתונים וקטורי מנוהל בענן (Pinecone) על פני FAISS מקומי?</strong></p>
+<p>ת: כאשר צריך זמינות גבוהה, סקייל לאוספים גדולים מאוד, וללא צורך בניהול תפעולי עצמי של האינדקס.</p>

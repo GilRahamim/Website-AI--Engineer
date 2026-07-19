@@ -1,0 +1,29 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>שיטת אימון למודלים רקורסיביים (כגון Seq2Seq) שבה בכל צעד פיענוח (decoding) מזינים למודל את הטוקן האמיתי (ground-truth) מהצעד הקודם, במקום את הטוקן שהמודל עצמו חזה — מייצב ומאיץ את האימון.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ol><li>בכל צעד t בפיענוח, המודל מקבל קלט המכיל את הטוקן האמיתי y_{t-1} מהדאטה (לא את התחזית של המודל).</li><li>המודל מחשב התפלגות הסתברות על הטוקן הבא ומחשב את ה-Loss לעומת y_t האמיתי.</li><li>חוזרים על התהליך לכל אורך הרצף (sequence) בזמן האימון.</li><li>בזמן Inference (כשאין תוויות אמת) מזינים בפועל את הטוקן שהמודל עצמו חזה בצעד הקודם.</li></ol>
+<h4 class='sec-h'>📐 נוסחאות</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/c6b6fd4968d1.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>אימון מודלי Seq2Seq (תרגום מכונה, סיכום טקסט, יצירת כיתוב לתמונה)</li><li>כל מודל רקורסיבי שמייצר רצף פלט טוקן-אחר-טוקן</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מייצב ומאיץ משמעותית את האימון בהשוואה להזנת תחזיות המודל עצמו</li><li>מונע הצטברות שגיאות (error accumulation) במהלך האימון</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>יוצר פער (exposure bias) בין אימון (תמיד מקבל תוויות אמת) להסקה (מקבל תחזיות עצמיות, שיכולות להיות שגויות)</li><li>המודל לא &quot;מתרגל&quot; להתמודד עם הטעויות שלו עצמו בזמן אימון</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Sequence Generation</td><td>BLEU, Perplexity</td></tr><tr><td>Machine Translation</td><td>BLEU</td></tr></table>
+<h4 class='sec-h'>🔄 השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>הבדל מרכזי</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>Scheduled Sampling</td><td>מערבב בהדרגה תוויות אמת עם תחזיות המודל באימון</td><td>כשרוצים לצמצם exposure bias</td></tr><tr><td>Free Running (No Teacher Forcing)</td><td>מזין תמיד את תחזית המודל, גם באימון</td><td>פחות נפוץ — אימון לא יציב</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python / PyTorch)</h4>
+<pre class='code-block'><code>import torch
+
+# בכל צעד דקודינג באימון:
+for t in range(1, seq_len):
+    decoder_input = target_seq[:, t-1]   # Teacher Forcing — הטוקן האמיתי, לא התחזית
+    output, hidden = decoder(decoder_input, hidden)
+    loss += loss_fn(output, target_seq[:, t])</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה זה exposure bias וכיצד הוא נובע מ-Teacher Forcing?</p>
+<p><strong>ת: </strong>זה הפער בין תנאי האימון (המודל מקבל תמיד טוקן אמת) לתנאי ההסקה (המודל מקבל את התחזית שלו עצמו, שעלולה להיות שגויה) — מודל שמעולם לא ראה את הטעויות שלו עצמו באימון עלול להצטבר ולסטות (drift) בהסקה.</p>
+<p><strong>ש: </strong>איך Scheduled Sampling מקל על בעיית exposure bias?</p>
+<p><strong>ת: </strong>הוא מערבב בהדרגה, עם הסתברות עולה במהלך האימון, בין הזנת הטוקן האמיתי להזנת התחזית של המודל עצמו, כך שהמודל מתרגל גם להתמודד עם הטעויות שלו.</p>

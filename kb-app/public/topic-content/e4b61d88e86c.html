@@ -1,0 +1,33 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Conversational RAG הוא וריאנט RAG המתוכנן לאינטראקציות רב-תוריות — הוא שומר זיכרון של קלטי המשתמש ותגובות המערכת הקודמות, ומאפשר שיחה טבעית ומודעת-הקשר על פני מספר פניות.</p>
+<h4 class='sec-h'>🏛️ איך זה עובד</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/6193c5e695d7.png" loading="lazy" alt="Conversational RAG — architecture diagram" /></div>
+<ul><li>שמירת השיחה הקודמת (שאלות ותשובות) בזיכרון (memory).</li><li>שילוב השאילתה הנוכחית עם היסטוריית הצ'אט לביצוע ה-retrieval.</li><li>המסמכים שנשלפו מועברים ל-LLM יחד עם ההקשר לצורך הגנרציה.</li><li>נפוץ להשתמש ב-ConversationBufferMemory או אובייקטי memory מתקדמים יותר ב-LangChain.</li></ul>
+<h4 class='sec-h'>🎯 תחומי שימוש</h4>
+<ul><li>צ'אטבוטים/עוזרים וירטואליים עם שאלות המשך (follow-up).</li><li>שירות לקוחות, שאלות-תשובה רפואיות, מערכות הוראה (tutoring).</li><li>כל מקרה בו שמירת הקשר בין פניות קריטית.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>מאפשר שיחה טבעית עם שאלות המשך מבלי לחזור על ההקשר בכל פעם.</li><li>מתאים למקרי שימוש מורכבים כמו עוזר רפואי או יועץ משפטי המשתמשים ברצף שאלות.</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>Latency גבוהה — היסטוריית השיחה מגדילה את גודל ההקשר ל-retrieval ול-generation.</li><li>עלות גבוהה יותר עקב prompts ארוכים יותר וניהול memory.</li><li>לא מתאים לשאילתות עצמאיות חד-פעמיות (FAQ) ללא צורך בהקשר היסטורי.</li></ul>
+<h4 class='sec-h'>📊 מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Conversational QA</td><td>Faithfulness, Answer Relevancy, Context Recall (RAGAS)</td></tr><tr><td>שמירת הקשר רב-תורי</td><td>בדיקה ידנית/LLM-as-judge על עקביות בין תורות</td></tr></table>
+<h4 class='sec-h'>🔄 וריאנטים — ניהול זיכרון</h4>
+<table class='kbtable'><tr><td><strong>סוג Memory</strong></td><td><strong>הבדל מרכזי</strong></td></tr><tr><td>ConversationBufferMemory</td><td>שומר את כל ההיסטוריה כטקסט מלא — פשוט אך עלול לגדול ללא הגבלה</td></tr><tr><td>ConversationSummaryBufferMemory</td><td>מסכם היסטוריה ארוכה אוטומטית מעבר ל-max_token_limit, שומר prompts קצרים</td></tr><tr><td>Long-term Memory (DB-backed)</td><td>שומר עובדות/העדפות בין סשנים שונים (לא רק תוך שיחה אחת), לרוב ב-FAISS/Chroma/DB</td></tr></table>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>from langchain.chains import ConversationalRetrievalChain
+from langchain.memory import ConversationBufferMemory
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_openai import ChatOpenAI
+embedding_fn = HuggingFaceEmbeddings(model_name=&amp;quot;all-MiniLM-L6-v2&amp;quot;)
+vectorstore = FAISS.from_texts(texts=documents, embedding=embedding_fn)
+retriever = vectorstore.as_retriever(search_kwargs={&amp;quot;k&amp;quot;: 3})
+llm = ChatOpenAI(model_name=&amp;quot;gpt-3.5-turbo&amp;quot;, temperature=0.3)
+memory = ConversationBufferMemory(memory_key=&amp;quot;chat_history&amp;quot;, return_messages=True)
+qa_chain = ConversationalRetrievalChain.from_llm(llm=llm, retriever=retriever, memory=memory)
+qa_chain.run(&amp;quot;Tell me about Crohn's disease&amp;quot;)
+qa_chain.run(&amp;quot;What are the complications?&amp;quot;)   # uses memory of previous turn</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה התפקיד של max_token_limit ב-ConversationSummaryBufferMemory?</strong></p>
+<p>ת: הוא מגביל כמה טוקנים של היסטוריה נשמרים לפני שהמערכת מסכמת אוטומטית את השיחה — שומר על latency/עלות צפויים ומונע overflow של חלון ההקשר.</p>
+<p><strong>ש: מתי תעדיף Long-term Memory על פני ConversationBufferMemory רגיל?</strong></p>
+<p>ת: כשצריך לזכור עובדות/העדפות בין סשנים שונים (לא רק תוך שיחה אחת) — אז שומרים את העובדות במסד וקטורי ושולפים אותן בהמשך, בדומה ל-retrieval רגיל.</p>

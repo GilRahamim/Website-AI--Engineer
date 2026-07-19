@@ -1,0 +1,24 @@
+<h4 class='sec-h'>Graphs ו-Networks — מושגי בסיס</h4>
+<p class='formula-label'><em>יסודות תורת הגרפים לניתוח רשתות</em></p>
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>גרף <img class="inline-formula-img" src="/topic-assets/d9fb832f20e1.png" loading="lazy" alt="formula"> הוא מבנה מתמטי המורכב מקבוצת צמתים (Vertices/Nodes, <img class="inline-formula-img" src="/topic-assets/2311ee774c83.png" loading="lazy" alt="formula">) וקבוצת קשתות (Edges, <img class="inline-formula-img" src="/topic-assets/b74d39a93b56.png" loading="lazy" alt="formula">) המחברות ביניהם. רשתות (Networks) הן גרפים המייצגים מערכות יחסים בעולם האמיתי — חברתיות, תקשורתיות, ביולוגיות, תחבורתיות ועוד.</p>
+<h4 class='sec-h'>🔍 מתי זה קורה / מתי זה רלוונטי</h4>
+<ul><li>ניתוח רשתות חברתיות (לדוגמה מי מחובר למי, חברי קבוצה).</li><li>רשתות תחבורה (קווי תעופה, מסילות רכבת) ורשתות תקשורת/אינטרנט.</li><li>רשתות מבוססות-קשר אחר: רשת דירקטורים-חברות (board-director networks), רשתות ציטוטים אקדמיים, רשתות חלבון-חלבון ביולוגיות.</li></ul>
+<h4 class='sec-h'>⚠️ איך מזהים / איך מיישמים</h4>
+<ul><li>Directed vs. Undirected: בגרף מכוון (Directed) לקשת יש כיוון (לדוגמה 'עוקב אחרי' ב-Twitter/X); בגרף לא-מכוון הקשר סימטרי (לדוגמה 'חברים' ב-Facebook).</li><li>Degree (דרגת צומת): מספר הקשתות הנוגעות בצומת. בגרף מכוון מבחינים בין In-Degree (קשתות נכנסות) ל-Out-Degree (קשתות יוצאות).</li><li>Weighted vs. Unweighted: לקשתות יכול להיות משקל (לדוגמה עוצמת קשר, מספר אינטראקציות) או לא.</li></ul>
+<h4 class='sec-h'>📐 נוסחאות רלוונטיות</h4>
+<p>סכום הדרגות בגרף לא-מכוון שווה לפעמיים מספר הקשתות (Handshaking Lemma):</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/849168f4707c.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<ul><li>מושגי בסיס אלו (צמתים, קשתות, דרגה) הם הבסיס הנדרש להבנת Community Detection, Modularity, Louvain ו-Label Propagation.</li><li>דוגמאות קלאסיות בקורס: רשת Zachary Karate Club (38 חברי מועדון קראטה) ורשת הדמויות בספר Les Misérables — שתיהן רשתות בנצ'מארק נפוצות להדגמת אלגוריתמי community detection.</li></ul>
+<h4 class='sec-h'>💻 קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>import networkx as nx
+G = nx.karate_club_graph()
+print(G.number_of_nodes(), G.number_of_edges())
+print(dict(G.degree()))          # דרגת כל צומת
+print(nx.density(G))             # צפיפות הגרף</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>מה ההבדל בין גרף מכוון ללא-מכוון, ותן דוגמה לכל אחד.</strong></p>
+<p><strong>ת: </strong>בגרף לא-מכוון הקשר סימטרי — אם A מחובר ל-B, גם B מחובר ל-A (לדוגמה רשת חברים). בגרף מכוון לקשת יש כיוון ברור שלא בהכרח סימטרי (לדוגמה 'עוקב אחרי' ברשת חברתית, או קישורי היפרלינק בין דפי אינטרנט).</p>
+<p><strong>ש: </strong><strong>מה זו 'דרגת צומת' (Degree) ולמה היא חשובה?</strong></p>
+<p><strong>ת: </strong>דרגת צומת היא מספר הקשתות הנוגעות בו. היא מדד בסיסי לחשיבות/קישוריות הצומת ברשת, ומשמשת כבסיס לחישובים מורכבים יותר כמו Modularity ולזיהוי צמתי-מפתח (hubs) ברשת.</p>

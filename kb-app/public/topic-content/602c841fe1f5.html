@@ -1,0 +1,56 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>כדי לבנות Knowledge Graph נדרשים טריפלטים (subject, relation, object). במקום regex ידני, מבקשים מ-LLM לקרוא כל מסמך ולהפיק טריפלטים בפורמט JSON — לאחר מכן בונים מהם גרף מכוון (directed multigraph) ומפעילים עליו אלגוריתמי אחזור.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>1. שליחת כל מסמך ל-LLM עם system prompt שמורה לו לחלץ triples בפורמט JSON תקני.</li><li>2. בניית גרף מכוון (NetworkX MultiDiGraph) — כל subject/object הוא node, כל triple הוא edge עם relation, doc_id ו-sentence תומך.</li><li>3. אחזור גרפי (graph_retrieve) — איתור seed entities מתאימים לשאלה, הרחבת frontier מספר hops, אגירת קשתות נתמכות.</li><li>4. אחזור מקביל ב-keyword (חפיפת token) ו-vector (embeddings) לצורך השוואה.</li><li>5. בניית context סופי מהתוצאות הממוספרות ([1], [2]...) להזנה ל-LLM.</li></ul>
+<h4 class='sec-h'>💻 קוד לדוגמה — חילוץ טריפלטים עם LLM</h4>
+<pre class='code-block'><code>EXTRACTION_SYSTEM_PROMPT = &amp;quot;&amp;quot;&amp;quot;You extract knowledge-graph triples from short text about
+the automotive industry.
+Return ONLY valid JSON of the form:
+{&amp;quot;triples&amp;quot;: [{&amp;quot;subject&amp;quot;: &amp;quot;...&amp;quot;, &amp;quot;relation&amp;quot;: &amp;quot;...&amp;quot;, &amp;quot;object&amp;quot;: &amp;quot;...&amp;quot;, &amp;quot;sentence&amp;quot;: &amp;quot;...&amp;quot;}]}&amp;quot;&amp;quot;&amp;quot;
+response = client.chat.completions.create(
+model=model, temperature=0,
+response_format={&amp;quot;type&amp;quot;: &amp;quot;json_object&amp;quot;},
+messages=[
+{&amp;quot;role&amp;quot;: &amp;quot;system&amp;quot;, &amp;quot;content&amp;quot;: EXTRACTION_SYSTEM_PROMPT},
+{&amp;quot;role&amp;quot;: &amp;quot;user&amp;quot;, &amp;quot;content&amp;quot;: f&amp;quot;Document:\n{text}&amp;quot;},
+],
+)</code></pre>
+<h4 class='sec-h'>💻 קוד לדוגמה — בניית הגרף</h4>
+<pre class='code-block'><code>G = nx.MultiDiGraph()
+for row in triples:
+G.add_node(row[&amp;quot;subject&amp;quot;], node_type=&amp;quot;entity&amp;quot;)
+G.add_node(row[&amp;quot;object&amp;quot;], node_type=&amp;quot;entity&amp;quot;)
+G.add_edge(row[&amp;quot;subject&amp;quot;], row[&amp;quot;object&amp;quot;],
+relation=row[&amp;quot;relation&amp;quot;], doc_id=row[&amp;quot;doc_id&amp;quot;], sentence=row[&amp;quot;sentence&amp;quot;])
+print(f&amp;quot;Number of nodes: {G.number_of_nodes()}&amp;quot;)   # 46
+print(f&amp;quot;Number of edges: {G.number_of_edges()}&amp;quot;)   # 41</code></pre>
+<h4 class='sec-h'>💻 קוד לדוגמה — אחזור גרפי מרובה-hops</h4>
+<pre class='code-block'><code>def graph_retrieve(query: str, max_hops: int = 2, max_sentences: int = 8):
+seeds = find_seed_entities(query)
+visited = set(seeds)
+frontier = set(seeds)
+collected_edges = []
+for _ in range(max_hops):
+next_frontier = set()
+for node in frontier:
+for _, neighbor, data in G.out_edges(node, data=True):
+collected_edges.append((node, neighbor, data))
+if neighbor not in visited:
+next_frontier.add(neighbor); visited.add(neighbor)
+for neighbor, _, data in G.in_edges(node, data=True):
+collected_edges.append((neighbor, node, data))
+if neighbor not in visited:
+next_frontier.add(neighbor); visited.add(neighbor)
+frontier = next_frontier
+return collected_edges</code></pre>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>בניית KG אוטומטית ממסמכי טקסט לא-מבניים, ללא צורך בכללי regex ידניים.</li><li>בסיס לאחזור multi-hop ול-agents מבוססי-גרף.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>LLM מתמודד בקלות עם ניסוחים מגוונים של אותו יחס, בניגוד ל-regex שביר.</li><li>JSON מבני מאפשר ולידציה ובדיקת תקינות אוטומטית.</li></ul>
+<h4 class='sec-h'>❌ חסרונות / מגבלות</h4>
+<ul><li>דיוק חילוץ תלוי באיכות ה-LLM ובניסוח ה-prompt; שגיאות נספחות (cascading) לגרף.</li><li>דורש נורמליזציה של ישויות/יחסים (לדוגמה: &quot;Tesla&quot; מול &quot;Tesla Inc.&quot;) כדי למנוע פיצול שגוי של nodes.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מדוע להשתמש ב-LLM לחילוץ טריפלטים במקום regex?</strong></p>
+<p>ת: regex שביר לניסוחים מגוונים ודורש כללים ידניים לכל סוג יחס; LLM מבין הקשר סמנטי ומסוגל להפיק triples עקביים מניסוחים שונים של אותו מידע, עם JSON מבני שניתן לוולידציה.</p>
+<p><strong>ש: מה ההבדל בין graph_retrieve ל-vector_retrieve במימוש?</strong></p>
+<p>ת: graph_retrieve מתחיל מ-seed entities ומרחיב frontier על קשתות מוטיפסות (in/out edges) למספר hops; vector_retrieve מחשב cosine similarity בין embedding השאלה לבין embeddings של כל הקורפוס ומחזיר top-k.</p>

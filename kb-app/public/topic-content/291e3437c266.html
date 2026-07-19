@@ -1,0 +1,41 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>FastMCP הוא תבנית מימוש (framework קל-משקל) לבניית שרתי MCP באמצעות FastAPI. הוא משתמש ב-FastAPI כשכבת transport ו-orchestration ל-agents/כלי MCP, במקום לכתוב לוגיקת שרת MCP גולמית, וחושף כלים, agents ו-pipelines מעל MCP במאמץ מינימלי.</p>
+<h4 class='sec-h'>🏛️ רעיונות מפתח</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/ca64802cb39b.png" loading="lazy" alt="FastMCP — מימוש פרקטי של MCP — architecture diagram" /></div>
+<ul><li>Tools as FastAPI Endpoints — כל כלי MCP הוא endpoint (לדוגמה: POST /tools/medline_lookup), ונרשם באמצעות דקורטור @tool כתואם-MCP.</li><li>Agents as Orchestrators — agent מוגדר (לדוגמה: medication summarizer) שקורא לאותם כלים ומתאם זרימות מרובות-שלבים (fetch → parse → upsert).</li><li>Pipelines as Workflows — קיבוץ agents+כלים לזרימות (כגון patient medication enrichment), מורצות דרך שרת MCP עם jobs/tasks.</li><li>MCP Server = FastAPI App — אפליקציית FastAPI רגילה, אך חושפת schema של MCP, רישום כלים ותיאום agents; ניתן להריץ via uvicorn או בתוך Docker.</li></ul>
+<h4 class='sec-h'>💻 קוד לדוגמה — הגדרת כלי MCP</h4>
+<pre class='code-block'><code>mcp = FastMCP()
+NWS_API_BASE = &amp;quot;https://api.weather.gov/&amp;quot;
+@mcp.tool()
+async def get_alerts(state: str) -&amp;gt; str:
+&amp;quot;&amp;quot;&amp;quot;Return raw active weather alerts for a two-letter US state.&amp;quot;&amp;quot;&amp;quot;
+url = f&amp;quot;{NWS_API_BASE}alerts/active?area={state}&amp;quot;
+data = await make_nws_request(url)
+if not data or &amp;quot;features&amp;quot; not in data or not data[&amp;quot;features&amp;quot;]:
+return f&amp;quot;No active alerts found for {state}.&amp;quot;
+out = []
+for feat in data[&amp;quot;features&amp;quot;]:
+props = feat.get(&amp;quot;properties&amp;quot;, {})
+out.append(
+f&amp;quot;Event: {props.get('event','?')}\n&amp;quot;
+f&amp;quot;Area: {props.get('areaDesc','?')}\n&amp;quot;
+f&amp;quot;Severity: {props.get('severity','?')}&amp;quot;)
+return &amp;quot;\n---\n&amp;quot;.join(out)
+@mcp.tool()
+async def explain_alert(feature: Dict[str, Any]) -&amp;gt; str:
+&amp;quot;&amp;quot;&amp;quot;Ask GPT to explain one alert feature in plain English.&amp;quot;&amp;quot;&amp;quot;
+props = feature.get(&amp;quot;properties&amp;quot;, {})
+prompt = (f&amp;quot;Here's a weather alert:\nEvent: {props.get('event')}\n&amp;quot;
+f&amp;quot;Severity: {props.get('severity')}\nExplain what this means.&amp;quot;)
+resp = client.chat.completions.create(
+model=&amp;quot;gpt-4o-mini&amp;quot;, messages=[{&amp;quot;role&amp;quot;: &amp;quot;user&amp;quot;, &amp;quot;content&amp;quot;: prompt}])
+return resp.choices[0].message.content
+# Run: uvicorn api:app --host 0.0.0.0 --port 8001</code></pre>
+<h4 class='sec-h'>📊 דוגמת פריסה — Streamlit Stocks Analysis using MCP</h4>
+<ul><li>7 כלי MCP: search_symbols, latest_quote, price_series, indicators, detect_events, backtest_ma_cross, explain.</li><li>שכבות: Streamlit UI (Presentation) → FastAPI Bridge (API) → MCP Server (Business Logic) → Yahoo Finance (Data Access).</li><li>וריאנט מתקדם משלב CrewAI multi-agent pipeline (Research Agent → Technical Analyst → Report Writer) מעל אותם כלי MCP.</li></ul>
+<h4 class='sec-h'>🔗 מדריכי שרתי MCP ציבוריים</h4>
+<table class='kbtable'><tr><td><strong>מדריך</strong></td><td><strong>תיאור</strong></td></tr><tr><td>mcp.so</td><td>המדריך הציבורי הגדול ביותר לשרתי MCP; ניתן לחיפוש לפי קטגוריה וסוג אינטגרציה</td></tr><tr><td>MCP Server Finder</td><td>רשימה מאוצרת של שרתי MCP מאומתים עם metadata ומדריכי הקמה</td></tr><tr><td>PulseMCP</td><td>אינדקס מתעדכן ברציפות של 4K+ שרתים, עם analytics ומגמות פופולריות</td></tr><tr><td>Awesome MCP Servers (GitHub)</td><td>מאגר קוד-פתוח מתוחזק בידי הקהילה של שרתי MCP ו-SDKs</td></tr></table>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין FastMCP ל-MCP הגולמי?</strong></p>
+<p>ת: FastMCP הוא שכבת נוחות מעל FastAPI שמאפשרת לחשוף כלי MCP כ-endpoints רגילים עם דקורטור @tool, בלי לכתוב את לוגיקת פרוטוקול ה-MCP הגולמית מאפס — מקצר משמעותית את ה-boilerplate.</p>
+<p><strong>ש: מהי דוגמה ל-pipeline שמשתמש בכלי MCP מרובים?</strong></p>
+<p>ת: fetch → parse → upsert: כלי MCP אחד מביא מידע, agent מפענח/מנתח אותו, וכלי נוסף שומר את התוצאה — כל שלב הוא endpoint MCP נפרד שמתואם בתוך אותו pipeline.</p>

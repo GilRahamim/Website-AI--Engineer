@@ -1,0 +1,18 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>AI Agent הוא מערכת מבוססת-LLM שמתכננת, מנמקת (reasoning) ופועלת (acting) באופן אוטונומי להשגת מטרה — בניגוד ל-pipeline נוקשה עם שלבים קבועים-מראש, ה-agent מפרק משימה כוללת לצעדים, ומשתמש בכלים/זיכרון לפי הצורך.</p>
+<h4 class='sec-h'>🔍 Agentic Workflow מול one-shot prompt</h4>
+<p>One-shot prompt: קלט → LLM → פלט, ללא איטרציה. Agentic workflow: המשימה מפורקת לשלבי Thinking/Research → Revise → Finish, עם איטרציות וקריאות כלים בין לבין. לדוגמה, תכנון חופשת סקי דורש בדיקת ימי חופשה, חיפוש יעדים, בדיקת תחזית מזג אוויר, הזמנת טיסה והזמנת מלון — חמש משימות שLLM רגיל לא יכול לבצע (אין לו גישה ל-API-ים חיצוניים ולנתוני המשתמש).</p>
+<h4 class='sec-h'>🏛️ מגבלות LLM רגיל בטיפול בבקשות מורכבות</h4>
+<ul><li>עונה על שאלות גנריות לפי נתוני אימון ציבוריים — לא על נתונים ספציפיים לחברה.</li><li>אין לו גישה לנתונים עדכניים או ל-API-ים חיצוניים (מזג אוויר היום, הזמנת מלון).</li><li>עונה רק לפי נתוני אימון עם knowledge cutoff קבוע.</li></ul>
+<h4 class='sec-h'>🏛️ ארכיטקטורת AI Agent — חמשת המרכיבים</h4>
+<table class='kbtable'><tr><td><strong>מרכיב</strong></td><td><strong>תפקיד</strong></td></tr><tr><td>Planning</td><td>תכנון משימות דינמי — פירוק מטרה לצעדי-משנה</td></tr><tr><td>Tools &amp; Action</td><td>גישה לנתונים ו-API-ים חיצוניים לביצוע פעולות בעולם</td></tr><tr><td>Memory</td><td>שמירת הקשר אינטראקציה עם המשתמש (session/long-term)</td></tr><tr><td>Guardrails</td><td>מניעת toxicity ו-hallucinations</td></tr><tr><td>Communication</td><td>תקשורת — Agent בודד או ריבוי Agents (Multi-Agent)</td></tr></table>
+<h4 class='sec-h'>🎯 סוגי Agents</h4>
+<table class='kbtable'><tr><td><strong>סוג</strong></td><td><strong>תיאור</strong></td><td><strong>דוגמה</strong></td></tr><tr><td>Reactive</td><td>Stateless, מבוסס-כללים</td><td>FAQ bots</td></tr><tr><td>Tool-Using</td><td>משתמש ב-APIs/כלים חיצוניים</td><td>מחשבון, מנוע חיפוש</td></tr><tr><td>Planning</td><td>מפרק מטרות לצעדי-משנה</td><td>מתכנן טיולים, כותב דוחות</td></tr></table>
+<p>Agentic AI — שימוש בהיגיון מתוחכם ותכנון איטרטיבי לפתרון אוטונומי של בעיות מורכבות ורבות-שלבים, תוך גישה לנתוני ארגון ושימוש בכלים.</p>
+<h4 class='sec-h'>🧰 Agent Frameworks — מהי המטרה?</h4>
+<ul><li>ספריות/פלטפורמות עם רכיבים מובנים-מראש לפיתוח agents (ניהול זיכרון, אינטגרציית כלים, תכנון, תקשורת multi-agent).</li><li>מאפשרות למפתחים להתמקד בלוגיקת ה-agent ולא בפרטי המימוש הנמוכים.</li><li>יתרונות: פיתוח מהיר יותר, גישות סטנדרטיות, אינטגרציה קלה עם מודלים/כלים שונים, תמיכה בארכיטקטורות שונות (ReAct, multi-agent).</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין pipeline רגיל ל-AI Agent?</strong></p>
+<p>ת: Pipeline מבצע שלבים קבועים-מראש בסדר נתון; Agent מתכנן, מנמק ופועל אוטונומית — מחליט דינמית אילו צעדים/כלים נדרשים כדי להשיג מטרה.</p>
+<p><strong>ש: מהם חמשת המרכיבים המרכזיים של ארכיטקטורת AI Agent?</strong></p>
+<p>ת: Planning (תכנון), Tools &amp; Action (כלים ופעולה), Memory (זיכרון), Guardrails (גידור בטיחות), Communication (תקשורת בין agents).</p>

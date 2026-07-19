@@ -1,0 +1,24 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>מנגנון המאפשר חישוב אוטומטי של גרדיאנטים על ידי בניית גרף חישוב דינמי (computation graph) במהלך ה-Forward Pass, ושימוש בו לחישוב נגזרות בעזרת כלל השרשרת ב-Backward Pass — הבסיס הטכני שמאפשר Backpropagation בספריות כמו PyTorch.</p>
+<h4 class='sec-h'>⚙️ איך זה עובד</h4>
+<ul><li>כל פעולה על טנזור עם requires_grad=True נרשמת בגרף חישוב דינמי (Directed Acyclic Graph).</li><li>כל צומת בגרף שומר הפניה לפעולה שיצרה אותו ולפונקציית הנגזרת שלה (grad_fn).</li><li>בקריאה ל-loss.backward(), המנגנון עובר על הגרף מהפלט לכניסה (אחורה), ומחשב את הגרדיאנט של כל טנזור בעזרת כלל השרשרת.</li><li>הגרדיאנטים מצטברים בשדה .grad של כל טנזור עם requires_grad=True.</li></ul>
+<h4 class='sec-h'>🔑 מושגים מרכזיים</h4>
+<ul><li>Computation Graph — גרף דינמי הנבנה מחדש בכל Forward Pass (לעומת TensorFlow 1.x שהשתמש בגרף סטטי).</li><li>requires_grad — דגל המורה למנגנון לעקוב אחר ההיסטוריה של טנזור מסוים.</li><li>grad_fn — הפניה לפונקציה שיצרה את הטנזור, המשמשת בזמן Backward.</li><li>torch.no_grad() — הקשר המבטל מעקב גרדיאנטים (לדוגמה בזמן Inference), חוסך זיכרון וחישוב.</li></ul>
+<h4 class='sec-h'>🎯 שימושים עיקריים</h4>
+<ul><li>חישוב גרדיאנטים לאימון כל מודל deep learning (Backpropagation מבוסס Autograd).</li><li>חישוב נגזרות עבור אופטימיזציה כללית (לא רק רשתות עצביות).</li></ul>
+<h4 class='sec-h'>💻 קוד לדוגמה</h4>
+<pre class='code-block'><code>import torch
+
+x = torch.tensor(3.0, requires_grad=True)
+y = x ** 2 + 2 * x
+
+y.backward()           # מחשב dy/dx באמצעות Autograd
+print(x.grad)           # tensor(8.) -&amp;gt; dy/dx = 2x + 2 = 2*3+2=8
+
+with torch.no_grad():
+    z = x * 2           # לא נרשם בגרף - לא נדרש גרדיאנט (לדוגמה ב-Inference)</code></pre>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong>מה ההבדל בין גרף חישוב דינמי (PyTorch) לסטטי (TensorFlow 1.x)?</p>
+<p><strong>ת: </strong>גרף דינמי נבנה מחדש בכל Forward Pass, מה שמאפשר קוד Python גמיש (תנאים, לולאות) ודיבוג קל יותר; גרף סטטי נבנה מראש ומקובע, מה שמאפשר אופטימיזציות מסוימות אך פחות גמיש לפיתוח.</p>
+<p><strong>ש: </strong>מתי נכון להשתמש ב-torch.no_grad()?</p>
+<p><strong>ת: </strong>בזמן Inference/Evaluation, כשאין צורך לחשב גרדיאנטים — זה חוסך זיכרון (לא נשמר היסטוריית הפעולות) ומאיץ את החישוב.</p>

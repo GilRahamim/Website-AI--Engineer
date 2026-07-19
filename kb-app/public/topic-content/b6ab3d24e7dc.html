@@ -1,0 +1,15 @@
+<h4 class='sec-h'>Supervised vs. Unsupervised Learning</h4>
+<p class='formula-label'><em>ההבדל המהותי בין למידה מפוקחת ולא-מפוקחת</em></p>
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Supervised Learning הוא למידה מדאטה מתויג (<img class="inline-formula-img" src="/topic-assets/beae802a6106.png" loading="lazy" alt="formula">) שבה המודל לומד מיפוי מקלט לתווית ידועה (לדוגמה Classification/Regression). Unsupervised Learning הוא למידה מדאטה לא-מתויג (<img class="inline-formula-img" src="/topic-assets/02c7779a28dd.png" loading="lazy" alt="formula"> בלבד), שבה המודל מאתר מבנה, תבניות או קבוצות חבויות בדאטה ללא 'תשובה נכונה' מוגדרת מראש.</p>
+<h4 class='sec-h'>🔍 מתי זה קורה / מתי זה רלוונטי</h4>
+<ul><li>כשאין תוויות (labels) זמינות בדאטה, או שעלות התיוג גבוהה מאוד — Unsupervised Learning הוא לרוב נקודת ההתחלה.</li><li>כשהמטרה היא חיפוש מבנה/תבניות לא ידועות מראש בדאטה (exploratory data analysis), בניגוד לחיזוי יעד ספציפי.</li><li>Supervised Learning רלוונטי כשיש דאטה מתויג ואנו רוצים לחזות תווית ספציפית על נתונים חדשים.</li></ul>
+<h4 class='sec-h'>🔄 השוואה</h4>
+<table class='kbtable'><tr><td><strong>מאפיין</strong></td><td><strong>Supervised Learning</strong></td><td><strong>Unsupervised Learning</strong></td></tr><tr><td>דאטה</td><td>מתויג (<img class="inline-formula-img" src="/topic-assets/beae802a6106.png" loading="lazy" alt="formula">)</td><td>לא מתויג (<img class="inline-formula-img" src="/topic-assets/02c7779a28dd.png" loading="lazy" alt="formula"> בלבד)</td></tr><tr><td>מטרה</td><td>חיזוי תווית/ערך (Classification/Regression)</td><td>חיפוש מבנה/אשכולות/הפחתת מימד</td></tr><tr><td>דוגמאות אלגוריתמים</td><td>Linear Regression, Random Forest, SVM</td><td>K-Means, DBSCAN, PCA, GMM</td></tr><tr><td>הערכת הצלחה</td><td>ישירה — השוואה לתווית אמת (Accuracy, F1, MSE)</td><td>עקיפה — מדדים פנימיים (Silhouette) ולעיתים שיקול דעת מומחה</td></tr><tr><td>עלות</td><td>תיוג דאטה יקר ואיטי</td><td>ללא עלות תיוג — אך פרשנות התוצאה דורשת ידע תחום</td></tr></table>
+<h4 class='sec-h'>🔄 קשר לנושאים אחרים</h4>
+<ul><li>קיימת גם קטגוריית ביניים: Semi-Supervised Learning, שמשתמשת בכמות קטנה של דאטה מתויג ובכמות גדולה של דאטה לא-מתויג (לדוגמה Label Propagation ברשתות).</li><li>תוצאות של Unsupervised Learning (כמו אשכולות מ-K-Means) משמשות פעמים רבות כפיצ'רים חדשים (feature engineering) לשלב Supervised Learning מאוחר יותר.</li><li>Self-Supervised Learning (נפוץ בעמוקה) יוצר 'תוויות' מהדאטה עצמו, וממוקם בתווך הגבול בין שתי הגישות.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: </strong><strong>איך מעריכים אלגוריתם unsupervised אם אין תוויות אמת?</strong></p>
+<p><strong>ת: </strong>משתמשים במדדים פנימיים (internal metrics) שמסתמכים רק על מבנה הדאטה עצמו — לדוגמה Silhouette Score או Inertia ב-clustering, או Explained Variance Ratio ב-PCA — ולעיתים בשיקול דעת תחומי (domain expertise) לבדיקת סבירות התוצאה.</p>
+<p><strong>ש: </strong><strong>תן דוגמה למצב שבו דאטה לא-מתויג 'נהפך' למתויג לצורך אימון.</strong></p>
+<p><strong>ת: </strong>ב-Self-Supervised Learning, לדוגמה ב-Autoencoders — הקלט עצמו משמש כ'תווית' (המודל לומד לשחזר את הקלט), כך שלמרות שאין תיוג אנושי, יש פונקציית מטרה מדידה.</p>

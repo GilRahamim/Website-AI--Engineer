@@ -1,0 +1,35 @@
+<h4 class='sec-h'>📋 הגדרה</h4>
+<p>Claude Agent SDK (שינוי שם מ-Claude Code SDK, סוף 2025) הוא ספרייה (Python/TypeScript) שחושפת את אותו runtime שמפעיל את Claude Code — agent loop, כלים מובנים, skills, sub-agents, hooks, MCP — לשימוש headless מתוך סקריפטים, שירותים, או CI, ולא רק מטרמינל אינטראקטיבי.</p>
+<h4 class='sec-h'>🏛️ מבנה הארכיטקטורה</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/aa3344b03df1.png" loading="lazy" alt="Claude Agent SDK — ארכיטקטורה ו-query() Loop — architecture diagram" /></div>
+<ul><li>query() — לולאת ה-agent: לחשוב (reason), לקרוא לכלי (call tool), לצפות בתוצאה (observe), לחזור.</li><li>Options (ClaudeAgentOptions) — system prompt, כלים מורשים, MCP servers, תיקיות skills, hooks, permission mode, working directory.</li><li>כלים מובנים (in-box): Bash, Read, Write, Edit, Grep, Glob, WebFetch, Task (לקריאה ל-sub-agent), TodoWrite.</li><li>סטרימינג של הודעות מטיפוסים שונים: user, assistant, tool_use, tool_result, אירועי system — האפליקציה מחליטה מה לרנדר/לשמור.</li><li>קומפוזביליות: Skills מזינות נהלים, MCP מזין כלים, hooks מזינים חוקים, sub-agents מזינים בידוד קונטקסט — ה-SDK מחבר את כולם.</li></ul>
+<h4 class='sec-h'>💻 קוד לדוגמה — Agent מינימלי</h4>
+<pre class='code-block'><code># pip install claude-agent-sdk
+import anyio
+from claude_agent_sdk import query, ClaudeAgentOptions
+options = ClaudeAgentOptions(
+model='claude-sonnet-4-6',
+system_prompt='You are a senior Python reviewer.',
+allowed_tools=['Read', 'Grep', 'Glob'],
+permission_mode='acceptEdits',
+cwd='/repo',
+)
+async def main():
+async for msg in query(
+prompt='Review src/auth.py for security issues.',
+options=options,
+):
+print(msg)
+anyio.run(main)</code></pre>
+<h4 class='sec-h'>🔄 SDK לעומת Claude Code לעומת Raw API</h4>
+<table class='kbtable'><tr><td><strong>מאפיין</strong></td><td><strong>Raw API</strong></td><td><strong>Agent SDK</strong></td><td><strong>Claude Code</strong></td></tr><tr><td>משטח עבודה (Surface)</td><td>messages.create</td><td>ספריית query()</td><td>CLI / IDE</td></tr><tr><td>Agent loop</td><td>כותבים בעצמכם</td><td>מובנה (Built-in)</td><td>מובנה (Built-in)</td></tr><tr><td>כלים (Tools)</td><td>מגדירים בעצמכם</td><td>Bash/Read/Edit מוכנים</td><td>אותם כלים + IDE tools</td></tr><tr><td>Skills / Sub-agents</td><td>ידני</td><td>First-class</td><td>First-class</td></tr><tr><td>Hooks</td><td>לא קיים</td><td>כן</td><td>כן</td></tr><tr><td>Plugins</td><td>לא קיים</td><td>כן</td><td>כן</td></tr><tr><td>הכי מתאים ל</td><td>לולאות מותאמות, הטמעות (embeds)</td><td>שירותים headless, CI</td><td>עבודת dev אינטראקטיבית</td></tr></table>
+<h4 class='sec-h'>🎯 מתי להשתמש ב-SDK</h4>
+<ul><li>צריך agent מתוך סקריפט, שירות (service), או job ב-CI.</li><li>רוצים את הפרימיטיבים של Claude Code (skills, sub-agents, hooks, MCP) — בלי טרמינל אינטראקטיבי.</li></ul>
+<h4 class='sec-h'>✅ יתרונות</h4>
+<ul><li>חוסך כתיבת agent loop, ניהול כלים, וניהול קונטקסט מאפס (לעומת Raw API).</li><li>אותו runtime בדיוק כמו Claude Code — תאימות מלאה ל-skills/sub-agents/hooks/plugins.</li><li>תמיכה ב-Python ו-TypeScript; סטרימינג של אירועים טיפוסיים.</li></ul>
+<h4 class='sec-h'>❌ מגבלות</h4>
+<ul><li>פחות שליטה גרעינית (low-level) מ-Raw API למי שצריך לולאת agent מאוד מותאמת-אישית.</li><li>תלוי בריצה headless — לא מספק את חוויית ה-IDE/CLI האינטראקטיבית של Claude Code עצמו.</li></ul>
+<h4 class='sec-h'>🧠 שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל המעשי בין Claude Agent SDK ל-Raw API?</strong></p>
+<p>ת: Raw API נותן קריאת מודל בודדת — אתם כותבים את לולאת ה-agent, ניהול כלים, וקונטקסט בעצמכם. Agent SDK מספק query() עם לולאת agent מובנית, כלים מוכנים (Bash/Read/Edit וכו'), ותמיכה ב-skills/sub-agents/hooks/MCP — אותו runtime שמפעיל את Claude Code, אך headless.</p>
+<p><strong>ש: מתי תבחרו ב-Claude Code על פני Agent SDK?</strong></p>
+<p>ת: כשהמשתמש עובד אינטראקטיבית בטרמינל/IDE וצריך session-driven workflow עם פידבק מיידי; Agent SDK מתאים יותר לשירותים headless, אוטומציה ב-CI, או הטמעה בתוך אפליקציה/סקריפט משלכם.</p>
