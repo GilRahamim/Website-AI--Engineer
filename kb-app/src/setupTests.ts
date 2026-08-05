@@ -1,4 +1,11 @@
 import '@testing-library/jest-dom/vitest';
+import { cleanup } from '@testing-library/react';
+import { afterEach } from 'vitest';
+
+// Cleanup after each test
+afterEach(() => {
+  cleanup();
+});
 
 // jsdom doesn't implement matchMedia. Provide a default stub so any code
 // that reads it (src/lib/theme.ts) doesn't crash in tests that don't care
