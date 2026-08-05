@@ -1,3 +1,5 @@
+import { useEffect, useRef, type KeyboardEvent } from 'react';
+
 interface ShortcutsHelpProps {
   open: boolean;
   onClose: () => void;
@@ -13,7 +15,29 @@ const SHORTCUTS: { keys: string; description: string }[] = [
 ];
 
 export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (open) {
+      previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      closeButtonRef.current?.focus();
+    } else if (previousFocusRef.current) {
+      previousFocusRef.current.focus();
+      previousFocusRef.current = null;
+    }
+  }, [open]);
+
   if (!open) return null;
+
+  function handleDialogKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    // The dialog currently has a single focusable element (the close button),
+    // so trapping Tab is just a matter of keeping focus pinned to it.
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      closeButtonRef.current?.focus();
+    }
+  }
 
   return (
     <div
@@ -25,6 +49,7 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
         aria-modal="true"
         aria-labelledby="shortcuts-title"
         onClick={(event) => event.stopPropagation()}
+        onKeyDown={handleDialogKeyDown}
         className="w-full max-w-sm rounded-xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-6 shadow-[var(--kb-shadow-lg)]"
       >
         <h2 id="shortcuts-title" className="mb-4 text-lg font-bold text-[var(--kb-text)]">
@@ -43,6 +68,7 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
           ))}
         </dl>
         <button
+          ref={closeButtonRef}
           type="button"
           aria-label="סגור"
           onClick={onClose}
