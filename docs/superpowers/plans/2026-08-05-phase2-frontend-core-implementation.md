@@ -1028,6 +1028,7 @@ git commit -m "feat: pure filterTopics + groupTopicsByModule data transforms"
 Create `src/hooks/useGridKeyboardNav.test.tsx`:
 
 ```tsx
+import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -1105,6 +1106,39 @@ describe('useGridKeyboardNav', () => {
     expect(onActivate).toHaveBeenCalledWith('b');
   });
 });
+
+function DynamicHarness({ onActivate }: { onActivate: (id: string) => void }) {
+  const [itemIds, setItemIds] = useState(['a', 'b', 'c']);
+  const { getItemProps } = useGridKeyboardNav(itemIds, onActivate);
+  return (
+    <div>
+      <button type="button" data-testid="narrow" onClick={() => setItemIds(['b', 'c'])}>
+        narrow
+      </button>
+      {itemIds.map((id) => {
+        const props = getItemProps(id);
+        return (
+          <button key={id} data-testid={id} ref={props.ref} tabIndex={props.tabIndex} onFocus={props.onFocus} onKeyDown={props.onKeyDown}>
+            {id}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+describe('useGridKeyboardNav — itemIds changes post-mount', () => {
+  it('falls back to the new first item when the focused item is filtered out', async () => {
+    const user = userEvent.setup();
+    render(<DynamicHarness onActivate={() => {}} />);
+    expect(screen.getByTestId('a')).toHaveAttribute('tabindex', '0');
+
+    await user.click(screen.getByTestId('narrow')); // itemIds becomes ['b', 'c']; 'a' is gone
+
+    expect(screen.getByTestId('b')).toHaveAttribute('tabindex', '0');
+    expect(screen.getByTestId('c')).toHaveAttribute('tabindex', '-1');
+  });
+});
 ```
 
 - [ ] **Step 2: Run to verify it fails**
@@ -1115,7 +1149,7 @@ Expected: FAIL — module not found.
 - [ ] **Step 3: Implement `src/hooks/useGridKeyboardNav.ts`**
 
 ```ts
-import { useCallback, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { useCallback, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 
 export interface GridItemProps {
   tabIndex: number;
@@ -1127,6 +1161,15 @@ export interface GridItemProps {
 export function useGridKeyboardNav(itemIds: string[], onActivate: (id: string) => void) {
   const [focusedId, setFocusedId] = useState<string | null>(itemIds[0] ?? null);
   const elementsRef = useRef(new Map<string, HTMLElement>());
+
+  // Falls back to the first item whenever the tracked focusedId is no longer
+  // present in itemIds (e.g. a filter/search change dropped it) — otherwise
+  // every item's tabIndex would resolve to -1 and the grid becomes
+  // keyboard-untabbable until a fresh onFocus fires.
+  const effectiveFocusedId = useMemo(
+    () => (focusedId !== null && itemIds.includes(focusedId) ? focusedId : (itemIds[0] ?? null)),
+    [focusedId, itemIds],
+  );
 
   const focusIndex = useCallback(
     (index: number) => {
@@ -1141,7 +1184,7 @@ export function useGridKeyboardNav(itemIds: string[], onActivate: (id: string) =
 
   const getItemProps = useCallback(
     (id: string): GridItemProps => ({
-      tabIndex: id === (focusedId ?? itemIds[0]) ? 0 : -1,
+      tabIndex: id === effectiveFocusedId ? 0 : -1,
       ref: (element) => {
         if (element) {
           elementsRef.current.set(id, element);
@@ -1186,17 +1229,17 @@ export function useGridKeyboardNav(itemIds: string[], onActivate: (id: string) =
         }
       },
     }),
-    [focusedId, itemIds, focusIndex, onActivate],
+    [effectiveFocusedId, itemIds, focusIndex, onActivate],
   );
 
-  return { focusedId, getItemProps };
+  return { focusedId: effectiveFocusedId, getItemProps };
 }
 ```
 
 - [ ] **Step 4: Run to verify it passes**
 
 Run: `npm run test -- useGridKeyboardNav`
-Expected: PASS (6 tests).
+Expected: PASS (7 tests).
 
 - [ ] **Step 5: Commit**
 
@@ -2149,7 +2192,10 @@ function reset() {
 describe('SearchBar', () => {
   beforeEach(() => {
     reset();
-    vi.useFakeTimers();
+    // shouldAdvanceTime is required: Testing Library's asyncWrapper (used internally
+    // by user.type/user.keyboard) detects Vitest's faked timers and otherwise never
+    // advances them itself, deadlocking every `await user.type(...)` call.
+    vi.useFakeTimers({ shouldAdvanceTime: true });
   });
 
   it('renders an accessible search input', () => {
@@ -2377,7 +2423,7 @@ export default function FilterChips({ modules, categoryLabels }: FilterChipsProp
           type="button"
           role="listitem"
           onClick={() => (chip.kind === 'module' ? toggleModule(chip.key) : toggleCategory(chip.key))}
-          className="flex min-h-9 items-center gap-1 rounded-full bg-[var(--kb-accent-soft)] px-3 text-sm text-[var(--kb-text)]"
+          className="flex min-h-11 items-center gap-1 rounded-full bg-[var(--kb-accent-soft)] px-3 text-sm text-[var(--kb-text)]"
         >
           {chip.label} <span aria-hidden="true">✕</span>
         </button>
@@ -2385,7 +2431,7 @@ export default function FilterChips({ modules, categoryLabels }: FilterChipsProp
       <button
         type="button"
         onClick={clearFilters}
-        className="min-h-9 rounded-full border border-[var(--kb-border-strong)] px-3 text-sm text-[var(--kb-muted)]"
+        className="min-h-11 rounded-full border border-[var(--kb-border-strong)] px-3 text-sm text-[var(--kb-muted)]"
       >
         נקה הכול
       </button>
@@ -2563,6 +2609,7 @@ git commit -m "feat: SortMenu + ViewToggle browse controls"
 **Files:**
 - Create: `kb-app/src/components/layout/ShortcutsHelp.tsx`
 - Create: `kb-app/src/components/layout/ShortcutsHelp.test.tsx`
+- Modify: `kb-app/src/styles/tokens.css` (backdrop-overlay token — golden rule 7 forbids the raw `bg-black/40` this component needs otherwise)
 
 **Interfaces:**
 - Consumes: nothing beyond React.
@@ -2614,7 +2661,15 @@ describe('ShortcutsHelp', () => {
 Run: `npm run test -- ShortcutsHelp`
 Expected: FAIL — module not found.
 
-- [ ] **Step 3: Implement `ShortcutsHelp.tsx`**
+- [ ] **Step 3: Add the backdrop-overlay token**
+
+Append to the `:root` block in `src/styles/tokens.css`:
+
+```css
+  --kb-overlay: oklch(0% 0 0 / 0.4);
+```
+
+- [ ] **Step 4: Implement `ShortcutsHelp.tsx`**
 
 ```tsx
 interface ShortcutsHelpProps {
@@ -2637,7 +2692,7 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-20 grid place-items-center bg-black/40 p-4"
+      className="fixed inset-0 z-20 grid place-items-center bg-[var(--kb-overlay)] p-4"
     >
       <div
         role="dialog"
@@ -2675,15 +2730,15 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
 }
 ```
 
-- [ ] **Step 4: Run to verify it passes**
+- [ ] **Step 5: Run to verify it passes**
 
 Run: `npm run test -- ShortcutsHelp`
 Expected: PASS (4 tests).
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
-git add src/components/layout/ShortcutsHelp.tsx src/components/layout/ShortcutsHelp.test.tsx
+git add src/components/layout/ShortcutsHelp.tsx src/components/layout/ShortcutsHelp.test.tsx src/styles/tokens.css
 git commit -m "feat: ShortcutsHelp modal (? key shortcut reference)"
 ```
 
@@ -2704,8 +2759,8 @@ git commit -m "feat: ShortcutsHelp modal (? key shortcut reference)"
 Create `src/pages/Home.test.tsx`:
 
 ```tsx
-import { act, beforeEach, describe, expect, it } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import Home from './Home';
@@ -2891,10 +2946,10 @@ export default function Home() {
           </div>
           <FilterChips modules={modules} categoryLabels={categoryLabels} />
           <div className="mb-4 flex gap-2 text-sm">
-            <button type="button" onClick={expandAllGroups} className="min-h-9 text-[var(--kb-accent)] underline">
+            <button type="button" onClick={expandAllGroups} className="min-h-11 text-[var(--kb-accent)] underline">
               הרחב הכול
             </button>
-            <button type="button" onClick={collapseAllGroups} className="min-h-9 text-[var(--kb-accent)] underline">
+            <button type="button" onClick={collapseAllGroups} className="min-h-11 text-[var(--kb-accent)] underline">
               כווץ הכול
             </button>
           </div>
@@ -3045,7 +3100,7 @@ export default function RelatedTopics({ relatedIds, topicsById }: RelatedTopicsP
           <li key={topic.id}>
             <Link
               to={`/topic/${encodeURIComponent(topic.id)}`}
-              className="inline-block min-h-9 rounded-full border border-[var(--kb-border)] px-3 py-1 text-sm text-[var(--kb-accent)] hover:bg-[var(--kb-accent-soft)]"
+              className="inline-block min-h-11 rounded-full border border-[var(--kb-border)] px-3 py-1 text-sm text-[var(--kb-accent)] hover:bg-[var(--kb-accent-soft)]"
             >
               {topic.title}
             </Link>
