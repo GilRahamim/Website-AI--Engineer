@@ -71,3 +71,17 @@ a, button, [role="button"], input, select, textarea, [tabindex] {
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1rem;
 }
+
+.kb-topic-content img.block-formula-img {
+  display: block;
+  max-width: 100%;
+  margin: 1rem auto;
+}
+.kb-topic-content img.cell-formula-img {
+  height: 1.1em;
+  vertical-align: middle;
+}
+[data-theme='dark'] .kb-topic-content img.block-formula-img,
+[data-theme='dark'] .kb-topic-content img.cell-formula-img {
+  filter: invert(1);
+}
