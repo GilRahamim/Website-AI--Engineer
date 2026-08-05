@@ -16,6 +16,7 @@
   --kb-cat-metrics: oklch(62% 0.15 75);
   --kb-cat-formulas: oklch(56% 0.15 320);
   --kb-cat-architectures: oklch(56% 0.16 25);
+  --kb-overlay: oklch(0% 0 0 / 0.4);
 }
 :root[data-theme="dark"] {
   --kb-bg: oklch(19% 0.012 260); --kb-surface: oklch(23% 0.014 260);

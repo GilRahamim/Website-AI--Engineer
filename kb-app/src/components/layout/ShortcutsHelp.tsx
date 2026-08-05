@@ -18,7 +18,7 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-20 grid place-items-center bg-black/40 p-4"
+      className="fixed inset-0 z-20 grid place-items-center bg-[var(--kb-overlay)] p-4"
     >
       <div
         role="dialog"
