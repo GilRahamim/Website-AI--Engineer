@@ -21,10 +21,10 @@ function topic(overrides: Partial<Topic>): Topic {
 }
 
 const topics: Topic[] = [
-  topic({ id: 'a', title: 'Linear Regression', category: 'algorithms', module: 'Intro to Data Science' }),
-  topic({ id: 'b', title: 'K-Means Clustering', category: 'algorithms', module: 'Topic 1 - Unsupervised Learning' }),
-  topic({ id: 'c', title: 'Bias-Variance Tradeoff', category: 'concepts', module: 'Intro to Data Science' }),
-  topic({ id: 'd', title: 'Attention Mechanism', category: 'concepts', module: 'Topic 3 - Deep Learning' }),
+  topic({ id: 'a', title: 'Linear Regression', category: 'algorithms', category_label: 'אלגוריתמים', module: 'Intro to Data Science' }),
+  topic({ id: 'b', title: 'K-Means Clustering', category: 'algorithms', category_label: 'אלגוריתמים', module: 'Topic 1 - Unsupervised Learning' }),
+  topic({ id: 'c', title: 'Bias-Variance Tradeoff', category: 'concepts', category_label: 'מושגים', module: 'Intro to Data Science' }),
+  topic({ id: 'd', title: 'Attention Mechanism', category: 'concepts', category_label: 'מושגים', module: 'Topic 3 - Deep Learning' }),
 ];
 
 const searchIndex: SearchEntry[] = [
@@ -106,7 +106,7 @@ describe('filterTopics', () => {
 
   it('sorts by category label, then title, when sortOrder is category', () => {
     const result = filterTopics(topics, searchIndex, filters({ sortOrder: 'category' }));
-    expect(result.map((t) => t.id)).toEqual(['a', 'b', 'c', 'd']);
+    expect(result.map((t) => t.id)).toEqual(['b', 'a', 'd', 'c']);
   });
 
   it('returns an empty array when nothing matches', () => {

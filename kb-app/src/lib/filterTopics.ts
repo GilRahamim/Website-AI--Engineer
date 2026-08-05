@@ -32,7 +32,10 @@ function sortTopics(topics: Topic[], sortOrder: FilterState['sortOrder']): Topic
   if (sortOrder === 'alpha') {
     sorted.sort((a, b) => a.title.localeCompare(b.title, 'he'));
   } else {
-    sorted.sort((a, b) => a.category.localeCompare(b.category, 'he'));
+    sorted.sort((a, b) => {
+      const byCategory = a.category_label.localeCompare(b.category_label, 'he');
+      return byCategory !== 0 ? byCategory : a.title.localeCompare(b.title, 'he');
+    });
   }
   return sorted;
 }
