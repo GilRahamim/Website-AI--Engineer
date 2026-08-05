@@ -42,8 +42,9 @@ for (const raw of rawTopics) {
   writeFileSync(join(contentDir, `${idHash}.html`), html, 'utf-8');
   contentFilesWritten += 1;
 
-  cleanTopics.push(buildCleanTopicMeta(raw, contentPath));
-  searchIndex.push({ id: raw.id, search: normalize(`${raw.title} ${raw.definition}`) });
+  const clean = buildCleanTopicMeta(raw, contentPath);
+  cleanTopics.push(clean);
+  searchIndex.push({ id: raw.id, search: normalize(`${raw.title} ${clean.definition}`) });
 
   for (const target of raw.related_match) {
     if (target !== null && !knownIds.has(target)) {

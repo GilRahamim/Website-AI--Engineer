@@ -62,6 +62,42 @@ describe('extractBase64Images', () => {
   });
 });
 
+import { stripEmbeddedMarkup } from './migrate-helpers.ts';
+
+describe('stripEmbeddedMarkup', () => {
+  it('leaves plain text with no tags untouched', () => {
+    expect(stripEmbeddedMarkup('שיטת למידה מונחית לחיזוי ערך רציף.')).toBe(
+      'שיטת למידה מונחית לחיזוי ערך רציף.',
+    );
+  });
+
+  it('removes a self-closing <img> tag (including an embedded base64 data URI) entirely', () => {
+    const text =
+      'מחלק קבוצת נתונים ל-<img class="inline-formula-img" src="data:image/png;base64,iVBORw0KGgo=" alt="formula"> אשכולות.';
+    expect(stripEmbeddedMarkup(text)).toBe('מחלק קבוצת נתונים ל- אשכולות.');
+  });
+
+  it('strips <em>/<strong> tag markers but keeps the text between them', () => {
+    expect(stripEmbeddedMarkup('פונקציית המיפוי <em>f</em>(text) → vector')).toBe(
+      'פונקציית המיפוי f(text) → vector',
+    );
+  });
+
+  it('collapses double spaces left behind by tag removal', () => {
+    expect(stripEmbeddedMarkup('a <img src="x"> b')).toBe('a b');
+  });
+
+  it('removes empty parens left behind when a tag was the entire parenthetical', () => {
+    expect(stripEmbeddedMarkup('מדאטה מתויג (<img src="x">) שבה המודל')).toBe(
+      'מדאטה מתויג שבה המודל',
+    );
+  });
+
+  it('trims leading/trailing whitespace', () => {
+    expect(stripEmbeddedMarkup('  <em>x</em>  ')).toBe('x');
+  });
+});
+
 import { buildCleanTopicMeta, type RawTopic } from './migrate-helpers.ts';
 
 describe('buildCleanTopicMeta', () => {
@@ -102,10 +138,19 @@ describe('buildCleanTopicMeta', () => {
     });
   });
 
-  it('never alters id, title, or definition text', () => {
+  it('never alters id, title, or definition text (when definition has no embedded markup)', () => {
     const clean = buildCleanTopicMeta(raw, '/topic-content/abc123.html');
     expect(clean.id).toBe(raw.id);
     expect(clean.title).toBe(raw.title);
     expect(clean.definition).toBe(raw.definition);
+  });
+
+  it('strips embedded HTML markup that leaked into the raw definition field', () => {
+    const rawWithMarkup: RawTopic = {
+      ...raw,
+      definition: 'מחלק ל-<img class="inline-formula-img" src="data:image/png;base64,abc="> אשכולות.',
+    };
+    const clean = buildCleanTopicMeta(rawWithMarkup, '/topic-content/abc123.html');
+    expect(clean.definition).toBe('מחלק ל- אשכולות.');
   });
 });
