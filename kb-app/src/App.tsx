@@ -1,8 +1,12 @@
+import { Route, Routes } from 'react-router-dom';
+import Home from './pages/Home';
+import Reader from './pages/Reader';
+
 export default function App() {
   return (
-    <main style={{ padding: '2rem' }}>
-      <h1 style={{ color: 'var(--kb-text)' }}>מסד ידע — AI Engineer</h1>
-      <p style={{ color: 'var(--kb-muted)' }}>הבנייה החלה.</p>
-    </main>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/topic/:id" element={<Reader />} />
+    </Routes>
   );
 }
