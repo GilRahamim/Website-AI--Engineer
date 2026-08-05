@@ -2380,7 +2380,7 @@ export default function FilterChips({ modules, categoryLabels }: FilterChipsProp
           type="button"
           role="listitem"
           onClick={() => (chip.kind === 'module' ? toggleModule(chip.key) : toggleCategory(chip.key))}
-          className="flex min-h-9 items-center gap-1 rounded-full bg-[var(--kb-accent-soft)] px-3 text-sm text-[var(--kb-text)]"
+          className="flex min-h-11 items-center gap-1 rounded-full bg-[var(--kb-accent-soft)] px-3 text-sm text-[var(--kb-text)]"
         >
           {chip.label} <span aria-hidden="true">✕</span>
         </button>
@@ -2388,7 +2388,7 @@ export default function FilterChips({ modules, categoryLabels }: FilterChipsProp
       <button
         type="button"
         onClick={clearFilters}
-        className="min-h-9 rounded-full border border-[var(--kb-border-strong)] px-3 text-sm text-[var(--kb-muted)]"
+        className="min-h-11 rounded-full border border-[var(--kb-border-strong)] px-3 text-sm text-[var(--kb-muted)]"
       >
         נקה הכול
       </button>
@@ -2894,10 +2894,10 @@ export default function Home() {
           </div>
           <FilterChips modules={modules} categoryLabels={categoryLabels} />
           <div className="mb-4 flex gap-2 text-sm">
-            <button type="button" onClick={expandAllGroups} className="min-h-9 text-[var(--kb-accent)] underline">
+            <button type="button" onClick={expandAllGroups} className="min-h-11 text-[var(--kb-accent)] underline">
               הרחב הכול
             </button>
-            <button type="button" onClick={collapseAllGroups} className="min-h-9 text-[var(--kb-accent)] underline">
+            <button type="button" onClick={collapseAllGroups} className="min-h-11 text-[var(--kb-accent)] underline">
               כווץ הכול
             </button>
           </div>
@@ -3048,7 +3048,7 @@ export default function RelatedTopics({ relatedIds, topicsById }: RelatedTopicsP
           <li key={topic.id}>
             <Link
               to={`/topic/${encodeURIComponent(topic.id)}`}
-              className="inline-block min-h-9 rounded-full border border-[var(--kb-border)] px-3 py-1 text-sm text-[var(--kb-accent)] hover:bg-[var(--kb-accent-soft)]"
+              className="inline-block min-h-11 rounded-full border border-[var(--kb-border)] px-3 py-1 text-sm text-[var(--kb-accent)] hover:bg-[var(--kb-accent-soft)]"
             >
               {topic.title}
             </Link>
