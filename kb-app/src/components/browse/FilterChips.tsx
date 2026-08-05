@@ -32,7 +32,7 @@ export default function FilterChips({ modules, categoryLabels }: FilterChipsProp
           type="button"
           role="listitem"
           onClick={() => (chip.kind === 'module' ? toggleModule(chip.key) : toggleCategory(chip.key))}
-          className="flex min-h-9 items-center gap-1 rounded-full bg-[var(--kb-accent-soft)] px-3 text-sm text-[var(--kb-text)]"
+          className="flex min-h-11 items-center gap-1 rounded-full bg-[var(--kb-accent-soft)] px-3 text-sm text-[var(--kb-text)]"
         >
           {chip.label} <span aria-hidden="true">✕</span>
         </button>
@@ -40,7 +40,7 @@ export default function FilterChips({ modules, categoryLabels }: FilterChipsProp
       <button
         type="button"
         onClick={clearFilters}
-        className="min-h-9 rounded-full border border-[var(--kb-border-strong)] px-3 text-sm text-[var(--kb-muted)]"
+        className="min-h-11 rounded-full border border-[var(--kb-border-strong)] px-3 text-sm text-[var(--kb-muted)]"
       >
         נקה הכול
       </button>
