@@ -24,6 +24,7 @@ const topicsById = new Map([[relatedTopic.id, relatedTopic]]);
 
 beforeEach(() => {
   global.fetch = vi.fn().mockResolvedValue({
+    ok: true,
     text: () => Promise.resolve('<p>תוכן הנושא המלא</p>'),
   }) as unknown as typeof fetch;
 });
@@ -58,5 +59,22 @@ describe('TopicReader', () => {
   it('renders resolved related topics', async () => {
     renderWithRouter();
     await waitFor(() => expect(screen.getByText('Related Topic')).toBeInTheDocument());
+  });
+
+  it('renders an error state when the content fetch fails', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 404,
+      text: () => Promise.resolve(''),
+    }) as unknown as typeof fetch;
+    renderWithRouter();
+    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('שגיאה בטעינת התוכן'));
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  });
+
+  it('renders an error state when the content fetch rejects', async () => {
+    global.fetch = vi.fn().mockRejectedValue(new Error('network error')) as unknown as typeof fetch;
+    renderWithRouter();
+    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('שגיאה בטעינת התוכן'));
   });
 });

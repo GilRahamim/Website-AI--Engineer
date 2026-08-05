@@ -5,7 +5,7 @@ import Reader from './Reader';
 import topicsData from '../data/topics.clean.json';
 
 beforeEach(() => {
-  global.fetch = vi.fn().mockResolvedValue({ text: () => Promise.resolve('<p>content</p>') }) as unknown as typeof fetch;
+  global.fetch = vi.fn().mockResolvedValue({ ok: true, text: () => Promise.resolve('<p>content</p>') }) as unknown as typeof fetch;
 });
 
 function renderAt(path: string) {

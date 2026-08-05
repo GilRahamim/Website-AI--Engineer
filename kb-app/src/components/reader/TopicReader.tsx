@@ -8,22 +8,34 @@ interface TopicReaderProps {
   topicsById: Map<string, Topic>;
 }
 
+type ContentState =
+  | { path: string; status: 'loaded'; html: string }
+  | { path: string; status: 'error' };
+
 export default function TopicReader({ topic, topicsById }: TopicReaderProps) {
-  const [content, setContent] = useState<{ path: string; html: string } | null>(null);
+  const [content, setContent] = useState<ContentState | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     fetch(topic.contentPath)
-      .then((response) => response.text())
+      .then((response) => {
+        if (!response.ok) throw new Error(`Failed to load content: ${response.status}`);
+        return response.text();
+      })
       .then((text) => {
-        if (!cancelled) setContent({ path: topic.contentPath, html: text });
+        if (!cancelled) setContent({ path: topic.contentPath, status: 'loaded', html: text });
+      })
+      .catch(() => {
+        if (!cancelled) setContent({ path: topic.contentPath, status: 'error' });
       });
     return () => {
       cancelled = true;
     };
   }, [topic.contentPath]);
 
-  const html = content?.path === topic.contentPath ? content.html : null;
+  const isCurrent = content?.path === topic.contentPath;
+  const html = isCurrent && content.status === 'loaded' ? content.html : null;
+  const error = isCurrent && content.status === 'error';
 
   return (
     <article className="mx-auto max-w-3xl p-4">
@@ -40,7 +52,11 @@ export default function TopicReader({ topic, topicsById }: TopicReaderProps) {
       <h1 className="mb-2 text-2xl font-extrabold text-[var(--kb-text)]">{topic.title}</h1>
       <p className="mb-6 text-[var(--kb-text2)]">{topic.definition}</p>
       {html === null ? (
-        <p role="status">טוען תוכן…</p>
+        error ? (
+          <p role="alert">שגיאה בטעינת התוכן.</p>
+        ) : (
+          <p role="status">טוען תוכן…</p>
+        )
       ) : (
         <div className="kb-topic-content" dangerouslySetInnerHTML={{ __html: html }} />
       )}
