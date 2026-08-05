@@ -74,6 +74,26 @@ describe('Home', () => {
     expect(after).toBeLessThan(before);
   });
 
+  it('keeps at least one visible card keyboard-tabbable after a filter drops the originally-focused topic', () => {
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>,
+    );
+
+    // Filter to the *last* topic's module — this excludes topicsData[0], the
+    // topic useGridKeyboardNav focused by default on mount, reproducing the
+    // stale-focusedId regression (see useGridKeyboardNav.ts).
+    act(() => {
+      useUiStore.getState().toggleModule(topicsData[topicsData.length - 1].module);
+    });
+
+    const links = screen.getAllByRole('link');
+    expect(links.length).toBeGreaterThan(0);
+    const tabbable = links.filter((link) => link.getAttribute('tabindex') === '0');
+    expect(tabbable).toHaveLength(1);
+  });
+
   it('opens the shortcuts help modal on "?"', async () => {
     const user = userEvent.setup();
     render(
