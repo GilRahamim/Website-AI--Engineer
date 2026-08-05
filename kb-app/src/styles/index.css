@@ -59,11 +59,14 @@ a, button, [role="button"], input, select, textarea, [tabindex] {
   color: inherit;
 }
 .kb-topic-card:hover,
-.kb-topic-card:focus-visible,
-.kb-topic-list-row:hover,
-.kb-topic-list-row:focus-visible {
+.kb-topic-list-row:hover {
   transform: translateY(-2px);
   box-shadow: var(--kb-shadow-md);
+}
+.kb-topic-card:focus-visible,
+.kb-topic-list-row:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: var(--kb-focus-ring), var(--kb-shadow-md);
 }
 
 .kb-topic-grid {

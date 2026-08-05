@@ -19,7 +19,7 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={theme === 'dark' ? 'עבור לערכת נושא בהירה' : 'עבור לערכת נושא כהה'}
-      className="grid size-9 place-items-center rounded-full border border-[var(--kb-border)] bg-[var(--kb-surface)] text-base transition hover:bg-[var(--kb-surface2)]"
+      className="grid size-11 place-items-center rounded-full border border-[var(--kb-border)] bg-[var(--kb-surface)] text-base transition hover:bg-[var(--kb-surface2)]"
     >
       <span aria-hidden="true">{theme === 'dark' ? '☀️' : '🌙'}</span>
     </button>
