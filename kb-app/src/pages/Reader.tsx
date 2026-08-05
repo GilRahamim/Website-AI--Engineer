@@ -9,7 +9,7 @@ const topicsById = new Map(topics.map((topic) => [topic.id, topic]));
 
 export default function Reader() {
   const { id } = useParams<{ id: string }>();
-  const topic = id ? topicsById.get(decodeURIComponent(id)) : undefined;
+  const topic = id ? topicsById.get(id) : undefined;
 
   return (
     <>
