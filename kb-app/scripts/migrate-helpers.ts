@@ -32,6 +32,27 @@ export function extractBase64Images(html: string): ExtractResult {
   return { html: outHtml, images };
 }
 
+const HTML_TAG_RE = /<\/?[a-zA-Z][^>]*>/g;
+
+/**
+ * Strips HTML tags that leaked into an otherwise-plain-text field (e.g. an
+ * <img> inline-formula tag, or <em>/<strong> from the source docx's
+ * formatting) — the definition field is rendered as plain text everywhere
+ * in the frontend, never as HTML, so any tag left in it displays as broken
+ * literal text (and, for <img> with an embedded base64 data URI, a huge
+ * unreadable blob). Removing the tag markers while preserving any text
+ * between them (e.g. <em>f</em> -> f) restores the field to plain text
+ * without altering the words the author wrote — this is a structural
+ * migration fix, not a content edit.
+ */
+export function stripEmbeddedMarkup(text: string): string {
+  return text
+    .replace(HTML_TAG_RE, '')
+    .replace(/\(\s*\)/g, '') // empty parens left behind when a tag was the entire parenthetical
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim();
+}
+
 export interface RawTopic {
   id: string;
   module: string;
@@ -76,7 +97,7 @@ export function buildCleanTopicMeta(raw: RawTopic, contentPath: string): CleanTo
     num: raw.num,
     slug_name: raw.slug_name,
     title: raw.title,
-    definition: raw.definition,
+    definition: stripEmbeddedMarkup(raw.definition),
     related_raw: raw.related_raw,
     related_match: raw.related_match,
     contentPath,
