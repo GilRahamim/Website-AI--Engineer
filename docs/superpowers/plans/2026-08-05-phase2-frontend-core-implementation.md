@@ -2566,6 +2566,7 @@ git commit -m "feat: SortMenu + ViewToggle browse controls"
 **Files:**
 - Create: `kb-app/src/components/layout/ShortcutsHelp.tsx`
 - Create: `kb-app/src/components/layout/ShortcutsHelp.test.tsx`
+- Modify: `kb-app/src/styles/tokens.css` (backdrop-overlay token — golden rule 7 forbids the raw `bg-black/40` this component needs otherwise)
 
 **Interfaces:**
 - Consumes: nothing beyond React.
@@ -2617,7 +2618,15 @@ describe('ShortcutsHelp', () => {
 Run: `npm run test -- ShortcutsHelp`
 Expected: FAIL — module not found.
 
-- [ ] **Step 3: Implement `ShortcutsHelp.tsx`**
+- [ ] **Step 3: Add the backdrop-overlay token**
+
+Append to the `:root` block in `src/styles/tokens.css`:
+
+```css
+  --kb-overlay: oklch(0% 0 0 / 0.4);
+```
+
+- [ ] **Step 4: Implement `ShortcutsHelp.tsx`**
 
 ```tsx
 interface ShortcutsHelpProps {
@@ -2640,7 +2649,7 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-20 grid place-items-center bg-black/40 p-4"
+      className="fixed inset-0 z-20 grid place-items-center bg-[var(--kb-overlay)] p-4"
     >
       <div
         role="dialog"
@@ -2678,15 +2687,15 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
 }
 ```
 
-- [ ] **Step 4: Run to verify it passes**
+- [ ] **Step 5: Run to verify it passes**
 
 Run: `npm run test -- ShortcutsHelp`
 Expected: PASS (4 tests).
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
-git add src/components/layout/ShortcutsHelp.tsx src/components/layout/ShortcutsHelp.test.tsx
+git add src/components/layout/ShortcutsHelp.tsx src/components/layout/ShortcutsHelp.test.tsx src/styles/tokens.css
 git commit -m "feat: ShortcutsHelp modal (? key shortcut reference)"
 ```
 
