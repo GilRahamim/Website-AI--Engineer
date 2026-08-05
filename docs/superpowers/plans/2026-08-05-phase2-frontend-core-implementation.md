@@ -2149,7 +2149,10 @@ function reset() {
 describe('SearchBar', () => {
   beforeEach(() => {
     reset();
-    vi.useFakeTimers();
+    // shouldAdvanceTime is required: Testing Library's asyncWrapper (used internally
+    // by user.type/user.keyboard) detects Vitest's faked timers and otherwise never
+    // advances them itself, deadlocking every `await user.type(...)` call.
+    vi.useFakeTimers({ shouldAdvanceTime: true });
   });
 
   it('renders an accessible search input', () => {
