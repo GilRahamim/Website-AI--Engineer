@@ -1028,6 +1028,7 @@ git commit -m "feat: pure filterTopics + groupTopicsByModule data transforms"
 Create `src/hooks/useGridKeyboardNav.test.tsx`:
 
 ```tsx
+import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -1105,6 +1106,39 @@ describe('useGridKeyboardNav', () => {
     expect(onActivate).toHaveBeenCalledWith('b');
   });
 });
+
+function DynamicHarness({ onActivate }: { onActivate: (id: string) => void }) {
+  const [itemIds, setItemIds] = useState(['a', 'b', 'c']);
+  const { getItemProps } = useGridKeyboardNav(itemIds, onActivate);
+  return (
+    <div>
+      <button type="button" data-testid="narrow" onClick={() => setItemIds(['b', 'c'])}>
+        narrow
+      </button>
+      {itemIds.map((id) => {
+        const props = getItemProps(id);
+        return (
+          <button key={id} data-testid={id} ref={props.ref} tabIndex={props.tabIndex} onFocus={props.onFocus} onKeyDown={props.onKeyDown}>
+            {id}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+describe('useGridKeyboardNav — itemIds changes post-mount', () => {
+  it('falls back to the new first item when the focused item is filtered out', async () => {
+    const user = userEvent.setup();
+    render(<DynamicHarness onActivate={() => {}} />);
+    expect(screen.getByTestId('a')).toHaveAttribute('tabindex', '0');
+
+    await user.click(screen.getByTestId('narrow')); // itemIds becomes ['b', 'c']; 'a' is gone
+
+    expect(screen.getByTestId('b')).toHaveAttribute('tabindex', '0');
+    expect(screen.getByTestId('c')).toHaveAttribute('tabindex', '-1');
+  });
+});
 ```
 
 - [ ] **Step 2: Run to verify it fails**
@@ -1115,7 +1149,7 @@ Expected: FAIL — module not found.
 - [ ] **Step 3: Implement `src/hooks/useGridKeyboardNav.ts`**
 
 ```ts
-import { useCallback, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { useCallback, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 
 export interface GridItemProps {
   tabIndex: number;
@@ -1127,6 +1161,15 @@ export interface GridItemProps {
 export function useGridKeyboardNav(itemIds: string[], onActivate: (id: string) => void) {
   const [focusedId, setFocusedId] = useState<string | null>(itemIds[0] ?? null);
   const elementsRef = useRef(new Map<string, HTMLElement>());
+
+  // Falls back to the first item whenever the tracked focusedId is no longer
+  // present in itemIds (e.g. a filter/search change dropped it) — otherwise
+  // every item's tabIndex would resolve to -1 and the grid becomes
+  // keyboard-untabbable until a fresh onFocus fires.
+  const effectiveFocusedId = useMemo(
+    () => (focusedId !== null && itemIds.includes(focusedId) ? focusedId : (itemIds[0] ?? null)),
+    [focusedId, itemIds],
+  );
 
   const focusIndex = useCallback(
     (index: number) => {
@@ -1141,7 +1184,7 @@ export function useGridKeyboardNav(itemIds: string[], onActivate: (id: string) =
 
   const getItemProps = useCallback(
     (id: string): GridItemProps => ({
-      tabIndex: id === (focusedId ?? itemIds[0]) ? 0 : -1,
+      tabIndex: id === effectiveFocusedId ? 0 : -1,
       ref: (element) => {
         if (element) {
           elementsRef.current.set(id, element);
@@ -1186,17 +1229,17 @@ export function useGridKeyboardNav(itemIds: string[], onActivate: (id: string) =
         }
       },
     }),
-    [focusedId, itemIds, focusIndex, onActivate],
+    [effectiveFocusedId, itemIds, focusIndex, onActivate],
   );
 
-  return { focusedId, getItemProps };
+  return { focusedId: effectiveFocusedId, getItemProps };
 }
 ```
 
 - [ ] **Step 4: Run to verify it passes**
 
 Run: `npm run test -- useGridKeyboardNav`
-Expected: PASS (6 tests).
+Expected: PASS (7 tests).
 
 - [ ] **Step 5: Commit**
 
@@ -2716,8 +2759,8 @@ git commit -m "feat: ShortcutsHelp modal (? key shortcut reference)"
 Create `src/pages/Home.test.tsx`:
 
 ```tsx
-import { act, beforeEach, describe, expect, it } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import Home from './Home';
