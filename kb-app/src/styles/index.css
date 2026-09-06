@@ -55,18 +55,27 @@ a, button, [role="button"], input, select, textarea, [tabindex] {
   border: 1px solid var(--kb-border);
   background: var(--kb-surface);
   box-shadow: var(--kb-shadow-sm);
-  text-decoration: none;
-  color: inherit;
 }
 .kb-topic-card:hover,
 .kb-topic-list-row:hover {
   transform: translateY(-2px);
   box-shadow: var(--kb-shadow-md);
 }
-.kb-topic-card:focus-visible,
-.kb-topic-list-row:focus-visible {
+/* Focus now lands on the inner .kb-stretched-link <a>, not this outer div. */
+.kb-topic-card:has(a:focus-visible),
+.kb-topic-list-row:has(a:focus-visible) {
   transform: translateY(-2px);
   box-shadow: var(--kb-focus-ring), var(--kb-shadow-md);
+}
+
+.kb-stretched-link {
+  text-decoration: none;
+  color: inherit;
+}
+.kb-stretched-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
 }
 
 .kb-topic-grid {

@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import type { Topic } from '../../types';
 import type { GridItemProps } from '../../hooks/useGridKeyboardNav';
 import { highlightMatch } from '../../lib/highlightMatch';
+import TopicStatusButton from '../topic/TopicStatusButton';
+import TopicFavoriteButton from '../topic/TopicFavoriteButton';
 
 interface TopicCardProps {
   topic: Topic;
@@ -17,30 +19,38 @@ export default function TopicCard({ topic, highlightTerm, itemProps }: TopicCard
      name-based heuristic misidentifies the whole itemProps object because it has a property
      literally named "ref". */
   return (
-    <Link
-      to={`/topic/${encodeURIComponent(topic.id)}`}
-      ref={itemProps.ref}
-      tabIndex={itemProps.tabIndex}
-      onFocus={itemProps.onFocus}
-      onKeyDown={itemProps.onKeyDown}
-      className="kb-topic-card flex flex-col gap-2 p-4 transition-[transform,box-shadow] duration-150 ease-[var(--kb-ease)]"
-    >
-      <span className="kb-category-chip w-fit" data-category={topic.category}>
-        {topic.category_label}
-      </span>
-      <h3 className="text-base font-bold text-[var(--kb-text)]">
-        {titleSegments.map((segment, i) =>
-          segment.match ? (
-            <mark key={i} className="bg-[var(--kb-accent-soft)] text-[var(--kb-text)]">
-              {segment.text}
-            </mark>
-          ) : (
-            <span key={i}>{segment.text}</span>
-          ),
-        )}
-      </h3>
-      <p className="text-sm text-[var(--kb-muted)] line-clamp-3">{topic.definition}</p>
-    </Link>
+    <div className="kb-topic-card relative flex flex-col gap-2 p-4 transition-[transform,box-shadow] duration-150 ease-[var(--kb-ease)]">
+      <div className="flex items-center justify-between gap-2">
+        <span className="kb-category-chip" data-category={topic.category}>
+          {topic.category_label}
+        </span>
+        <div className="flex items-center gap-1">
+          <TopicStatusButton topicId={topic.id} />
+          <TopicFavoriteButton topicId={topic.id} />
+        </div>
+      </div>
+      <Link
+        to={`/topic/${encodeURIComponent(topic.id)}`}
+        ref={itemProps.ref}
+        tabIndex={itemProps.tabIndex}
+        onFocus={itemProps.onFocus}
+        onKeyDown={itemProps.onKeyDown}
+        className="kb-stretched-link flex flex-col gap-2"
+      >
+        <h3 className="text-base font-bold text-[var(--kb-text)]">
+          {titleSegments.map((segment, i) =>
+            segment.match ? (
+              <mark key={i} className="bg-[var(--kb-accent-soft)] text-[var(--kb-text)]">
+                {segment.text}
+              </mark>
+            ) : (
+              <span key={i}>{segment.text}</span>
+            ),
+          )}
+        </h3>
+        <p className="text-sm text-[var(--kb-muted)] line-clamp-3">{topic.definition}</p>
+      </Link>
+    </div>
   );
   /* eslint-enable react-hooks/refs */
 }

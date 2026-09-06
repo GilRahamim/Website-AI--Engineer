@@ -1,8 +1,10 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import TopicCard from './TopicCard';
 import TopicListRow from './TopicListRow';
+import { useUserDataStore } from '../../store/userDataStore';
 import type { GridItemProps } from '../../hooks/useGridKeyboardNav';
 import type { Topic } from '../../types';
 
@@ -28,11 +30,17 @@ const itemProps: GridItemProps = {
   onKeyDown: () => {},
 };
 
+function reset() {
+  useUserDataStore.setState({ progress: new Map(), favorites: new Set(), recents: [], isLoaded: true });
+}
+
 function renderWithRouter(ui: React.ReactElement) {
   return render(<MemoryRouter>{ui}</MemoryRouter>);
 }
 
 describe('TopicCard', () => {
+  beforeEach(reset);
+
   it('links to the topic reader route with an encoded id', () => {
     renderWithRouter(<TopicCard topic={topic} highlightTerm="" itemProps={itemProps} />);
     const link = screen.getByRole('link');
@@ -50,20 +58,52 @@ describe('TopicCard', () => {
     expect(screen.getByText('Linear')).toBeInTheDocument();
   });
 
-  it('applies keyboard-nav props from the item', () => {
+  it('applies keyboard-nav props from the item to the link', () => {
     const onKeyDown = vi.fn();
     renderWithRouter(
       <TopicCard topic={topic} highlightTerm="" itemProps={{ ...itemProps, tabIndex: -1, onKeyDown }} />,
     );
     expect(screen.getByRole('link')).toHaveAttribute('tabindex', '-1');
   });
+
+  it('renders the status and favorite buttons as siblings of the link, not nested inside it', () => {
+    renderWithRouter(<TopicCard topic={topic} highlightTerm="" itemProps={itemProps} />);
+    const link = screen.getByRole('link');
+    const statusButton = screen.getByRole('button', { name: /מצב למידה/ });
+    const favoriteButton = screen.getByRole('button', { name: /מועדפים/ });
+    expect(link.contains(statusButton)).toBe(false);
+    expect(link.contains(favoriteButton)).toBe(false);
+  });
+
+  it('clicking the status or favorite button does not navigate to the topic route', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<TopicCard topic={topic} highlightTerm="" itemProps={itemProps} />} />
+          <Route path="/topic/:id" element={<p>Reader page</p>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    await user.click(screen.getByRole('button', { name: /מצב למידה/ }));
+    expect(screen.queryByText('Reader page')).not.toBeInTheDocument();
+  });
 });
 
 describe('TopicListRow', () => {
+  beforeEach(reset);
+
   it('links to the topic reader route and shows the title', () => {
     renderWithRouter(<TopicListRow topic={topic} highlightTerm="" itemProps={itemProps} />);
     const link = screen.getByRole('link');
     expect(link).toHaveAttribute('href', `/topic/${encodeURIComponent(topic.id)}`);
     expect(link).toHaveTextContent('Linear Regression');
+  });
+
+  it('renders the status and favorite buttons as siblings of the link, not nested inside it', () => {
+    renderWithRouter(<TopicListRow topic={topic} highlightTerm="" itemProps={itemProps} />);
+    const link = screen.getByRole('link');
+    const statusButton = screen.getByRole('button', { name: /מצב למידה/ });
+    expect(link.contains(statusButton)).toBe(false);
   });
 });
