@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import TopicReader from './TopicReader';
+import { useUserDataStore } from '../../store/userDataStore';
 import type { Topic } from '../../types';
 
 const topic: Topic = {
@@ -27,6 +28,7 @@ beforeEach(() => {
     ok: true,
     text: () => Promise.resolve('<p>תוכן הנושא המלא</p>'),
   }) as unknown as typeof fetch;
+  useUserDataStore.setState({ progress: new Map(), favorites: new Set(), recents: [], isLoaded: true });
 });
 
 afterEach(() => {
@@ -76,5 +78,11 @@ describe('TopicReader', () => {
     global.fetch = vi.fn().mockRejectedValue(new Error('network error')) as unknown as typeof fetch;
     renderWithRouter();
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('שגיאה בטעינת התוכן'));
+  });
+
+  it('renders status and favorite controls for the topic', () => {
+    renderWithRouter();
+    expect(screen.getByRole('button', { name: /מצב למידה/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /מועדפים/ })).toBeInTheDocument();
   });
 });

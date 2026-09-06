@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Topic } from '../../types';
 import RelatedTopics from './RelatedTopics';
+import TopicStatusButton from '../topic/TopicStatusButton';
+import TopicFavoriteButton from '../topic/TopicFavoriteButton';
 
 interface TopicReaderProps {
   topic: Topic;
@@ -46,9 +48,15 @@ export default function TopicReader({ topic, topicsById }: TopicReaderProps) {
         <span aria-hidden="true">›</span>
         <span>{topic.module_label}</span>
       </nav>
-      <span className="kb-category-chip mb-2 w-fit" data-category={topic.category}>
-        {topic.category_label}
-      </span>
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <span className="kb-category-chip w-fit" data-category={topic.category}>
+          {topic.category_label}
+        </span>
+        <div className="flex items-center gap-2">
+          <TopicStatusButton topicId={topic.id} size="lg" />
+          <TopicFavoriteButton topicId={topic.id} size="lg" />
+        </div>
+      </div>
       <h1 className="mb-2 text-2xl font-extrabold text-[var(--kb-text)]">{topic.title}</h1>
       <p className="mb-6 text-[var(--kb-text2)]">{topic.definition}</p>
       {html === null ? (
