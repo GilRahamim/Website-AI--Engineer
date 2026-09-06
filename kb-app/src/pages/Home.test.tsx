@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import Home from './Home';
 import { useUiStore } from '../store/uiStore';
+import { useUserDataStore } from '../store/userDataStore';
 import topicsData from '../data/topics.clean.json';
 
 function reset() {
@@ -17,6 +18,7 @@ function reset() {
     sidebarCollapsed: false,
     expandedGroups: new Set(allModuleKeys),
   });
+  useUserDataStore.setState({ progress: new Map(), favorites: new Set(), recents: [], isLoaded: true });
 }
 
 describe('Home', () => {

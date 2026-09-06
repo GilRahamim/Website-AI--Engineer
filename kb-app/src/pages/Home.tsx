@@ -8,6 +8,7 @@ import { filterTopics } from '../lib/filterTopics';
 import { groupTopicsByModule } from '../lib/groupTopics';
 import { useGridKeyboardNav } from '../hooks/useGridKeyboardNav';
 import { useUiStore } from '../store/uiStore';
+import { useUserDataStore } from '../store/userDataStore';
 import Header from '../components/layout/Header';
 import Hero from '../components/layout/Hero';
 import Sidebar from '../components/layout/Sidebar';
@@ -21,6 +22,7 @@ import AccordionGroup from '../components/browse/AccordionGroup';
 const topics = topicsRaw as Topic[];
 const modules = modulesRaw as ModulesMap;
 const searchIndex = searchIndexRaw as SearchEntry[];
+const topicsById = new Map(topics.map((topic) => [topic.id, topic]));
 
 const categoryLabels: Record<string, string> = Object.fromEntries(
   topics.map((topic) => [topic.category, topic.category_label]),
@@ -43,7 +45,16 @@ export default function Home() {
   const toggleGroup = useUiStore((s) => s.toggleGroup);
   const expandAllGroups = useUiStore((s) => s.expandAllGroups);
   const collapseAllGroups = useUiStore((s) => s.collapseAllGroups);
+  const progress = useUserDataStore((s) => s.progress);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+
+  const moduleMasteredCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const key of Object.keys(modules)) {
+      counts[key] = topics.filter((t) => t.module === key && progress.get(t.id) === 'mastered').length;
+    }
+    return counts;
+  }, [progress]);
 
   const filtered = useMemo(
     () => filterTopics(topics, searchIndex, { searchQuery, selectedModules, selectedCategories, sortOrder }),
@@ -78,7 +89,14 @@ export default function Home() {
       <Header />
       <Hero topicCount={topics.length} moduleCount={Object.keys(modules).length} />
       <div className="flex flex-col md:flex-row">
-        <Sidebar modules={modules} moduleCounts={moduleCounts} categoryLabels={categoryLabels} categoryCounts={categoryCounts} />
+        <Sidebar
+          modules={modules}
+          moduleCounts={moduleCounts}
+          moduleMasteredCounts={moduleMasteredCounts}
+          categoryLabels={categoryLabels}
+          categoryCounts={categoryCounts}
+          topicsById={topicsById}
+        />
         <main className="flex-1 p-4">
           <div className="flex flex-wrap items-center gap-3">
             <SearchBar />
