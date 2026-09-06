@@ -56,6 +56,11 @@ export default function Home() {
     return counts;
   }, [progress]);
 
+  const masteredCount = useMemo(
+    () => topics.filter((t) => progress.get(t.id) === 'mastered').length,
+    [progress],
+  );
+
   const filtered = useMemo(
     () => filterTopics(topics, searchIndex, { searchQuery, selectedModules, selectedCategories, sortOrder }),
     [searchQuery, selectedModules, selectedCategories, sortOrder],
@@ -87,7 +92,7 @@ export default function Home() {
   return (
     <>
       <Header />
-      <Hero topicCount={topics.length} moduleCount={Object.keys(modules).length} />
+      <Hero topicCount={topics.length} moduleCount={Object.keys(modules).length} masteredCount={masteredCount} />
       <div className="flex flex-col md:flex-row">
         <Sidebar
           modules={modules}
