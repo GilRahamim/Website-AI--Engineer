@@ -6,8 +6,8 @@ import {
   getAllProgress,
   getAllRecents,
   recordView,
+  setFavorite,
   setProgress,
-  toggleFavorite,
 } from './db';
 
 beforeEach(() => {
@@ -45,10 +45,19 @@ describe('db — favorites', () => {
     expect(await getAllFavorites()).toEqual([]);
   });
 
-  it('toggleFavorite adds a favorite, then removes it on a second call', async () => {
-    await toggleFavorite('topic-a');
+  it('setFavorite(true) adds a favorite, then setFavorite(false) removes it', async () => {
+    await setFavorite('topic-a', true);
     expect(await getAllFavorites()).toHaveLength(1);
-    await toggleFavorite('topic-a');
+    await setFavorite('topic-a', false);
+    expect(await getAllFavorites()).toEqual([]);
+  });
+
+  it('setFavorite is idempotent — repeat calls with the same value do not toggle', async () => {
+    await setFavorite('topic-a', true);
+    await setFavorite('topic-a', true);
+    expect(await getAllFavorites()).toHaveLength(1);
+    await setFavorite('topic-a', false);
+    await setFavorite('topic-a', false);
     expect(await getAllFavorites()).toEqual([]);
   });
 });
@@ -96,7 +105,7 @@ describe('db — failure handling', () => {
     expect(await getAllProgress()).toEqual([]);
     await expect(setProgress('topic-a', 'learning')).resolves.toBeUndefined();
     expect(await getAllFavorites()).toEqual([]);
-    await expect(toggleFavorite('topic-a')).resolves.toBeUndefined();
+    await expect(setFavorite('topic-a', true)).resolves.toBeUndefined();
     expect(await getAllRecents()).toEqual([]);
     await expect(recordView('topic-a')).resolves.toBeUndefined();
 

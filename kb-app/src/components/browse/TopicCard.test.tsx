@@ -75,7 +75,7 @@ describe('TopicCard', () => {
     expect(link.contains(favoriteButton)).toBe(false);
   });
 
-  it('clicking the status or favorite button does not navigate to the topic route', async () => {
+  it('clicking the status button does not navigate to the topic route', async () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter initialEntries={['/']}>
@@ -87,6 +87,34 @@ describe('TopicCard', () => {
     );
     await user.click(screen.getByRole('button', { name: /מצב למידה/ }));
     expect(screen.queryByText('Reader page')).not.toBeInTheDocument();
+  });
+
+  it('clicking the favorite button does not navigate to the topic route', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<TopicCard topic={topic} highlightTerm="" itemProps={itemProps} />} />
+          <Route path="/topic/:id" element={<p>Reader page</p>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    await user.click(screen.getByRole('button', { name: /מועדפים/ }));
+    expect(screen.queryByText('Reader page')).not.toBeInTheDocument();
+  });
+
+  it('renders the status and favorite buttons with the same tabindex as the card link', () => {
+    renderWithRouter(
+      <TopicCard topic={topic} highlightTerm="" itemProps={{ ...itemProps, tabIndex: -1 }} />,
+    );
+    expect(screen.getByRole('button', { name: /מצב למידה/ })).toHaveAttribute('tabindex', '-1');
+    expect(screen.getByRole('button', { name: /מועדפים/ })).toHaveAttribute('tabindex', '-1');
+  });
+
+  it('renders the status and favorite buttons as tabbable when the card link is', () => {
+    renderWithRouter(<TopicCard topic={topic} highlightTerm="" itemProps={{ ...itemProps, tabIndex: 0 }} />);
+    expect(screen.getByRole('button', { name: /מצב למידה/ })).toHaveAttribute('tabindex', '0');
+    expect(screen.getByRole('button', { name: /מועדפים/ })).toHaveAttribute('tabindex', '0');
   });
 });
 
@@ -105,5 +133,19 @@ describe('TopicListRow', () => {
     const link = screen.getByRole('link');
     const statusButton = screen.getByRole('button', { name: /מצב למידה/ });
     expect(link.contains(statusButton)).toBe(false);
+  });
+
+  it('clicking the status button does not navigate to the topic route', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<TopicListRow topic={topic} highlightTerm="" itemProps={itemProps} />} />
+          <Route path="/topic/:id" element={<p>Reader page</p>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    await user.click(screen.getByRole('button', { name: /מצב למידה/ }));
+    expect(screen.queryByText('Reader page')).not.toBeInTheDocument();
   });
 });

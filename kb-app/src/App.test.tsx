@@ -3,9 +3,11 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from './App';
 import topicsData from './data/topics.clean.json';
+import { useUserDataStore } from './store/userDataStore';
 
 beforeEach(() => {
   global.fetch = vi.fn().mockResolvedValue({ ok: true, text: () => Promise.resolve('<p>content</p>') }) as unknown as typeof fetch;
+  useUserDataStore.setState({ progress: new Map(), favorites: new Set(), recents: [], isLoaded: true });
 });
 
 describe('App', () => {

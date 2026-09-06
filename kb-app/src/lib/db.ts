@@ -9,7 +9,7 @@ interface KbUserDataSchema extends DBSchema {
 
 const DB_NAME = 'kb-user-data';
 const DB_VERSION = 1;
-const RECENTS_LIMIT = 12;
+export const RECENTS_LIMIT = 12;
 
 let warned = false;
 function warnOnce(context: string, error: unknown): void {
@@ -71,17 +71,20 @@ export async function getAllFavorites(): Promise<Favorite[]> {
   }
 }
 
-export async function toggleFavorite(topicId: string): Promise<void> {
+/** Idempotent — the caller (the Zustand store) already knows the desired end
+ *  state from its own optimistic update, so this needs no read-then-write:
+ *  a single `put`/`delete` can't interleave with itself the way a prior
+ *  get-then-put/delete pair could across two rapid, un-awaited calls. */
+export async function setFavorite(topicId: string, isFavorite: boolean): Promise<void> {
   try {
     const db = await getDb();
-    const existing = await db.get('favorites', topicId);
-    if (existing) {
-      await db.delete('favorites', topicId);
-    } else {
+    if (isFavorite) {
       await db.put('favorites', { topicId, createdAt: Date.now() });
+    } else {
+      await db.delete('favorites', topicId);
     }
   } catch (error) {
-    warnOnce('toggleFavorite', error);
+    warnOnce('setFavorite', error);
   }
 }
 

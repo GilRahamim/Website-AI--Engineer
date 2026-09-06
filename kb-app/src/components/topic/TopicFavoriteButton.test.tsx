@@ -16,6 +16,16 @@ describe('TopicFavoriteButton', () => {
     expect(screen.getByRole('button')).toHaveAttribute('aria-pressed', 'false');
   });
 
+  it('defaults to tabindex 0 when no tabIndex prop is given', () => {
+    render(<TopicFavoriteButton topicId="topic-a" />);
+    expect(screen.getByRole('button')).toHaveAttribute('tabindex', '0');
+  });
+
+  it('applies a given tabIndex prop to the button', () => {
+    render(<TopicFavoriteButton topicId="topic-a" tabIndex={-1} />);
+    expect(screen.getByRole('button')).toHaveAttribute('tabindex', '-1');
+  });
+
   it('toggles favorite state in the store on click, reflected via aria-pressed', async () => {
     const user = userEvent.setup();
     render(<TopicFavoriteButton topicId="topic-a" />);

@@ -16,6 +16,16 @@ describe('TopicStatusButton', () => {
     expect(screen.getByRole('button')).toHaveAccessibleName(/חדש/);
   });
 
+  it('defaults to tabindex 0 when no tabIndex prop is given', () => {
+    render(<TopicStatusButton topicId="topic-a" />);
+    expect(screen.getByRole('button')).toHaveAttribute('tabindex', '0');
+  });
+
+  it('applies a given tabIndex prop to the button', () => {
+    render(<TopicStatusButton topicId="topic-a" tabIndex={-1} />);
+    expect(screen.getByRole('button')).toHaveAttribute('tabindex', '-1');
+  });
+
   it('cycles the status in the store on each click', async () => {
     const user = userEvent.setup();
     render(<TopicStatusButton topicId="topic-a" />);

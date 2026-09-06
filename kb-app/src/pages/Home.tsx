@@ -51,18 +51,16 @@ export default function Home() {
   const progress = useUserDataStore((s) => s.progress);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
 
-  const moduleMasteredCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    for (const key of Object.keys(modules)) {
-      counts[key] = topics.filter((t) => t.module === key && progress.get(t.id) === 'mastered').length;
+  const { moduleMasteredCounts, masteredCount } = useMemo(() => {
+    const counts: Record<string, number> = Object.fromEntries(Object.keys(modules).map((key) => [key, 0]));
+    let total = 0;
+    for (const t of topics) {
+      if (progress.get(t.id) !== 'mastered') continue;
+      counts[t.module] = (counts[t.module] ?? 0) + 1;
+      total += 1;
     }
-    return counts;
+    return { moduleMasteredCounts: counts, masteredCount: total };
   }, [progress]);
-
-  const masteredCount = useMemo(
-    () => topics.filter((t) => progress.get(t.id) === 'mastered').length,
-    [progress],
-  );
 
   const filtered = useMemo(
     () =>

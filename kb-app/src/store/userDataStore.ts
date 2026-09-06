@@ -5,9 +5,10 @@ import {
   getAllFavorites,
   getAllProgress,
   getAllRecents,
+  RECENTS_LIMIT,
   recordView as persistRecordView,
+  setFavorite as persistSetFavorite,
   setProgress as persistSetProgress,
-  toggleFavorite as persistToggleFavorite,
 } from '../lib/db';
 
 interface RecentEntry {
@@ -27,8 +28,6 @@ interface UserDataState {
   toggleFavorite: (topicId: string) => void;
   recordView: (topicId: string) => void;
 }
-
-const RECENTS_LIMIT = 12;
 
 export const useUserDataStore = create<UserDataState>()((set, get) => ({
   progress: new Map(),
@@ -73,6 +72,7 @@ export const useUserDataStore = create<UserDataState>()((set, get) => ({
   },
 
   toggleFavorite: (topicId) => {
+    const willBeFavorite = !get().favorites.has(topicId);
     set((state) => {
       if (state.favorites.has(topicId)) {
         const next = new Set(state.favorites);
@@ -83,7 +83,9 @@ export const useUserDataStore = create<UserDataState>()((set, get) => ({
       // want the newest favorite first, matching loadUserData's ordering.
       return { favorites: new Set([topicId, ...state.favorites]) };
     });
-    void persistToggleFavorite(topicId);
+    // Store already knows the desired end state — pass it through so the
+    // persistence call is idempotent and never needs its own read.
+    void persistSetFavorite(topicId, willBeFavorite);
   },
 
   recordView: (topicId) => {

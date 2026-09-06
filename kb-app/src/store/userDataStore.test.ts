@@ -52,10 +52,13 @@ describe('userDataStore', () => {
       expect([...useUserDataStore.getState().favorites]).toEqual(['topic-b', 'topic-a']);
     });
 
-    it('persists via db.toggleFavorite without the caller awaiting it', () => {
-      const toggleFavoriteSpy = vi.spyOn(db, 'toggleFavorite').mockResolvedValue(undefined);
+    it('persists via db.setFavorite with the computed next state, without the caller awaiting it', () => {
+      const setFavoriteSpy = vi.spyOn(db, 'setFavorite').mockResolvedValue(undefined);
       useUserDataStore.getState().toggleFavorite('topic-a');
-      expect(toggleFavoriteSpy).toHaveBeenCalledWith('topic-a');
+      expect(setFavoriteSpy).toHaveBeenCalledWith('topic-a', true);
+
+      useUserDataStore.getState().toggleFavorite('topic-a');
+      expect(setFavoriteSpy).toHaveBeenCalledWith('topic-a', false);
     });
   });
 

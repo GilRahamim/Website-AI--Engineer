@@ -4,15 +4,17 @@ import { NEXT_STATUS, STATUS_GLYPHS, STATUS_LABELS } from '../../lib/progressSta
 interface TopicStatusButtonProps {
   topicId: string;
   size?: 'sm' | 'lg';
+  tabIndex?: number;
 }
 
-export default function TopicStatusButton({ topicId, size = 'sm' }: TopicStatusButtonProps) {
+export default function TopicStatusButton({ topicId, size = 'sm', tabIndex = 0 }: TopicStatusButtonProps) {
   const status = useUserDataStore((s) => s.progress.get(topicId) ?? 'new');
   const cycleStatus = useUserDataStore((s) => s.cycleStatus);
 
   return (
     <button
       type="button"
+      tabIndex={tabIndex}
       onClick={(event) => {
         // Defensive — TopicCard/TopicListRow (Task 4) render this as a
         // sibling of the topic link, not a descendant, so there is normally
