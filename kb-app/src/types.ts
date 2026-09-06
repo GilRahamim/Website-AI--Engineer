@@ -56,3 +56,9 @@ export interface Recent {
   topicId: string;
   viewedAt: number;
 }
+
+export interface Note {
+  topicId: string;
+  text: string;
+  updatedAt: number;
+}

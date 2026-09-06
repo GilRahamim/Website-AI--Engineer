@@ -1,14 +1,15 @@
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
-import type { Favorite, Progress, ProgressStatus, Recent } from '../types';
+import type { Favorite, Note, Progress, ProgressStatus, Recent } from '../types';
 
 interface KbUserDataSchema extends DBSchema {
   progress: { key: string; value: Progress };
   favorites: { key: string; value: Favorite };
   recents: { key: string; value: Recent };
+  notes: { key: string; value: Note };
 }
 
 const DB_NAME = 'kb-user-data';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 export const RECENTS_LIMIT = 12;
 
 let warned = false;
@@ -35,6 +36,9 @@ function getDb(): Promise<IDBPDatabase<KbUserDataSchema>> {
         }
         if (!db.objectStoreNames.contains('recents')) {
           db.createObjectStore('recents', { keyPath: 'topicId' });
+        }
+        if (!db.objectStoreNames.contains('notes')) {
+          db.createObjectStore('notes', { keyPath: 'topicId' });
         }
       },
     });
@@ -105,6 +109,33 @@ export async function recordView(topicId: string): Promise<void> {
     await db.put('recents', { topicId, viewedAt: Date.now() });
   } catch (error) {
     warnOnce('recordView', error);
+  }
+}
+
+export async function getAllNotes(): Promise<Note[]> {
+  try {
+    const db = await getDb();
+    return await db.getAll('notes');
+  } catch (error) {
+    warnOnce('getAllNotes', error);
+    return [];
+  }
+}
+
+/** Idempotent, same shape as setFavorite: the caller already knows the final
+ *  text, so a single put/delete needs no read-then-write. Empty or
+ *  whitespace-only text deletes the row — absence of a record means "no
+ *  note," matching progress/favorites' existing convention. */
+export async function setNote(topicId: string, text: string): Promise<void> {
+  try {
+    const db = await getDb();
+    if (text.trim() === '') {
+      await db.delete('notes', topicId);
+    } else {
+      await db.put('notes', { topicId, text, updatedAt: Date.now() });
+    }
+  } catch (error) {
+    warnOnce('setNote', error);
   }
 }
 

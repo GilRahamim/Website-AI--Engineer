@@ -3,10 +3,12 @@ import { IDBFactory } from 'fake-indexeddb';
 import {
   __resetDbForTests,
   getAllFavorites,
+  getAllNotes,
   getAllProgress,
   getAllRecents,
   recordView,
   setFavorite,
+  setNote,
   setProgress,
 } from './db';
 
@@ -94,6 +96,35 @@ describe('db — recents', () => {
   });
 });
 
+describe('db — notes', () => {
+  it('returns an empty array when no notes exist', async () => {
+    expect(await getAllNotes()).toEqual([]);
+  });
+
+  it('setNote writes a record retrievable via getAllNotes', async () => {
+    await setNote('topic-a', 'my note text');
+    const all = await getAllNotes();
+    expect(all).toHaveLength(1);
+    expect(all[0]).toMatchObject({ topicId: 'topic-a', text: 'my note text' });
+    expect(all[0].updatedAt).toEqual(expect.any(Number));
+  });
+
+  it('setNote overwrites the existing record for the same topic', async () => {
+    await setNote('topic-a', 'first');
+    await setNote('topic-a', 'second');
+    const all = await getAllNotes();
+    expect(all).toHaveLength(1);
+    expect(all[0].text).toBe('second');
+  });
+
+  it('setNote deletes the record when text is empty or whitespace-only', async () => {
+    await setNote('topic-a', 'something');
+    expect(await getAllNotes()).toHaveLength(1);
+    await setNote('topic-a', '   ');
+    expect(await getAllNotes()).toEqual([]);
+  });
+});
+
 describe('db — failure handling', () => {
   it('resolves with safe defaults and warns exactly once when IndexedDB is unavailable', async () => {
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -108,6 +139,8 @@ describe('db — failure handling', () => {
     await expect(setFavorite('topic-a', true)).resolves.toBeUndefined();
     expect(await getAllRecents()).toEqual([]);
     await expect(recordView('topic-a')).resolves.toBeUndefined();
+    expect(await getAllNotes()).toEqual([]);
+    await expect(setNote('topic-a', 'text')).resolves.toBeUndefined();
 
     expect(warnSpy).toHaveBeenCalledTimes(1);
 
