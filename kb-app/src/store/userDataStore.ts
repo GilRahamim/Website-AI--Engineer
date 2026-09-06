@@ -3,11 +3,13 @@ import type { ProgressStatus } from '../types';
 import { NEXT_STATUS } from '../lib/progressStatus';
 import {
   getAllFavorites,
+  getAllNotes,
   getAllProgress,
   getAllRecents,
   RECENTS_LIMIT,
   recordView as persistRecordView,
   setFavorite as persistSetFavorite,
+  setNote as persistSetNote,
   setProgress as persistSetProgress,
 } from '../lib/db';
 
@@ -20,6 +22,7 @@ interface UserDataState {
   progress: Map<string, ProgressStatus>;
   favorites: Set<string>;
   recents: RecentEntry[];
+  notes: Map<string, string>;
   isLoaded: boolean;
 
   loadUserData: () => Promise<void>;
@@ -27,30 +30,34 @@ interface UserDataState {
   cycleStatus: (topicId: string) => void;
   toggleFavorite: (topicId: string) => void;
   recordView: (topicId: string) => void;
+  setNote: (topicId: string, text: string) => void;
 }
 
 export const useUserDataStore = create<UserDataState>()((set, get) => ({
   progress: new Map(),
   favorites: new Set(),
   recents: [],
+  notes: new Map(),
   isLoaded: false,
 
   loadUserData: async () => {
     try {
-      const [progressRows, favoriteRows, recentRows] = await Promise.all([
+      const [progressRows, favoriteRows, recentRows, noteRows] = await Promise.all([
         getAllProgress(),
         getAllFavorites(),
         getAllRecents(),
+        getAllNotes(),
       ]);
       const favoritesNewestFirst = [...favoriteRows].sort((a, b) => b.createdAt - a.createdAt);
       set({
         progress: new Map(progressRows.map((row) => [row.topicId, row.status])),
         favorites: new Set(favoritesNewestFirst.map((row) => row.topicId)),
         recents: recentRows.map((row) => ({ topicId: row.topicId, viewedAt: row.viewedAt })),
+        notes: new Map(noteRows.map((row) => [row.topicId, row.text])),
         isLoaded: true,
       });
     } catch {
-      // getAllProgress/getAllFavorites/getAllRecents already catch their own
+      // getAllProgress/getAllFavorites/getAllRecents/getAllNotes already catch their own
       // errors and resolve with safe defaults — this only guards Promise.all's
       // own plumbing, so isLoaded still settles true either way.
       set({ isLoaded: true });
@@ -94,5 +101,18 @@ export const useUserDataStore = create<UserDataState>()((set, get) => ({
       return { recents: [{ topicId, viewedAt: Date.now() }, ...withoutTopic].slice(0, RECENTS_LIMIT) };
     });
     void persistRecordView(topicId);
+  },
+
+  setNote: (topicId, text) => {
+    set((state) => {
+      const next = new Map(state.notes);
+      if (text.trim() === '') {
+        next.delete(topicId);
+      } else {
+        next.set(topicId, text);
+      }
+      return { notes: next };
+    });
+    void persistSetNote(topicId, text);
   },
 }));

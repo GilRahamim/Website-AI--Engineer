@@ -7,6 +7,7 @@ function resetStore() {
     progress: new Map(),
     favorites: new Set(),
     recents: [],
+    notes: new Map(),
     isLoaded: false,
   });
 }
@@ -78,8 +79,27 @@ describe('userDataStore', () => {
     });
   });
 
+  describe('setNote', () => {
+    it('sets note text for a topic', () => {
+      useUserDataStore.getState().setNote('topic-a', 'hello');
+      expect(useUserDataStore.getState().notes.get('topic-a')).toBe('hello');
+    });
+
+    it('deletes the note when text is empty or whitespace-only', () => {
+      useUserDataStore.getState().setNote('topic-a', 'hello');
+      useUserDataStore.getState().setNote('topic-a', '   ');
+      expect(useUserDataStore.getState().notes.has('topic-a')).toBe(false);
+    });
+
+    it('persists via db.setNote with the exact text, without the caller awaiting it', () => {
+      const setNoteSpy = vi.spyOn(db, 'setNote').mockResolvedValue(undefined);
+      useUserDataStore.getState().setNote('topic-a', 'hello');
+      expect(setNoteSpy).toHaveBeenCalledWith('topic-a', 'hello');
+    });
+  });
+
   describe('loadUserData', () => {
-    it('populates progress, favorites (newest-createdAt-first) and recents, and sets isLoaded', async () => {
+    it('populates progress, favorites (newest-createdAt-first), recents and notes, and sets isLoaded', async () => {
       vi.spyOn(db, 'getAllProgress').mockResolvedValue([
         { topicId: 'topic-a', status: 'mastered', updatedAt: 1 },
       ]);
@@ -88,6 +108,7 @@ describe('userDataStore', () => {
         { topicId: 'topic-c', createdAt: 2 },
       ]);
       vi.spyOn(db, 'getAllRecents').mockResolvedValue([{ topicId: 'topic-a', viewedAt: 1 }]);
+      vi.spyOn(db, 'getAllNotes').mockResolvedValue([{ topicId: 'topic-a', text: 'a note', updatedAt: 1 }]);
 
       await useUserDataStore.getState().loadUserData();
 
@@ -95,6 +116,7 @@ describe('userDataStore', () => {
       expect(state.progress.get('topic-a')).toBe('mastered');
       expect([...state.favorites]).toEqual(['topic-c', 'topic-b']);
       expect(state.recents).toEqual([{ topicId: 'topic-a', viewedAt: 1 }]);
+      expect(state.notes.get('topic-a')).toBe('a note');
       expect(state.isLoaded).toBe(true);
     });
 
@@ -102,6 +124,7 @@ describe('userDataStore', () => {
       vi.spyOn(db, 'getAllProgress').mockResolvedValue([]);
       vi.spyOn(db, 'getAllFavorites').mockResolvedValue([]);
       vi.spyOn(db, 'getAllRecents').mockResolvedValue([]);
+      vi.spyOn(db, 'getAllNotes').mockResolvedValue([]);
 
       await useUserDataStore.getState().loadUserData();
       expect(useUserDataStore.getState().isLoaded).toBe(true);
