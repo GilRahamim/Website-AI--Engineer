@@ -42,6 +42,8 @@ export default function Home() {
   const selectedCategories = useUiStore((s) => s.selectedCategories);
   const selectedStatuses = useUiStore((s) => s.selectedStatuses);
   const toggleStatus = useUiStore((s) => s.toggleStatus);
+  const includeNotesInSearch = useUiStore((s) => s.includeNotesInSearch);
+  const toggleIncludeNotesInSearch = useUiStore((s) => s.toggleIncludeNotesInSearch);
   const sortOrder = useUiStore((s) => s.sortOrder);
   const viewMode = useUiStore((s) => s.viewMode);
   const expandedGroups = useUiStore((s) => s.expandedGroups);
@@ -49,6 +51,7 @@ export default function Home() {
   const expandAllGroups = useUiStore((s) => s.expandAllGroups);
   const collapseAllGroups = useUiStore((s) => s.collapseAllGroups);
   const progress = useUserDataStore((s) => s.progress);
+  const notes = useUserDataStore((s) => s.notes);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
 
   const { moduleMasteredCounts, masteredCount } = useMemo(() => {
@@ -69,8 +72,18 @@ export default function Home() {
         searchIndex,
         { searchQuery, selectedModules, selectedCategories, selectedStatuses, sortOrder },
         progress,
+        includeNotesInSearch ? notes : undefined,
       ),
-    [searchQuery, selectedModules, selectedCategories, selectedStatuses, sortOrder, progress],
+    [
+      searchQuery,
+      selectedModules,
+      selectedCategories,
+      selectedStatuses,
+      sortOrder,
+      progress,
+      includeNotesInSearch,
+      notes,
+    ],
   );
 
   const groups = useMemo(() => groupTopicsByModule(filtered, modules), [filtered]);
@@ -112,6 +125,10 @@ export default function Home() {
         <main className="flex-1 p-4">
           <div className="flex flex-wrap items-center gap-3">
             <SearchBar />
+            <label className="flex min-h-11 items-center gap-2 text-sm text-[var(--kb-text)]">
+              <input type="checkbox" checked={includeNotesInSearch} onChange={toggleIncludeNotesInSearch} />
+              כלול הערות בחיפוש
+            </label>
             <div className="flex gap-1" role="group" aria-label="סינון לפי מצב למידה">
               {ALL_STATUSES.map((status) => (
                 <button

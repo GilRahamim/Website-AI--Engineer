@@ -18,8 +18,9 @@ function reset() {
     viewMode: 'grid',
     sidebarCollapsed: false,
     expandedGroups: new Set(allModuleKeys),
+    includeNotesInSearch: false,
   });
-  useUserDataStore.setState({ progress: new Map(), favorites: new Set(), recents: [], isLoaded: true });
+  useUserDataStore.setState({ progress: new Map(), favorites: new Set(), recents: [], notes: new Map(), isLoaded: true });
 }
 
 describe('Home', () => {
@@ -128,6 +129,38 @@ describe('Home', () => {
     );
     act(() => {
       useUiStore.getState().toggleStatus('mastered');
+    });
+    expect(screen.getAllByRole('link')).toHaveLength(1);
+  });
+
+  it('toggles includeNotesInSearch when the "include notes" checkbox is clicked', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>,
+    );
+    const checkbox = screen.getByRole('checkbox', { name: 'כלול הערות בחיפוש' });
+    expect(checkbox).not.toBeChecked();
+    await user.click(checkbox);
+    expect(checkbox).toBeChecked();
+    expect(useUiStore.getState().includeNotesInSearch).toBe(true);
+  });
+
+  it('finds a topic by its note text only when "include notes in search" is toggled on', () => {
+    useUserDataStore.setState({ notes: new Map([[topicsData[2].id, 'zzz-unique-note-term']]) });
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>,
+    );
+    act(() => {
+      useUiStore.getState().setSearchQuery('zzz-unique-note-term');
+    });
+    expect(screen.queryAllByRole('link')).toHaveLength(0);
+
+    act(() => {
+      useUiStore.getState().toggleIncludeNotesInSearch();
     });
     expect(screen.getAllByRole('link')).toHaveLength(1);
   });

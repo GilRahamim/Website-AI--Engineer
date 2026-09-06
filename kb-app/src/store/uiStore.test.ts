@@ -14,6 +14,7 @@ function reset() {
     viewMode: 'grid',
     sidebarCollapsed: false,
     expandedGroups: new Set(allModuleKeys),
+    includeNotesInSearch: false,
   });
 }
 
@@ -58,12 +59,21 @@ describe('uiStore', () => {
     expect(useUiStore.getState().selectedStatuses.has('mastered')).toBe(false);
   });
 
-  it('clearFilters resets query, modules, categories and statuses but not sort/view', () => {
+  it('toggleIncludeNotesInSearch flips the flag', () => {
+    expect(useUiStore.getState().includeNotesInSearch).toBe(false);
+    useUiStore.getState().toggleIncludeNotesInSearch();
+    expect(useUiStore.getState().includeNotesInSearch).toBe(true);
+    useUiStore.getState().toggleIncludeNotesInSearch();
+    expect(useUiStore.getState().includeNotesInSearch).toBe(false);
+  });
+
+  it('clearFilters resets query, modules, categories, statuses and includeNotesInSearch but not sort/view', () => {
     const store = useUiStore.getState();
     store.setSearchQuery('x');
     store.toggleModule('Intro to Data Science');
     store.toggleCategory('algorithms');
     store.toggleStatus('mastered');
+    store.toggleIncludeNotesInSearch();
     store.setSortOrder('alpha');
     store.clearFilters();
 
@@ -72,6 +82,7 @@ describe('uiStore', () => {
     expect(state.selectedModules.size).toBe(0);
     expect(state.selectedCategories.size).toBe(0);
     expect(state.selectedStatuses.size).toBe(0);
+    expect(state.includeNotesInSearch).toBe(false);
     expect(state.sortOrder).toBe('alpha'); // untouched
   });
 

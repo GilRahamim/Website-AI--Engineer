@@ -23,11 +23,13 @@ interface UiState {
   viewMode: ViewMode;
   sidebarCollapsed: boolean;
   expandedGroups: Set<string>;
+  includeNotesInSearch: boolean;
 
   setSearchQuery: (query: string) => void;
   toggleModule: (moduleKey: string) => void;
   toggleCategory: (category: string) => void;
   toggleStatus: (status: ProgressStatus) => void;
+  toggleIncludeNotesInSearch: () => void;
   clearFilters: () => void;
   setSortOrder: (order: SortOrder) => void;
   setViewMode: (mode: ViewMode) => void;
@@ -46,6 +48,7 @@ export const useUiStore = create<UiState>()((set) => ({
   viewMode: 'grid',
   sidebarCollapsed: false,
   expandedGroups: new Set(allModuleKeys),
+  includeNotesInSearch: false,
 
   setSearchQuery: (query) => set({ searchQuery: query }),
   toggleModule: (moduleKey) =>
@@ -54,12 +57,15 @@ export const useUiStore = create<UiState>()((set) => ({
     set((state) => ({ selectedCategories: toggleInSet(state.selectedCategories, category) })),
   toggleStatus: (status) =>
     set((state) => ({ selectedStatuses: toggleInSet(state.selectedStatuses, status) })),
+  toggleIncludeNotesInSearch: () =>
+    set((state) => ({ includeNotesInSearch: !state.includeNotesInSearch })),
   clearFilters: () =>
     set({
       searchQuery: '',
       selectedModules: new Set(),
       selectedCategories: new Set(),
       selectedStatuses: new Set(),
+      includeNotesInSearch: false,
     }),
   setSortOrder: (order) => set({ sortOrder: order }),
   setViewMode: (mode) => set({ viewMode: mode }),

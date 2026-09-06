@@ -6,6 +6,7 @@ export function filterTopics(
   searchIndex: SearchEntry[],
   filters: FilterState,
   progress: Map<string, ProgressStatus>,
+  notes?: Map<string, string>,
 ): Topic[] {
   const normalizedQuery = normalize(filters.searchQuery);
   const matchedIds = normalizedQuery
@@ -13,6 +14,14 @@ export function filterTopics(
         searchIndex.filter((entry) => entry.search.includes(normalizedQuery)).map((entry) => entry.id),
       )
     : null;
+
+  if (matchedIds && notes) {
+    for (const [topicId, text] of notes) {
+      if (normalize(text).includes(normalizedQuery)) {
+        matchedIds.add(topicId);
+      }
+    }
+  }
 
   const result = topics.filter((topic) => {
     if (matchedIds && !matchedIds.has(topic.id)) return false;

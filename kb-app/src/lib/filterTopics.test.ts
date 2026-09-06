@@ -157,4 +157,41 @@ describe('filterTopics', () => {
     );
     expect(result.map((t) => t.id)).toEqual(['c']);
   });
+
+  describe('notes-in-search', () => {
+    it('does not consider notes when the notes param is omitted', () => {
+      const result = filterTopics(topics, searchIndex, filters({ searchQuery: 'unique-note-term' }), noProgress);
+      expect(result).toEqual([]);
+    });
+
+    it('matches a topic whose note text contains the query, even if the topic text does not', () => {
+      const notes = new Map([['c', 'this has unique-note-term inside']]);
+      const result = filterTopics(
+        topics,
+        searchIndex,
+        filters({ searchQuery: 'unique-note-term' }),
+        noProgress,
+        notes,
+      );
+      expect(result.map((t) => t.id)).toEqual(['c']);
+    });
+
+    it('does not duplicate a topic matched by both the static index and its note', () => {
+      const notes = new Map([['a', 'linear regression is great']]);
+      const result = filterTopics(
+        topics,
+        searchIndex,
+        filters({ searchQuery: 'linear' }),
+        noProgress,
+        notes,
+      );
+      expect(result.map((t) => t.id)).toEqual(['a']);
+    });
+
+    it('ignores notes entirely when there is no search query', () => {
+      const notes = new Map([['c', 'anything']]);
+      const result = filterTopics(topics, searchIndex, filters({}), noProgress, notes);
+      expect(result.map((t) => t.id)).toEqual(['a', 'b', 'c', 'd']);
+    });
+  });
 });
