@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TopicNotes from './TopicNotes';
 import { useUserDataStore } from '../../store/userDataStore';
@@ -39,13 +39,6 @@ describe('TopicNotes', () => {
     await user.type(textarea, 'hi');
     expect(useUserDataStore.getState().notes.get('topic-a')).toBeUndefined();
 
-    // Vitest's `shouldAdvanceTime` fake-timer mode ticks the mock clock
-    // forward in real-wall-clock-paced 20ms steps (its `advanceTimeDelta`
-    // default), so a 499ms/1ms split leaves no margin against that
-    // granularity and false-fails under normal render/keystroke overhead.
-    // Widened to 400/100 — same intent (no premature commit, then commit
-    // at the debounce boundary), matching the margin already used by the
-    // "resets the debounce timer" test below.
     vi.advanceTimersByTime(400);
     expect(useUserDataStore.getState().notes.get('topic-a')).toBeUndefined();
 
@@ -83,6 +76,22 @@ describe('TopicNotes', () => {
     expect(useUserDataStore.getState().notes.get('topic-a')).toBe('hi');
   });
 
+  it('does not write to the store on blur when nothing was edited', async () => {
+    useUserDataStore.setState({ notes: new Map([['topic-a', 'unchanged']]) });
+    const setNoteSpy = vi.spyOn(useUserDataStore.getState(), 'setNote');
+    const user = userEvent.setup({ delay: null });
+    render(
+      <>
+        <TopicNotes topicId="topic-a" />
+        <button type="button">elsewhere</button>
+      </>,
+    );
+
+    await user.click(screen.getByLabelText('ההערות שלי'));
+    await user.click(screen.getByRole('button', { name: 'elsewhere' }));
+    expect(setNoteSpy).not.toHaveBeenCalled();
+  });
+
   it('clearing the text back to empty removes the note from the store', async () => {
     useUserDataStore.setState({ notes: new Map([['topic-a', 'existing']]) });
     const user = userEvent.setup({ delay: null });
@@ -94,15 +103,24 @@ describe('TopicNotes', () => {
     expect(useUserDataStore.getState().notes.has('topic-a')).toBe(false);
   });
 
-  it('does not persist after unmount even if a debounce was pending', async () => {
+  it('flushes a pending edit on unmount instead of discarding it', async () => {
     const user = userEvent.setup({ delay: null });
     const { unmount } = render(<TopicNotes topicId="topic-a" />);
     const textarea = screen.getByLabelText('ההערות שלי');
 
     await user.type(textarea, 'hi');
     unmount();
-    vi.advanceTimersByTime(500);
-    expect(useUserDataStore.getState().notes.get('topic-a')).toBeUndefined();
+    expect(useUserDataStore.getState().notes.get('topic-a')).toBe('hi');
+  });
+
+  it('flushes a pending edit for the outgoing topic when topicId changes without unmounting', async () => {
+    const user = userEvent.setup({ delay: null });
+    const { rerender } = render(<TopicNotes topicId="topic-a" />);
+    const textarea = screen.getByLabelText('ההערות שלי');
+
+    await user.type(textarea, 'hi');
+    rerender(<TopicNotes topicId="topic-b" />);
+    expect(useUserDataStore.getState().notes.get('topic-a')).toBe('hi');
   });
 
   it('resyncs its value when topicId changes without unmounting', () => {
@@ -112,5 +130,29 @@ describe('TopicNotes', () => {
 
     rerender(<TopicNotes topicId="topic-b" />);
     expect(screen.getByLabelText('ההערות שלי')).toHaveValue('note for b');
+  });
+
+  it('resyncs its value once the store finishes loading after this component already mounted', () => {
+    useUserDataStore.setState({ notes: new Map(), isLoaded: false });
+    render(<TopicNotes topicId="topic-a" />);
+    expect(screen.getByLabelText('ההערות שלי')).toHaveValue('');
+
+    act(() => {
+      useUserDataStore.setState({ notes: new Map([['topic-a', 'loaded after mount']]), isLoaded: true });
+    });
+    expect(screen.getByLabelText('ההערות שלי')).toHaveValue('loaded after mount');
+  });
+
+  it('does not clobber an in-progress edit if hydration completes while typing', async () => {
+    useUserDataStore.setState({ notes: new Map(), isLoaded: false });
+    const user = userEvent.setup({ delay: null });
+    render(<TopicNotes topicId="topic-a" />);
+    const textarea = screen.getByLabelText('ההערות שלי');
+
+    await user.type(textarea, 'typing');
+    act(() => {
+      useUserDataStore.setState({ notes: new Map([['topic-a', 'stale server text']]), isLoaded: true });
+    });
+    expect(textarea).toHaveValue('typing');
   });
 });
