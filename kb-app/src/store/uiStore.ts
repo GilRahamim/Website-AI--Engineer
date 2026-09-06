@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import modulesData from '../data/modules.json';
-import type { SortOrder, ViewMode } from '../types';
+import type { ProgressStatus, SortOrder, ViewMode } from '../types';
 
 const allModuleKeys = Object.keys(modulesData as Record<string, string>);
 
@@ -18,6 +18,7 @@ interface UiState {
   searchQuery: string;
   selectedModules: Set<string>;
   selectedCategories: Set<string>;
+  selectedStatuses: Set<ProgressStatus>;
   sortOrder: SortOrder;
   viewMode: ViewMode;
   sidebarCollapsed: boolean;
@@ -26,6 +27,7 @@ interface UiState {
   setSearchQuery: (query: string) => void;
   toggleModule: (moduleKey: string) => void;
   toggleCategory: (category: string) => void;
+  toggleStatus: (status: ProgressStatus) => void;
   clearFilters: () => void;
   setSortOrder: (order: SortOrder) => void;
   setViewMode: (mode: ViewMode) => void;
@@ -39,6 +41,7 @@ export const useUiStore = create<UiState>()((set) => ({
   searchQuery: '',
   selectedModules: new Set(),
   selectedCategories: new Set(),
+  selectedStatuses: new Set(),
   sortOrder: 'original',
   viewMode: 'grid',
   sidebarCollapsed: false,
@@ -49,8 +52,15 @@ export const useUiStore = create<UiState>()((set) => ({
     set((state) => ({ selectedModules: toggleInSet(state.selectedModules, moduleKey) })),
   toggleCategory: (category) =>
     set((state) => ({ selectedCategories: toggleInSet(state.selectedCategories, category) })),
+  toggleStatus: (status) =>
+    set((state) => ({ selectedStatuses: toggleInSet(state.selectedStatuses, status) })),
   clearFilters: () =>
-    set({ searchQuery: '', selectedModules: new Set(), selectedCategories: new Set() }),
+    set({
+      searchQuery: '',
+      selectedModules: new Set(),
+      selectedCategories: new Set(),
+      selectedStatuses: new Set(),
+    }),
   setSortOrder: (order) => set({ sortOrder: order }),
   setViewMode: (mode) => set({ viewMode: mode }),
   toggleSidebarCollapsed: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),

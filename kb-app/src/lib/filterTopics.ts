@@ -1,10 +1,11 @@
 import { normalize } from './normalize';
-import type { FilterState, SearchEntry, Topic } from '../types';
+import type { FilterState, ProgressStatus, SearchEntry, Topic } from '../types';
 
 export function filterTopics(
   topics: Topic[],
   searchIndex: SearchEntry[],
   filters: FilterState,
+  progress: Map<string, ProgressStatus>,
 ): Topic[] {
   const normalizedQuery = normalize(filters.searchQuery);
   const matchedIds = normalizedQuery
@@ -18,6 +19,10 @@ export function filterTopics(
     if (filters.selectedModules.size > 0 && !filters.selectedModules.has(topic.module)) return false;
     if (filters.selectedCategories.size > 0 && !filters.selectedCategories.has(topic.category)) {
       return false;
+    }
+    if (filters.selectedStatuses.size > 0) {
+      const status = progress.get(topic.id) ?? 'new';
+      if (!filters.selectedStatuses.has(status)) return false;
     }
     return true;
   });

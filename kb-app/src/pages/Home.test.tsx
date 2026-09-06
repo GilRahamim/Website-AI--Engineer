@@ -13,6 +13,7 @@ function reset() {
     searchQuery: '',
     selectedModules: new Set(),
     selectedCategories: new Set(),
+    selectedStatuses: new Set(),
     sortOrder: 'original',
     viewMode: 'grid',
     sidebarCollapsed: false,
@@ -106,5 +107,28 @@ describe('Home', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     await user.keyboard('?');
     expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
+  it('renders the mastered-count stat reflecting progress store state', () => {
+    useUserDataStore.setState({ progress: new Map([[topicsData[0].id, 'mastered']]) });
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>,
+    );
+    expect(screen.getByText(`מתוך ${topicsData.length} נשלטו`)).toBeInTheDocument();
+  });
+
+  it('narrows visible topics when a status filter is toggled from the store', () => {
+    useUserDataStore.setState({ progress: new Map([[topicsData[0].id, 'mastered']]) });
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>,
+    );
+    act(() => {
+      useUiStore.getState().toggleStatus('mastered');
+    });
+    expect(screen.getAllByRole('link')).toHaveLength(1);
   });
 });

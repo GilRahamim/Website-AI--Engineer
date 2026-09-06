@@ -6,6 +6,7 @@ import searchIndexRaw from '../data/search-index.json';
 import type { ModulesMap, SearchEntry, Topic } from '../types';
 import { filterTopics } from '../lib/filterTopics';
 import { groupTopicsByModule } from '../lib/groupTopics';
+import { ALL_STATUSES, STATUS_GLYPHS, STATUS_LABELS } from '../lib/progressStatus';
 import { useGridKeyboardNav } from '../hooks/useGridKeyboardNav';
 import { useUiStore } from '../store/uiStore';
 import { useUserDataStore } from '../store/userDataStore';
@@ -39,6 +40,8 @@ export default function Home() {
   const searchQuery = useUiStore((s) => s.searchQuery);
   const selectedModules = useUiStore((s) => s.selectedModules);
   const selectedCategories = useUiStore((s) => s.selectedCategories);
+  const selectedStatuses = useUiStore((s) => s.selectedStatuses);
+  const toggleStatus = useUiStore((s) => s.toggleStatus);
   const sortOrder = useUiStore((s) => s.sortOrder);
   const viewMode = useUiStore((s) => s.viewMode);
   const expandedGroups = useUiStore((s) => s.expandedGroups);
@@ -62,8 +65,14 @@ export default function Home() {
   );
 
   const filtered = useMemo(
-    () => filterTopics(topics, searchIndex, { searchQuery, selectedModules, selectedCategories, sortOrder }),
-    [searchQuery, selectedModules, selectedCategories, sortOrder],
+    () =>
+      filterTopics(
+        topics,
+        searchIndex,
+        { searchQuery, selectedModules, selectedCategories, selectedStatuses, sortOrder },
+        progress,
+      ),
+    [searchQuery, selectedModules, selectedCategories, selectedStatuses, sortOrder, progress],
   );
 
   const groups = useMemo(() => groupTopicsByModule(filtered, modules), [filtered]);
@@ -105,6 +114,20 @@ export default function Home() {
         <main className="flex-1 p-4">
           <div className="flex flex-wrap items-center gap-3">
             <SearchBar />
+            <div className="flex gap-1" role="group" aria-label="סינון לפי מצב למידה">
+              {ALL_STATUSES.map((status) => (
+                <button
+                  key={status}
+                  type="button"
+                  aria-pressed={selectedStatuses.has(status)}
+                  onClick={() => toggleStatus(status)}
+                  className="flex min-h-11 items-center gap-1 rounded-full border border-[var(--kb-border)] px-3 text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)] aria-pressed:bg-[var(--kb-accent-soft)]"
+                >
+                  <span aria-hidden="true">{STATUS_GLYPHS[status]}</span>
+                  {STATUS_LABELS[status]}
+                </button>
+              ))}
+            </div>
             <SortMenu />
             <ViewToggle />
           </div>

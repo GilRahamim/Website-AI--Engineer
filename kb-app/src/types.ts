@@ -29,6 +29,7 @@ export interface FilterState {
   searchQuery: string;
   selectedModules: Set<string>;
   selectedCategories: Set<string>;
+  selectedStatuses: Set<ProgressStatus>;
   sortOrder: SortOrder;
 }
 
