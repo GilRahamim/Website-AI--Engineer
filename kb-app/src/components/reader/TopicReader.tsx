@@ -4,6 +4,7 @@ import type { Topic } from '../../types';
 import RelatedTopics from './RelatedTopics';
 import TopicStatusButton from '../topic/TopicStatusButton';
 import TopicFavoriteButton from '../topic/TopicFavoriteButton';
+import TopicNotes from '../topic/TopicNotes';
 
 interface TopicReaderProps {
   topic: Topic;
@@ -68,6 +69,7 @@ export default function TopicReader({ topic, topicsById }: TopicReaderProps) {
       ) : (
         <div className="kb-topic-content" dangerouslySetInnerHTML={{ __html: html }} />
       )}
+      <TopicNotes topicId={topic.id} />
       <RelatedTopics relatedIds={topic.related_match} topicsById={topicsById} />
     </article>
   );

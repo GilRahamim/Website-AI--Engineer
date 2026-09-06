@@ -28,7 +28,7 @@ beforeEach(() => {
     ok: true,
     text: () => Promise.resolve('<p>תוכן הנושא המלא</p>'),
   }) as unknown as typeof fetch;
-  useUserDataStore.setState({ progress: new Map(), favorites: new Set(), recents: [], isLoaded: true });
+  useUserDataStore.setState({ progress: new Map(), favorites: new Set(), recents: [], notes: new Map(), isLoaded: true });
 });
 
 afterEach(() => {
@@ -84,5 +84,10 @@ describe('TopicReader', () => {
     renderWithRouter();
     expect(screen.getByRole('button', { name: /מצב למידה/ })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /מועדפים/ })).toBeInTheDocument();
+  });
+
+  it('renders the personal notes textarea for the topic', () => {
+    renderWithRouter();
+    expect(screen.getByLabelText('ההערות שלי')).toBeInTheDocument();
   });
 });
