@@ -37,3 +37,21 @@ export interface TopicGroup {
   moduleLabel: string;
   topics: Topic[];
 }
+
+export type ProgressStatus = 'new' | 'learning' | 'mastered';
+
+export interface Progress {
+  topicId: string;
+  status: ProgressStatus;
+  updatedAt: number;
+}
+
+export interface Favorite {
+  topicId: string;
+  createdAt: number;
+}
+
+export interface Recent {
+  topicId: string;
+  viewedAt: number;
+}
