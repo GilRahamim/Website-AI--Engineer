@@ -88,3 +88,27 @@ a, button, [role="button"], input, select, textarea, [tabindex] {
 [data-theme='dark'] .kb-topic-content img.cell-formula-img {
   filter: invert(1);
 }
+
+.kb-status-pill,
+.kb-favorite-star {
+  /* position:relative + a positive z-index is required so these controls
+     paint above the stretched-link overlay introduced in Task 4 and stay
+     independently clickable. */
+  position: relative;
+  z-index: 1;
+  color: var(--kb-text2);
+}
+.kb-status-pill:hover,
+.kb-favorite-star:hover {
+  background: var(--kb-surface2);
+}
+.kb-status-pill[data-status='learning'] {
+  color: var(--kb-accent);
+}
+.kb-status-pill[data-status='mastered'] {
+  color: var(--kb-accent);
+  background: var(--kb-accent-soft);
+}
+.kb-favorite-star[aria-pressed='true'] {
+  color: var(--kb-accent);
+}
