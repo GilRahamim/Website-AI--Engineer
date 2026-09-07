@@ -172,4 +172,43 @@ describe('Home', () => {
     });
     expect(within(screen.getByRole('main')).getAllByRole('link')).toHaveLength(1);
   });
+
+  it('renders the Daily Review card with the correct due count and a random-concept link', () => {
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>,
+    );
+    expect(screen.getByText(`${topicsData.length} ממתינים היום`)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'התחל חזרה' })).toHaveAttribute('href', '/flashcards');
+    const randomLink = screen.getByRole('link', { name: /מושג אקראי/ });
+    const linkedId = decodeURIComponent(randomLink.getAttribute('href')!.replace('/topic/', ''));
+    expect(topicsData.some((t) => t.id === linkedId)).toBe(true);
+  });
+
+  it('the due count reflects graded cards', () => {
+    const now = Date.now();
+    useUserDataStore.setState({
+      srsCards: new Map([
+        [
+          topicsData[0].id,
+          {
+            topicId: topicsData[0].id,
+            ease: 2.5,
+            intervalDays: 30,
+            dueAt: now + 1000 * 60 * 60 * 24 * 30,
+            reps: 1,
+            lapses: 0,
+            updatedAt: now,
+          },
+        ],
+      ]),
+    });
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>,
+    );
+    expect(screen.getByText(`${topicsData.length - 1} ממתינים היום`)).toBeInTheDocument();
+  });
 });

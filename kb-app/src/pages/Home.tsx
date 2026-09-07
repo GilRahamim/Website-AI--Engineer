@@ -7,11 +7,13 @@ import type { ModulesMap, SearchEntry, Topic } from '../types';
 import { filterTopics } from '../lib/filterTopics';
 import { groupTopicsByModule } from '../lib/groupTopics';
 import { ALL_STATUSES, STATUS_GLYPHS, STATUS_LABELS } from '../lib/progressStatus';
+import { getDueTopicIds } from '../lib/srs';
 import { useGridKeyboardNav } from '../hooks/useGridKeyboardNav';
 import { useUiStore } from '../store/uiStore';
 import { useUserDataStore } from '../store/userDataStore';
 import Header from '../components/layout/Header';
 import Hero from '../components/layout/Hero';
+import DailyReviewCard from '../components/layout/DailyReviewCard';
 import Sidebar from '../components/layout/Sidebar';
 import ShortcutsHelp from '../components/layout/ShortcutsHelp';
 import SearchBar from '../components/browse/SearchBar';
@@ -52,7 +54,12 @@ export default function Home() {
   const collapseAllGroups = useUiStore((s) => s.collapseAllGroups);
   const progress = useUserDataStore((s) => s.progress);
   const notes = useUserDataStore((s) => s.notes);
+  const srsCards = useUserDataStore((s) => s.srsCards);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+
+  const [now] = useState(() => Date.now());
+  const [randomTopic] = useState(() => topics[Math.floor(Math.random() * topics.length)]);
+  const dueCount = getDueTopicIds(topics, srsCards, now).length;
 
   const { moduleMasteredCounts, masteredCount } = useMemo(() => {
     const counts: Record<string, number> = Object.fromEntries(Object.keys(modules).map((key) => [key, 0]));
@@ -113,6 +120,7 @@ export default function Home() {
     <>
       <Header />
       <Hero topicCount={topics.length} moduleCount={Object.keys(modules).length} masteredCount={masteredCount} />
+      <DailyReviewCard dueCount={dueCount} randomTopic={randomTopic} />
       <div className="flex flex-col md:flex-row">
         <Sidebar
           modules={modules}
