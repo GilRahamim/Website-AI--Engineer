@@ -13,7 +13,7 @@ body {
   margin: 0;
   background: var(--kb-bg);
   color: var(--kb-text);
-  font-family: 'Heebo', system-ui, sans-serif;
+  font-family: system-ui, sans-serif;
   line-height: 1.6;
 }
 
