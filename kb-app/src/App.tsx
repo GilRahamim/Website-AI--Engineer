@@ -1,12 +1,21 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Reader from './pages/Reader';
-import Flashcards from './pages/Flashcards';
-import Quiz from './pages/Quiz';
-import KnowledgeMap from './pages/Map';
 import { useUserDataStore } from './store/userDataStore';
 import CommandPalette from './components/palette/CommandPalette';
+
+const Flashcards = lazy(() => import('./pages/Flashcards'));
+const Quiz = lazy(() => import('./pages/Quiz'));
+const KnowledgeMap = lazy(() => import('./pages/Map'));
+
+function RouteFallback() {
+  return (
+    <p role="status" className="p-8 text-center text-[var(--kb-muted)]">
+      טוען…
+    </p>
+  );
+}
 
 export default function App() {
   const isLoaded = useUserDataStore((s) => s.isLoaded);
@@ -17,30 +26,34 @@ export default function App() {
 
   return (
     <>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/topic/:id" element={<Reader />} />
-        {/* Flashcards' initial session queue is built once via a useState lazy
-            initializer that reads userDataStore synchronously at first render
-            — before loadUserData() has necessarily resolved. Keying on
-            isLoaded forces a remount the moment hydration completes, so the
-            lazy initializer re-runs against the now-correct data instead of
-            silently keeping a queue built from an empty pre-hydration
-            snapshot. When isLoaded is already true at mount (the common case
-            — navigating here after the app already loaded), the key never
-            changes, so no extra remount happens. */}
-        <Route path="/flashcards" element={<Flashcards key={String(isLoaded)} />} />
-        {/* Quiz never reads userDataStore into local state until the user
-            clicks "התחל מבחן" — by which point loadUserData() has always
-            resolved (an IndexedDB read finishes in milliseconds, long before
-            a human reads the setup screen and clicks). Unlike Flashcards, no
-            key/remount trick is needed here. */}
-        <Route path="/quiz" element={<Quiz />} />
-        {/* Map never reads userDataStore at all — the graph is derived purely
-            from the static topic dataset, so it carries none of the
-            hydration hazard the routes above had to design around. */}
-        <Route path="/map" element={<KnowledgeMap />} />
-      </Routes>
+      <Suspense fallback={<RouteFallback />}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/topic/:id" element={<Reader />} />
+          {/* Flashcards' initial session queue is built once via a useState lazy
+              initializer that reads userDataStore synchronously at first render
+              — before loadUserData() has necessarily resolved. Keying on
+              isLoaded forces a remount the moment hydration completes, so the
+              lazy initializer re-runs against the now-correct data instead of
+              silently keeping a queue built from an empty pre-hydration
+              snapshot. When isLoaded is already true at mount (the common case
+              — navigating here after the app already loaded), the key never
+              changes, so no extra remount happens. This is unrelated to (and
+              unaffected by) the React.lazy() code-splitting below — lazy()
+              only defers fetching the module, not when the component mounts. */}
+          <Route path="/flashcards" element={<Flashcards key={String(isLoaded)} />} />
+          {/* Quiz never reads userDataStore into local state until the user
+              clicks "התחל מבחן" — by which point loadUserData() has always
+              resolved (an IndexedDB read finishes in milliseconds, long before
+              a human reads the setup screen and clicks). Unlike Flashcards, no
+              key/remount trick is needed here. */}
+          <Route path="/quiz" element={<Quiz />} />
+          {/* Map never reads userDataStore at all — the graph is derived purely
+              from the static topic dataset, so it carries none of the
+              hydration hazard the routes above had to design around. */}
+          <Route path="/map" element={<KnowledgeMap />} />
+        </Routes>
+      </Suspense>
       {/* Mounted once, globally — safe here since main.tsx already wraps
           App in <BrowserRouter>, so useNavigate() works inside it. Renders
           nothing until Cmd/Ctrl+K opens it. */}
