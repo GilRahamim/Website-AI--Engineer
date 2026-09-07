@@ -1,5 +1,6 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import Header from './Header';
 import { useUserDataStore } from '../../store/userDataStore';
@@ -22,6 +23,18 @@ function renderWithRouter() {
       <Header />
     </MemoryRouter>,
   );
+}
+
+type MockBeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+};
+
+function dispatchBeforeInstallPrompt(promptSpy: () => Promise<void>) {
+  const event = new Event('beforeinstallprompt', { cancelable: true }) as MockBeforeInstallPromptEvent;
+  event.prompt = promptSpy;
+  event.userChoice = Promise.resolve({ outcome: 'accepted' });
+  fireEvent(window, event);
 }
 
 describe('Header', () => {
@@ -75,5 +88,20 @@ describe('Header', () => {
     useUserDataStore.setState({ srsCards: allNotDue });
     renderWithRouter();
     expect(screen.queryByText(/כרטיסים ממתינים לחזרה/)).not.toBeInTheDocument();
+  });
+
+  it('does not render an install button by default', () => {
+    renderWithRouter();
+    expect(screen.queryByRole('button', { name: /התקן אפליקציה/ })).not.toBeInTheDocument();
+  });
+
+  it('renders an install button after a beforeinstallprompt event, and calls promptInstall on click', async () => {
+    const user = userEvent.setup();
+    renderWithRouter();
+    const promptSpy = vi.fn(async () => {});
+    dispatchBeforeInstallPrompt(promptSpy);
+    const installButton = screen.getByRole('button', { name: /התקן אפליקציה/ });
+    await user.click(installButton);
+    expect(promptSpy).toHaveBeenCalledTimes(1);
   });
 });

@@ -4,6 +4,7 @@ import topicsRaw from '../../data/topics.clean.json';
 import type { Topic } from '../../types';
 import { getDueTopicIds } from '../../lib/srs';
 import { useUserDataStore } from '../../store/userDataStore';
+import { useInstallPrompt } from '../../hooks/useInstallPrompt';
 import ThemeToggle from '../theme/ThemeToggle';
 
 const topics = topicsRaw as Topic[];
@@ -12,6 +13,7 @@ export default function Header() {
   const srsCards = useUserDataStore((s) => s.srsCards);
   const [now] = useState(() => Date.now());
   const dueCount = getDueTopicIds(topics, srsCards, now).length;
+  const { canInstall, promptInstall } = useInstallPrompt();
 
   return (
     <header className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--kb-border)] bg-[var(--kb-surface)] px-4 py-3 shadow-[var(--kb-shadow-sm)]">
@@ -49,6 +51,16 @@ export default function Header() {
         >
           מפה
         </Link>
+        {canInstall && (
+          <button
+            type="button"
+            onClick={promptInstall}
+            className="flex min-h-11 items-center gap-1 rounded-md px-3 text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
+          >
+            <span aria-hidden="true">📲</span>
+            התקן אפליקציה
+          </button>
+        )}
         <ThemeToggle />
       </div>
     </header>
