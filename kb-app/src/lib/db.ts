@@ -1,15 +1,16 @@
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
-import type { Favorite, Note, Progress, ProgressStatus, Recent } from '../types';
+import type { Favorite, Note, Progress, ProgressStatus, Recent, SrsCard } from '../types';
 
 interface KbUserDataSchema extends DBSchema {
   progress: { key: string; value: Progress };
   favorites: { key: string; value: Favorite };
   recents: { key: string; value: Recent };
   notes: { key: string; value: Note };
+  srsCards: { key: string; value: SrsCard };
 }
 
 const DB_NAME = 'kb-user-data';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 export const RECENTS_LIMIT = 12;
 
 let warned = false;
@@ -39,6 +40,9 @@ function getDb(): Promise<IDBPDatabase<KbUserDataSchema>> {
         }
         if (!db.objectStoreNames.contains('notes')) {
           db.createObjectStore('notes', { keyPath: 'topicId' });
+        }
+        if (!db.objectStoreNames.contains('srsCards')) {
+          db.createObjectStore('srsCards', { keyPath: 'topicId' });
         }
       },
     });
@@ -136,6 +140,28 @@ export async function setNote(topicId: string, text: string): Promise<void> {
     }
   } catch (error) {
     warnOnce('setNote', error);
+  }
+}
+
+export async function getAllSrsCards(): Promise<SrsCard[]> {
+  try {
+    const db = await getDb();
+    return await db.getAll('srsCards');
+  } catch (error) {
+    warnOnce('getAllSrsCards', error);
+    return [];
+  }
+}
+
+/** Takes the fully-computed card (the caller already ran it through
+ *  lib/srs.ts's gradeCard) — a single put, no read, same idempotent shape
+ *  as setFavorite/setNote. */
+export async function setSrsCard(card: SrsCard): Promise<void> {
+  try {
+    const db = await getDb();
+    await db.put('srsCards', card);
+  } catch (error) {
+    warnOnce('setSrsCard', error);
   }
 }
 

@@ -6,10 +6,12 @@ import {
   getAllNotes,
   getAllProgress,
   getAllRecents,
+  getAllSrsCards,
   recordView,
   setFavorite,
   setNote,
   setProgress,
+  setSrsCard,
 } from './db';
 
 beforeEach(() => {
@@ -125,6 +127,26 @@ describe('db — notes', () => {
   });
 });
 
+describe('db — srsCards', () => {
+  it('returns an empty array when nothing is stored', async () => {
+    expect(await getAllSrsCards()).toEqual([]);
+  });
+
+  it('setSrsCard writes a record retrievable via getAllSrsCards', async () => {
+    const card = { topicId: 'topic-a', ease: 2.5, intervalDays: 1, dueAt: 1000, reps: 1, lapses: 0, updatedAt: 1000 };
+    await setSrsCard(card);
+    expect(await getAllSrsCards()).toEqual([card]);
+  });
+
+  it('setSrsCard overwrites the existing record for the same topic', async () => {
+    await setSrsCard({ topicId: 'topic-a', ease: 2.5, intervalDays: 1, dueAt: 1000, reps: 1, lapses: 0, updatedAt: 1000 });
+    await setSrsCard({ topicId: 'topic-a', ease: 2.3, intervalDays: 2, dueAt: 2000, reps: 2, lapses: 1, updatedAt: 2000 });
+    const all = await getAllSrsCards();
+    expect(all).toHaveLength(1);
+    expect(all[0].intervalDays).toBe(2);
+  });
+});
+
 describe('db — failure handling', () => {
   it('resolves with safe defaults and warns exactly once when IndexedDB is unavailable', async () => {
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -141,6 +163,10 @@ describe('db — failure handling', () => {
     await expect(recordView('topic-a')).resolves.toBeUndefined();
     expect(await getAllNotes()).toEqual([]);
     await expect(setNote('topic-a', 'text')).resolves.toBeUndefined();
+    expect(await getAllSrsCards()).toEqual([]);
+    await expect(
+      setSrsCard({ topicId: 'topic-a', ease: 2.5, intervalDays: 1, dueAt: 1000, reps: 1, lapses: 0, updatedAt: 1000 }),
+    ).resolves.toBeUndefined();
 
     expect(warnSpy).toHaveBeenCalledTimes(1);
 
