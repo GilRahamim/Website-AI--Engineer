@@ -62,3 +62,15 @@ export interface Note {
   text: string;
   updatedAt: number;
 }
+
+export interface SrsCard {
+  topicId: string;
+  ease: number;
+  intervalDays: number;
+  dueAt: number;
+  reps: number;
+  lapses: number;
+  updatedAt: number;
+}
+
+export type SrsRating = 'again' | 'hard' | 'good' | 'easy';
