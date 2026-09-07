@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import App from './App';
+import App, { RouteErrorBoundary } from './App';
 import topicsData from './data/topics.clean.json';
 import { useUserDataStore } from './store/userDataStore';
 
@@ -117,5 +117,20 @@ describe('App', () => {
       </MemoryRouter>,
     );
     expect(await screen.findByRole('heading', { name: 'מפת ידע' })).toBeInTheDocument();
+  });
+
+  it('RouteErrorBoundary shows a reload message when a child throws during render', () => {
+    function Boom(): never {
+      throw new Error('boom');
+    }
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    render(
+      <RouteErrorBoundary>
+        <Boom />
+      </RouteErrorBoundary>,
+    );
+    expect(screen.getByRole('alert')).toHaveTextContent('שגיאה בטעינת הדף');
+    expect(screen.getByRole('button', { name: 'רענן את הדף' })).toBeInTheDocument();
+    consoleErrorSpy.mockRestore();
   });
 });

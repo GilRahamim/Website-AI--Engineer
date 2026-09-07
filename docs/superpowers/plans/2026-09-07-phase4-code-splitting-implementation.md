@@ -300,7 +300,8 @@ git commit -m "chore: remove dead Heebo font-family reference"
 ## Manual QA (post-implementation, not testable in jsdom)
 
 - `npm run preview`, open the browser DevTools Network tab, hard-reload `/` — confirm no request for a `Flashcards`/`Quiz`/`Map`-named chunk.
-- Navigate to `/flashcards` — confirm a new JS chunk downloads at that moment, and the `RouteFallback` "טוען…" message is visible briefly before the page renders.
+- Navigate to `/flashcards` via an in-app link/nav click — confirm a new JS chunk downloads at that moment. The previous page's UI is expected to stay visible during the transition rather than showing the `RouteFallback` message (react-router-dom 7 wraps navigations in `React.startTransition`, which keeps prior content on screen instead of swapping to the Suspense fallback) — this is correct, better UX, not a bug to chase.
+- Open `/flashcards` directly via a hard page load (e.g. typing the URL, or a fresh `npm run preview` tab) — confirm the `RouteFallback` "טוען…" message IS visible briefly here, since the `Suspense` boundary is mounting fresh with no prior content to keep showing.
 - Repeat for `/quiz` and `/map`.
 - Light theme, dark theme, RTL check on the `RouteFallback` message (trigger a slow network via DevTools throttling to see it clearly if it flashes too fast otherwise).
 - Confirm no regression to Phase 3 features (Flashcards SRS grading, Quiz answering, Map node click-through) or Phase 4 sub-projects #1-#2 (install button still works; a previously-cached topic still works offline).
