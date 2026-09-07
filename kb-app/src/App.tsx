@@ -6,6 +6,7 @@ import Flashcards from './pages/Flashcards';
 import Quiz from './pages/Quiz';
 import KnowledgeMap from './pages/Map';
 import { useUserDataStore } from './store/userDataStore';
+import CommandPalette from './components/palette/CommandPalette';
 
 export default function App() {
   const isLoaded = useUserDataStore((s) => s.isLoaded);
@@ -15,29 +16,35 @@ export default function App() {
   }, []);
 
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/topic/:id" element={<Reader />} />
-      {/* Flashcards' initial session queue is built once via a useState lazy
-          initializer that reads userDataStore synchronously at first render
-          — before loadUserData() has necessarily resolved. Keying on
-          isLoaded forces a remount the moment hydration completes, so the
-          lazy initializer re-runs against the now-correct data instead of
-          silently keeping a queue built from an empty pre-hydration
-          snapshot. When isLoaded is already true at mount (the common case
-          — navigating here after the app already loaded), the key never
-          changes, so no extra remount happens. */}
-      <Route path="/flashcards" element={<Flashcards key={String(isLoaded)} />} />
-      {/* Quiz never reads userDataStore into local state until the user
-          clicks "התחל מבחן" — by which point loadUserData() has always
-          resolved (an IndexedDB read finishes in milliseconds, long before
-          a human reads the setup screen and clicks). Unlike Flashcards, no
-          key/remount trick is needed here. */}
-      <Route path="/quiz" element={<Quiz />} />
-      {/* Map never reads userDataStore at all — the graph is derived purely
-          from the static topic dataset, so it carries none of the
-          hydration hazard the routes above had to design around. */}
-      <Route path="/map" element={<KnowledgeMap />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/topic/:id" element={<Reader />} />
+        {/* Flashcards' initial session queue is built once via a useState lazy
+            initializer that reads userDataStore synchronously at first render
+            — before loadUserData() has necessarily resolved. Keying on
+            isLoaded forces a remount the moment hydration completes, so the
+            lazy initializer re-runs against the now-correct data instead of
+            silently keeping a queue built from an empty pre-hydration
+            snapshot. When isLoaded is already true at mount (the common case
+            — navigating here after the app already loaded), the key never
+            changes, so no extra remount happens. */}
+        <Route path="/flashcards" element={<Flashcards key={String(isLoaded)} />} />
+        {/* Quiz never reads userDataStore into local state until the user
+            clicks "התחל מבחן" — by which point loadUserData() has always
+            resolved (an IndexedDB read finishes in milliseconds, long before
+            a human reads the setup screen and clicks). Unlike Flashcards, no
+            key/remount trick is needed here. */}
+        <Route path="/quiz" element={<Quiz />} />
+        {/* Map never reads userDataStore at all — the graph is derived purely
+            from the static topic dataset, so it carries none of the
+            hydration hazard the routes above had to design around. */}
+        <Route path="/map" element={<KnowledgeMap />} />
+      </Routes>
+      {/* Mounted once, globally — safe here since main.tsx already wraps
+          App in <BrowserRouter>, so useNavigate() works inside it. Renders
+          nothing until Cmd/Ctrl+K opens it. */}
+      <CommandPalette />
+    </>
   );
 }

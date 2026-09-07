@@ -12,6 +12,7 @@ const SHORTCUTS: { keys: string; description: string }[] = [
   { keys: '↑ ↓ → ←', description: 'ניווט בין כרטיסים' },
   { keys: 'Enter', description: 'פתיחת נושא' },
   { keys: 'Home / End', description: 'מעבר לכרטיס הראשון / האחרון' },
+  { keys: 'Ctrl/Cmd + K', description: 'פתיחת חיפוש מהיר ופעולות' },
 ];
 
 export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
