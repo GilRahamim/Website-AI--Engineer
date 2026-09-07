@@ -13,7 +13,7 @@ interface TopicReaderProps {
 
 type ContentState =
   | { path: string; status: 'loaded'; html: string }
-  | { path: string; status: 'error' };
+  | { path: string; status: 'error'; offline: boolean };
 
 export default function TopicReader({ topic, topicsById }: TopicReaderProps) {
   const [content, setContent] = useState<ContentState | null>(null);
@@ -29,7 +29,12 @@ export default function TopicReader({ topic, topicsById }: TopicReaderProps) {
         if (!cancelled) setContent({ path: topic.contentPath, status: 'loaded', html: text });
       })
       .catch(() => {
-        if (!cancelled) setContent({ path: topic.contentPath, status: 'error' });
+        // navigator.onLine is a coarse signal — `true` doesn't guarantee
+        // real connectivity, but `false` reliably means no network, which
+        // is exactly the asymmetry needed here: distinguish "definitely
+        // offline" from any other fetch failure, not detect flaky
+        // connections precisely.
+        if (!cancelled) setContent({ path: topic.contentPath, status: 'error', offline: !navigator.onLine });
       });
     return () => {
       cancelled = true;
@@ -38,7 +43,7 @@ export default function TopicReader({ topic, topicsById }: TopicReaderProps) {
 
   const isCurrent = content?.path === topic.contentPath;
   const html = isCurrent && content.status === 'loaded' ? content.html : null;
-  const error = isCurrent && content.status === 'error';
+  const error = isCurrent && content.status === 'error' ? content : null;
 
   return (
     <article className="mx-auto max-w-3xl p-4">
@@ -62,7 +67,9 @@ export default function TopicReader({ topic, topicsById }: TopicReaderProps) {
       <p className="mb-6 text-[var(--kb-text2)]">{topic.definition}</p>
       {html === null ? (
         error ? (
-          <p role="alert">שגיאה בטעינת התוכן.</p>
+          <p role="alert">
+            {error.offline ? 'אין חיבור לאינטרנט — ניתן לצפות רק בנושאים שנצפו כבר.' : 'שגיאה בטעינת התוכן.'}
+          </p>
         ) : (
           <p role="status">טוען תוכן…</p>
         )

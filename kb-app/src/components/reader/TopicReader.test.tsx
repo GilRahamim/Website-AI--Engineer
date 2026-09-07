@@ -80,6 +80,15 @@ describe('TopicReader', () => {
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('שגיאה בטעינת התוכן'));
   });
 
+  it('renders an offline-specific message when the fetch rejects while navigator.onLine is false', async () => {
+    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
+    global.fetch = vi.fn().mockRejectedValue(new Error('network error')) as unknown as typeof fetch;
+    renderWithRouter();
+    await waitFor(() =>
+      expect(screen.getByRole('alert')).toHaveTextContent('אין חיבור לאינטרנט — ניתן לצפות רק בנושאים שנצפו כבר.'),
+    );
+  });
+
   it('renders status and favorite controls for the topic', () => {
     renderWithRouter();
     expect(screen.getByRole('button', { name: /מצב למידה/ })).toBeInTheDocument();
