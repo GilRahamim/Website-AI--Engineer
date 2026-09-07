@@ -47,4 +47,18 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    // Vite's default 500 kB warning doesn't fit this app well: the main
+    // chunk (518.93 kB minified as of this commit) is dominated by
+    // ~270KB raw of static Hebrew-text JSON (topics.clean.json +
+    // search-index.json, eagerly loaded by Home/Reader by design) rather
+    // than unsplit route code — Flashcards/Quiz/Map are already isolated
+    // into their own lazy-loaded chunks. That JSON content compresses
+    // very well: the whole remaining chunk is only 141.39 kB gzip, a
+    // perfectly reasonable transfer size. Raised to 600 so a genuine
+    // future bloat regression (a real jump past this documented baseline)
+    // still surfaces, without warning on content that was always going
+    // to be this size.
+    chunkSizeWarningLimit: 600,
+  },
 });

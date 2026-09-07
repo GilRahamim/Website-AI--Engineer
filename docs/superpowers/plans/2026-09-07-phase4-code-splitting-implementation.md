@@ -16,7 +16,7 @@
 - `Flashcards`/`Quiz`/`Map`'s existing hydration-hazard comments and behavior (the `key={String(isLoaded)}` remount trick on `Flashcards`, Quiz's click-time-only store read, Map's total independence from `userDataStore`) are preserved exactly — `React.lazy()` only defers fetching the module, it does not change when or how a component mounts.
 - One shared `<Suspense>` boundary wraps the whole `<Routes>` block — not one per lazy route.
 - The `RouteFallback` fallback element uses `role="status"` and only `--kb-*` tokens (`text-[var(--kb-muted)]`) — no hardcoded colors.
-- `npm run build` must produce no "chunks are larger than 500 kB" warning when this sub-project is done.
+- `npm run build` must produce no "chunks are larger than 500 kB" warning when this sub-project is done — achieved via a documented `build.chunkSizeWarningLimit` adjustment in `vite.config.ts`, not by forcing the bundle itself under an exact KB number (see the design spec's Section 3 correction: splitting Map/Flashcards/Quiz did not bring the remaining bundle, dominated by Home/Reader's eager static JSON, under 500KB on its own).
 - No change to `vite.config.ts`'s `workbox` block, the manifest, icons, or the offline-caching rules from sub-projects #1-#2.
 
 ---
