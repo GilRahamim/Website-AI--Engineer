@@ -76,4 +76,13 @@ describe('App', () => {
 
     expect(screen.getByRole('status')).toHaveTextContent('אין כרטיסים לחזרה');
   });
+
+  it('renders the Quiz page at "/quiz"', () => {
+    render(
+      <MemoryRouter initialEntries={['/quiz']}>
+        <App />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('heading', { name: 'מבחן' })).toBeInTheDocument();
+  });
 });

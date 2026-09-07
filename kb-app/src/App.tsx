@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Reader from './pages/Reader';
 import Flashcards from './pages/Flashcards';
+import Quiz from './pages/Quiz';
 import { useUserDataStore } from './store/userDataStore';
 
 export default function App() {
@@ -26,6 +27,12 @@ export default function App() {
           — navigating here after the app already loaded), the key never
           changes, so no extra remount happens. */}
       <Route path="/flashcards" element={<Flashcards key={String(isLoaded)} />} />
+      {/* Quiz never reads userDataStore into local state until the user
+          clicks "התחל מבחן" — by which point loadUserData() has always
+          resolved (an IndexedDB read finishes in milliseconds, long before
+          a human reads the setup screen and clicks). Unlike Flashcards, no
+          key/remount trick is needed here. */}
+      <Route path="/quiz" element={<Quiz />} />
     </Routes>
   );
 }
