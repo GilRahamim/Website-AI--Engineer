@@ -37,6 +37,12 @@ export default function Header() {
             </span>
           )}
         </Link>
+        <Link
+          to="/quiz"
+          className="flex min-h-11 items-center rounded-md px-3 text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
+        >
+          מבחן
+        </Link>
         <ThemeToggle />
       </div>
     </header>

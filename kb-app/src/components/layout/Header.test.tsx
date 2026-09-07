@@ -48,6 +48,11 @@ describe('Header', () => {
     expect(screen.getByRole('link', { name: /כרטיסיות/ })).toHaveAttribute('href', '/flashcards');
   });
 
+  it('renders a link to the Quiz page', () => {
+    renderWithRouter();
+    expect(screen.getByRole('link', { name: 'מבחן' })).toHaveAttribute('href', '/quiz');
+  });
+
   it('shows a due-count badge when cards are due (every topic starts never-reviewed = due)', () => {
     renderWithRouter();
     expect(screen.getByLabelText(`${topicsData.length} כרטיסים ממתינים לחזרה`)).toBeInTheDocument();
