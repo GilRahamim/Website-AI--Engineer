@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from './App';
 import topicsData from './data/topics.clean.json';
@@ -44,5 +44,36 @@ describe('App', () => {
       </MemoryRouter>,
     );
     expect(screen.getByRole('heading', { name: 'כרטיסיות' })).toBeInTheDocument();
+  });
+
+  it('rebuilds the Flashcards queue once the store finishes loading after mounting pre-hydration', () => {
+    const now = Date.now();
+    const farFuture = now + 1000 * 60 * 60 * 24 * 365;
+    useUserDataStore.setState({
+      progress: new Map(),
+      favorites: new Set(),
+      recents: [],
+      notes: new Map(),
+      srsCards: new Map(),
+      isLoaded: false,
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/flashcards']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    act(() => {
+      const allNotDue = new Map(
+        topicsData.map((t) => [
+          t.id,
+          { topicId: t.id, ease: 2.5, intervalDays: 365, dueAt: farFuture, reps: 1, lapses: 0, updatedAt: now },
+        ]),
+      );
+      useUserDataStore.setState({ srsCards: allNotDue, isLoaded: true });
+    });
+
+    expect(screen.getByRole('status')).toHaveTextContent('אין כרטיסים לחזרה');
   });
 });

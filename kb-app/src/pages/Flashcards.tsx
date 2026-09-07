@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import topicsRaw from '../data/topics.clean.json';
 import modulesRaw from '../data/modules.json';
@@ -139,6 +139,16 @@ export default function Flashcards() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [revealed, currentTopic, currentTopicId, handleRate]);
 
+  const revealButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Moves focus to the new card's reveal control whenever the current card
+  // changes (after grading advances the queue, or a filter change resets
+  // the session) — otherwise focus silently falls to document.body and a
+  // keyboard/screen-reader user has no landing point on the new card.
+  useEffect(() => {
+    revealButtonRef.current?.focus();
+  }, [currentTopicId]);
+
   return (
     <>
       <Header />
@@ -207,11 +217,15 @@ export default function Flashcards() {
         )}
 
         {currentTopic && (
-          <div className="rounded-xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-6 text-center shadow-[var(--kb-shadow-sm)]">
+          <div
+            aria-live="polite"
+            className="rounded-xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-6 text-center shadow-[var(--kb-shadow-sm)]"
+          >
             <p className="mb-1 text-sm text-[var(--kb-muted)]">{`${currentIndex + 1} מתוך ${queue.length}`}</p>
             <h2 className="mb-4 text-xl font-bold text-[var(--kb-text)]">{currentTopic.title}</h2>
             {!revealed ? (
               <button
+                ref={revealButtonRef}
                 type="button"
                 onClick={() => setRevealed(true)}
                 className="min-h-11 rounded-md border border-[var(--kb-border)] px-4 text-[var(--kb-text)]"

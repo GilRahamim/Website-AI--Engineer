@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { IDBFactory } from 'fake-indexeddb';
+import { openDB } from 'idb';
 import {
   __resetDbForTests,
   getAllFavorites,
@@ -144,6 +145,24 @@ describe('db — srsCards', () => {
     const all = await getAllSrsCards();
     expect(all).toHaveLength(1);
     expect(all[0].intervalDays).toBe(2);
+  });
+});
+
+describe('db — v2 to v3 migration', () => {
+  it('preserves an existing v2 store and adds srsCards when upgraded to v3', async () => {
+    const v2db = await openDB('kb-user-data', 2, {
+      upgrade(db) {
+        if (!db.objectStoreNames.contains('progress')) db.createObjectStore('progress', { keyPath: 'topicId' });
+        if (!db.objectStoreNames.contains('favorites')) db.createObjectStore('favorites', { keyPath: 'topicId' });
+        if (!db.objectStoreNames.contains('recents')) db.createObjectStore('recents', { keyPath: 'topicId' });
+        if (!db.objectStoreNames.contains('notes')) db.createObjectStore('notes', { keyPath: 'topicId' });
+      },
+    });
+    await v2db.put('progress', { topicId: 'topic-a', status: 'learning', updatedAt: 1 });
+    v2db.close();
+
+    expect(await getAllProgress()).toEqual([{ topicId: 'topic-a', status: 'learning', updatedAt: 1 }]);
+    expect(await getAllSrsCards()).toEqual([]);
   });
 });
 

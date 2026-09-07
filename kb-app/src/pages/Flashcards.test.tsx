@@ -87,6 +87,42 @@ describe('Flashcards', () => {
     expect(screen.getByRole('status')).toHaveTextContent('סיימת! 1 כרטיסים נסקרו.');
   });
 
+  it.each([
+    ['שוב', { lapses: 1, ease: 2.3 }],
+    ['קשה', { lapses: 0, ease: 2.35 }],
+    ['טוב', { lapses: 0, ease: 2.5 }],
+    ['קל', { lapses: 0, ease: 2.65 }],
+  ] as const)('rating "%s" grades the card with the matching SrsRating', async (label, expected) => {
+    const user = userEvent.setup();
+    renderPage();
+    await user.click(screen.getByRole('button', { name: 'לחץ לחשיפה' }));
+    await user.click(screen.getByRole('button', { name: label }));
+
+    const [gradedCard] = [...useUserDataStore.getState().srsCards.values()];
+    expect(gradedCard).toBeDefined();
+    expect(gradedCard.lapses).toBe(expected.lapses);
+    expect(gradedCard.ease).toBeCloseTo(expected.ease);
+  });
+
+  it('does not reinsert an "Again"-rated card later in the same session', async () => {
+    const progress = new Map<string, 'mastered' | 'new'>(topicsData.map((t) => [t.id, 'mastered']));
+    progress.set(topicsData[0].id, 'new');
+    progress.set(topicsData[1].id, 'new');
+    useUserDataStore.setState({ progress });
+    const user = userEvent.setup();
+    renderPage();
+    await user.selectOptions(screen.getByLabelText('מצב למידה'), 'new');
+    expect(screen.getByText('1 מתוך 2')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'לחץ לחשיפה' }));
+    await user.click(screen.getByRole('button', { name: 'שוב' }));
+    expect(screen.getByText('2 מתוך 2')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'לחץ לחשיפה' }));
+    await user.click(screen.getByRole('button', { name: 'טוב' }));
+    expect(screen.getByRole('status')).toHaveTextContent('סיימת! 2 כרטיסים נסקרו.');
+  });
+
   it('reveals via Space and rates via number keys 1-4', async () => {
     const user = userEvent.setup();
     renderPage();
