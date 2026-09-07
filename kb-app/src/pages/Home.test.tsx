@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import Home from './Home';
@@ -20,19 +20,27 @@ function reset() {
     expandedGroups: new Set(allModuleKeys),
     includeNotesInSearch: false,
   });
-  useUserDataStore.setState({ progress: new Map(), favorites: new Set(), recents: [], notes: new Map(), isLoaded: true });
+  useUserDataStore.setState({
+    progress: new Map(),
+    favorites: new Set(),
+    recents: [],
+    notes: new Map(),
+    srsCards: new Map(),
+    isLoaded: true,
+  });
 }
 
 describe('Home', () => {
   beforeEach(reset);
 
   it('renders the hero with the real topic count', () => {
-    render(
+    const { container } = render(
       <MemoryRouter>
         <Home />
       </MemoryRouter>,
     );
-    expect(screen.getByText(String(topicsData.length))).toBeInTheDocument();
+    const hero = container.querySelector('section') as HTMLElement;
+    expect(within(hero).getByText(String(topicsData.length))).toBeInTheDocument();
   });
 
   it('renders every module as an accordion group, expanded by default', () => {
@@ -130,7 +138,7 @@ describe('Home', () => {
     act(() => {
       useUiStore.getState().toggleStatus('mastered');
     });
-    expect(screen.getAllByRole('link')).toHaveLength(1);
+    expect(within(screen.getByRole('main')).getAllByRole('link')).toHaveLength(1);
   });
 
   it('toggles includeNotesInSearch when the "include notes" checkbox is clicked', async () => {
@@ -157,11 +165,11 @@ describe('Home', () => {
     act(() => {
       useUiStore.getState().setSearchQuery('zzz-unique-note-term');
     });
-    expect(screen.queryAllByRole('link')).toHaveLength(0);
+    expect(within(screen.getByRole('main')).queryAllByRole('link')).toHaveLength(0);
 
     act(() => {
       useUiStore.getState().toggleIncludeNotesInSearch();
     });
-    expect(screen.getAllByRole('link')).toHaveLength(1);
+    expect(within(screen.getByRole('main')).getAllByRole('link')).toHaveLength(1);
   });
 });
