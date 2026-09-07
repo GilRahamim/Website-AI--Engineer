@@ -5,15 +5,15 @@ import modulesRaw from '../data/modules.json';
 import type { ModulesMap, ProgressStatus, Topic } from '../types';
 import { buildQuiz, type QuizQuestion } from '../lib/quiz';
 import { ALL_STATUSES, STATUS_LABELS } from '../lib/progressStatus';
+import { buildCategoryLabels } from '../lib/categoryLabels';
 import { useUserDataStore } from '../store/userDataStore';
 import Header from '../components/layout/Header';
+import TopicFilters from '../components/browse/TopicFilters';
 
 const topics = topicsRaw as Topic[];
 const modules = modulesRaw as ModulesMap;
 const topicsById = new Map(topics.map((t) => [t.id, t]));
-const categoryLabels: Record<string, string> = Object.fromEntries(
-  topics.map((t) => [t.category, t.category_label]),
-);
+const categoryLabels = buildCategoryLabels(topics);
 
 const QUESTION_COUNT_OPTIONS = [5, 10, 20] as const;
 
@@ -133,36 +133,14 @@ export default function Quiz() {
         <main className="mx-auto max-w-xl p-4">
           <h1 className="mb-4 text-xl font-bold text-[var(--kb-text)]">מבחן</h1>
           <div className="mb-6 flex flex-wrap items-center gap-3">
-            <label className="flex flex-col text-sm text-[var(--kb-text)]">
-              מודול
-              <select
-                value={selectedModule}
-                onChange={(e) => setSelectedModule(e.target.value)}
-                className="min-h-11 rounded-md border border-[var(--kb-border)] bg-[var(--kb-surface)] px-2 text-[var(--kb-text)]"
-              >
-                <option value="all">הכול</option>
-                {Object.entries(modules).map(([key, label]) => (
-                  <option key={key} value={key}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="flex flex-col text-sm text-[var(--kb-text)]">
-              קטגוריה
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="min-h-11 rounded-md border border-[var(--kb-border)] bg-[var(--kb-surface)] px-2 text-[var(--kb-text)]"
-              >
-                <option value="all">הכול</option>
-                {Object.entries(categoryLabels).map(([key, label]) => (
-                  <option key={key} value={key}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <TopicFilters
+              modules={modules}
+              categoryLabels={categoryLabels}
+              selectedModule={selectedModule}
+              selectedCategory={selectedCategory}
+              onModuleChange={setSelectedModule}
+              onCategoryChange={setSelectedCategory}
+            />
             <label className="flex flex-col text-sm text-[var(--kb-text)]">
               מצב למידה
               <select
