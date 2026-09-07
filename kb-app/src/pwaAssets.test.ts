@@ -6,6 +6,7 @@ import { dirname, join } from 'node:path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const manifestPath = join(__dirname, '..', 'public', 'manifest.webmanifest');
 const indexHtmlPath = join(__dirname, '..', 'index.html');
+const viteConfigPath = join(__dirname, '..', 'vite.config.ts');
 
 describe('PWA manifest', () => {
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
@@ -47,5 +48,24 @@ describe('index.html PWA tags', () => {
   it('declares iOS web-app-capable and apple-touch-icon', () => {
     expect(html).toContain('<meta name="apple-mobile-web-app-capable" content="yes" />');
     expect(html).toContain('<link rel="apple-touch-icon" href="/icons/icon-192.png" />');
+  });
+});
+
+describe('vite.config.ts runtime caching', () => {
+  const configSource = readFileSync(viteConfigPath, 'utf-8');
+
+  it('caches topic-content HTML with CacheFirst', () => {
+    expect(configSource).toContain("cacheName: 'topic-content'");
+    expect(configSource).toMatch(/topic-content.*\.html/);
+  });
+
+  it('caches topic-assets images with CacheFirst', () => {
+    expect(configSource).toContain("cacheName: 'topic-assets'");
+    expect(configSource).toMatch(/topic-assets.*\.png/);
+  });
+
+  it('uses CacheFirst for both runtime caching rules', () => {
+    const matches = configSource.match(/handler: 'CacheFirst'/g);
+    expect(matches).toHaveLength(2);
   });
 });
