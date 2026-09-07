@@ -56,7 +56,7 @@ describe('vite.config.ts runtime caching', () => {
 
   it('caches topic-content HTML with CacheFirst', () => {
     expect(configSource).toContain("cacheName: 'topic-content'");
-    expect(configSource).toMatch(/topic-content.*\.html/);
+    expect(configSource).toContain('urlPattern: /\\/topic-content\\/.+\\.html$/');
   });
 
   it('caches topic-assets images with CacheFirst', () => {

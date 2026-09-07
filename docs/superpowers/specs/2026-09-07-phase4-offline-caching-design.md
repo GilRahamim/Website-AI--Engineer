@@ -90,3 +90,11 @@ Declined: a persistent offline indicator elsewhere in the UI (header badge, bann
 - No regression to sub-project #1 — `globIgnores` and every other existing `workbox`/`VitePWA` option stay unchanged; this only *adds* `runtimeCaching`.
 - Light theme, dark theme, RTL checked for the new error message.
 - No hardcoded colors outside `--kb-*` tokens (golden rule 7) — the new message uses the same `role="alert"` element and surrounding styles `TopicReader.tsx` already uses for its error state, no new styling introduced.
+
+## Post-final-review addendum: cache staleness is an accepted tradeoff
+
+The final whole-branch review flagged that `CacheFirst` with no `expiration` on `topic-content/*.html` means a cached topic's HTML is pinned in the browser's Cache Storage indefinitely — its URL is a hash of the topic's *id*, not its content, so a future correction to that topic's text would never reach a reader who already cached it, short of a manual site-data clear or a cache-name bump.
+
+This is accepted as-is, not fixed, for two reasons: (1) it's a direct consequence of the "no expiration cap" choice already made deliberately during this sub-project's design (the ~5.9MB total dataset doesn't need eviction, and `StaleWhileRevalidate` would silently change that approved decision without being asked); (2) golden rule 1 (`kb-app/CLAUDE.md`: "התוכן קדוש. אין לשנות טקסט/הגדרות/נוסחאות של נושאים" — content is sacred, topic text/definitions/formulas must not be changed) already means this app's own rules treat post-migration topic content as immutable. A "content correction" that this caching behavior would block is exactly the kind of change golden rule 1 already prohibits outside the one-time migration step.
+
+If a genuine need to update already-shipped topic content ever arises (a data pipeline bug, not a content edit), the fix is a one-line cache-name bump in `vite.config.ts` (e.g. `topic-content` → `topic-content-v2`), not a change to the caching strategy itself.
