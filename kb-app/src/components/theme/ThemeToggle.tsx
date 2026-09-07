@@ -1,17 +1,23 @@
-import { useState } from 'react';
-import { setTheme, type Theme } from '../../lib/theme';
-
-function currentTheme(): Theme {
-  return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-}
+import { useEffect, useState } from 'react';
+import { getCurrentTheme, setTheme } from '../../lib/theme';
 
 export default function ThemeToggle() {
-  const [theme, setThemeState] = useState<Theme>(currentTheme);
+  const [theme, setThemeState] = useState(getCurrentTheme);
+
+  // Keeps this button's own displayed state in sync with theme changes made
+  // from elsewhere (e.g. the command palette's "toggle theme" action calls
+  // setTheme() directly) — the same kb-theme-change event Map.tsx already
+  // listens for to re-resolve its canvas colors.
+  useEffect(() => {
+    function handleThemeChange() {
+      setThemeState(getCurrentTheme());
+    }
+    window.addEventListener('kb-theme-change', handleThemeChange);
+    return () => window.removeEventListener('kb-theme-change', handleThemeChange);
+  }, []);
 
   function toggle() {
-    const next: Theme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    setThemeState(next);
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   }
 
   return (

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import topicsRaw from '../../data/topics.clean.json';
 import type { Topic } from '../../types';
 import { buildActionList, filterResults, type PaletteAction } from '../../lib/commandPalette';
-import { setTheme, type Theme } from '../../lib/theme';
+import { getCurrentTheme, setTheme } from '../../lib/theme';
 
 const topics = topicsRaw as Topic[];
 const allActions = buildActionList();
@@ -14,10 +14,6 @@ const ACTION_ROUTES: Record<string, string> = {
   quiz: '/quiz',
   map: '/map',
 };
-
-function currentTheme(): Theme {
-  return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-}
 
 type PaletteItem = { kind: 'action'; action: PaletteAction } | { kind: 'topic'; topic: Topic };
 
@@ -38,7 +34,7 @@ export default function CommandPalette() {
   // body), so it never trips react-hooks/set-state-in-effect.
   useEffect(() => {
     function handleGlobalKeyDown(event: globalThis.KeyboardEvent) {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+      if ((event.metaKey || event.ctrlKey) && (event.key.toLowerCase() === 'k' || event.code === 'KeyK')) {
         event.preventDefault();
         setOpen((wasOpen) => {
           const next = !wasOpen;
@@ -80,7 +76,7 @@ export default function CommandPalette() {
 
   function runAction(action: PaletteAction) {
     if (action.id === 'toggle-theme') {
-      setTheme(currentTheme() === 'dark' ? 'light' : 'dark');
+      setTheme(getCurrentTheme() === 'dark' ? 'light' : 'dark');
     } else {
       const path = ACTION_ROUTES[action.id];
       if (path) navigate(path);

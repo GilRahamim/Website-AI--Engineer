@@ -2,6 +2,10 @@ const STORAGE_KEY = 'kb-theme';
 
 export type Theme = 'light' | 'dark';
 
+export function getCurrentTheme(): Theme {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+}
+
 function systemPrefersDark(): boolean {
   return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }

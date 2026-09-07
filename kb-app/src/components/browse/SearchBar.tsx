@@ -14,7 +14,11 @@ export default function SearchBar() {
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === '/' && document.activeElement !== inputRef.current) {
+      const isTyping =
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement ||
+        event.target instanceof HTMLSelectElement;
+      if (event.key === '/' && !isTyping) {
         event.preventDefault();
         inputRef.current?.focus();
       }

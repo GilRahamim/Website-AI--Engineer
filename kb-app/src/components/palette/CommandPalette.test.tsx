@@ -51,6 +51,7 @@ describe('CommandPalette', () => {
     expect(screen.getByRole('option', { name: 'מבחן' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'מפת ידע' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'החלף ערכת נושא' })).toBeInTheDocument();
+    expect(screen.getAllByRole('option')).toHaveLength(5);
   });
 
   it('narrows results as the user types', async () => {
