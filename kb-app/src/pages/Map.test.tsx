@@ -18,29 +18,35 @@ interface MockForceGraphProps {
   onNodeHover?: (node: GraphNode | null) => void;
 }
 
+const capturedGraphData: { nodes: GraphNode[]; links: GraphLink[] }[] = [];
+
 // react-force-graph-2d renders to a real <canvas>, which jsdom doesn't
 // meaningfully implement. This test double stands in for it, exposing
-// graphData's node/link counts as text and onNodeClick/onNodeHover as
-// clickable/hoverable hooks — testing this app's integration code, not
-// the library's canvas internals.
+// graphData's node/link counts as text, onNodeClick/onNodeHover as
+// clickable/hoverable hooks, and every graphData reference it was called
+// with (capturedGraphData) — testing this app's integration code, not the
+// library's canvas internals.
 vi.mock('react-force-graph-2d', () => ({
-  default: ({ graphData, onNodeClick, onNodeHover }: MockForceGraphProps) => (
-    <div>
-      <p>{`nodes:${graphData.nodes.length}`}</p>
-      <p>{`links:${graphData.links.length}`}</p>
-      {graphData.nodes.map((node) => (
-        <button
-          key={node.id}
-          type="button"
-          onClick={() => onNodeClick?.(node)}
-          onMouseEnter={() => onNodeHover?.(node)}
-          onMouseLeave={() => onNodeHover?.(null)}
-        >
-          {node.title}
-        </button>
-      ))}
-    </div>
-  ),
+  default: ({ graphData, onNodeClick, onNodeHover }: MockForceGraphProps) => {
+    capturedGraphData.push(graphData);
+    return (
+      <div>
+        <p>{`nodes:${graphData.nodes.length}`}</p>
+        <p>{`links:${graphData.links.length}`}</p>
+        {graphData.nodes.map((node) => (
+          <button
+            key={node.id}
+            type="button"
+            onClick={() => onNodeClick?.(node)}
+            onMouseEnter={() => onNodeHover?.(node)}
+            onMouseLeave={() => onNodeHover?.(null)}
+          >
+            {node.title}
+          </button>
+        ))}
+      </div>
+    );
+  },
 }));
 
 function renderPage() {
@@ -84,6 +90,19 @@ describe('Map', () => {
     renderPage();
     await user.click(screen.getByRole('button', { name: topicsData[0].title }));
     expect(mockNavigate).toHaveBeenCalledWith(`/topic/${encodeURIComponent(topicsData[0].id)}`);
+  });
+
+  it('keeps the same graphData reference across a hover interaction (the force layout does not reset)', async () => {
+    capturedGraphData.length = 0;
+    const user = userEvent.setup();
+    renderPage();
+    const beforeHover = capturedGraphData.at(-1);
+
+    await user.hover(screen.getByRole('button', { name: topicsData[0].title }));
+    await user.unhover(screen.getByRole('button', { name: topicsData[0].title }));
+    const afterHover = capturedGraphData.at(-1);
+
+    expect(afterHover).toBe(beforeHover);
   });
 
   it('resolves category colors from getComputedStyle on mount', () => {

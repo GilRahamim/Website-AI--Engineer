@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ForceGraph2D, { type LinkObject, type NodeObject } from 'react-force-graph-2d';
 import topicsRaw from '../data/topics.clean.json';
 import modulesRaw from '../data/modules.json';
-import type { ModulesMap, Topic } from '../types';
+import type { Category, ModulesMap, Topic } from '../types';
 import { buildGraphData, type GraphLink, type GraphNode } from '../lib/graph';
 import Header from '../components/layout/Header';
 
@@ -13,7 +13,7 @@ const categoryLabels: Record<string, string> = Object.fromEntries(
   topics.map((t) => [t.category, t.category_label]),
 );
 
-const CATEGORY_TOKEN_VARS: Record<string, string> = {
+const CATEGORY_TOKEN_VARS: Record<Category, string> = {
   algorithms: '--kb-cat-algorithms',
   concepts: '--kb-cat-concepts',
   metrics: '--kb-cat-metrics',
@@ -21,14 +21,28 @@ const CATEGORY_TOKEN_VARS: Record<string, string> = {
   architectures: '--kb-cat-architectures',
 };
 
+interface ResolvedColors {
+  categoryColors: Record<Category, string>;
+  linkColor: string;
+  accentColor: string;
+}
+
 function resolveToken(name: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
-function resolveCategoryColors(): Record<string, string> {
-  return Object.fromEntries(
-    Object.entries(CATEGORY_TOKEN_VARS).map(([category, cssVar]) => [category, resolveToken(cssVar)]),
-  );
+// getPropertyValue returns '' (not undefined) for an unresolved custom
+// property, so a `?? fallback` guard can never fire — `|| fallback` is
+// required for the fallback to actually be reachable. `--kb-border-strong`
+// itself falls back to a literal as the last resort in the (should-never-
+// happen) case even that token fails to resolve.
+function resolveColors(): ResolvedColors {
+  const linkColor = resolveToken('--kb-border-strong') || '#94a3b8';
+  const accentColor = resolveToken('--kb-accent') || linkColor;
+  const categoryColors = Object.fromEntries(
+    Object.entries(CATEGORY_TOKEN_VARS).map(([category, cssVar]) => [category, resolveToken(cssVar) || linkColor]),
+  ) as Record<Category, string>;
+  return { categoryColors, linkColor, accentColor };
 }
 
 // d3-force (which react-force-graph-2d wraps) mutates link.source/target in
@@ -46,21 +60,38 @@ export default function Map() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
 
-  const [categoryColors, setCategoryColors] = useState(resolveCategoryColors);
-  const [linkColor, setLinkColor] = useState(() => resolveToken('--kb-border-strong'));
-  const [accentColor, setAccentColor] = useState(() => resolveToken('--kb-accent'));
+  const [colors, setColors] = useState(resolveColors);
 
   useEffect(() => {
     function handleThemeChange() {
-      setCategoryColors(resolveCategoryColors());
-      setLinkColor(resolveToken('--kb-border-strong'));
-      setAccentColor(resolveToken('--kb-accent'));
+      setColors(resolveColors());
     }
     window.addEventListener('kb-theme-change', handleThemeChange);
     return () => window.removeEventListener('kb-theme-change', handleThemeChange);
   }, []);
 
-  const { nodes, links } = buildGraphData(topics, selectedModule, selectedCategory);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    function updateDimensions() {
+      if (!container) return;
+      setDimensions({ width: container.clientWidth, height: container.clientHeight });
+    }
+    updateDimensions();
+    const observer = new ResizeObserver(updateDimensions);
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
+  const [prefersReducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  const graphData = useMemo(
+    () => buildGraphData(topics, selectedModule, selectedCategory),
+    [selectedModule, selectedCategory],
+  );
 
   return (
     <>
@@ -98,25 +129,34 @@ export default function Map() {
               ))}
             </select>
           </label>
-          <p className="text-sm text-[var(--kb-muted)]">{`${nodes.length} נושאים, ${links.length} קשרים`}</p>
+          <p className="text-sm text-[var(--kb-muted)]">{`${graphData.nodes.length} נושאים, ${graphData.links.length} קשרים`}</p>
         </div>
-        <div className="h-[70vh] overflow-hidden rounded-xl border border-[var(--kb-border)]">
-          <ForceGraph2D<GraphNode, GraphLink>
-            graphData={{ nodes, links }}
-            nodeId="id"
-            nodeLabel="title"
-            nodeColor={(node: NodeObject<GraphNode>) => categoryColors[node.category] ?? linkColor}
-            linkColor={(link: LinkObject<GraphNode, GraphLink>) => {
-              if (!hoveredNodeId) return linkColor;
-              const sourceId = link.source !== undefined ? linkEndpointId(link.source) : undefined;
-              const targetId = link.target !== undefined ? linkEndpointId(link.target) : undefined;
-              return sourceId === hoveredNodeId || targetId === hoveredNodeId ? accentColor : linkColor;
-            }}
-            onNodeClick={(node: NodeObject<GraphNode>) => {
-              if (node.id) navigate(`/topic/${encodeURIComponent(String(node.id))}`);
-            }}
-            onNodeHover={(node: NodeObject<GraphNode> | null) => setHoveredNodeId(node ? String(node.id) : null)}
-          />
+        <div
+          ref={containerRef}
+          aria-label="גרף אינטראקטיבי המציג קשרים בין נושאים"
+          className="h-[70vh] overflow-hidden rounded-xl border border-[var(--kb-border)]"
+        >
+          {dimensions && (
+            <ForceGraph2D<GraphNode, GraphLink>
+              graphData={graphData}
+              width={dimensions.width}
+              height={dimensions.height}
+              nodeId="id"
+              nodeLabel="title"
+              nodeColor={(node: NodeObject<GraphNode>) => colors.categoryColors[node.category]}
+              linkColor={(link: LinkObject<GraphNode, GraphLink>) => {
+                if (!hoveredNodeId) return colors.linkColor;
+                const sourceId = link.source !== undefined ? linkEndpointId(link.source) : undefined;
+                const targetId = link.target !== undefined ? linkEndpointId(link.target) : undefined;
+                return sourceId === hoveredNodeId || targetId === hoveredNodeId ? colors.accentColor : colors.linkColor;
+              }}
+              onNodeClick={(node: NodeObject<GraphNode>) => {
+                if (node.id) navigate(`/topic/${encodeURIComponent(String(node.id))}`);
+              }}
+              onNodeHover={(node: NodeObject<GraphNode> | null) => setHoveredNodeId(node ? String(node.id) : null)}
+              cooldownTicks={prefersReducedMotion ? 0 : undefined}
+            />
+          )}
         </div>
       </main>
     </>

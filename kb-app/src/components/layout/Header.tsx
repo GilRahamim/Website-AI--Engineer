@@ -22,7 +22,7 @@ export default function Header() {
           <span className="text-xs text-[var(--kb-muted)]">AI Engineer</span>
         </div>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2">
         <Link
           to="/flashcards"
           className="flex min-h-11 items-center rounded-md px-3 text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
