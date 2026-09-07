@@ -69,7 +69,16 @@ export default function Quiz() {
       if (question.options[index] === question.correctTitle) {
         setCorrectCount((n) => n + 1);
       } else {
-        gradeCard(question.topicId, 'again');
+        // A topic with no existing SrsCard is already maximally due
+        // (isDue() treats a missing card as due now) — grading it 'again'
+        // would set dueAt to tomorrow, which is LATER than "now" and would
+        // silently pull a never-reviewed topic OUT of today's due queue
+        // instead of flagging it. Only re-grade a topic that's already on
+        // a real schedule; a never-reviewed miss still gets listed in the
+        // summary below, just without touching the (nonexistent) schedule.
+        if (useUserDataStore.getState().srsCards.has(question.topicId)) {
+          gradeCard(question.topicId, 'again');
+        }
         setMissedTopicIds((ids) => [...ids, question.topicId]);
       }
     },
@@ -98,7 +107,7 @@ export default function Quiz() {
           event.preventDefault();
           handleAnswer(index);
         }
-      } else if (event.key === 'Enter' || event.key === 'ArrowRight') {
+      } else if (event.key === 'Enter' || event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
         event.preventDefault();
         handleNext();
       }
@@ -114,7 +123,7 @@ export default function Quiz() {
   // silently falls to document.body after each "הבא" click.
   useEffect(() => {
     firstOptionRef.current?.focus();
-  }, [currentIndex]);
+  }, [currentIndex, questions]);
 
   if (questions === null) {
     const pool = filteredCandidates();
@@ -237,6 +246,13 @@ export default function Quiz() {
             >
               <p className="mb-1 text-sm text-[var(--kb-muted)]">{`${currentIndex + 1} מתוך ${questions.length}`}</p>
               <p className="mb-4 text-[var(--kb-text)]">{currentQuestion.definition}</p>
+              {answeredIndex !== null && (
+                <p className="mb-2 font-bold text-[var(--kb-text)]">
+                  {currentQuestion.options[answeredIndex] === currentQuestion.correctTitle
+                    ? 'נכון!'
+                    : `לא נכון — התשובה הנכונה: ${currentQuestion.correctTitle}`}
+                </p>
+              )}
               <div className="flex flex-col gap-2">
                 {currentQuestion.options.map((option, index) => {
                   const isAnswered = answeredIndex !== null;

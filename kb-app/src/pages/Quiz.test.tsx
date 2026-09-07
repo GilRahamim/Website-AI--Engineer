@@ -72,7 +72,36 @@ describe('Quiz', () => {
     expect(within(screen.getByRole('main')).getByRole('button', { name: 'הבא' })).toBeInTheDocument();
   });
 
-  it('selecting a wrong option grades the topic "again" and lists it in the summary', async () => {
+  it('selecting a wrong option on an already-scheduled topic re-grades it "again"', async () => {
+    const target = topicsData[0];
+    isolateOneTopic(target);
+    const now = Date.now();
+    useUserDataStore.setState({
+      srsCards: new Map([
+        [target.id, { topicId: target.id, ease: 2.5, intervalDays: 10, dueAt: now, reps: 1, lapses: 0, updatedAt: now }],
+      ]),
+    });
+    const user = userEvent.setup();
+    renderPage();
+    await user.selectOptions(screen.getByLabelText('מצב למידה'), 'new');
+    await user.click(screen.getByRole('button', { name: 'התחל מבחן' }));
+
+    const main = screen.getByRole('main');
+    const wrongOption = within(main)
+      .getAllByRole('button')
+      .find((btn) => btn.textContent !== target.title)!;
+    await user.click(wrongOption);
+
+    const graded = useUserDataStore.getState().srsCards.get(target.id);
+    expect(graded?.lapses).toBe(1);
+    expect(graded?.intervalDays).toBe(1);
+
+    await user.click(within(main).getByRole('button', { name: 'הבא' }));
+    expect(within(main).getByRole('status')).toHaveTextContent('0 מתוך 1 נכונות');
+    expect(within(main).getByRole('link', { name: target.title })).toBeInTheDocument();
+  });
+
+  it('selecting a wrong option on a never-reviewed topic does not create an SRS card (it is already maximally due)', async () => {
     const target = topicsData[0];
     isolateOneTopic(target);
     const user = userEvent.setup();
@@ -86,12 +115,9 @@ describe('Quiz', () => {
       .find((btn) => btn.textContent !== target.title)!;
     await user.click(wrongOption);
 
-    const graded = useUserDataStore.getState().srsCards.get(target.id);
-    expect(graded).toBeDefined();
-    expect(graded?.lapses).toBe(1);
+    expect(useUserDataStore.getState().srsCards.has(target.id)).toBe(false);
 
     await user.click(within(main).getByRole('button', { name: 'הבא' }));
-    expect(within(main).getByRole('status')).toHaveTextContent('0 מתוך 1 נכונות');
     expect(within(main).getByRole('link', { name: target.title })).toBeInTheDocument();
   });
 
