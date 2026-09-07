@@ -7,7 +7,14 @@ import { useUserDataStore } from './store/userDataStore';
 
 beforeEach(() => {
   global.fetch = vi.fn().mockResolvedValue({ ok: true, text: () => Promise.resolve('<p>content</p>') }) as unknown as typeof fetch;
-  useUserDataStore.setState({ progress: new Map(), favorites: new Set(), recents: [], notes: new Map(), isLoaded: true });
+  useUserDataStore.setState({
+    progress: new Map(),
+    favorites: new Set(),
+    recents: [],
+    notes: new Map(),
+    srsCards: new Map(),
+    isLoaded: true,
+  });
 });
 
 describe('App', () => {
@@ -28,5 +35,14 @@ describe('App', () => {
       </MemoryRouter>,
     );
     expect(screen.getByRole('heading', { name: knownTopic.title })).toBeInTheDocument();
+  });
+
+  it('renders the Flashcards page at "/flashcards"', () => {
+    render(
+      <MemoryRouter initialEntries={['/flashcards']}>
+        <App />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('heading', { name: 'כרטיסיות' })).toBeInTheDocument();
   });
 });
