@@ -57,4 +57,28 @@ describe('useInstallPrompt', () => {
     fireEvent(window, new Event('appinstalled'));
     expect(screen.getByText('cannot-install')).toBeInTheDocument();
   });
+
+  it('clicking install clears canInstall immediately, even before prompt() resolves', async () => {
+    const user = userEvent.setup();
+    let resolvePrompt: () => void = () => {};
+    const slowPrompt = vi.fn(() => new Promise<void>((resolve) => { resolvePrompt = resolve; }));
+    render(<Harness />);
+    fireEvent(window, makeBeforeInstallPromptEvent(slowPrompt));
+    expect(screen.getByText('can-install')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'install' }));
+    // canInstall clears synchronously — a second click can't re-trigger prompt().
+    expect(screen.getByText('cannot-install')).toBeInTheDocument();
+    expect(slowPrompt).toHaveBeenCalledTimes(1);
+    resolvePrompt();
+  });
+
+  it('a rejecting prompt() does not throw or leave canInstall stuck true', async () => {
+    const user = userEvent.setup();
+    const rejectingPrompt = vi.fn(() => Promise.reject(new Error('The prompt() method may only be called once.')));
+    render(<Harness />);
+    fireEvent(window, makeBeforeInstallPromptEvent(rejectingPrompt));
+    expect(screen.getByText('can-install')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'install' }));
+    expect(screen.getByText('cannot-install')).toBeInTheDocument();
+  });
 });
