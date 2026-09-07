@@ -332,10 +332,12 @@ export default defineConfig({
       // only `npm run build && npm run preview`.
       devOptions: { enabled: true },
       // workbox.globPatterns defaults to the built JS/CSS/HTML app shell —
-      // that IS this sub-project's whole precache scope. Runtime caching
-      // for topic-content/topic-assets and precaching the static data
-      // JSON files are sub-project #2's job, not this one — do not add
-      // workbox.runtimeCaching or extend globPatterns here.
+      // that IS this sub-project's whole precache scope, and it already
+      // includes topics.clean.json/modules.json/search-index.json's
+      // content (they're `import`ed as ES modules, inlined into the JS
+      // bundle, not separate fetched files). Runtime caching for
+      // topic-content/topic-assets is sub-project #2's job, not this one
+      // — do not add workbox.runtimeCaching or extend globPatterns here.
     }),
   ],
 });

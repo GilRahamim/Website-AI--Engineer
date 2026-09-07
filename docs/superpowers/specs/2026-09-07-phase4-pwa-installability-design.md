@@ -18,7 +18,7 @@ Explored before designing; three assumptions in `05-PWA-AND-DEPLOYMENT.md` don't
 
 ## Out of scope
 
-Runtime caching of topic content/images, precaching the static data JSON files (`topics.clean.json`/`modules.json`/`search-index.json`), and any offline-fallback UX — all sub-project #2. Per-route code-splitting and the `<500KB` first-load target — sub-project #3. Supabase (Phase 5). Actual hosting deploy (Phase 6).
+Runtime caching of topic content/images and any offline-fallback UX — all sub-project #2. (The static data JSON files — `topics.clean.json`/`modules.json`/`search-index.json` — are already precached as part of this sub-project's app-shell bundle, since they're `import`ed as ES modules rather than fetched separately; see the correction in Section 3.) Per-route code-splitting and the `<500KB` first-load target — sub-project #3. Supabase (Phase 5). Actual hosting deploy (Phase 6).
 
 ## Section 1: Icon assets
 
@@ -74,7 +74,7 @@ VitePWA({
 })
 ```
 
-**Scope boundary, explicit:** this sub-project's service worker precaches only the app shell (the JS/CSS/HTML Vite already builds) — `vite-plugin-pwa`'s default behavior. It does **not** cache `topics.clean.json`/`modules.json`/`search-index.json` or any `topic-content/`/`topic-assets/` file, and does **not** make a previously-read topic work offline — that is entirely sub-project #2. This sub-project's offline story is narrower than sub-project #2's, but not as narrow as originally assumed here: `topics.clean.json`/`modules.json`/`search-index.json` are `import`ed as ES modules (not fetched as separate files), so Vite inlines their content into the main JS bundle — which this sub-project's app-shell precache does include. In practice, Home and search work offline once installed; only Reader's per-topic HTML/images (fetched from `topic-content/`/`topic-assets/`, explicitly excluded from this sub-project's precache) remain unavailable offline until sub-project #2 lands. *(Correction added after the final review of this sub-project — the original text above this note assumed the data files were excluded from the precache; they are not, because they were never separate files to begin with.)*
+**Scope boundary, explicit:** this sub-project's service worker precaches only the app shell (the JS/CSS/HTML Vite already builds) — `vite-plugin-pwa`'s default behavior. It does **not** cache any `topic-content/`/`topic-assets/` file, and does **not** make a previously-read topic's HTML/images work offline — that is entirely sub-project #2. This sub-project's offline story is narrower than sub-project #2's, but not as narrow as originally assumed here: `topics.clean.json`/`modules.json`/`search-index.json` are `import`ed as ES modules (not fetched as separate files), so Vite inlines their content into the main JS bundle — which this sub-project's app-shell precache does include. In practice, Home and search work offline once installed; only Reader's per-topic HTML/images (fetched from `topic-content/`/`topic-assets/`, explicitly excluded from this sub-project's precache) remain unavailable offline until sub-project #2 lands. *(Correction added after the final review of this sub-project — the original text above this note assumed the data files were excluded from the precache; they are not, because they were never separate files to begin with.)*
 
 `kb-app/src/main.tsx` registers the service worker via the plugin's virtual module:
 ```ts
