@@ -1,16 +1,19 @@
 import { create } from 'zustand';
-import type { ProgressStatus } from '../types';
+import type { ProgressStatus, SrsCard, SrsRating } from '../types';
 import { NEXT_STATUS } from '../lib/progressStatus';
+import { gradeCard as computeGradedCard } from '../lib/srs';
 import {
   getAllFavorites,
   getAllNotes,
   getAllProgress,
   getAllRecents,
+  getAllSrsCards,
   RECENTS_LIMIT,
   recordView as persistRecordView,
   setFavorite as persistSetFavorite,
   setNote as persistSetNote,
   setProgress as persistSetProgress,
+  setSrsCard as persistSetSrsCard,
 } from '../lib/db';
 
 interface RecentEntry {
@@ -23,6 +26,7 @@ interface UserDataState {
   favorites: Set<string>;
   recents: RecentEntry[];
   notes: Map<string, string>;
+  srsCards: Map<string, SrsCard>;
   isLoaded: boolean;
 
   loadUserData: () => Promise<void>;
@@ -31,6 +35,7 @@ interface UserDataState {
   toggleFavorite: (topicId: string) => void;
   recordView: (topicId: string) => void;
   setNote: (topicId: string, text: string) => void;
+  gradeCard: (topicId: string, rating: SrsRating) => void;
 }
 
 export const useUserDataStore = create<UserDataState>()((set, get) => ({
@@ -38,15 +43,17 @@ export const useUserDataStore = create<UserDataState>()((set, get) => ({
   favorites: new Set(),
   recents: [],
   notes: new Map(),
+  srsCards: new Map(),
   isLoaded: false,
 
   loadUserData: async () => {
     try {
-      const [progressRows, favoriteRows, recentRows, noteRows] = await Promise.all([
+      const [progressRows, favoriteRows, recentRows, noteRows, srsCardRows] = await Promise.all([
         getAllProgress(),
         getAllFavorites(),
         getAllRecents(),
         getAllNotes(),
+        getAllSrsCards(),
       ]);
       const favoritesNewestFirst = [...favoriteRows].sort((a, b) => b.createdAt - a.createdAt);
       set({
@@ -54,6 +61,7 @@ export const useUserDataStore = create<UserDataState>()((set, get) => ({
         favorites: new Set(favoritesNewestFirst.map((row) => row.topicId)),
         recents: recentRows.map((row) => ({ topicId: row.topicId, viewedAt: row.viewedAt })),
         notes: new Map(noteRows.map((row) => [row.topicId, row.text])),
+        srsCards: new Map(srsCardRows.map((row) => [row.topicId, row])),
         isLoaded: true,
       });
     } catch {
@@ -114,5 +122,16 @@ export const useUserDataStore = create<UserDataState>()((set, get) => ({
       return { notes: next };
     });
     void persistSetNote(topicId, text);
+  },
+
+  gradeCard: (topicId, rating) => {
+    const current = get().srsCards.get(topicId);
+    const next = computeGradedCard(topicId, current, rating, Date.now());
+    set((state) => {
+      const nextMap = new Map(state.srsCards);
+      nextMap.set(topicId, next);
+      return { srsCards: nextMap };
+    });
+    void persistSetSrsCard(next);
   },
 }));

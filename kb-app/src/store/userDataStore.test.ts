@@ -8,6 +8,7 @@ function resetStore() {
     favorites: new Set(),
     recents: [],
     notes: new Map(),
+    srsCards: new Map(),
     isLoaded: false,
   });
 }
@@ -98,8 +99,32 @@ describe('userDataStore', () => {
     });
   });
 
+  describe('gradeCard', () => {
+    it('grades a never-reviewed topic and stores the resulting card', () => {
+      useUserDataStore.getState().gradeCard('topic-a', 'good');
+      const card = useUserDataStore.getState().srsCards.get('topic-a');
+      expect(card).toBeDefined();
+      expect(card?.reps).toBe(1);
+      expect(card?.intervalDays).toBe(1);
+    });
+
+    it('grades an existing card from its current state, not starting over', () => {
+      useUserDataStore.getState().gradeCard('topic-a', 'good');
+      useUserDataStore.getState().gradeCard('topic-a', 'good');
+      const card = useUserDataStore.getState().srsCards.get('topic-a');
+      expect(card?.reps).toBe(2);
+      expect(card?.intervalDays).toBeGreaterThan(1);
+    });
+
+    it('persists via db.setSrsCard with the computed card, without the caller awaiting it', () => {
+      const setSrsCardSpy = vi.spyOn(db, 'setSrsCard').mockResolvedValue(undefined);
+      useUserDataStore.getState().gradeCard('topic-a', 'again');
+      expect(setSrsCardSpy).toHaveBeenCalledWith(expect.objectContaining({ topicId: 'topic-a', intervalDays: 1 }));
+    });
+  });
+
   describe('loadUserData', () => {
-    it('populates progress, favorites (newest-createdAt-first), recents and notes, and sets isLoaded', async () => {
+    it('populates progress, favorites (newest-createdAt-first), recents, notes and srsCards, and sets isLoaded', async () => {
       vi.spyOn(db, 'getAllProgress').mockResolvedValue([
         { topicId: 'topic-a', status: 'mastered', updatedAt: 1 },
       ]);
@@ -109,6 +134,9 @@ describe('userDataStore', () => {
       ]);
       vi.spyOn(db, 'getAllRecents').mockResolvedValue([{ topicId: 'topic-a', viewedAt: 1 }]);
       vi.spyOn(db, 'getAllNotes').mockResolvedValue([{ topicId: 'topic-a', text: 'a note', updatedAt: 1 }]);
+      vi.spyOn(db, 'getAllSrsCards').mockResolvedValue([
+        { topicId: 'topic-a', ease: 2.5, intervalDays: 1, dueAt: 1, reps: 1, lapses: 0, updatedAt: 1 },
+      ]);
 
       await useUserDataStore.getState().loadUserData();
 
@@ -117,6 +145,7 @@ describe('userDataStore', () => {
       expect([...state.favorites]).toEqual(['topic-c', 'topic-b']);
       expect(state.recents).toEqual([{ topicId: 'topic-a', viewedAt: 1 }]);
       expect(state.notes.get('topic-a')).toBe('a note');
+      expect(state.srsCards.get('topic-a')).toMatchObject({ ease: 2.5, intervalDays: 1 });
       expect(state.isLoaded).toBe(true);
     });
 
@@ -125,6 +154,7 @@ describe('userDataStore', () => {
       vi.spyOn(db, 'getAllFavorites').mockResolvedValue([]);
       vi.spyOn(db, 'getAllRecents').mockResolvedValue([]);
       vi.spyOn(db, 'getAllNotes').mockResolvedValue([]);
+      vi.spyOn(db, 'getAllSrsCards').mockResolvedValue([]);
 
       await useUserDataStore.getState().loadUserData();
       expect(useUserDataStore.getState().isLoaded).toBe(true);
