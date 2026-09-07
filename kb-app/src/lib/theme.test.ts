@@ -35,6 +35,14 @@ describe('theme', () => {
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
   });
 
+  it('setTheme dispatches a kb-theme-change window event', () => {
+    const handler = vi.fn();
+    window.addEventListener('kb-theme-change', handler);
+    setTheme('dark');
+    expect(handler).toHaveBeenCalledTimes(1);
+    window.removeEventListener('kb-theme-change', handler);
+  });
+
   it('getStoredTheme returns null when nothing was stored', () => {
     expect(getStoredTheme()).toBeNull();
   });

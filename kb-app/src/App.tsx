@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Reader from './pages/Reader';
 import Flashcards from './pages/Flashcards';
 import Quiz from './pages/Quiz';
+import Map from './pages/Map';
 import { useUserDataStore } from './store/userDataStore';
 
 export default function App() {
@@ -33,6 +34,10 @@ export default function App() {
           a human reads the setup screen and clicks). Unlike Flashcards, no
           key/remount trick is needed here. */}
       <Route path="/quiz" element={<Quiz />} />
+      {/* Map never reads userDataStore at all — the graph is derived purely
+          from the static topic dataset, so it carries none of the
+          hydration hazard the routes above had to design around. */}
+      <Route path="/map" element={<Map />} />
     </Routes>
   );
 }

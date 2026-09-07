@@ -5,6 +5,10 @@ import App from './App';
 import topicsData from './data/topics.clean.json';
 import { useUserDataStore } from './store/userDataStore';
 
+vi.mock('react-force-graph-2d', () => ({
+  default: () => <div />,
+}));
+
 beforeEach(() => {
   global.fetch = vi.fn().mockResolvedValue({ ok: true, text: () => Promise.resolve('<p>content</p>') }) as unknown as typeof fetch;
   useUserDataStore.setState({
@@ -84,5 +88,14 @@ describe('App', () => {
       </MemoryRouter>,
     );
     expect(screen.getByRole('heading', { name: 'מבחן' })).toBeInTheDocument();
+  });
+
+  it('renders the Map page at "/map"', () => {
+    render(
+      <MemoryRouter initialEntries={['/map']}>
+        <App />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('heading', { name: 'מפת ידע' })).toBeInTheDocument();
   });
 });
