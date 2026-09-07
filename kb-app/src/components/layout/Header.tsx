@@ -43,6 +43,12 @@ export default function Header() {
         >
           מבחן
         </Link>
+        <Link
+          to="/map"
+          className="flex min-h-11 items-center rounded-md px-3 text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
+        >
+          מפה
+        </Link>
         <ThemeToggle />
       </div>
     </header>

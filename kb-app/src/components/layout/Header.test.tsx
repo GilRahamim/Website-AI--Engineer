@@ -53,6 +53,11 @@ describe('Header', () => {
     expect(screen.getByRole('link', { name: 'מבחן' })).toHaveAttribute('href', '/quiz');
   });
 
+  it('renders a link to the Map page', () => {
+    renderWithRouter();
+    expect(screen.getByRole('link', { name: 'מפה' })).toHaveAttribute('href', '/map');
+  });
+
   it('shows a due-count badge when cards are due (every topic starts never-reviewed = due)', () => {
     renderWithRouter();
     expect(screen.getByLabelText(`${topicsData.length} כרטיסים ממתינים לחזרה`)).toBeInTheDocument();
