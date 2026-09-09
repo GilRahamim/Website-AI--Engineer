@@ -1,6 +1,18 @@
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
 import type { Favorite, Note, Progress, ProgressStatus, Recent, SrsCard } from '../types';
 
+export interface ExportPayload {
+  version: 1;
+  exportedAt: string;
+  data: {
+    progress: Progress[];
+    favorites: Favorite[];
+    recents: Recent[];
+    notes: Note[];
+    srsCards: SrsCard[];
+  };
+}
+
 interface KbUserDataSchema extends DBSchema {
   progress: { key: string; value: Progress };
   favorites: { key: string; value: Favorite };
@@ -162,6 +174,52 @@ export async function setSrsCard(card: SrsCard): Promise<void> {
     await db.put('srsCards', card);
   } catch (error) {
     warnOnce('setSrsCard', error);
+  }
+}
+
+export async function exportAllData(): Promise<ExportPayload> {
+  const [progress, favorites, recents, notes, srsCards] = await Promise.all([
+    getAllProgress(),
+    getAllFavorites(),
+    getAllRecents(),
+    getAllNotes(),
+    getAllSrsCards(),
+  ]);
+  return {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    data: { progress, favorites, recents, notes, srsCards },
+  };
+}
+
+/** One readwrite transaction across all five stores: every store is cleared
+ *  first, then every imported row is put — clear() and put() calls on the
+ *  same store are issued synchronously in that order below, so IndexedDB's
+ *  same-store FIFO request ordering guarantees clear-before-write even
+ *  though nothing here is individually awaited until the final Promise.all.
+ *  A single transaction means a mid-import failure can't leave some stores
+ *  overwritten and others stale. */
+export async function importAllData(data: ExportPayload['data']): Promise<boolean> {
+  try {
+    const db = await getDb();
+    const tx = db.transaction(['progress', 'favorites', 'recents', 'notes', 'srsCards'], 'readwrite');
+    await Promise.all([
+      tx.objectStore('progress').clear(),
+      tx.objectStore('favorites').clear(),
+      tx.objectStore('recents').clear(),
+      tx.objectStore('notes').clear(),
+      tx.objectStore('srsCards').clear(),
+      ...data.progress.map((row) => tx.objectStore('progress').put(row)),
+      ...data.favorites.map((row) => tx.objectStore('favorites').put(row)),
+      ...data.recents.map((row) => tx.objectStore('recents').put(row)),
+      ...data.notes.map((row) => tx.objectStore('notes').put(row)),
+      ...data.srsCards.map((row) => tx.objectStore('srsCards').put(row)),
+      tx.done,
+    ]);
+    return true;
+  } catch (error) {
+    warnOnce('importAllData', error);
+    return false;
   }
 }
 

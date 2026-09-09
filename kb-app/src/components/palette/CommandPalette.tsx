@@ -13,6 +13,7 @@ const ACTION_ROUTES: Record<string, string> = {
   flashcards: '/flashcards',
   quiz: '/quiz',
   map: '/map',
+  settings: '/settings',
 };
 
 type PaletteItem = { kind: 'action'; action: PaletteAction } | { kind: 'topic'; topic: Topic };

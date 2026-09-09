@@ -119,6 +119,15 @@ describe('App', () => {
     expect(await screen.findByRole('heading', { name: 'מפת ידע' })).toBeInTheDocument();
   });
 
+  it('renders the Settings page at "/settings"', async () => {
+    render(
+      <MemoryRouter initialEntries={['/settings']}>
+        <App />
+      </MemoryRouter>,
+    );
+    expect(await screen.findByRole('heading', { name: 'הגדרות' })).toBeInTheDocument();
+  });
+
   it('RouteErrorBoundary shows a reload message when a child throws during render', () => {
     function Boom(): never {
       throw new Error('boom');
