@@ -71,6 +71,11 @@ describe('Header', () => {
     expect(screen.getByRole('link', { name: 'מפה' })).toHaveAttribute('href', '/map');
   });
 
+  it('renders a link to the Settings page', () => {
+    renderWithRouter();
+    expect(screen.getByRole('link', { name: 'הגדרות' })).toHaveAttribute('href', '/settings');
+  });
+
   it('shows a due-count badge when cards are due (every topic starts never-reviewed = due)', () => {
     renderWithRouter();
     expect(screen.getByLabelText(`${topicsData.length} כרטיסים ממתינים לחזרה`)).toBeInTheDocument();

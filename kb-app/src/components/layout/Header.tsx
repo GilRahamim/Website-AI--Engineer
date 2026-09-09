@@ -51,6 +51,12 @@ export default function Header() {
         >
           מפה
         </Link>
+        <Link
+          to="/settings"
+          className="flex min-h-11 items-center rounded-md px-3 text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
+        >
+          הגדרות
+        </Link>
         {canInstall && (
           <button
             type="button"

@@ -43,15 +43,16 @@ describe('CommandPalette', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
-  it('shows all five actions and no topics when opened with an empty query', async () => {
+  it('shows all six actions and no topics when opened with an empty query', async () => {
     const user = userEvent.setup();
     renderPalette();
     await user.keyboard('{Control>}k{/Control}');
     expect(screen.getByRole('option', { name: 'כרטיסיות' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'מבחן' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'מפת ידע' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'הגדרות' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'החלף ערכת נושא' })).toBeInTheDocument();
-    expect(screen.getAllByRole('option')).toHaveLength(5);
+    expect(screen.getAllByRole('option')).toHaveLength(6);
   });
 
   it('narrows results as the user types', async () => {
@@ -107,6 +108,15 @@ describe('CommandPalette', () => {
     await user.keyboard('{Control>}k{/Control}');
     await user.click(screen.getByRole('option', { name: 'מבחן' }));
     expect(mockNavigate).toHaveBeenCalledWith('/quiz');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('selecting "settings" navigates to /settings and closes the palette', async () => {
+    const user = userEvent.setup();
+    renderPalette();
+    await user.keyboard('{Control>}k{/Control}');
+    await user.click(screen.getByRole('option', { name: 'הגדרות' }));
+    expect(mockNavigate).toHaveBeenCalledWith('/settings');
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 

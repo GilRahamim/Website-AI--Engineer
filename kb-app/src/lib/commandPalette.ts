@@ -14,6 +14,7 @@ export function buildActionList(): PaletteAction[] {
     { id: 'flashcards', label: 'כרטיסיות' },
     { id: 'quiz', label: 'מבחן' },
     { id: 'map', label: 'מפת ידע' },
+    { id: 'settings', label: 'הגדרות' },
     { id: 'toggle-theme', label: 'החלף ערכת נושא' },
   ];
 }
