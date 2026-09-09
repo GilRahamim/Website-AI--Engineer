@@ -202,6 +202,15 @@ Expected: FAIL — `./syncStore` does not exist yet.
 
 - [ ] **Step 3: Implement `kb-app/src/store/syncStore.ts`**
 
+> **Correction — found during the whole-branch review, after this task was originally executed:** the `markSynced()` below only updates `syncStore`'s own status — it never refreshes `userDataStore`'s in-memory state. Since `fullSync()`/`pullSince()` write pulled rows straight to IndexedDB and nothing else in the app re-reads IndexedDB afterward, a background pull correctly updated storage while every screen kept rendering stale data until a manual page reload — silently defeating the whole point of auto-sync. **`markSynced()` must also call `useUserDataStore.getState().loadUserData()`** (imported via a static `import { useUserDataStore } from './userDataStore';` — safe for bundling, since `userDataStore.ts` is already in the eager chunk via `App.tsx` regardless, and `syncStore.ts` is already its own separate lazy chunk regardless of this added edge):
+> ```ts
+> function markSynced() {
+>   set({ status: 'synced', lastSyncedAt: Date.now() });
+>   void useUserDataStore.getState().loadUserData();
+> }
+> ```
+> The code block below is preserved as a record of what was actually dispatched to Task 1's implementer (and is what the per-task review passed, before this gap surfaced at the whole-branch review) — treat it as historical for this one function; everything else in the block is accurate and unaffected.
+
 ```ts
 import { create } from 'zustand';
 import { useAuthStore } from './authStore';
@@ -444,6 +453,14 @@ Run: `npm run test -- userDataStore.test.ts` (from `kb-app/`)
 Expected: FAIL on the four new "schedules a debounced sync push" tests (the calls don't happen yet); the `recordView` "does NOT schedule" test passes vacuously already (no call was ever going to happen) — that's fine, it becomes a real regression guard once Step 3 is done.
 
 - [ ] **Step 3: Implement**
+
+> **Correction — found during the whole-branch review, after this task was originally executed:** the static import shown below caused a Critical bundle-bloat regression (`userDataStore.ts` is eagerly bundled via `App.tsx`, and a static `import` of `syncStore.ts` here pulled `authStore.ts`/`lib/sync.ts`/`lib/supabase.ts`/`@supabase/supabase-js` into the eager main chunk — 521KB → 742KB — defeating `App.tsx`'s own dynamic imports of those same modules). **Do not follow the static-import version below.** The actually-shipped fix (commit `d9afb08` on this sub-project's branch) replaces it with a small local helper using a per-call dynamic import instead:
+> ```ts
+> function scheduleSyncPush(): void {
+>   void import('./syncStore').then(({ useSyncStore }) => useSyncStore.getState().scheduleDirtyPush());
+> }
+> ```
+> and each of the four action call sites below calls `scheduleSyncPush();` rather than `useSyncStore.getState().scheduleDirtyPush();` directly. The static-import text below is preserved as a record of what was actually dispatched to Task 2's implementer (and is what the per-task review initially passed, before the bundle regression surfaced during Task 3's review) — treat it as historical, not as instructions to follow.
 
 In `kb-app/src/store/userDataStore.ts`, add one import line (after the existing `../lib/db` import):
 
