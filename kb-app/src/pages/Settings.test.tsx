@@ -1,10 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { IDBFactory } from 'fake-indexeddb';
 import Settings from './Settings';
 import { useUserDataStore } from '../store/userDataStore';
+import { useAuthStore } from '../store/authStore';
 import * as db from '../lib/db';
 import { __resetDbForTests, setProgress } from '../lib/db';
 
@@ -37,6 +38,7 @@ beforeEach(() => {
     srsCards: new Map(),
     isLoaded: true,
   });
+  useAuthStore.setState({ email: null, status: 'idle', errorMessage: null });
   URL.createObjectURL = vi.fn(() => 'blob:mock-url');
   URL.revokeObjectURL = vi.fn();
 });
@@ -83,6 +85,85 @@ describe('Settings — export', () => {
     const today = new Date();
     const expectedName = `kb-backup-${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}.json`;
     expect(anchor?.download).toBe(expectedName);
+  });
+});
+
+describe('Settings — account', () => {
+  it('renders the signed-out email form', () => {
+    renderSettings();
+    expect(screen.getByLabelText('כתובת אימייל')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'שלח קישור התחברות' })).toBeInTheDocument();
+  });
+
+  it('submitting the form calls sendMagicLink with the entered email', async () => {
+    const user = userEvent.setup();
+    const sendMagicLinkSpy = vi.spyOn(useAuthStore.getState(), 'sendMagicLink').mockImplementation(async () => {
+      useAuthStore.setState({ status: 'sent' });
+    });
+    renderSettings();
+
+    await user.type(screen.getByLabelText('כתובת אימייל'), 'a@b.com');
+    await user.click(screen.getByRole('button', { name: 'שלח קישור התחברות' }));
+
+    expect(sendMagicLinkSpy).toHaveBeenCalledWith('a@b.com');
+    expect(await screen.findByRole('status')).toHaveTextContent('קישור נשלח ל-a@b.com');
+  });
+
+  it('disables the submit button while sending, and re-enables after', async () => {
+    const user = userEvent.setup();
+    let resolveSend: () => void = () => {};
+    vi.spyOn(useAuthStore.getState(), 'sendMagicLink').mockImplementation(() => {
+      useAuthStore.setState({ status: 'sending' });
+      return new Promise((resolve) => {
+        resolveSend = () => {
+          useAuthStore.setState({ status: 'sent' });
+          resolve();
+        };
+      });
+    });
+    renderSettings();
+
+    await user.type(screen.getByLabelText('כתובת אימייל'), 'a@b.com');
+    const submitButton = screen.getByRole('button', { name: 'שלח קישור התחברות' });
+    await user.click(submitButton);
+
+    expect(submitButton).toBeDisabled();
+    act(() => resolveSend());
+    await waitFor(() => expect(submitButton).not.toBeDisabled());
+  });
+
+  it('shows an error message when sendMagicLink fails, form stays visible', async () => {
+    const user = userEvent.setup();
+    vi.spyOn(useAuthStore.getState(), 'sendMagicLink').mockImplementation(async () => {
+      useAuthStore.setState({ status: 'error', errorMessage: 'שליחת הקישור נכשלה. נסה שוב.' });
+    });
+    renderSettings();
+
+    await user.type(screen.getByLabelText('כתובת אימייל'), 'a@b.com');
+    await user.click(screen.getByRole('button', { name: 'שלח קישור התחברות' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('שליחת הקישור נכשלה');
+    expect(screen.getByLabelText('כתובת אימייל')).toBeInTheDocument();
+  });
+
+  it('shows the signed-in view with the user\'s email when signed in', () => {
+    useAuthStore.setState({ email: 'signed-in@example.com' });
+    renderSettings();
+
+    expect(screen.getByText('מחובר כ: signed-in@example.com')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'התנתק' })).toBeInTheDocument();
+    expect(screen.queryByLabelText('כתובת אימייל')).not.toBeInTheDocument();
+  });
+
+  it('clicking sign out calls authStore.signOut', async () => {
+    const user = userEvent.setup();
+    useAuthStore.setState({ email: 'signed-in@example.com' });
+    const signOutSpy = vi.spyOn(useAuthStore.getState(), 'signOut').mockResolvedValue(undefined);
+    renderSettings();
+
+    await user.click(screen.getByRole('button', { name: 'התנתק' }));
+
+    expect(signOutSpy).toHaveBeenCalledTimes(1);
   });
 });
 

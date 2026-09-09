@@ -1,7 +1,8 @@
-import { useRef, useState, type ChangeEvent } from 'react';
+import { type FormEvent, useRef, useState, type ChangeEvent } from 'react';
 import Header from '../components/layout/Header';
 import { exportAllData, importAllData, type ExportPayload } from '../lib/db';
 import { useUserDataStore } from '../store/userDataStore';
+import { useAuthStore } from '../store/authStore';
 
 const VALID_PROGRESS_STATUSES = new Set(['new', 'learning', 'mastered']);
 
@@ -61,6 +62,9 @@ function backupFileName(exportedAt: string): string {
 }
 
 export default function Settings() {
+  const email = useAuthStore((s) => s.email);
+  const isSending = useAuthStore((s) => s.status === 'sending');
+  const [emailInput, setEmailInput] = useState('');
   const [message, setMessage] = useState<{ kind: 'success' | 'error'; text: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -79,6 +83,21 @@ export default function Settings() {
 
   function handleImportClick() {
     fileInputRef.current?.click();
+  }
+
+  async function handleSendMagicLink(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await useAuthStore.getState().sendMagicLink(emailInput);
+    const { status, errorMessage } = useAuthStore.getState();
+    if (status === 'sent') {
+      setMessage({ kind: 'success', text: `קישור נשלח ל-${emailInput}, בדוק את תיבת הדואר.` });
+    } else if (status === 'error') {
+      setMessage({ kind: 'error', text: errorMessage ?? 'שליחת הקישור נכשלה.' });
+    }
+  }
+
+  async function handleSignOut() {
+    await useAuthStore.getState().signOut();
   }
 
   async function handleFileSelected(event: ChangeEvent<HTMLInputElement>) {
@@ -120,6 +139,50 @@ export default function Settings() {
       <main className="flex flex-col gap-8 p-4">
         <h1 className="text-xl font-bold text-[var(--kb-text)]">הגדרות</h1>
 
+        {message && (
+          <p role={message.kind === 'error' ? 'alert' : 'status'} className="text-sm text-[var(--kb-text)]">
+            {message.text}
+          </p>
+        )}
+
+        <section className="flex flex-col gap-2">
+          <h2 className="font-semibold text-[var(--kb-text)]">חשבון</h2>
+          {email ? (
+            <>
+              <p className="text-sm text-[var(--kb-text)]">{`מחובר כ: ${email}`}</p>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="min-h-11 w-fit rounded-md border border-[var(--kb-border)] px-4 text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
+              >
+                התנתק
+              </button>
+            </>
+          ) : (
+            <form onSubmit={handleSendMagicLink} className="flex flex-col gap-2">
+              <p className="text-sm text-[var(--kb-muted)]">התחבר כדי לסנכרן נתונים בין מכשירים (בקרוב).</p>
+              <label className="flex min-h-11 items-center gap-2 rounded-lg border border-[var(--kb-border)] bg-[var(--kb-surface)] px-3">
+                <span className="sr-only">כתובת אימייל</span>
+                <input
+                  type="email"
+                  required
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full bg-transparent py-2 text-[var(--kb-text)] outline-none placeholder:text-[var(--kb-muted)]"
+                />
+              </label>
+              <button
+                type="submit"
+                disabled={isSending}
+                className="min-h-11 w-fit rounded-md border border-[var(--kb-border)] px-4 text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)] disabled:opacity-50"
+              >
+                שלח קישור התחברות
+              </button>
+            </form>
+          )}
+        </section>
+
         <section className="flex flex-col gap-2">
           <h2 className="font-semibold text-[var(--kb-text)]">ייצוא נתונים</h2>
           <p className="text-sm text-[var(--kb-muted)]">
@@ -154,11 +217,6 @@ export default function Settings() {
           >
             ייבוא נתונים
           </button>
-          {message && (
-            <p role={message.kind === 'error' ? 'alert' : 'status'} className="text-sm text-[var(--kb-text)]">
-              {message.text}
-            </p>
-          )}
         </section>
       </main>
     </>
