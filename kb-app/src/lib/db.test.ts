@@ -3,11 +3,13 @@ import { IDBFactory } from 'fake-indexeddb';
 import { openDB } from 'idb';
 import {
   __resetDbForTests,
+  exportAllData,
   getAllFavorites,
   getAllNotes,
   getAllProgress,
   getAllRecents,
   getAllSrsCards,
+  importAllData,
   recordView,
   setFavorite,
   setNote,
@@ -163,6 +165,73 @@ describe('db — v2 to v3 migration', () => {
 
     expect(await getAllProgress()).toEqual([{ topicId: 'topic-a', status: 'learning', updatedAt: 1 }]);
     expect(await getAllSrsCards()).toEqual([]);
+  });
+});
+
+describe('db — export/import', () => {
+  it('exportAllData returns version 1, an ISO timestamp, and all five tables', async () => {
+    await setProgress('topic-a', 'learning');
+    await setFavorite('topic-b', true);
+    await recordView('topic-c');
+    await setNote('topic-d', 'a note');
+    await setSrsCard({ topicId: 'topic-e', ease: 2.5, intervalDays: 1, dueAt: 1000, reps: 1, lapses: 0, updatedAt: 1000 });
+
+    const payload = await exportAllData();
+
+    expect(payload.version).toBe(1);
+    expect(new Date(payload.exportedAt).toString()).not.toBe('Invalid Date');
+    expect(payload.data.progress).toHaveLength(1);
+    expect(payload.data.favorites).toHaveLength(1);
+    expect(payload.data.recents).toHaveLength(1);
+    expect(payload.data.notes).toHaveLength(1);
+    expect(payload.data.srsCards).toHaveLength(1);
+  });
+
+  it('exportAllData returns empty arrays when nothing is stored', async () => {
+    const payload = await exportAllData();
+    expect(payload.data).toEqual({ progress: [], favorites: [], recents: [], notes: [], srsCards: [] });
+  });
+
+  it('importAllData round-trips an exported payload unchanged', async () => {
+    await setProgress('topic-a', 'mastered');
+    await setNote('topic-a', 'hello');
+    const exported = await exportAllData();
+
+    await importAllData(exported.data);
+
+    const reimported = await exportAllData();
+    expect(reimported.data).toEqual(exported.data);
+  });
+
+  it('importAllData fully replaces existing rows rather than merging', async () => {
+    await setProgress('old-topic', 'mastered');
+    await setNote('old-topic', 'old note');
+
+    await importAllData({
+      progress: [{ topicId: 'new-topic', status: 'new', updatedAt: 1 }],
+      favorites: [],
+      recents: [],
+      notes: [],
+      srsCards: [],
+    });
+
+    expect(await getAllProgress()).toEqual([{ topicId: 'new-topic', status: 'new', updatedAt: 1 }]);
+    expect(await getAllNotes()).toEqual([]);
+  });
+
+  it('importAllData resolves without throwing when IndexedDB is unavailable', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const originalOpen = indexedDB.open.bind(indexedDB);
+    indexedDB.open = () => {
+      throw new Error('boom');
+    };
+
+    await expect(
+      importAllData({ progress: [], favorites: [], recents: [], notes: [], srsCards: [] }),
+    ).resolves.toBeUndefined();
+
+    indexedDB.open = originalOpen;
+    warnSpy.mockRestore();
   });
 });
 
