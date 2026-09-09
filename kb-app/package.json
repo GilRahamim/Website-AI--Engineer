@@ -14,6 +14,7 @@
     "migrate": "node scripts/migrate-data.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.116.0",
     "@tailwindcss/vite": "^4.3.3",
     "idb": "^8.0.3",
     "react": "^19.2.7",
