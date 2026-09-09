@@ -13,16 +13,25 @@ export interface ExportPayload {
   };
 }
 
+export type SyncTableName = 'progress' | 'notes' | 'favorites' | 'srsCards';
+
+export interface SyncManifest {
+  id: 'manifest';
+  tables: Record<SyncTableName, string[]>;
+  syncedAt: number;
+}
+
 interface KbUserDataSchema extends DBSchema {
   progress: { key: string; value: Progress };
   favorites: { key: string; value: Favorite };
   recents: { key: string; value: Recent };
   notes: { key: string; value: Note };
   srsCards: { key: string; value: SrsCard };
+  syncMeta: { key: string; value: SyncManifest };
 }
 
 const DB_NAME = 'kb-user-data';
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 export const RECENTS_LIMIT = 12;
 
 let warned = false;
@@ -55,6 +64,9 @@ function getDb(): Promise<IDBPDatabase<KbUserDataSchema>> {
         }
         if (!db.objectStoreNames.contains('srsCards')) {
           db.createObjectStore('srsCards', { keyPath: 'topicId' });
+        }
+        if (!db.objectStoreNames.contains('syncMeta')) {
+          db.createObjectStore('syncMeta', { keyPath: 'id' });
         }
       },
     });
@@ -220,6 +232,55 @@ export async function importAllData(data: ExportPayload['data']): Promise<boolea
   } catch (error) {
     warnOnce('importAllData', error);
     return false;
+  }
+}
+
+/** Writes rows exactly as given — including their own `updatedAt`/`createdAt`
+ *  timestamps — unlike the UI-facing setters (setProgress, setFavorite, etc.)
+ *  which always stamp `Date.now()`. Used only by the sync engine when
+ *  applying a pulled remote row, which must keep its true remote timestamp
+ *  so future last-write-wins comparisons stay correct. */
+export async function putRows(
+  table: SyncTableName,
+  rows: (Progress | Note | Favorite | SrsCard)[],
+): Promise<void> {
+  try {
+    const db = await getDb();
+    const tx = db.transaction(table, 'readwrite');
+    await Promise.all([...rows.map((row) => tx.objectStore(table).put(row as never)), tx.done]);
+  } catch (error) {
+    warnOnce(`putRows:${table}`, error);
+  }
+}
+
+/** Used only by the sync engine to apply a remote deletion locally. */
+export async function deleteRows(table: SyncTableName, topicIds: string[]): Promise<void> {
+  try {
+    const db = await getDb();
+    const tx = db.transaction(table, 'readwrite');
+    await Promise.all([...topicIds.map((id) => tx.objectStore(table).delete(id)), tx.done]);
+  } catch (error) {
+    warnOnce(`deleteRows:${table}`, error);
+  }
+}
+
+export async function getSyncManifest(): Promise<SyncManifest | null> {
+  try {
+    const db = await getDb();
+    const record = await db.get('syncMeta', 'manifest');
+    return record ?? null;
+  } catch (error) {
+    warnOnce('getSyncManifest', error);
+    return null;
+  }
+}
+
+export async function setSyncManifest(manifest: SyncManifest): Promise<void> {
+  try {
+    const db = await getDb();
+    await db.put('syncMeta', manifest);
+  } catch (error) {
+    warnOnce('setSyncManifest', error);
   }
 }
 

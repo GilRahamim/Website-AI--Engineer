@@ -3,18 +3,22 @@ import { IDBFactory } from 'fake-indexeddb';
 import { openDB } from 'idb';
 import {
   __resetDbForTests,
+  deleteRows,
   exportAllData,
   getAllFavorites,
   getAllNotes,
   getAllProgress,
   getAllRecents,
   getAllSrsCards,
+  getSyncManifest,
   importAllData,
+  putRows,
   recordView,
   setFavorite,
   setNote,
   setProgress,
   setSrsCard,
+  setSyncManifest,
 } from './db';
 
 beforeEach(() => {
@@ -260,5 +264,55 @@ describe('db — failure handling', () => {
 
     indexedDB.open = originalOpen;
     warnSpy.mockRestore();
+  });
+});
+
+describe('db — sync primitives', () => {
+  it('putRows writes rows with their own timestamps (not Date.now())', async () => {
+    await putRows('progress', [{ topicId: 'topic-a', status: 'mastered', updatedAt: 12345 }]);
+    const all = await getAllProgress();
+    expect(all).toEqual([{ topicId: 'topic-a', status: 'mastered', updatedAt: 12345 }]);
+  });
+
+  it('putRows overwrites an existing row with the same topicId', async () => {
+    await setProgress('topic-a', 'new');
+    await putRows('progress', [{ topicId: 'topic-a', status: 'mastered', updatedAt: 999 }]);
+    const all = await getAllProgress();
+    expect(all).toHaveLength(1);
+    expect(all[0]).toEqual({ topicId: 'topic-a', status: 'mastered', updatedAt: 999 });
+  });
+
+  it('deleteRows removes only the given topicIds', async () => {
+    await setFavorite('topic-a', true);
+    await setFavorite('topic-b', true);
+    await deleteRows('favorites', ['topic-a']);
+    const all = await getAllFavorites();
+    expect(all.map((r) => r.topicId)).toEqual(['topic-b']);
+  });
+
+  it('deleteRows on a non-existent id is a no-op, not an error', async () => {
+    await expect(deleteRows('notes', ['does-not-exist'])).resolves.toBeUndefined();
+  });
+
+  it('getSyncManifest returns null when none has been stored', async () => {
+    expect(await getSyncManifest()).toBeNull();
+  });
+
+  it('setSyncManifest then getSyncManifest round-trips', async () => {
+    const manifest = {
+      id: 'manifest' as const,
+      tables: { progress: ['a'], notes: [], favorites: ['b', 'c'], srsCards: [] },
+      syncedAt: 1700000000000,
+    };
+    await setSyncManifest(manifest);
+    expect(await getSyncManifest()).toEqual(manifest);
+  });
+
+  it('setSyncManifest overwrites a previously stored manifest', async () => {
+    await setSyncManifest({ id: 'manifest', tables: { progress: [], notes: [], favorites: [], srsCards: [] }, syncedAt: 1 });
+    await setSyncManifest({ id: 'manifest', tables: { progress: ['x'], notes: [], favorites: [], srsCards: [] }, syncedAt: 2 });
+    const manifest = await getSyncManifest();
+    expect(manifest?.tables.progress).toEqual(['x']);
+    expect(manifest?.syncedAt).toBe(2);
   });
 });
