@@ -51,7 +51,7 @@ create table favorites (
   created_at timestamptz not null default now(),
   primary key (user_id, topic_id)
 );
-create index favorites_user_updated_idx on favorites (user_id, created_at);
+create index favorites_user_created_idx on favorites (user_id, created_at);
 
 alter table favorites enable row level security;
 create policy "own rows" on favorites
