@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { IDBFactory } from 'fake-indexeddb';
+import * as dbModule from './db';
 import {
   __resetDbForTests,
   getAllFavorites,
@@ -188,6 +189,29 @@ describe('fullSync — conflict resolution', () => {
     expect(progressMock.upsert).not.toHaveBeenCalled();
   });
 
+  // Discriminating regression test: the above only proves upsert wasn't
+  // called, which the pre-fix "remote wins on tie" code also satisfied (it
+  // pulled instead of pushing). Differing content on both sides of a tied
+  // timestamp is what actually distinguishes "no-op" from "remote wins" —
+  // pre-fix this overwrites the local text with the remote text; post-fix
+  // it leaves the local row untouched.
+  it('exact timestamp tie with differing content leaves the local row unwritten', async () => {
+    await setNote('topic-z', 'local text');
+    const localRows = await getAllNotes();
+    const remoteRow = {
+      topic_id: 'topic-z',
+      text: 'remote text',
+      updated_at: new Date(localRows[0].updatedAt).toISOString(),
+    };
+    const notesMock = makeTableMock({ data: [remoteRow] });
+    mockTables({ progress: makeTableMock(), notes: notesMock, favorites: makeTableMock(), srs_cards: makeTableMock() });
+
+    await fullSync();
+
+    expect(notesMock.upsert).not.toHaveBeenCalled();
+    expect((await getAllNotes())[0].text).toBe('local text');
+  });
+
   it('two consecutive fullSync calls with no changes only reconcile once', async () => {
     await setProgress('topic-q', 'new');
     const progressMock = makeTableMock({ data: [] });
@@ -311,6 +335,45 @@ describe('fullSync — manifest and resilience', () => {
     await expect(fullSync()).resolves.toBeUndefined();
     const manifest = await getSyncManifest();
     expect(manifest?.tables.favorites).toContain('topic-v');
+  });
+
+  it('a remote delete resolving with an error does not remove that id from the manifest', async () => {
+    await setSyncManifest({
+      id: 'manifest',
+      tables: { progress: [], notes: [], favorites: ['topic-x'], srsCards: [] },
+      syncedAt: NOW,
+    });
+    const remoteRow = { topic_id: 'topic-x', created_at: new Date(NOW).toISOString() };
+    const favoritesMock = makeTableMock({ data: [remoteRow] });
+    favoritesMock.in.mockResolvedValue({ error: new Error('delete failed') });
+    mockTables({ progress: makeTableMock(), notes: makeTableMock(), favorites: favoritesMock, srs_cards: makeTableMock() });
+
+    await fullSync();
+
+    const manifest = await getSyncManifest();
+    expect(manifest?.tables.favorites).toContain('topic-x');
+  });
+
+  it('a local write failure (putRows returning false) is not recorded as synced', async () => {
+    await setSyncManifest({
+      id: 'manifest',
+      tables: { progress: [], notes: [], favorites: [], srsCards: [] },
+      syncedAt: NOW,
+    });
+    const remoteRow = { topic_id: 'topic-w', status: 'new', updated_at: new Date(NOW).toISOString() };
+    mockTables({
+      progress: makeTableMock({ data: [remoteRow] }),
+      notes: makeTableMock(),
+      favorites: makeTableMock(),
+      srs_cards: makeTableMock(),
+    });
+    const putRowsSpy = vi.spyOn(dbModule, 'putRows').mockResolvedValueOnce(false);
+
+    await fullSync();
+
+    const manifest = await getSyncManifest();
+    expect(manifest?.tables.progress ?? []).not.toContain('topic-w');
+    putRowsSpy.mockRestore();
   });
 
   it('all four tables failing leaves the stored manifest completely unchanged', async () => {
