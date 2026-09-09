@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAuthStore } from './authStore';
+import { useUserDataStore } from './userDataStore';
 
 vi.mock('../lib/sync', () => ({
   fullSync: vi.fn(() => Promise.resolve()),
@@ -9,6 +10,8 @@ vi.mock('../lib/sync', () => ({
 
 const { fullSync, pushDirty, pullSince } = await import('../lib/sync');
 const { useSyncStore, __resetSyncStoreForTests } = await import('./syncStore');
+
+let loadUserDataSpy: ReturnType<typeof vi.spyOn>;
 
 function setVisibility(state: 'visible' | 'hidden') {
   Object.defineProperty(document, 'visibilityState', { value: state, configurable: true });
@@ -23,6 +26,7 @@ beforeEach(() => {
   useAuthStore.setState({ email: null, status: 'idle', errorMessage: null });
   useSyncStore.setState({ status: 'idle', lastSyncedAt: null });
   __resetSyncStoreForTests();
+  loadUserDataSpy = vi.spyOn(useUserDataStore.getState(), 'loadUserData').mockResolvedValue(undefined);
   setVisibility('visible');
 });
 
@@ -42,6 +46,7 @@ describe('syncStore — start()', () => {
     useAuthStore.setState({ email: 'a@b.com' });
     useSyncStore.getState().start();
     await vi.waitFor(() => expect(fullSync).toHaveBeenCalledTimes(1));
+    expect(loadUserDataSpy).toHaveBeenCalled();
   });
 
   it('a null->value email transition triggers fullSync and starts the pull interval', async () => {
@@ -56,6 +61,7 @@ describe('syncStore — start()', () => {
 
     await vi.advanceTimersByTimeAsync(60_000);
     expect(pullSince).toHaveBeenCalledTimes(2);
+    expect(loadUserDataSpy).toHaveBeenCalled();
   });
 
   it('a value->null email transition (sign-out) stops the pull interval', async () => {
@@ -83,6 +89,7 @@ describe('syncStore — start()', () => {
 
     window.dispatchEvent(new Event('focus'));
     await vi.waitFor(() => expect(pullSince).toHaveBeenCalledTimes(1));
+    expect(loadUserDataSpy).toHaveBeenCalled();
   });
 
   it('an online event while signed in triggers a full sync', async () => {
@@ -92,6 +99,7 @@ describe('syncStore — start()', () => {
 
     window.dispatchEvent(new Event('online'));
     await vi.waitFor(() => expect(fullSync).toHaveBeenCalledTimes(2));
+    expect(loadUserDataSpy).toHaveBeenCalled();
   });
 
   it('updates status and lastSyncedAt after a successful sync', async () => {
@@ -118,6 +126,7 @@ describe('syncStore — scheduleDirtyPush()', () => {
     useSyncStore.getState().scheduleDirtyPush();
     await vi.advanceTimersByTimeAsync(3000);
     expect(pushDirty).toHaveBeenCalledTimes(1);
+    expect(loadUserDataSpy).toHaveBeenCalled();
   });
 
   it('a call while signed out still resolves harmlessly (no thrown error)', async () => {
@@ -151,5 +160,6 @@ describe('syncStore — syncNow()', () => {
     expect(fullSync).toHaveBeenCalledTimes(1);
     expect(useSyncStore.getState().status).toBe('synced');
     expect(useSyncStore.getState().lastSyncedAt).toEqual(expect.any(Number));
+    expect(loadUserDataSpy).toHaveBeenCalled();
   });
 });

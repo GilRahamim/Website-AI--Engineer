@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { useAuthStore } from './authStore';
+import { useUserDataStore } from './userDataStore';
 import { fullSync, pullSince, pushDirty } from '../lib/sync';
 
 const DIRTY_PUSH_DEBOUNCE_MS = 3000;
@@ -25,6 +26,7 @@ let unsubscribeAuth: (() => void) | null = null;
 export const useSyncStore = create<SyncState>()((set) => {
   function markSynced() {
     set({ status: 'synced', lastSyncedAt: Date.now() });
+    void useUserDataStore.getState().loadUserData();
   }
 
   function beginAutoSync() {
