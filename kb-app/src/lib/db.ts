@@ -243,24 +243,28 @@ export async function importAllData(data: ExportPayload['data']): Promise<boolea
 export async function putRows(
   table: SyncTableName,
   rows: (Progress | Note | Favorite | SrsCard)[],
-): Promise<void> {
+): Promise<boolean> {
   try {
     const db = await getDb();
     const tx = db.transaction(table, 'readwrite');
     await Promise.all([...rows.map((row) => tx.objectStore(table).put(row as never)), tx.done]);
+    return true;
   } catch (error) {
     warnOnce(`putRows:${table}`, error);
+    return false;
   }
 }
 
 /** Used only by the sync engine to apply a remote deletion locally. */
-export async function deleteRows(table: SyncTableName, topicIds: string[]): Promise<void> {
+export async function deleteRows(table: SyncTableName, topicIds: string[]): Promise<boolean> {
   try {
     const db = await getDb();
     const tx = db.transaction(table, 'readwrite');
     await Promise.all([...topicIds.map((id) => tx.objectStore(table).delete(id)), tx.done]);
+    return true;
   } catch (error) {
     warnOnce(`deleteRows:${table}`, error);
+    return false;
   }
 }
 

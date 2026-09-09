@@ -20,6 +20,13 @@ type Direction = 'push' | 'pull' | 'full';
 
 const TABLES: SyncTableName[] = ['progress', 'notes', 'favorites', 'srsCards'];
 
+const warnedContexts = new Set<string>();
+function warnOnce(context: string, error: unknown): void {
+  if (warnedContexts.has(context)) return;
+  warnedContexts.add(context);
+  console.warn(`[sync] ${context}:`, error);
+}
+
 const REMOTE_TABLE: Record<SyncTableName, string> = {
   progress: 'progress',
   notes: 'notes',
@@ -123,7 +130,16 @@ async function getLocalRows(table: SyncTableName): Promise<LocalRow[]> {
  *  since last sync -> delete locally. Present remotely + absent locally +
  *  id in manifest -> this device deleted it since last sync -> delete
  *  remotely. Either side present + id NOT in manifest -> brand new, never
- *  synced before -> push or pull, never delete. */
+ *  synced before -> push or pull, never delete.
+ *
+ *  CRITICAL caveat when `sinceTs` is set (pullSince's use): a filtered
+ *  remote query only omits rows UNCHANGED since `sinceTs` -- it does not
+ *  tell you a row was deleted. So "present locally, absent from this
+ *  filtered remoteRows" must NOT be trusted as deletion evidence -- doing
+ *  so would delete every local row that simply hasn't changed recently.
+ *  That branch is skipped entirely whenever `sinceTs !== undefined`; only
+ *  an unfiltered view (fullSync, pushDirty -- both always call with
+ *  `sinceTs` undefined) may classify local-only presence as a deletion. */
 async function reconcileTable(
   supabase: SupabaseClient,
   userId: string,
@@ -138,7 +154,8 @@ async function reconcileTable(
   if (sinceTs !== undefined) {
     query = query.gt(TIMESTAMP_COLUMN[table], new Date(sinceTs).toISOString());
   }
-  const { data } = await query;
+  const { data, error: selectError } = await query;
+  if (selectError) throw selectError;
   const remoteRows = (data ?? []) as RemoteRow[];
 
   const localById = new Map(localRows.map((r) => [r.topicId, r]));
@@ -154,11 +171,17 @@ async function reconcileTable(
     const local = localById.get(id);
     const remote = remoteById.get(id);
     if (local && remote) {
-      if (localTimestamp(table, local) > remoteTimestamp(table, remote)) toPush.push(local);
-      else toPull.push(remote);
+      const localTs = localTimestamp(table, local);
+      const remoteTs = remoteTimestamp(table, remote);
+      if (localTs > remoteTs) toPush.push(local);
+      else if (remoteTs > localTs) toPull.push(remote);
+      // exact tie: nothing to reconcile, neither side is written
     } else if (local && !remote) {
-      if (manifestIds.has(id)) localDeleteIds.push(id);
-      else toPush.push(local);
+      if (sinceTs === undefined) {
+        if (manifestIds.has(id)) localDeleteIds.push(id);
+        else toPush.push(local);
+      }
+      // sinceTs set: absence from a filtered view proves nothing -- skip.
     } else if (!local && remote) {
       if (manifestIds.has(id)) remoteDeleteIds.push(id);
       else toPull.push(remote);
@@ -167,18 +190,26 @@ async function reconcileTable(
 
   if (direction === 'push' || direction === 'full') {
     if (toPush.length > 0) {
-      await supabase.from(REMOTE_TABLE[table]).upsert(toPush.map((r) => toRemoteRow(table, r, userId)));
+      const { error } = await supabase.from(REMOTE_TABLE[table]).upsert(toPush.map((r) => toRemoteRow(table, r, userId)));
+      if (error) throw error;
     }
     if (remoteDeleteIds.length > 0) {
-      await supabase.from(REMOTE_TABLE[table]).delete().in('topic_id', remoteDeleteIds);
+      const { error } = await supabase
+        .from(REMOTE_TABLE[table])
+        .delete()
+        .eq('user_id', userId)
+        .in('topic_id', remoteDeleteIds);
+      if (error) throw error;
     }
   }
   if (direction === 'pull' || direction === 'full') {
     if (toPull.length > 0) {
-      await putRows(table, toPull.map((r) => fromRemoteRow(table, r)));
+      const ok = await putRows(table, toPull.map((r) => fromRemoteRow(table, r)));
+      if (!ok) throw new Error(`putRows failed for ${table}`);
     }
     if (localDeleteIds.length > 0) {
-      await deleteRows(table, localDeleteIds);
+      const ok = await deleteRows(table, localDeleteIds);
+      if (!ok) throw new Error(`deleteRows failed for ${table}`);
     }
   }
 
@@ -201,19 +232,23 @@ export async function fullSync(): Promise<void> {
 
   const manifest: SyncManifest | null = await getSyncManifest();
   const newTables = { progress: [], notes: [], favorites: [], srsCards: [] } as Record<SyncTableName, string[]>;
+  let anySucceeded = false;
 
   for (const table of TABLES) {
     const manifestIds = new Set(manifest?.tables[table] ?? []);
     try {
       const finalIds = await reconcileTable(supabase, userId, table, 'full', manifestIds);
       newTables[table] = [...finalIds];
+      anySucceeded = true;
     } catch (error) {
-      console.warn(`[sync] fullSync failed for ${table}:`, error);
+      warnOnce(`fullSync:${table}`, error);
       newTables[table] = [...manifestIds];
     }
   }
 
-  await setSyncManifest({ id: 'manifest', tables: newTables, syncedAt: Date.now() });
+  if (anySucceeded) {
+    await setSyncManifest({ id: 'manifest', tables: newTables, syncedAt: Date.now() });
+  }
 }
 
 export async function pushDirty(): Promise<void> {
@@ -227,7 +262,7 @@ export async function pushDirty(): Promise<void> {
     try {
       await reconcileTable(supabase, userId, table, 'push', new Set(manifest?.tables[table] ?? []));
     } catch (error) {
-      console.warn(`[sync] pushDirty failed for ${table}:`, error);
+      warnOnce(`pushDirty:${table}`, error);
     }
   }
 }
@@ -243,7 +278,7 @@ export async function pullSince(ts: number): Promise<void> {
     try {
       await reconcileTable(supabase, userId, table, 'pull', new Set(manifest?.tables[table] ?? []), ts);
     } catch (error) {
-      console.warn(`[sync] pullSince failed for ${table}:`, error);
+      warnOnce(`pullSince:${table}`, error);
     }
   }
 }

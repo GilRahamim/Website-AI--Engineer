@@ -291,7 +291,7 @@ describe('db — sync primitives', () => {
   });
 
   it('deleteRows on a non-existent id is a no-op, not an error', async () => {
-    await expect(deleteRows('notes', ['does-not-exist'])).resolves.toBeUndefined();
+    await expect(deleteRows('notes', ['does-not-exist'])).resolves.toBe(true);
   });
 
   it('getSyncManifest returns null when none has been stored', async () => {

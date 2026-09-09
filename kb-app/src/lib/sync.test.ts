@@ -27,20 +27,26 @@ vi.mock('./supabase', () => ({
   getSupabase: () => mockGetSupabase(),
 }));
 
+type SelectResult = { data: Record<string, unknown>[] | null; error?: unknown };
+
 /** Builds a chainable fake query builder for one table. `selectResult` is
- *  what `.select('*')` (optionally followed by `.gt(...)`) resolves to;
- *  `upsert`/`deleteIn` are spies the test can assert against. */
-function makeTableMock(selectResult: { data: Record<string, unknown>[] } = { data: [] }) {
+ *  what `.select('*')` (optionally followed by `.gt(...)`) resolves to —
+ *  including a Supabase-style `{ data: null, error }` failure, which
+ *  resolves rather than rejects, exactly as supabase-js does. `upsert` and
+ *  `in` (the tail of the `.delete().eq(...).in(...)` chain) are spies the
+ *  test can assert against. */
+function makeTableMock(selectResult: SelectResult = { data: [] }) {
   const gt = vi.fn(() => Promise.resolve(selectResult));
-  const select = vi.fn(() => ({ gt, then: (resolve: (v: typeof selectResult) => void) => resolve(selectResult) }));
-  const upsert = vi.fn<(rows: Record<string, unknown>[]) => Promise<{ error: null }>>(() =>
+  const select = vi.fn(() => ({ gt, then: (resolve: (v: SelectResult) => void) => resolve(selectResult) }));
+  const upsert = vi.fn<(rows: Record<string, unknown>[]) => Promise<{ error: unknown }>>(() =>
     Promise.resolve({ error: null }),
   );
-  const inFn = vi.fn<(column: string, ids: string[]) => Promise<{ error: null }>>(() =>
+  const inFn = vi.fn<(column: string, ids: string[]) => Promise<{ error: unknown }>>(() =>
     Promise.resolve({ error: null }),
   );
-  const del = vi.fn(() => ({ in: inFn }));
-  return { select, gt, upsert, delete: del, in: inFn };
+  const eq = vi.fn<(column: string, value: string) => { in: typeof inFn }>(() => ({ in: inFn }));
+  const del = vi.fn(() => ({ eq }));
+  return { select, gt, upsert, delete: del, eq, in: inFn };
 }
 
 function mockTables(byTable: Record<string, ReturnType<typeof makeTableMock>>) {
@@ -169,6 +175,37 @@ describe('fullSync — conflict resolution', () => {
     const all = await getAllNotes();
     expect(all[0].text).toBe('remote newer text');
   });
+
+  it('exact timestamp tie is a no-op — neither side is written', async () => {
+    await setProgress('topic-p', 'learning');
+    const localRows = await getAllProgress();
+    const remoteRow = { topic_id: 'topic-p', status: 'learning', updated_at: new Date(localRows[0].updatedAt).toISOString() };
+    const progressMock = makeTableMock({ data: [remoteRow] });
+    mockTables({ progress: progressMock, notes: makeTableMock(), favorites: makeTableMock(), srs_cards: makeTableMock() });
+
+    await fullSync();
+
+    expect(progressMock.upsert).not.toHaveBeenCalled();
+  });
+
+  it('two consecutive fullSync calls with no changes only reconcile once', async () => {
+    await setProgress('topic-q', 'new');
+    const progressMock = makeTableMock({ data: [] });
+    mockTables({ progress: progressMock, notes: makeTableMock(), favorites: makeTableMock(), srs_cards: makeTableMock() });
+
+    await fullSync();
+    expect(progressMock.upsert).toHaveBeenCalledTimes(1);
+
+    // Second call: remote now has the pushed row, matching what was just pushed.
+    const pushedRow = progressMock.upsert.mock.calls[0][0][0];
+    progressMock.select.mockReturnValue({
+      gt: progressMock.gt,
+      then: (resolve: (v: SelectResult) => void) => resolve({ data: [pushedRow] }),
+    });
+
+    await fullSync();
+    expect(progressMock.upsert).toHaveBeenCalledTimes(1); // still 1 — not called again
+  });
 });
 
 describe('fullSync — deletions', () => {
@@ -222,12 +259,74 @@ describe('fullSync — manifest and resilience', () => {
     await setProgress('topic-h', 'new');
     await setFavorite('topic-i', true);
     const progressMock = makeTableMock({ data: [] });
-    progressMock.upsert.mockRejectedValue(new Error('network error'));
+    progressMock.upsert.mockResolvedValue({ error: new Error('network error') });
     const favoritesMock = makeTableMock({ data: [] });
     mockTables({ progress: progressMock, notes: makeTableMock(), favorites: favoritesMock, srs_cards: makeTableMock() });
 
     await expect(fullSync()).resolves.toBeUndefined();
     expect(favoritesMock.upsert).toHaveBeenCalledTimes(1);
+  });
+
+  it("a select resolving with an error leaves that table's local data untouched", async () => {
+    await setProgress('topic-s', 'new');
+    await setSyncManifest({
+      id: 'manifest',
+      tables: { progress: ['topic-s'], notes: [], favorites: [], srsCards: [] },
+      syncedAt: NOW,
+    });
+    mockTables({
+      progress: makeTableMock({ data: null, error: new Error('select failed') }),
+      notes: makeTableMock(),
+      favorites: makeTableMock(),
+      srs_cards: makeTableMock(),
+    });
+
+    await fullSync();
+
+    expect(await getAllProgress()).toHaveLength(1);
+  });
+
+  it('an upsert resolving with an error does not advance that row into the manifest', async () => {
+    await setProgress('topic-t', 'new');
+    const progressMock = makeTableMock({ data: [] });
+    progressMock.upsert.mockResolvedValue({ error: new Error('upsert failed') });
+    mockTables({ progress: progressMock, notes: makeTableMock(), favorites: makeTableMock(), srs_cards: makeTableMock() });
+
+    await fullSync();
+
+    const manifest = await getSyncManifest();
+    expect(manifest?.tables.progress ?? []).not.toContain('topic-t');
+  });
+
+  it('one table resolving an error (not rejecting) does not stop the others', async () => {
+    await setProgress('topic-u', 'new');
+    await setFavorite('topic-v', true);
+    mockTables({
+      progress: makeTableMock({ data: null, error: new Error('down') }),
+      notes: makeTableMock(),
+      favorites: makeTableMock({ data: [] }),
+      srs_cards: makeTableMock(),
+    });
+
+    await expect(fullSync()).resolves.toBeUndefined();
+    const manifest = await getSyncManifest();
+    expect(manifest?.tables.favorites).toContain('topic-v');
+  });
+
+  it('all four tables failing leaves the stored manifest completely unchanged', async () => {
+    await setSyncManifest({
+      id: 'manifest',
+      tables: { progress: ['a'], notes: [], favorites: [], srsCards: [] },
+      syncedAt: 1000,
+    });
+    const failing = () => makeTableMock({ data: null, error: new Error('down') });
+    mockTables({ progress: failing(), notes: failing(), favorites: failing(), srs_cards: failing() });
+
+    await fullSync();
+
+    const manifest = await getSyncManifest();
+    expect(manifest?.syncedAt).toBe(1000);
+    expect(manifest?.tables.progress).toEqual(['a']);
   });
 });
 
@@ -314,6 +413,22 @@ describe('pullSince', () => {
 
     expect(progressMock.upsert).not.toHaveBeenCalled();
     expect(progressMock.in).not.toHaveBeenCalled();
+  });
+
+  it('does not delete a local row that is simply unchanged (present locally, in manifest, absent from the filtered remote result)', async () => {
+    await setFavorite('topic-r', true);
+    const localRows = await getAllFavorites();
+    await setSyncManifest({
+      id: 'manifest',
+      tables: { progress: [], notes: [], favorites: ['topic-r'], srsCards: [] },
+      syncedAt: localRows[0].createdAt,
+    });
+    // Filtered query legitimately returns nothing — topic-r hasn't changed since ts.
+    mockTables({ progress: makeTableMock(), notes: makeTableMock(), favorites: makeTableMock({ data: [] }), srs_cards: makeTableMock() });
+
+    await pullSince(localRows[0].createdAt + 1);
+
+    expect(await getAllFavorites()).toHaveLength(1);
   });
 
   it('no-ops when there is no active session', async () => {
