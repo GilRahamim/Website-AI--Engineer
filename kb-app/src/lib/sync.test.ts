@@ -59,7 +59,7 @@ beforeEach(() => {
   mockTables({});
 });
 
-const { fullSync } = await import('./sync');
+const { fullSync, pullSince, pushDirty } = await import('./sync');
 
 describe('fullSync — no-op cases', () => {
   it('does nothing when getSupabase() returns null', async () => {
@@ -228,5 +228,97 @@ describe('fullSync — manifest and resilience', () => {
 
     await expect(fullSync()).resolves.toBeUndefined();
     expect(favoritesMock.upsert).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('pushDirty', () => {
+  it('pushes a new local row and never writes to local IndexedDB or the manifest', async () => {
+    await setProgress('topic-k', 'learning');
+    const progressMock = makeTableMock({ data: [] });
+    mockTables({ progress: progressMock, notes: makeTableMock(), favorites: makeTableMock(), srs_cards: makeTableMock() });
+
+    await pushDirty();
+
+    expect(progressMock.upsert).toHaveBeenCalledTimes(1);
+    expect(await getSyncManifest()).toBeNull();
+  });
+
+  it('detects and pushes a local deletion using the stored manifest, without pulling', async () => {
+    await setSyncManifest({
+      id: 'manifest',
+      tables: { progress: [], notes: [], favorites: ['topic-l'], srsCards: [] },
+      syncedAt: NOW,
+    });
+    const remoteRow = { topic_id: 'topic-l', created_at: new Date(NOW).toISOString() };
+    const favoritesMock = makeTableMock({ data: [remoteRow] });
+    mockTables({ progress: makeTableMock(), notes: makeTableMock(), favorites: favoritesMock, srs_cards: makeTableMock() });
+
+    await pushDirty();
+
+    expect(favoritesMock.in).toHaveBeenCalledWith('topic_id', ['topic-l']);
+  });
+
+  it('does not write to local IndexedDB even when a remote-only new row exists', async () => {
+    const remoteRow = { topic_id: 'topic-m', status: 'new', updated_at: new Date(NOW).toISOString() };
+    mockTables({
+      progress: makeTableMock({ data: [remoteRow] }),
+      notes: makeTableMock(),
+      favorites: makeTableMock(),
+      srs_cards: makeTableMock(),
+    });
+
+    await pushDirty();
+
+    expect(await getAllProgress()).toEqual([]);
+  });
+
+  it('no-ops when getSupabase() returns null', async () => {
+    mockGetSupabase.mockReturnValue(null);
+    await expect(pushDirty()).resolves.toBeUndefined();
+    expect(mockFrom).not.toHaveBeenCalled();
+  });
+});
+
+describe('pullSince', () => {
+  it('filters the remote query by the given timestamp', async () => {
+    const progressMock = makeTableMock({ data: [] });
+    mockTables({ progress: progressMock, notes: makeTableMock(), favorites: makeTableMock(), srs_cards: makeTableMock() });
+
+    await pullSince(NOW);
+
+    expect(progressMock.gt).toHaveBeenCalledWith('updated_at', new Date(NOW).toISOString());
+  });
+
+  it('pulls a new remote row into local IndexedDB and never writes to the manifest', async () => {
+    const remoteRow = { topic_id: 'topic-n', status: 'mastered', updated_at: new Date(NOW).toISOString() };
+    mockTables({
+      progress: makeTableMock({ data: [remoteRow] }),
+      notes: makeTableMock(),
+      favorites: makeTableMock(),
+      srs_cards: makeTableMock(),
+    });
+
+    await pullSince(NOW - 1000);
+
+    const all = await getAllProgress();
+    expect(all).toEqual([{ topicId: 'topic-n', status: 'mastered', updatedAt: NOW }]);
+    expect(await getSyncManifest()).toBeNull();
+  });
+
+  it('never calls upsert or delete against the remote', async () => {
+    await setProgress('topic-o', 'new'); // present only locally
+    const progressMock = makeTableMock({ data: [] });
+    mockTables({ progress: progressMock, notes: makeTableMock(), favorites: makeTableMock(), srs_cards: makeTableMock() });
+
+    await pullSince(0);
+
+    expect(progressMock.upsert).not.toHaveBeenCalled();
+    expect(progressMock.in).not.toHaveBeenCalled();
+  });
+
+  it('no-ops when there is no active session', async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    await expect(pullSince(0)).resolves.toBeUndefined();
+    expect(mockFrom).not.toHaveBeenCalled();
   });
 });

@@ -215,3 +215,35 @@ export async function fullSync(): Promise<void> {
 
   await setSyncManifest({ id: 'manifest', tables: newTables, syncedAt: Date.now() });
 }
+
+export async function pushDirty(): Promise<void> {
+  const supabase = getSupabase();
+  if (!supabase) return;
+  const userId = await currentUserId(supabase);
+  if (!userId) return;
+
+  const manifest = await getSyncManifest();
+  for (const table of TABLES) {
+    try {
+      await reconcileTable(supabase, userId, table, 'push', new Set(manifest?.tables[table] ?? []));
+    } catch (error) {
+      console.warn(`[sync] pushDirty failed for ${table}:`, error);
+    }
+  }
+}
+
+export async function pullSince(ts: number): Promise<void> {
+  const supabase = getSupabase();
+  if (!supabase) return;
+  const userId = await currentUserId(supabase);
+  if (!userId) return;
+
+  const manifest = await getSyncManifest();
+  for (const table of TABLES) {
+    try {
+      await reconcileTable(supabase, userId, table, 'pull', new Set(manifest?.tables[table] ?? []), ts);
+    } catch (error) {
+      console.warn(`[sync] pullSince failed for ${table}:`, error);
+    }
+  }
+}
