@@ -199,7 +199,7 @@ export async function exportAllData(): Promise<ExportPayload> {
  *  though nothing here is individually awaited until the final Promise.all.
  *  A single transaction means a mid-import failure can't leave some stores
  *  overwritten and others stale. */
-export async function importAllData(data: ExportPayload['data']): Promise<void> {
+export async function importAllData(data: ExportPayload['data']): Promise<boolean> {
   try {
     const db = await getDb();
     const tx = db.transaction(['progress', 'favorites', 'recents', 'notes', 'srsCards'], 'readwrite');
@@ -216,8 +216,10 @@ export async function importAllData(data: ExportPayload['data']): Promise<void> 
       ...data.srsCards.map((row) => tx.objectStore('srsCards').put(row)),
       tx.done,
     ]);
+    return true;
   } catch (error) {
     warnOnce('importAllData', error);
+    return false;
   }
 }
 

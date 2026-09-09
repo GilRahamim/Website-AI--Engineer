@@ -228,7 +228,7 @@ describe('db — export/import', () => {
 
     await expect(
       importAllData({ progress: [], favorites: [], recents: [], notes: [], srsCards: [] }),
-    ).resolves.toBeUndefined();
+    ).resolves.toBe(false);
 
     indexedDB.open = originalOpen;
     warnSpy.mockRestore();

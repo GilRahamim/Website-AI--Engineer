@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { IDBFactory } from 'fake-indexeddb';
 import Settings from './Settings';
 import { useUserDataStore } from '../store/userDataStore';
+import * as db from '../lib/db';
 import { __resetDbForTests, setProgress } from '../lib/db';
 
 function renderSettings() {
@@ -101,6 +102,18 @@ describe('Settings — import', () => {
 
     expect(await screen.findByRole('status')).toHaveTextContent('הנתונים יובאו בהצלחה');
     await waitFor(() => expect(useUserDataStore.getState().progress.get('topic-a')).toBe('mastered'));
+  });
+
+  it('shows a failure message and no success message when importAllData fails', async () => {
+    const user = userEvent.setup();
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    vi.spyOn(db, 'importAllData').mockResolvedValue(false);
+    renderSettings();
+
+    await user.upload(screen.getByLabelText('בחר קובץ גיבוי לייבוא'), validBackupFile());
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('הייבוא נכשל');
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 
   it('does nothing when the user cancels the confirmation', async () => {

@@ -27,7 +27,7 @@ const topics: Topic[] = [
 ];
 
 describe('buildActionList', () => {
-  it('returns the five fixed actions', () => {
+  it('returns the six fixed actions', () => {
     const actions = buildActionList();
     expect(actions.map((a) => a.id).sort()).toEqual(['flashcards', 'home', 'map', 'quiz', 'settings', 'toggle-theme']);
   });

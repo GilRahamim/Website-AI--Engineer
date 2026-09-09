@@ -86,7 +86,7 @@ export default function App() {
                 from the static topic dataset, so it carries none of the
                 hydration hazard the routes above had to design around. */}
             <Route path="/map" element={<KnowledgeMap />} />
-            {/* Settings never reads userDataStore at all — it only provides
+            {/* Settings never reads userDataStore during render — it only provides
                 export/import UI for data backup, so it carries none of the
                 hydration hazard the routes above had to design around. */}
             <Route path="/settings" element={<Settings />} />

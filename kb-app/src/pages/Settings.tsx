@@ -71,8 +71,10 @@ export default function Settings() {
     const anchor = document.createElement('a');
     anchor.href = url;
     anchor.download = backupFileName(payload.exportedAt);
+    document.body.appendChild(anchor);
     anchor.click();
-    URL.revokeObjectURL(url);
+    anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
   }
 
   function handleImportClick() {
@@ -80,6 +82,7 @@ export default function Settings() {
   }
 
   async function handleFileSelected(event: ChangeEvent<HTMLInputElement>) {
+    setMessage(null);
     const file = event.target.files?.[0];
     // Reset so re-selecting the same filename after a rejected import still
     // fires onChange.
@@ -102,7 +105,11 @@ export default function Settings() {
     const confirmed = window.confirm('הפעולה תחליף את כל הנתונים המקומיים הקיימים. להמשיך?');
     if (!confirmed) return;
 
-    await importAllData(parsed.data);
+    const ok = await importAllData(parsed.data);
+    if (!ok) {
+      setMessage({ kind: 'error', text: 'הייבוא נכשל.' });
+      return;
+    }
     await useUserDataStore.getState().loadUserData();
     setMessage({ kind: 'success', text: 'הנתונים יובאו בהצלחה.' });
   }
