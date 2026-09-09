@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useUserDataStore } from './userDataStore';
+import { useSyncStore } from './syncStore';
 import * as db from '../lib/db';
 
 function resetStore() {
@@ -36,6 +37,12 @@ describe('userDataStore', () => {
       expect(useUserDataStore.getState().progress.get('topic-a')).toBe('learning');
       expect(setProgressSpy).toHaveBeenCalledWith('topic-a', 'learning');
     });
+
+    it('schedules a debounced sync push', () => {
+      const scheduleSpy = vi.spyOn(useSyncStore.getState(), 'scheduleDirtyPush').mockImplementation(() => {});
+      useUserDataStore.getState().cycleStatus('topic-a');
+      expect(scheduleSpy).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('toggleFavorite', () => {
@@ -62,6 +69,12 @@ describe('userDataStore', () => {
       useUserDataStore.getState().toggleFavorite('topic-a');
       expect(setFavoriteSpy).toHaveBeenCalledWith('topic-a', false);
     });
+
+    it('schedules a debounced sync push', () => {
+      const scheduleSpy = vi.spyOn(useSyncStore.getState(), 'scheduleDirtyPush').mockImplementation(() => {});
+      useUserDataStore.getState().toggleFavorite('topic-a');
+      expect(scheduleSpy).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('recordView', () => {
@@ -77,6 +90,12 @@ describe('userDataStore', () => {
       const recordViewSpy = vi.spyOn(db, 'recordView').mockResolvedValue(undefined);
       useUserDataStore.getState().recordView('topic-a');
       expect(recordViewSpy).toHaveBeenCalledWith('topic-a');
+    });
+
+    it('does NOT schedule a sync push — recents never sync', () => {
+      const scheduleSpy = vi.spyOn(useSyncStore.getState(), 'scheduleDirtyPush').mockImplementation(() => {});
+      useUserDataStore.getState().recordView('topic-a');
+      expect(scheduleSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -96,6 +115,12 @@ describe('userDataStore', () => {
       const setNoteSpy = vi.spyOn(db, 'setNote').mockResolvedValue(undefined);
       useUserDataStore.getState().setNote('topic-a', 'hello');
       expect(setNoteSpy).toHaveBeenCalledWith('topic-a', 'hello');
+    });
+
+    it('schedules a debounced sync push', () => {
+      const scheduleSpy = vi.spyOn(useSyncStore.getState(), 'scheduleDirtyPush').mockImplementation(() => {});
+      useUserDataStore.getState().setNote('topic-a', 'hello');
+      expect(scheduleSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -120,6 +145,12 @@ describe('userDataStore', () => {
       const setSrsCardSpy = vi.spyOn(db, 'setSrsCard').mockResolvedValue(undefined);
       useUserDataStore.getState().gradeCard('topic-a', 'again');
       expect(setSrsCardSpy).toHaveBeenCalledWith(expect.objectContaining({ topicId: 'topic-a', intervalDays: 1 }));
+    });
+
+    it('schedules a debounced sync push', () => {
+      const scheduleSpy = vi.spyOn(useSyncStore.getState(), 'scheduleDirtyPush').mockImplementation(() => {});
+      useUserDataStore.getState().gradeCard('topic-a', 'good');
+      expect(scheduleSpy).toHaveBeenCalledTimes(1);
     });
   });
 

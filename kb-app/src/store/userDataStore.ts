@@ -15,6 +15,7 @@ import {
   setProgress as persistSetProgress,
   setSrsCard as persistSetSrsCard,
 } from '../lib/db';
+import { useSyncStore } from './syncStore';
 
 interface RecentEntry {
   topicId: string;
@@ -79,6 +80,7 @@ export const useUserDataStore = create<UserDataState>()((set, get) => ({
       return { progress: next };
     });
     void persistSetProgress(topicId, status);
+    useSyncStore.getState().scheduleDirtyPush();
   },
 
   cycleStatus: (topicId) => {
@@ -101,6 +103,7 @@ export const useUserDataStore = create<UserDataState>()((set, get) => ({
     // Store already knows the desired end state — pass it through so the
     // persistence call is idempotent and never needs its own read.
     void persistSetFavorite(topicId, willBeFavorite);
+    useSyncStore.getState().scheduleDirtyPush();
   },
 
   recordView: (topicId) => {
@@ -122,6 +125,7 @@ export const useUserDataStore = create<UserDataState>()((set, get) => ({
       return { notes: next };
     });
     void persistSetNote(topicId, text);
+    useSyncStore.getState().scheduleDirtyPush();
   },
 
   gradeCard: (topicId, rating) => {
@@ -133,5 +137,6 @@ export const useUserDataStore = create<UserDataState>()((set, get) => ({
       return { srsCards: nextMap };
     });
     void persistSetSrsCard(next);
+    useSyncStore.getState().scheduleDirtyPush();
   },
 }));
