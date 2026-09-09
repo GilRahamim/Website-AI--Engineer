@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { waitFor } from '@testing-library/react';
 import { useUserDataStore } from './userDataStore';
 import { useSyncStore } from './syncStore';
 import * as db from '../lib/db';
@@ -38,10 +39,10 @@ describe('userDataStore', () => {
       expect(setProgressSpy).toHaveBeenCalledWith('topic-a', 'learning');
     });
 
-    it('schedules a debounced sync push', () => {
+    it('schedules a debounced sync push', async () => {
       const scheduleSpy = vi.spyOn(useSyncStore.getState(), 'scheduleDirtyPush').mockImplementation(() => {});
       useUserDataStore.getState().cycleStatus('topic-a');
-      expect(scheduleSpy).toHaveBeenCalledTimes(1);
+      await waitFor(() => expect(scheduleSpy).toHaveBeenCalledTimes(1));
     });
   });
 
@@ -70,10 +71,10 @@ describe('userDataStore', () => {
       expect(setFavoriteSpy).toHaveBeenCalledWith('topic-a', false);
     });
 
-    it('schedules a debounced sync push', () => {
+    it('schedules a debounced sync push', async () => {
       const scheduleSpy = vi.spyOn(useSyncStore.getState(), 'scheduleDirtyPush').mockImplementation(() => {});
       useUserDataStore.getState().toggleFavorite('topic-a');
-      expect(scheduleSpy).toHaveBeenCalledTimes(1);
+      await waitFor(() => expect(scheduleSpy).toHaveBeenCalledTimes(1));
     });
   });
 
@@ -117,10 +118,10 @@ describe('userDataStore', () => {
       expect(setNoteSpy).toHaveBeenCalledWith('topic-a', 'hello');
     });
 
-    it('schedules a debounced sync push', () => {
+    it('schedules a debounced sync push', async () => {
       const scheduleSpy = vi.spyOn(useSyncStore.getState(), 'scheduleDirtyPush').mockImplementation(() => {});
       useUserDataStore.getState().setNote('topic-a', 'hello');
-      expect(scheduleSpy).toHaveBeenCalledTimes(1);
+      await waitFor(() => expect(scheduleSpy).toHaveBeenCalledTimes(1));
     });
   });
 
@@ -147,10 +148,10 @@ describe('userDataStore', () => {
       expect(setSrsCardSpy).toHaveBeenCalledWith(expect.objectContaining({ topicId: 'topic-a', intervalDays: 1 }));
     });
 
-    it('schedules a debounced sync push', () => {
+    it('schedules a debounced sync push', async () => {
       const scheduleSpy = vi.spyOn(useSyncStore.getState(), 'scheduleDirtyPush').mockImplementation(() => {});
       useUserDataStore.getState().gradeCard('topic-a', 'good');
-      expect(scheduleSpy).toHaveBeenCalledTimes(1);
+      await waitFor(() => expect(scheduleSpy).toHaveBeenCalledTimes(1));
     });
   });
 
