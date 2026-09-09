@@ -106,7 +106,7 @@ describe('Settings — account', () => {
     await user.click(screen.getByRole('button', { name: 'שלח קישור התחברות' }));
 
     expect(sendMagicLinkSpy).toHaveBeenCalledWith('a@b.com');
-    expect(await screen.findByRole('status')).toHaveTextContent('קישור נשלח ל-a@b.com');
+    expect(await screen.findByRole('status')).toHaveTextContent('קישור נשלח ל-\u2066a@b.com\u2069');
   });
 
   it('disables the submit button while sending, and re-enables after', async () => {
@@ -150,7 +150,7 @@ describe('Settings — account', () => {
     useAuthStore.setState({ email: 'signed-in@example.com' });
     renderSettings();
 
-    expect(screen.getByText('מחובר כ: signed-in@example.com')).toBeInTheDocument();
+    expect(screen.getByText('מחובר כ: \u2066signed-in@example.com\u2069')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'התנתק' })).toBeInTheDocument();
     expect(screen.queryByLabelText('כתובת אימייל')).not.toBeInTheDocument();
   });
@@ -164,6 +164,23 @@ describe('Settings — account', () => {
     await user.click(screen.getByRole('button', { name: 'התנתק' }));
 
     expect(signOutSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('a stale message from one flow does not persist once a different flow completes', async () => {
+    const user = userEvent.setup();
+    vi.spyOn(useAuthStore.getState(), 'sendMagicLink').mockImplementation(async () => {
+      useAuthStore.setState({ status: 'sent' });
+    });
+    renderSettings();
+
+    await user.type(screen.getByLabelText('כתובת אימייל'), 'a@b.com');
+    await user.click(screen.getByRole('button', { name: 'שלח קישור התחברות' }));
+    expect(await screen.findByRole('status')).toHaveTextContent('קישור נשלח');
+
+    await user.click(screen.getByRole('button', { name: 'ייצא את הנתונים שלי' }));
+    await waitFor(() => expect(URL.createObjectURL).toHaveBeenCalledTimes(1));
+
+    expect(screen.queryByText(/קישור נשלח/)).not.toBeInTheDocument();
   });
 });
 

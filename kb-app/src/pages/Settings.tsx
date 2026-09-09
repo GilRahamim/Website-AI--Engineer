@@ -69,6 +69,7 @@ export default function Settings() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function handleExport() {
+    setMessage(null);
     const payload = await exportAllData();
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -87,16 +88,18 @@ export default function Settings() {
 
   async function handleSendMagicLink(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setMessage(null);
     await useAuthStore.getState().sendMagicLink(emailInput);
     const { status, errorMessage } = useAuthStore.getState();
     if (status === 'sent') {
-      setMessage({ kind: 'success', text: `קישור נשלח ל-${emailInput}, בדוק את תיבת הדואר.` });
+      setMessage({ kind: 'success', text: `קישור נשלח ל-\u2066${emailInput}\u2069, בדוק את תיבת הדואר.` });
     } else if (status === 'error') {
       setMessage({ kind: 'error', text: errorMessage ?? 'שליחת הקישור נכשלה.' });
     }
   }
 
   async function handleSignOut() {
+    setMessage(null);
     await useAuthStore.getState().signOut();
   }
 
@@ -149,7 +152,7 @@ export default function Settings() {
           <h2 className="font-semibold text-[var(--kb-text)]">חשבון</h2>
           {email ? (
             <>
-              <p className="text-sm text-[var(--kb-text)]">{`מחובר כ: ${email}`}</p>
+              <p className="text-sm text-[var(--kb-text)]">{`מחובר כ: \u2066${email}\u2069`}</p>
               <button
                 type="button"
                 onClick={handleSignOut}

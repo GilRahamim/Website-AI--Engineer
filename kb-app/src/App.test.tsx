@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App, { RouteErrorBoundary } from './App';
 import topicsData from './data/topics.clean.json';
@@ -133,13 +133,13 @@ describe('App', () => {
     expect(await screen.findByRole('heading', { name: 'הגדרות' })).toBeInTheDocument();
   });
 
-  it('calls authStore.init() once on mount', () => {
+  it('calls authStore.init() once on mount', async () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>,
     );
-    expect(initSpy).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(initSpy).toHaveBeenCalledTimes(1));
   });
 
   it('RouteErrorBoundary shows a reload message when a child throws during render', () => {

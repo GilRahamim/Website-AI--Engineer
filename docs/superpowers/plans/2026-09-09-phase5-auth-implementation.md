@@ -556,6 +556,7 @@ git commit -m "feat: initialize authStore on App mount"
 
 - Create a Supabase project at supabase.com if you haven't already. In its dashboard, confirm Auth → Providers → Email is enabled with "Confirm email"/magic link defaults (no code change needed for this — it's the project's default Auth config).
 - Copy the project's URL and anon key into `kb-app/.env` (create it from `.env.example` — never commit it).
+- In the Supabase dashboard, go to Authentication → URL Configuration and add every origin you'll test from (e.g. `http://localhost:5173` for `npm run dev`, plus your eventual production origin) to "Redirect URLs" — `sendMagicLink` passes `emailRedirectTo: window.location.origin`, so the magic link only redirects back to the app from an origin Supabase has been told to trust.
 - `npm run dev`, open `/settings`, enter your real email in the Account section, submit. Confirm the "sent" message appears.
 - Check your email for the magic link. Click it — confirm it redirects back to the app and the Account section now shows "מחובר כ: `<your email>`".
 - Reload the page — confirm you're still shown as signed in (session persists).

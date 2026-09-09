@@ -6,28 +6,34 @@ const mockOnAuthStateChange = vi.fn();
 const mockSignInWithOtp = vi.fn();
 const mockSignOut = vi.fn();
 
+const mockClient = {
+  auth: {
+    getSession: (...args: unknown[]) => mockGetSession(...args),
+    onAuthStateChange: (...args: unknown[]) => mockOnAuthStateChange(...args),
+    signInWithOtp: (...args: unknown[]) => mockSignInWithOtp(...args),
+    signOut: (...args: unknown[]) => mockSignOut(...args),
+  },
+};
+
+const mockGetSupabase = vi.fn<() => typeof mockClient | null>(() => mockClient);
+
 // Full module replacement (not vi.spyOn on the real client) — this test file
 // never needs a real, network-capable Supabase client, so there's no reason
 // to depend on .env.test's placeholder values resolving to anything.
 vi.mock('../lib/supabase', () => ({
-  supabase: {
-    auth: {
-      getSession: (...args: unknown[]) => mockGetSession(...args),
-      onAuthStateChange: (...args: unknown[]) => mockOnAuthStateChange(...args),
-      signInWithOtp: (...args: unknown[]) => mockSignInWithOtp(...args),
-      signOut: (...args: unknown[]) => mockSignOut(...args),
-    },
-  },
+  getSupabase: () => mockGetSupabase(),
 }));
 
-const { useAuthStore } = await import('./authStore');
+const { useAuthStore, __resetAuthStoreForTests } = await import('./authStore');
 
 beforeEach(() => {
+  mockGetSupabase.mockReset().mockReturnValue(mockClient);
   mockGetSession.mockReset().mockResolvedValue({ data: { session: null } });
   mockOnAuthStateChange.mockReset();
   mockSignInWithOtp.mockReset().mockResolvedValue({ error: null });
   mockSignOut.mockReset().mockResolvedValue({ error: null });
   useAuthStore.setState({ email: null, status: 'idle', errorMessage: null });
+  __resetAuthStoreForTests();
 });
 
 describe('authStore', () => {
@@ -59,12 +65,32 @@ describe('authStore', () => {
     expect(useAuthStore.getState().email).toBeNull();
   });
 
+  it('init() no-ops when no Supabase project is configured', () => {
+    mockGetSupabase.mockReturnValue(null);
+    useAuthStore.getState().init();
+    expect(mockGetSession).not.toHaveBeenCalled();
+    expect(mockOnAuthStateChange).not.toHaveBeenCalled();
+  });
+
+  it('init() only subscribes once even if called twice (StrictMode double-invoke guard)', () => {
+    useAuthStore.getState().init();
+    useAuthStore.getState().init();
+    expect(mockOnAuthStateChange).toHaveBeenCalledTimes(1);
+  });
+
   it('sendMagicLink sets status to sending immediately, then sent on success', async () => {
     const promise = useAuthStore.getState().sendMagicLink('a@b.com');
     expect(useAuthStore.getState().status).toBe('sending');
     await promise;
     expect(useAuthStore.getState().status).toBe('sent');
-    expect(mockSignInWithOtp).toHaveBeenCalledWith({ email: 'a@b.com' });
+  });
+
+  it('sendMagicLink passes emailRedirectTo as the current window origin', async () => {
+    await useAuthStore.getState().sendMagicLink('a@b.com');
+    expect(mockSignInWithOtp).toHaveBeenCalledWith({
+      email: 'a@b.com',
+      options: { emailRedirectTo: window.location.origin },
+    });
   });
 
   it('sendMagicLink sets status to error with a fixed generic message on failure, never the raw error', async () => {
@@ -75,8 +101,28 @@ describe('authStore', () => {
     expect(useAuthStore.getState().errorMessage).not.toContain('some raw supabase error detail');
   });
 
+  it('sendMagicLink sets a generic error (not an unhandled rejection) when signInWithOtp throws', async () => {
+    mockSignInWithOtp.mockRejectedValue(new Error('network exploded'));
+    await useAuthStore.getState().sendMagicLink('a@b.com');
+    expect(useAuthStore.getState().status).toBe('error');
+    expect(useAuthStore.getState().errorMessage).toBe('שליחת הקישור נכשלה. נסה שוב.');
+  });
+
+  it('sendMagicLink sets a generic error when no Supabase project is configured', async () => {
+    mockGetSupabase.mockReturnValue(null);
+    await useAuthStore.getState().sendMagicLink('a@b.com');
+    expect(useAuthStore.getState().status).toBe('error');
+    expect(mockSignInWithOtp).not.toHaveBeenCalled();
+  });
+
   it('signOut calls supabase.auth.signOut', async () => {
     await useAuthStore.getState().signOut();
     expect(mockSignOut).toHaveBeenCalledTimes(1);
+  });
+
+  it('signOut does nothing when no Supabase project is configured', async () => {
+    mockGetSupabase.mockReturnValue(null);
+    await expect(useAuthStore.getState().signOut()).resolves.toBeUndefined();
+    expect(mockSignOut).not.toHaveBeenCalled();
   });
 });

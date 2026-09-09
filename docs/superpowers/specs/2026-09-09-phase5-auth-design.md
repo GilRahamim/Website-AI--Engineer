@@ -27,7 +27,7 @@ export const supabase = createClient(
 
 New dependency: `@supabase/supabase-js`. New env vars: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, documented with placeholders in a new `kb-app/.env.example` (`.env` itself is already gitignored — confirmed present in `kb-app/.gitignore`). The anon key is safe to expose client-side per Supabase's own model — RLS (sub-project #3) is the actual security boundary, not key secrecy.
 
-No live Supabase project exists yet. This module constructs a client either way (the SDK doesn't validate the URL/key at construction time), and every test in this sub-project mocks `lib/supabase.ts` rather than hitting a real project — so implementation and its automated tests need no live project. A live project is needed only for your own manual end-to-end check after implementation (creating one, and filling in `.env`, happens at that point).
+No live Supabase project exists yet. **Correction from the whole-branch review:** `createClient()` DOES validate its URL synchronously and throws on a missing/empty value — the original claim above was wrong. `lib/supabase.ts` therefore exports a lazy, memoized `getSupabase(): SupabaseClient | null` instead of an eagerly-constructed client, returning `null` (never throwing) when either env var is absent, so the app boots correctly with no `.env` at all (golden rule 3). Every consumer (`authStore.ts`) guards on a `null` return. Every test in this sub-project mocks `lib/supabase.ts` rather than hitting a real project — so implementation and its automated tests need no live project. A live project is needed only for your own manual end-to-end check after implementation (creating one, and filling in `.env`, happens at that point).
 
 ## Section 2: `authStore.ts`
 

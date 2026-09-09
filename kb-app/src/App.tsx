@@ -3,7 +3,6 @@ import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Reader from './pages/Reader';
 import { useUserDataStore } from './store/userDataStore';
-import { useAuthStore } from './store/authStore';
 import CommandPalette from './components/palette/CommandPalette';
 
 const Flashcards = lazy(() => import('./pages/Flashcards'));
@@ -56,7 +55,7 @@ export default function App() {
 
   useEffect(() => {
     void useUserDataStore.getState().loadUserData();
-    useAuthStore.getState().init();
+    void import('./store/authStore').then(({ useAuthStore }) => useAuthStore.getState().init());
   }, []);
 
   return (
