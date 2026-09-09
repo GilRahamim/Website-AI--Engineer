@@ -8,6 +8,7 @@ import CommandPalette from './components/palette/CommandPalette';
 const Flashcards = lazy(() => import('./pages/Flashcards'));
 const Quiz = lazy(() => import('./pages/Quiz'));
 const KnowledgeMap = lazy(() => import('./pages/Map'));
+const Settings = lazy(() => import('./pages/Settings'));
 
 function RouteFallback() {
   return (
@@ -85,6 +86,10 @@ export default function App() {
                 from the static topic dataset, so it carries none of the
                 hydration hazard the routes above had to design around. */}
             <Route path="/map" element={<KnowledgeMap />} />
+            {/* Settings never reads userDataStore at all — it only provides
+                export/import UI for data backup, so it carries none of the
+                hydration hazard the routes above had to design around. */}
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </Suspense>
       </RouteErrorBoundary>
