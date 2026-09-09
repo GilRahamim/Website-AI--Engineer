@@ -22,7 +22,8 @@ create index progress_user_updated_idx on progress (user_id, updated_at);
 
 alter table progress enable row level security;
 create policy "own rows" on progress
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 -- ============================================================
 -- notes
@@ -39,7 +40,8 @@ create index notes_user_updated_idx on notes (user_id, updated_at);
 
 alter table notes enable row level security;
 create policy "own rows" on notes
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 -- ============================================================
 -- favorites
@@ -55,7 +57,8 @@ create index favorites_user_created_idx on favorites (user_id, created_at);
 
 alter table favorites enable row level security;
 create policy "own rows" on favorites
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 -- ============================================================
 -- srs_cards
@@ -64,7 +67,7 @@ create policy "own rows" on favorites
 create table srs_cards (
   user_id uuid references auth.users on delete cascade,
   topic_id text not null,
-  ease real not null default 2.5,
+  ease double precision not null default 2.5,
   interval_days real not null default 0,
   due_at timestamptz not null default now(),
   reps int not null default 0,
@@ -76,4 +79,5 @@ create index srs_cards_user_updated_idx on srs_cards (user_id, updated_at);
 
 alter table srs_cards enable row level security;
 create policy "own rows" on srs_cards
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);

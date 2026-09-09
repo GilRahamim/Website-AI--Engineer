@@ -44,12 +44,12 @@ create table favorites (
   created_at timestamptz not null default now(),
   primary key (user_id, topic_id)
 );
-create index favorites_user_updated_idx on favorites (user_id, created_at);
+create index favorites_user_created_idx on favorites (user_id, created_at);
 
 create table srs_cards (
   user_id uuid references auth.users on delete cascade,
   topic_id text not null,
-  ease real not null default 2.5,
+  ease double precision not null default 2.5,
   interval_days real not null default 0,
   due_at timestamptz not null default now(),
   reps int not null default 0,
@@ -64,6 +64,8 @@ create index srs_cards_user_updated_idx on srs_cards (user_id, updated_at);
 
 **Correction 2 — a `(user_id, updated_at)` index on every table** (using `created_at` for `favorites`, which has no `updated_at` — matching its local `Favorite` type at `types.ts:50-53`, which also only has `createdAt`). The bare `(user_id, topic_id)` primary key supports "all of this user's rows" and "this exact row," but sub-project #4's `pullSince(ts)` needs "this user's rows changed after timestamp ts" — a query the primary key alone can't serve efficiently. Cheap to add now, before there's data to migrate around.
 
+**Correction 3 — `srs_cards.ease` is `double precision`, not `real`.** `real` (float4) round-trips lossily against the float64 `ease: number` that `srs.ts` accumulates in ±0.15/±0.2 steps — a push→pull cycle could return e.g. `2.3499999046325684` for a value pushed as `2.35`. Harmless for scheduling itself, but it would produce a phantom diff in any value-based dirty check sub-project #4 adds. `interval_days` stays `real`: `srs.ts` always rounds it to an integer before storing, so it isn't subject to the same drift.
+
 **Timestamp representation:** these columns are `timestamptz`; the local IndexedDB rows carry epoch-millisecond `number`s (`updatedAt`/`createdAt`/`dueAt`). Converting between the two directions (`new Date(ms).toISOString()` for a push, `new Date(row.updated_at).getTime()` for a pull) is sub-project #4's job, not this schema's — noted here so the boundary is explicit and isn't lost between pieces.
 
 ## Section 2: Row-Level Security
@@ -73,22 +75,26 @@ Identical policy shape on all four tables — a user can only see or modify thei
 ```sql
 alter table progress enable row level security;
 create policy "own rows" on progress
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 alter table notes enable row level security;
 create policy "own rows" on notes
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 alter table favorites enable row level security;
 create policy "own rows" on favorites
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 alter table srs_cards enable row level security;
 create policy "own rows" on srs_cards
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 ```
 
-`for all` covers select/insert/update/delete with one policy per table rather than four — this project has no admin/service role that needs different rules, so there's no reason to split them.
+`for all` covers select/insert/update/delete with one policy per table rather than four — this project has no admin/service role that needs different rules, so there's no reason to split them. `to authenticated` skips policy evaluation entirely for anonymous sessions (there's no anon read/write case anywhere in this app), and wrapping `auth.uid()` in `(select ...)` lets Postgres evaluate it once per query via an InitPlan instead of once per row — both are Supabase's documented RLS performance recommendations, cheap to bake in now before any table holds real rows.
 
 ## Section 3: File and application workflow
 

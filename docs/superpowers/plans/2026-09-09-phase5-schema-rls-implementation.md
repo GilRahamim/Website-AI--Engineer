@@ -14,9 +14,10 @@
 
 - File location: `kb-app/supabase/schema.sql` (matches `kb-app/CLAUDE.md`'s documented structure: "`supabase/schema.sql`").
 - Four tables only: `progress`, `notes`, `favorites`, `srs_cards`. No `recents` table (confirmed local-only, out of scope — see spec).
-- Every table: primary key `(user_id, topic_id)`, `user_id uuid references auth.users on delete cascade`, RLS enabled with a single `for all using (auth.uid() = user_id) with check (auth.uid() = user_id)` policy.
+- Every table: primary key `(user_id, topic_id)`, `user_id uuid references auth.users on delete cascade`, RLS enabled with a single `for all to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id)` policy (the `to authenticated` + `(select auth.uid())` form is Supabase's documented RLS perf pattern — skips evaluation for anon sessions, hoists the uid lookup to once per query).
 - Every table gets a supporting index: `(user_id, updated_at)` — except `favorites`, which has no `updated_at` locally or in this schema, so its index is `(user_id, created_at)`.
 - `srs_cards.due_at` is `timestamptz not null default now()` — NOT nullable (correction from spec Section 1; the original `04-BACKEND-SUPABASE-SYNC.md` draft left it nullable, but the local `SrsCard.dueAt: number` type is always present).
+- `srs_cards.ease` is `double precision`, not `real` — `real` round-trips lossily against the float64 values `srs.ts` produces (spec Correction 3). `interval_days` stays `real` (always integer-valued in practice).
 - No `if not exists` guards anywhere — this is an intentional one-time setup script, not a repeatable migration (see spec Section 3).
 - This plan makes NO changes under `kb-app/src/` — additive-only, one new file.
 - After the file exists, the project's existing pipeline (`npm run typecheck && npm run lint && npm run test && npm run build`, run from `kb-app/`) must stay green — this file must not be picked up or break any of those.
@@ -63,7 +64,8 @@ create index progress_user_updated_idx on progress (user_id, updated_at);
 
 alter table progress enable row level security;
 create policy "own rows" on progress
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 -- ============================================================
 -- notes
@@ -80,7 +82,8 @@ create index notes_user_updated_idx on notes (user_id, updated_at);
 
 alter table notes enable row level security;
 create policy "own rows" on notes
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 -- ============================================================
 -- favorites
@@ -92,11 +95,12 @@ create table favorites (
   created_at timestamptz not null default now(),
   primary key (user_id, topic_id)
 );
-create index favorites_user_updated_idx on favorites (user_id, created_at);
+create index favorites_user_created_idx on favorites (user_id, created_at);
 
 alter table favorites enable row level security;
 create policy "own rows" on favorites
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 -- ============================================================
 -- srs_cards
@@ -105,7 +109,7 @@ create policy "own rows" on favorites
 create table srs_cards (
   user_id uuid references auth.users on delete cascade,
   topic_id text not null,
-  ease real not null default 2.5,
+  ease double precision not null default 2.5,
   interval_days real not null default 0,
   due_at timestamptz not null default now(),
   reps int not null default 0,
@@ -117,7 +121,8 @@ create index srs_cards_user_updated_idx on srs_cards (user_id, updated_at);
 
 alter table srs_cards enable row level security;
 create policy "own rows" on srs_cards
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 ```
 
 - [ ] **Step 2: Verify no regression to the existing pipeline**
@@ -136,8 +141,9 @@ Read the file back and confirm by inspection:
 - Exactly four `create table` statements: `progress`, `notes`, `favorites`, `srs_cards`.
 - Every table has `primary key (user_id, topic_id)`.
 - Every table has exactly one `create index ... (user_id, updated_at)` line, except `favorites`, whose index is `(user_id, created_at)`.
-- Every table has `alter table <name> enable row level security;` followed by a `create policy "own rows" on <name> for all using (auth.uid() = user_id) with check (auth.uid() = user_id);`.
+- Every table has `alter table <name> enable row level security;` followed by a `create policy "own rows" on <name> for all to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);`.
 - `srs_cards.due_at` reads `timestamptz not null default now()` — not nullable.
+- `srs_cards.ease` reads `double precision`, not `real`.
 - No `if not exists` anywhere in the file.
 
 This is a manual read-through, not a script — there is no automated linter for embedded SQL strings in this codebase, and adding one would be disproportionate to a 70-line static file.
