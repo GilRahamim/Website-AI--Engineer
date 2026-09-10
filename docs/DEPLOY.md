@@ -26,6 +26,23 @@ by Cloudflare Pages' own git integration, independent of the repo's
 4. Save and deploy. Cloudflare Pages assigns a URL automatically, shown
    in the Pages dashboard, in the form `<project-name>.pages.dev`.
 
+## After the first deploy, verify
+
+Once the first deploy finishes, confirm it actually works before considering
+this done:
+
+1. Open the `*.pages.dev` URL Cloudflare assigned. The homepage should load.
+2. Navigate to a deep link (e.g. `/settings`) and hard-refresh the page. If
+   the SPA fallback (`kb-app/public/_redirects`) is working, the app loads
+   normally instead of showing a 404 — this is the one thing this whole
+   setup exists to get right.
+3. Confirm the PWA installs and its service worker registers — this is only
+   testable over real HTTPS, not on `localhost`, so this deploy is the first
+   real chance to check it.
+4. Check the repository's GitHub Actions tab for this commit's CI run —
+   confirm it's green (separate from the Cloudflare Pages build itself; see
+   "What CI does vs. what Cloudflare Pages does" below).
+
 ## Why the SPA fallback matters
 
 This app uses React Router's `BrowserRouter`, so a direct link or a
