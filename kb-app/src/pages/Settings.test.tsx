@@ -6,6 +6,7 @@ import { IDBFactory } from 'fake-indexeddb';
 import Settings from './Settings';
 import { useUserDataStore } from '../store/userDataStore';
 import { useAuthStore } from '../store/authStore';
+import { useSyncStore } from '../store/syncStore';
 import * as db from '../lib/db';
 import { __resetDbForTests, setProgress } from '../lib/db';
 
@@ -39,6 +40,7 @@ beforeEach(() => {
     isLoaded: true,
   });
   useAuthStore.setState({ email: null, status: 'idle', errorMessage: null });
+  useSyncStore.setState({ status: 'idle', lastSyncedAt: null });
   URL.createObjectURL = vi.fn(() => 'blob:mock-url');
   URL.revokeObjectURL = vi.fn();
 });
@@ -318,5 +320,41 @@ describe('Settings — import', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('קובץ לא תקין');
     expect(confirmSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe('Settings — sync status', () => {
+  it('shows nothing sync-related when signed out', () => {
+    renderSettings();
+    expect(screen.queryByText(/מסונכרן/)).not.toBeInTheDocument();
+  });
+
+  it('shows "מעולם לא" when signed in but never synced', () => {
+    useAuthStore.setState({ email: 'signed-in@example.com' });
+    renderSettings();
+    expect(screen.getByText(/מעולם לא/)).toBeInTheDocument();
+  });
+
+  it('shows a relative time when lastSyncedAt is set', () => {
+    useAuthStore.setState({ email: 'signed-in@example.com' });
+    useSyncStore.setState({ status: 'synced', lastSyncedAt: Date.now() - 5 * 60 * 1000 });
+    renderSettings();
+    expect(screen.getByText(/לפני 5 דקות/)).toBeInTheDocument();
+  });
+
+  it('clicking "סנכרן עכשיו" calls syncNow()', async () => {
+    const user = userEvent.setup();
+    useAuthStore.setState({ email: 'signed-in@example.com' });
+    const syncNowSpy = vi.spyOn(useSyncStore.getState(), 'syncNow').mockResolvedValue(undefined);
+    renderSettings();
+
+    await user.click(screen.getByRole('button', { name: 'סנכרן עכשיו' }));
+
+    expect(syncNowSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('the "(בקרוב)" text is gone from the signed-out helper text', () => {
+    renderSettings();
+    expect(screen.getByText(/התחבר כדי לסנכרן נתונים בין מכשירים/)).not.toHaveTextContent('בקרוב');
   });
 });

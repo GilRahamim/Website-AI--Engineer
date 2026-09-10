@@ -16,6 +16,16 @@ import {
   setSrsCard as persistSetSrsCard,
 } from '../lib/db';
 
+// Deliberately a per-call dynamic import, not a top-level static one — this
+// file is eagerly bundled (imported by App.tsx), and a static import of
+// syncStore.ts would pull authStore.ts/lib/sync.ts/lib/supabase.ts and
+// @supabase/supabase-js into the eager main chunk with it, defeating
+// App.tsx's own dynamic import of those same modules (and the bundle-size
+// fix from the Auth sub-project this would otherwise silently undo).
+function scheduleSyncPush(): void {
+  void import('./syncStore').then(({ useSyncStore }) => useSyncStore.getState().scheduleDirtyPush());
+}
+
 interface RecentEntry {
   topicId: string;
   viewedAt: number;
@@ -79,6 +89,7 @@ export const useUserDataStore = create<UserDataState>()((set, get) => ({
       return { progress: next };
     });
     void persistSetProgress(topicId, status);
+    scheduleSyncPush();
   },
 
   cycleStatus: (topicId) => {
@@ -101,6 +112,7 @@ export const useUserDataStore = create<UserDataState>()((set, get) => ({
     // Store already knows the desired end state — pass it through so the
     // persistence call is idempotent and never needs its own read.
     void persistSetFavorite(topicId, willBeFavorite);
+    scheduleSyncPush();
   },
 
   recordView: (topicId) => {
@@ -122,6 +134,7 @@ export const useUserDataStore = create<UserDataState>()((set, get) => ({
       return { notes: next };
     });
     void persistSetNote(topicId, text);
+    scheduleSyncPush();
   },
 
   gradeCard: (topicId, rating) => {
@@ -133,5 +146,6 @@ export const useUserDataStore = create<UserDataState>()((set, get) => ({
       return { srsCards: nextMap };
     });
     void persistSetSrsCard(next);
+    scheduleSyncPush();
   },
 }));

@@ -5,6 +5,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import TopicCard from './TopicCard';
 import TopicListRow from './TopicListRow';
 import { useUserDataStore } from '../../store/userDataStore';
+import { useSyncStore } from '../../store/syncStore';
 import type { GridItemProps } from '../../hooks/useGridKeyboardNav';
 import type { Topic } from '../../types';
 
@@ -32,6 +33,13 @@ const itemProps: GridItemProps = {
 
 function reset() {
   useUserDataStore.setState({ progress: new Map(), favorites: new Set(), recents: [], isLoaded: true });
+  // Statically importing useSyncStore here (rather than leaving it to
+  // userDataStore's own per-call `import('./syncStore')`) pre-warms the
+  // module in the graph before a status/favorite click can trigger that
+  // dynamic import, and stubs the resulting scheduleDirtyPush call so it
+  // doesn't leave a dangling real timer/network call running past this
+  // test's lifetime.
+  vi.spyOn(useSyncStore.getState(), 'scheduleDirtyPush').mockImplementation(() => {});
 }
 
 function renderWithRouter(ui: React.ReactElement) {

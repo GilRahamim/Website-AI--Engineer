@@ -3,6 +3,7 @@ import Header from '../components/layout/Header';
 import { exportAllData, importAllData, type ExportPayload } from '../lib/db';
 import { useUserDataStore } from '../store/userDataStore';
 import { useAuthStore } from '../store/authStore';
+import { useSyncStore } from '../store/syncStore';
 
 const VALID_PROGRESS_STATUSES = new Set(['new', 'learning', 'mastered']);
 
@@ -61,9 +62,22 @@ function backupFileName(exportedAt: string): string {
   return `kb-backup-${yyyy}-${mm}-${dd}.json`;
 }
 
+function formatLastSynced(lastSyncedAt: number | null): string {
+  if (lastSyncedAt === null) return 'מעולם לא';
+  const elapsedMs = Date.now() - lastSyncedAt;
+  const minutes = Math.floor(elapsedMs / 60_000);
+  if (minutes < 1) return 'הרגע';
+  if (minutes < 60) return `לפני ${minutes} דקות`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `לפני ${hours} שעות`;
+  const days = Math.floor(hours / 24);
+  return `לפני ${days} ימים`;
+}
+
 export default function Settings() {
   const email = useAuthStore((s) => s.email);
   const isSending = useAuthStore((s) => s.status === 'sending');
+  const lastSyncedAt = useSyncStore((s) => s.lastSyncedAt);
   const [emailInput, setEmailInput] = useState('');
   const [message, setMessage] = useState<{ kind: 'success' | 'error'; text: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -101,6 +115,10 @@ export default function Settings() {
   async function handleSignOut() {
     setMessage(null);
     await useAuthStore.getState().signOut();
+  }
+
+  async function handleSyncNow() {
+    await useSyncStore.getState().syncNow();
   }
 
   async function handleFileSelected(event: ChangeEvent<HTMLInputElement>) {
@@ -160,10 +178,18 @@ export default function Settings() {
               >
                 התנתק
               </button>
+              <p className="text-sm text-[var(--kb-muted)]">{`מסונכרן לאחרונה: ${formatLastSynced(lastSyncedAt)}`}</p>
+              <button
+                type="button"
+                onClick={handleSyncNow}
+                className="min-h-11 w-fit rounded-md border border-[var(--kb-border)] px-4 text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
+              >
+                סנכרן עכשיו
+              </button>
             </>
           ) : (
             <form onSubmit={handleSendMagicLink} className="flex flex-col gap-2">
-              <p className="text-sm text-[var(--kb-muted)]">התחבר כדי לסנכרן נתונים בין מכשירים (בקרוב).</p>
+              <p className="text-sm text-[var(--kb-muted)]">התחבר כדי לסנכרן נתונים בין מכשירים.</p>
               <label className="flex min-h-11 items-center gap-2 rounded-lg border border-[var(--kb-border)] bg-[var(--kb-surface)] px-3">
                 <span className="sr-only">כתובת אימייל</span>
                 <input

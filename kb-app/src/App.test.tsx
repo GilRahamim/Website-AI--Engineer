@@ -5,16 +5,19 @@ import App, { RouteErrorBoundary } from './App';
 import topicsData from './data/topics.clean.json';
 import { useUserDataStore } from './store/userDataStore';
 import { useAuthStore } from './store/authStore';
+import { useSyncStore } from './store/syncStore';
 
 vi.mock('react-force-graph-2d', () => ({
   default: () => <div />,
 }));
 
 let initSpy: ReturnType<typeof vi.spyOn>;
+let startSpy: ReturnType<typeof vi.spyOn>;
 
 beforeEach(() => {
   vi.restoreAllMocks();
   initSpy = vi.spyOn(useAuthStore.getState(), 'init').mockImplementation(() => {});
+  startSpy = vi.spyOn(useSyncStore.getState(), 'start').mockImplementation(() => {});
   global.fetch = vi.fn().mockResolvedValue({ ok: true, text: () => Promise.resolve('<p>content</p>') }) as unknown as typeof fetch;
   useUserDataStore.setState({
     progress: new Map(),
@@ -140,6 +143,15 @@ describe('App', () => {
       </MemoryRouter>,
     );
     await waitFor(() => expect(initSpy).toHaveBeenCalledTimes(1));
+  });
+
+  it('calls syncStore.start() once on mount', async () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+    await waitFor(() => expect(startSpy).toHaveBeenCalledTimes(1));
   });
 
   it('RouteErrorBoundary shows a reload message when a child throws during render', () => {

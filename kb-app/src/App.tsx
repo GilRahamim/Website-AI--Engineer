@@ -55,7 +55,12 @@ export default function App() {
 
   useEffect(() => {
     void useUserDataStore.getState().loadUserData();
-    void import('./store/authStore').then(({ useAuthStore }) => useAuthStore.getState().init());
+    void import('./store/authStore')
+      .then(({ useAuthStore }) => {
+        useAuthStore.getState().init();
+        return import('./store/syncStore');
+      })
+      .then(({ useSyncStore }) => useSyncStore.getState().start());
   }, []);
 
   return (

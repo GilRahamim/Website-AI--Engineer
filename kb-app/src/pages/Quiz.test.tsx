@@ -1,9 +1,10 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import Quiz from './Quiz';
 import { useUserDataStore } from '../store/userDataStore';
+import { useSyncStore } from '../store/syncStore';
 import topicsData from '../data/topics.clean.json';
 import type { ProgressStatus } from '../types';
 
@@ -16,6 +17,13 @@ function reset() {
     srsCards: new Map(),
     isLoaded: true,
   });
+  // Statically importing useSyncStore here (rather than leaving it to
+  // userDataStore's own per-call `import('./syncStore')`) pre-warms the
+  // module in the graph before a wrong-answer grade can trigger that
+  // dynamic import, and stubs the resulting scheduleDirtyPush call so it
+  // doesn't leave a dangling real timer/network call running past this
+  // test's lifetime.
+  vi.spyOn(useSyncStore.getState(), 'scheduleDirtyPush').mockImplementation(() => {});
 }
 
 function renderPage() {
