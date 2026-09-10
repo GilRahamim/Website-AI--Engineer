@@ -1,0 +1,22 @@
+{
+  // Config for Cloudflare's git-connected "Workers" deploy (the current
+  // product for what used to be a separate "Pages" dashboard flow —
+  // `npx wrangler deploy` reads this file to know what to serve).
+  // This app is pure static output (no server-side Worker code), so
+  // there's no `main` entry — just the built assets.
+  "name": "kb-app",
+  "compatibility_date": "2026-09-10",
+  "assets": {
+    // Relative to this file, so this resolves to kb-app/dist — the
+    // output of `npm run build`, which must run before `wrangler deploy`
+    // (set as the dashboard's "Build command").
+    "directory": "./dist",
+    // Cloudflare's documented mechanism for SPA fallback on this
+    // product: any request that doesn't match a real file in dist/ is
+    // served index.html with a 200, so React Router's BrowserRouter can
+    // handle deep links (e.g. /settings) on refresh. kb-app/public/_redirects
+    // (/* /index.html 200) stays in place as a harmless backup — both
+    // mechanisms agree, neither conflicts with the other.
+    "not_found_handling": "single-page-application"
+  }
+}
