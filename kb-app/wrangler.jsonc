@@ -4,7 +4,11 @@
   // `npx wrangler deploy` reads this file to know what to serve).
   // This app is pure static output (no server-side Worker code), so
   // there's no `main` entry — just the built assets.
-  "name": "kb-app",
+  // Must match the Cloudflare project name chosen during dashboard
+  // setup ("website-ai--engineer") — a mismatch here makes Cloudflare
+  // override it at deploy time with a warning (and offer to auto-PR a
+  // fix), so it's kept in sync explicitly instead.
+  "name": "website-ai--engineer",
   "compatibility_date": "2026-09-10",
   "assets": {
     // Relative to this file, so this resolves to kb-app/dist — the

@@ -18,7 +18,12 @@ flow, not the older Pages-only dashboard.
 2. On that screen:
    - **Project name:** whatever you like (this becomes part of your
      `<project-name>.pages.dev` URL) — the default (derived from the repo
-     name) is fine.
+     name) is fine. Whatever you pick must match `name` in
+     `kb-app/wrangler.jsonc` exactly, or Cloudflare overrides it at
+     deploy time with a warning — that file is already set to
+     `website-ai--engineer` to match the default; if you typed a
+     different project name, update `wrangler.jsonc`'s `name` to match
+     and push.
    - **Build command:** `npm run build`
    - **Deploy command:** leave the default, `npx wrangler deploy` — this
      reads `kb-app/wrangler.jsonc` (already in the repo) to know what to
@@ -49,9 +54,9 @@ this done:
 
 1. Open the `*.pages.dev` URL Cloudflare assigned. The homepage should load.
 2. Navigate to a deep link (e.g. `/settings`) and hard-refresh the page. If
-   the SPA fallback (`kb-app/public/_redirects`) is working, the app loads
-   normally instead of showing a 404 — this is the one thing this whole
-   setup exists to get right.
+   the SPA fallback (`wrangler.jsonc`'s `not_found_handling`) is working,
+   the app loads normally instead of showing a 404 — this is the one
+   thing this whole setup exists to get right.
 3. Confirm the PWA installs and its service worker registers — this is only
    testable over real HTTPS, not on `localhost`, so this deploy is the first
    real chance to check it.
@@ -64,13 +69,17 @@ this done:
 This app uses React Router's `BrowserRouter`, so a direct link or a
 refresh on any non-root path (e.g. `/settings`) must be served
 `index.html` with a 200 status, not a host default 404 — the router then
-takes over client-side. Two mechanisms provide this, and they agree with
-each other rather than conflict:
+takes over client-side. `kb-app/wrangler.jsonc`'s
+`assets.not_found_handling: "single-page-application"` provides this —
+the documented mechanism for this deploy method.
 
-- `kb-app/wrangler.jsonc`'s `assets.not_found_handling: "single-page-application"`
-  — the primary, documented mechanism for this deploy method.
-- `kb-app/public/_redirects` (`/* /index.html 200`) — kept in place as a
-  harmless backup from when this repo targeted the older Pages-only flow.
+**Do not add a `public/_redirects` file back.** An earlier version of
+this setup had one (`/* /index.html 200`, a leftover from before
+Cloudflare merged its Pages dashboard into this Workers flow) — combined
+with `not_found_handling`, Cloudflare's validator rejects it outright as
+an infinite redirect loop (`Invalid _redirects configuration: ... Infinite
+loop detected`), and the deploy fails. `not_found_handling` alone is
+correct and sufficient here.
 
 ## Rolling back
 
