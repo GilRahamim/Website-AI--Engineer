@@ -1,0 +1,50 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>פירוק לערכים סינגולריים (Singular Value Decomposition) המופעל על מטריצת TF-IDF כדי להוריד את ממדיה מעשרות אלפי פיצ'רים דלילים למאה-שלוש מאות ממדים צפופים. כשמפעילים את זה על טקסט קוראים לזה Latent Semantic Analysis (או LSI — Latent Semantic Indexing). כל ממד חדש מייצג ``קונספט'' סמוי — צירוף מילים שנוטות להופיע יחד.</p>
+<h4 class='sec-h'>למה בכלל להוריד ממד?</h4>
+<ul><li>וקטורי TF-IDF מגיעים ל-50,000–500,000 ממדים — עלות זיכרון וחישוב.</li><li>המטריצה דלילה מאוד: רוב התאים אפס.</li><li>בממדים גבוהים המרחקים ``מתרכזים'' — השכן הקרוב אינו קרוב משמעותית מנקודה אקראית (Curse of Dimensionality).</li><li>המודלים הופכים רעבים לדאטה וקל להם לעשות Overfitting.</li><li>חיפוש לפי מילים מדויקות מפספס מסמכים שמדברים על אותו נושא במילים אחרות — בעיית ה-vocabulary mismatch.</li></ul>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/01e1c1fd3b78.png" loading="lazy" alt="diagram"></div>
+<h4 class='sec-h'>איך זה עובד</h4>
+<ul><li>1. בונים את מטריצת A בגודל n מסמכים × m מונחים (בדרך כלל TF-IDF).</li><li>2. מפרקים את A למכפלה של שלוש מטריצות, ושומרים רק את k הכיוונים בעלי הערכים הסינגולריים הגדולים ביותר (Truncated SVD).</li><li>3. Uₖ נותנת ייצוג של כל מסמך ב-k ממדים — אלה וקטורי המסמכים.</li><li>4. Vₖᵀ נותנת ייצוג של כל מונח באותו מרחב — אלה וקטורי המונחים. מונחים עם דפוסי הופעה משותפת דומים יהיו קרובים זה לזה.</li><li>5. מנרמלים (Normalizer) לפני חישוב דמיון קוסינוס.</li><li>6. בוחרים את k לפי עקומת ה-cumulative explained variance.</li></ul>
+<h4 class='sec-h'>הנוסחה</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/726f90eba4a4.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>שיעור השונות המוסברת המצטברת — הקריטריון לבחירת k:</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/7c5b1dd46edb.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>רכיב</strong></td><td><strong>ממדים</strong></td><td><strong>משמעות</strong></td></tr><tr><td>A</td><td>n × m</td><td>מטריצת מסמכים-מונחים (TF-IDF)</td></tr><tr><td>Uₖ</td><td>n × k</td><td>ייצוג המסמכים במרחב הקונספטים</td></tr><tr><td>Σₖ</td><td>k × k</td><td>עוצמת כל קונספט (ערכים סינגולריים)</td></tr><tr><td>Vₖᵀ</td><td>k × m</td><td>ייצוג המונחים במרחב הקונספטים</td></tr><tr><td>k</td><td>סקלר</td><td>מספר הקונספטים שנשמרים — טיפוסית 100–300</td></tr></table>
+<h4 class='sec-h'>שימושים עיקריים</h4>
+<ul><li>חיפוש סמנטי מעבר להתאמת מילים מדויקת — LSA מאחזרת מסמכים דומים מושגית גם כשאין ביניהם חפיפת מילים.</li><li>מציאת מילים קרובות: וקטורי המונחים מ-Vₖᵀ מאפשרים לשאול ``אילו מילים מופיעות בהקשרים דומים ל-doctor?''</li><li>קלט מוקטן ל-t-SNE / UMAP לוויזואליזציה של קורפוס.</li><li>פיצ'רים למודלים קלאסיים — Logistic Regression על 200 ממדים במקום על 200,000.</li></ul>
+<h4 class='sec-h'>השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>שיטה</strong></td><td><strong>סוג המודל</strong></td><td><strong>פרשנות התוצאה</strong></td><td><strong>מתי לבחור</strong></td></tr><tr><td>SVD / LSA</td><td>אלגברה לינארית</td><td>רכיבים עם משקלים חיוביים ושליליים</td><td>כשרוצים דחיסה מהירה לאחזור</td></tr><tr><td>LDA</td><td>מודל הסתברותי</td><td>התפלגות מילים לכל נושא — קריא לבני אדם</td><td>כשרוצים נושאים שאפשר לתייג</td></tr><tr><td>PCA</td><td>אלגברה לינארית</td><td>רכיבים על דאטה צפוף וממורכז</td><td>דאטה טבלאי, לא מטריצה דלילה</td></tr><tr><td>Word2Vec / GloVe</td><td>רשת / פירוק מטריצת co-occurrence</td><td>וקטור צפוף לכל מילה</td><td>כשצריך סמנטיקה ברמת המילה</td></tr></table>
+<h4 class='sec-h'>יתרונות</h4>
+<ul><li>עובד ישירות על מטריצות דלילות (TruncatedSVD) — לא צריך לצפוף אותן.</li><li>דטרמיניסטי ומהיר יחסית ל-LDA.</li><li>נותן בו-זמנית ייצוג למסמכים ולמונחים באותו מרחב.</li></ul>
+<h4 class='sec-h'>מגבלות</h4>
+<ul><li>עדיין מבוסס Bag-of-Words — חסר רגישות להקשר ולסדר המילים.</li><li>לרכיבים יכולים להיות משקלים שליליים, ולכן קשה לפרש אותם כ``נושא'' בניגוד ל-LDA שהוא מודל הסתברותי.</li><li>צריך לחשב מחדש את הפירוק כשהקורפוס משתנה משמעותית — בפרקטיקה מריצים batch factorization אופליין.</li><li>לא ``המילה האחרונה'' על משמעות — Embeddings מודרניים עדיפים לרוב.</li></ul>
+<h4 class='sec-h'>קוד לדוגמה (scikit-learn)</h4>
+<pre class='code-block'><code>from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import TruncatedSVD
+from sklearn.preprocessing import Normalizer
+from sklearn.pipeline import make_pipeline
+from sklearn.metrics.pairwise import cosine_similarity
+
+tfidf  = TfidfVectorizer(stop_words='english', min_df=5)
+X      = tfidf.fit_transform(docs)          # sparse, e.g. 18k x 60k
+
+svd = TruncatedSVD(n_components=100, random_state=42)
+lsa = make_pipeline(svd, Normalizer(copy=False))
+X_lsa = lsa.fit_transform(X)                # dense, 18k x 100
+
+print("explained variance:", svd.explained_variance_ratio_.sum())
+
+# מילים קרובות במרחב הקונספטים (וקטורי המונחים)
+terms      = tfidf.get_feature_names_out()
+term_vecs  = svd.components_.T              # (vocab, k)
+i          = list(terms).index("doctor")
+sims       = cosine_similarity(term_vecs[i].reshape(1, -1), term_vecs).ravel()
+print([terms[j] for j in sims.argsort()[::-1][1:11]])</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין SVD ל-LDA כשיטות Topic Modeling?</strong></p>
+<p><strong>ת: </strong>SVD הוא פירוק אלגברי: הרכיבים הם כיוונים במרחב וקטורי ויכולים לקבל משקלים שליליים, ולכן קשה לתייג אותם. LDA הוא מודל הסתברותי גנרטיבי: כל נושא הוא התפלגות מעל מילים וכל מסמך הוא תערובת נושאים, מה שהופך את התוצאה לקריאה לבני אדם. SVD מהיר יותר ומתאים לאחזור; LDA מתאים כשרוצים לתייג נושאים.</p>
+<p><strong>ש: איך בוחרים את k?</strong></p>
+<p><strong>ת: </strong>מציירים עקומת cumulative explained variance עבור כמה ערכי k ובוחרים את הנקודה שבה התוספת מתמתנת. בפרקטיקה 100–300 עבור קורפוס טקסט טיפוסי. פחות ממדים = מהיר ופחות רועש, אבל מאבדים סיגנל.</p>
+<p><strong>ש: למה מנרמלים אחרי SVD?</strong></p>
+<p><strong>ת: </strong>כי אחרי הפירוק מודדים דמיון בקוסינוס, שרגיש רק לכיוון הווקטור ולא לאורכו. נרמול ל-L2 הופך את מכפלת הווקטורים לדמיון קוסינוס ישירות ומייצב את ההשוואות.</p>

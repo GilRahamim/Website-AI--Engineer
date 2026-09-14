@@ -1,0 +1,51 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>טכניקת רגולריזציה שעוצרת את האימון ברגע שה-validation loss מפסיק להשתפר, במקום להריץ מספר epochs קבוע מראש. הקריטריון נקבע לפני תחילת האימון — לא מסתכלים על התוצאות ואז מחליטים איפה לעצור.</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/e52fb11e4584.png" loading="lazy" alt="diagram"></div>
+<h4 class='sec-h'>איך זה עובד</h4>
+<ul><li>1. בסוף כל epoch מחשבים את ה-loss על סט ה-validation.</li><li>2. אם ה-loss השתפר ביותר מ-ε ביחס לטוב ביותר עד כה — שומרים את משקלי המודל ומאפסים את מונה הסבלנות.</li><li>3. אם לא השתפר — מקדמים את מונה הסבלנות באחד.</li><li>4. כשהמונה מגיע ל-patience, עושים break על לולאת ה-epochs.</li><li>5. טוענים בחזרה את המשקלים הטובים ביותר שנשמרו — לא את האחרונים.</li></ul>
+<h4 class='sec-h'>פירוש פרמטרים</h4>
+<table class='kbtable'><tr><td><strong>פרמטר</strong></td><td><strong>משמעות</strong></td><td><strong>ערך טיפוסי</strong></td></tr><tr><td>patience</td><td>כמה epochs להמתין ללא שיפור לפני עצירה</td><td>5–20</td></tr><tr><td>min_delta (ε)</td><td>שיפור מינימלי שנחשב שיפור אמיתי</td><td>1e-4</td></tr><tr><td>monitor</td><td>המדד שעוקבים אחריו</td><td>validation loss</td></tr><tr><td>restore_best</td><td>טעינת המשקלים הטובים ביותר בסיום</td><td>תמיד True</td></tr></table>
+<h4 class='sec-h'>שימושים עיקריים</h4>
+<ul><li>מניעת Overfitting בלי לשנות את הארכיטקטורה או להוסיף רגולריזציה.</li><li>חיסכון בזמן חישוב — לא מבזבזים שעות GPU על epochs שרק מזיקים.</li><li>קביעה אוטומטית של מספר ה-epochs, שהוא היפר-פרמטר שקשה לנחש מראש.</li><li>מלווה כמעט תמיד ReduceLROnPlateau — קודם מורידים את α, ורק אם גם זה לא עוזר, עוצרים.</li></ul>
+<h4 class='sec-h'>יתרונות</h4>
+<ul><li>כמעט חינם — לא מוסיף פרמטרים ולא מאט את האימון.</li><li>עובד עם כל ארכיטקטורה וכל אופטימייזר.</li><li>מספק אוטומטית את המודל בנקודת ה-generalization הטובה ביותר.</li></ul>
+<h4 class='sec-h'>חסרונות / מגבלות</h4>
+<ul><li>דורש סט validation נפרד — בדאטה קטן זו עלות משמעותית.</li><li>רגיש ל-patience: קצר מדי יעצור על רעש מקומי; ארוך מדי יבזבז זמן.</li><li>עקומת validation רועשת (batch קטן) יכולה לגרום לעצירה מוקדמת מדי.</li><li>אם משווים בין שתי שיטות אימון, חובה להסכים מראש על קריטריון העצירה — אחרת ההשוואה מוטה.</li></ul>
+<h4 class='sec-h'>קוד לדוגמה (PyTorch)</h4>
+<pre class='code-block'><code>import copy, torch
+
+best_val_loss = float('inf')
+patience, patience_counter = 10, 0
+best_state = None
+
+for epoch in range(200):
+    model.train()
+    for X_batch, Y_batch in train_loader:
+        optimizer.zero_grad()
+        loss = criterion(model(X_batch), Y_batch)
+        loss.backward()
+        optimizer.step()
+
+    model.eval()
+    with torch.no_grad():
+        val_loss = sum(criterion(model(X), Y).item()
+                       for X, Y in val_loader) / len(val_loader)
+
+    if val_loss &lt; best_val_loss - 1e-4:          # שיפור אמיתי
+        best_val_loss = val_loss
+        best_state = copy.deepcopy(model.state_dict())
+        patience_counter = 0
+    else:
+        patience_counter += 1
+        if patience_counter &gt;= patience:
+            print(f"Early stopping at epoch {epoch}")
+            break
+
+model.load_state_dict(best_state)                # המודל הטוב ביותר, לא האחרון</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: למה Early Stopping נחשב רגולריזציה?</strong></p>
+<p><strong>ת: </strong>כי הוא מגביל את הקיבולת האפקטיבית של המודל. ככל שמאמנים יותר, המשקלים גדלים והמודל לומד יותר פרטים ספציפיים לסט האימון. עצירה מוקדמת שומרת את המשקלים קטנים יותר — אפקט דומה ל-L2 regularization.</p>
+<p><strong>ש: למה חייבים לשמור את המשקלים הטובים ביותר ולא להסתפק באחרונים?</strong></p>
+<p><strong>ת: </strong>כי כשעוצרים אחרי patience epochs ללא שיפור, המודל כבר patience epochs בתוך אזור ה-overfitting. המשקלים האחרונים גרועים יותר מאלה שהיו בנקודת המינימום של ה-validation loss.</p>
+<p><strong>ש: על איזה סט מודדים — validation או test?</strong></p>
+<p><strong>ת: </strong>validation בלבד. שימוש ב-test set לקביעת נקודת העצירה הוא זליגת מידע: המודל מכויל לסט שאמור לשמש רק להערכה סופית בלתי-תלויה.</p>

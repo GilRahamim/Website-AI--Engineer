@@ -1,0 +1,36 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>‏מסווג הסתברותי המבוסס על משפט בייס, עם הנחה "נאיבית" שכל הפיצ'רים בלתי תלויים זה בזה בהינתן המחלקה. חרף ההנחה הלא-ריאליסטית הוא מהיר ביותר ועובד מצוין לסיווג טקסט (ספאם, סנטימנט) וכ-baseline מהיר לפני מודלים כבדים.</p>
+<h4 class='sec-h'>איך זה עובד</h4>
+<ul><li>‏1. אימון: מחשבים מהנתונים את ההסתברות הקודמת P(y) לכל מחלקה, ואת ההסתברות המותנית P(xⱼ|y) לכל פיצ'ר.</li><li>‏2. חיזוי: לכל מחלקה מחשבים את מכפלת ההסתברויות (בהנחת אי-תלות).</li><li>‏3. בוחרים את המחלקה בעלת ההסתברות הפוסטריורית הגבוהה ביותר (MAP).</li><li>‏4. בפועל עובדים ב-log כדי למנוע underflow של מכפלת הסתברויות קטנות.</li></ul>
+<h4 class='sec-h'>נוסחאות</h4>
+<p class='formula-label'><em>‏משפט בייס — בסיס המודל</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="P(y∣x)=\frac{P(y) P(x∣y)}{P(x)}">P(y∣x)=(P(y) P(x∣y))/(P(x))</span></div>
+<p class='formula-label'><em>‏ההנחה הנאיבית הופכת את הליקליהוד למכפלה</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="\hat{y}=argmax_{y} P(y)\prod_{j=1}^{n}P(x_{j}∣y)">ŷ=argmax_{y} P(y)∏_{j=1}^{n}P(x_j∣y)</span></div>
+<p class='formula-label'><em>‏Laplace smoothing — מונע הסתברות אפס לפיצ'ר שלא נראה</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="P(x_{j}∣y)=\frac{count(x_{j},y)+α}{count(y)+α |V|}">P(x_j∣y)=(count(x_j,y)+α)/(count(y)+α |V|)</span></div>
+<h4 class='sec-h'>שימושים עיקריים</h4>
+<ul><li>‏סיווג טקסט — ספאם, סנטימנט, קטגוריזציה (Multinomial NB על ספירות/TF-IDF).</li><li>‏פיצ'רים רציפים בהתפלגות נורמלית → Gaussian NB; בינאריים → Bernoulli NB.</li><li>‏Baseline מהיר לפני מודלים כבדים; טוב כשיש מעט דאטה.</li></ul>
+<h4 class='sec-h'>יתרונות</h4>
+<ul><li>‏מהיר מאוד לאימון ולחיזוי, לינארי בגודל הנתונים.</li><li>‏עובד היטב בממדים גבוהים (הרבה פיצ'רים, כמו טקסט).</li><li>‏דורש מעט דאטה כדי לאמוד את הפרמטרים, ומחזיר הסתברויות.</li></ul>
+<h4 class='sec-h'>חסרונות / מגבלות</h4>
+<ul><li>‏הנחת אי-התלות כמעט אף פעם לא נכונה — פוגע בכיול ההסתברויות.</li><li>‏פיצ'ר שלא נראה באימון מאפס הכל, אלא אם משתמשים ב-smoothing.</li><li>‏בדרך כלל פחות מדויק ממודלים דיסקרימינטיביים (Logistic Regression, SVM) כשיש מספיק דאטה.</li></ul>
+<h4 class='sec-h'>מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>‏סוג משימה</strong></td><td><strong>‏מדדים מומלצים</strong></td></tr><tr><td>‏Classification (טקסט/כללי)</td><td>‏Accuracy, F1, Precision/Recall, ROC-AUC</td></tr><tr><td>‏Imbalanced</td><td>‏PR-AUC, F1 של מחלקת המיעוט</td></tr></table>
+<h4 class='sec-h'>השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>‏מודל</strong></td><td><strong>‏סוג</strong></td><td><strong>‏יתרון</strong></td><td><strong>‏חיסרון מול NB</strong></td></tr><tr><td>‏Naive Bayes</td><td>‏Generative</td><td>‏מהיר, מעט דאטה</td><td>‏הנחת אי-תלות</td></tr><tr><td>‏Logistic Regression</td><td>‏Discriminative</td><td>‏מכייל טוב, מודל תלות</td><td>‏דורש יותר דאטה</td></tr><tr><td>‏SVM</td><td>‏Discriminative</td><td>‏דיוק גבוה בממדים גבוהים</td><td>‏איטי יותר</td></tr></table>
+<h4 class='sec-h'>קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>from sklearn.naive_bayes import MultinomialNB
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.pipeline import make_pipeline
+ 
+clf = make_pipeline(TfidfVectorizer(), MultinomialNB(alpha=1.0))  # alpha = smoothing
+clf.fit(texts_train, y_train)
+proba = clf.predict_proba(texts_test)</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: ‏למה קוראים לו "נאיבי"?</strong></p>
+<p><strong>ת: </strong>‏בגלל ההנחה שכל הפיצ'רים בלתי תלויים בהינתן המחלקה — הנחה כמעט תמיד שגויה (מילים במשפט תלויות זו בזו), אך היא מפשטת מאוד את החישוב ועדיין נותנת תוצאות טובות.</p>
+<p><strong>ש: ‏מהי בעיית ההסתברות האפסית ואיך פותרים?</strong></p>
+<p><strong>ת: </strong>‏אם מילה לא הופיעה במחלקה באימון, ההסתברות המותנית שלה 0 ומאפסת את כל המכפלה. פותרים עם Laplace/additive smoothing שמוסיף α לכל ספירה.</p>
+<p><strong>ש: ‏למה NB חזק לטקסט למרות ההנחה הלא-נכונה?</strong></p>
+<p><strong>ת: </strong>‏בממד גבוה עם הרבה מילים אינפורמטיביות, גם אם ההסתברויות לא מכוילות, דירוג המחלקות נשמר — וזה מה שקובע את ההחלטה.</p>

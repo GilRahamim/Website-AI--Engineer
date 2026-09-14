@@ -1,0 +1,50 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>ספריית הגרפים הוותיקה של Python והבסיס שעליו בנויות Seaborn ו-pandas.plot. היא מציעה שליטה מלאה בכל אלמנט בגרף, במחיר של קוד ארוך יותר מאשר בעטיפות ברמה גבוהה.</p>
+<h4 class='sec-h'>שתי דרכי עבודה</h4>
+<table class='kbtable'><tr><td><strong>גישה</strong></td><td><strong>איך נראית</strong></td><td><strong>מתי מתאימה</strong></td></tr><tr><td>Functional (pyplot)</td><td>plt.plot(x, y) · plt.title(...)</td><td>גרף מהיר אחד בזמן חקירה</td></tr><tr><td>Object-Oriented</td><td>fig, ax = plt.subplots() · ax.plot(x, y)</td><td>כל השאר — במיוחד כמה תתי-גרפים</td></tr></table>
+<p>הגישה המומלצת היא Object-Oriented: מחזיקים במפורש את אובייקט ה-Figure (הקנבס) ואת אובייקטי ה-Axes (הגרפים עליו), ולכן ברור בכל שורה על מה בדיוק פועלים. בגישה הפונקציונלית פועלים על ``הגרף הנוכחי'' — נוח לגרף אחד, מבלבל כשיש כמה.</p>
+<h4 class='sec-h'>המבנה הבסיסי</h4>
+<pre class='code-block'><code>import matplotlib.pyplot as plt
+%matplotlib inline          # ב-Jupyter; מחוץ לו צריך plt.show()
+
+# גישה פונקציונלית — לגרף מהיר
+plt.plot(x, y, 'r--')
+plt.xlabel('X'); plt.ylabel('Y'); plt.title('Title')
+
+# גישה מונחית-עצמים — מומלצת
+fig, ax = plt.subplots(figsize=(8, 4), dpi=100)
+ax.plot(x, y, color='#2E75B6', lw=2, ls='-', marker='o', markersize=6,
+        label='series 1')
+ax.set_xlabel('X'); ax.set_ylabel('Y'); ax.set_title('Title')
+ax.set_xlim([0, 10]); ax.set_ylim([0, 100])
+ax.legend(loc=0)            # 0 = מיקום אוטומטי
+fig.tight_layout()          # מונע חפיפה בין תוויות
+fig.savefig('plot.png', dpi=200, bbox_inches='tight')</code></pre>
+<h4 class='sec-h'>כמה גרפים על אותו קנבס</h4>
+<pre class='code-block'><code>fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 4))
+
+axes[0].plot(x, y);      axes[0].set_title('First')
+axes[1].scatter(x, y);   axes[1].set_title('Second')
+
+# רשת דו-ממדית: axes הוא מערך דו-ממדי
+fig, axes = plt.subplots(2, 2)
+axes[1, 0].hist(data, bins=30)
+
+plt.tight_layout()</code></pre>
+<p>plt.subplots מחזיר זוג: ה-Figure ומערך של Axes. אם ביקשו יותר מגרף אחד, axes הוא מערך NumPy — במקרה של רשת הוא דו-ממדי ומאונדקס [שורה, עמודה].</p>
+<h4 class='sec-h'>עיצוב</h4>
+<table class='kbtable'><tr><td><strong>פרמטר</strong></td><td><strong>מה שולט</strong></td><td><strong>ערכים</strong></td></tr><tr><td>color / c</td><td>צבע</td><td>'red', '#FF8C00', 'b'</td></tr><tr><td>alpha</td><td>שקיפות</td><td>0.0 עד 1.0</td></tr><tr><td>lw / linewidth</td><td>עובי קו</td><td>מספר</td></tr><tr><td>ls / linestyle</td><td>סגנון קו</td><td>'-', '--', '-.', ':'</td></tr><tr><td>marker</td><td>סמן נקודות</td><td>'o', '+', '*', 's'</td></tr><tr><td>figsize</td><td>גודל בעיצוב</td><td>(רוחב, גובה) באינצ'ים</td></tr><tr><td>dpi</td><td>רזולוציה</td><td>100 למסך, 200+ להדפסה</td></tr></table>
+<p>קיצור בסגנון MATLAB: המחרוזת 'b.-' פירושה קו כחול עם נקודות. נוח לחקירה מהירה, אך פחות קריא מפרמטרים מפורשים בקוד שנשמר.</p>
+<h4 class='sec-h'>סוגי גרפים נפוצים</h4>
+<ul><li>plt.plot — קו; לסדרות מסודרות ולסדרות עת.</li><li>plt.scatter — פיזור; לקשר בין שני משתנים רציפים.</li><li>plt.hist(data, bins=30) — היסטוגרמה; להתפלגות משתנה אחד.</li><li>plt.boxplot — קופסה; לחציון, רבעונים וחריגים.</li><li>plt.imshow — מטריצה כתמונה; לתמונות ולמפות חום פשוטות.</li></ul>
+<h4 class='sec-h'>יתרונות</h4>
+<ul><li>שליטה מלאה בכל פרט בגרף.</li><li>התשתית של Seaborn ו-pandas.plot — כל טריק שלמדתם כאן עובד גם שם.</li><li>ייצוא לכל פורמט: PNG, PDF, SVG, בכל רזולוציה.</li></ul>
+<h4 class='sec-h'>מגבלות</h4>
+<ul><li>מילולי — גרף סטטיסטי פשוט דורש הרבה יותר שורות מאשר ב-Seaborn.</li><li>עיצוב ברירת המחדל בסיסי.</li><li>שתי ה-API-ים במקביל מבלבלים מתחילים.</li><li>אינו אינטראקטיבי; לאינטראקטיביות משתמשים ב-Plotly או Bokeh.</li></ul>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין Figure ל-Axes?</strong></p>
+<p><strong>ת: </strong>Figure הוא הקנבס כולו — החלון או הקובץ. Axes הוא גרף בודד עליו, עם צירים, תוויות ונתונים משלו. קנבס אחד יכול להכיל כמה Axes; לכן ax.set_title קובע כותרת לתת-גרף בעוד fig.suptitle קובע כותרת-על לכל הקנבס.</p>
+<p><strong>ש: למה עדיף את הגישה המונחית-עצמים?</strong></p>
+<p><strong>ת: </strong>כי היא מפורשת: כל פקודה מופנית לאובייקט מסוים. בגישה הפונקציונלית כל פקודה פועלת על ``הגרף הפעיל'', ומרגע שיש יותר מגרף אחד קשה לעקוב מי פעיל ברגע נתון.</p>
+<p><strong>ש: מה tight_layout פותר?</strong></p>
+<p><strong>ת: </strong>חפיפה בין תוויות צירים, כותרות ותתי-גרפים. Matplotlib אינו מחשב מראש כמה מקום התוויות צריכות; tight_layout מודד אותן אחרי הציור ומתאים את הרווחים.</p>

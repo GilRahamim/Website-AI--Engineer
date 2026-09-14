@@ -1,0 +1,35 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>‏מדדי הערכה לרגרסיה מכמתים את הפער בין הערך החזוי לערך האמיתי עבור פלט רציף. בניגוד לסיווג, אין "נכון/לא נכון" אלא גודל שגיאה. ההבדל המרכזי בין המדדים הוא כיצד הם מענישים שגיאות גדולות, והאם הם תלויי-יחידות.</p>
+<h4 class='sec-h'>נוסחאות</h4>
+<p class='formula-label'><em>‏MAE — שגיאה מוחלטת ממוצעת (עמידה ל-outliers)</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="MAE=\frac{1}{n}\sum_{i=1}^{n}|y_{i}−\hat{y}_{i}|">MAE=(1)/(n)∑_{i=1}^{n}|y_i−ŷ_i|</span></div>
+<p class='formula-label'><em>‏MSE ו-RMSE — מענישות שגיאות גדולות בריבוע</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="MSE=\frac{1}{n}\sum_{i=1}^{n}(y_{i}−\hat{y}_{i})^{2}  RMSE=\sqrt{MSE}">MSE=(1)/(n)∑_{i=1}^{n}(y_i−ŷ_i)^2  RMSE=√(MSE)</span></div>
+<p class='formula-label'><em>‏R² — כמה מהשונות המודל מסביר</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="R^{2}=1−\frac{\sum_{i}(y_{i}−\hat{y}_{i})^{2}}{\sum_{i}(y_{i}−\hat{y})^{2}}">R^2=1−(∑_{i}(y_i−ŷ_i)^2)/(∑_{i}(y_i−y‾)^2)</span></div>
+<p class='formula-label'><em>‏MAPE — שגיאה יחסית באחוזים</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="MAPE=\frac{100%}{n}\sum_{i=1}^{n}\left|\frac{y_{i}−\hat{y}_{i}}{y_{i}}\right|">MAPE=(100%)/(n)∑_{i=1}^{n}|(y_i−ŷ_i)/(y_i)|</span></div>
+<h4 class='sec-h'>פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>‏משתנה</strong></td><td><strong>‏משמעות</strong></td></tr><tr><td>‏yᵢ</td><td>‏הערך האמיתי של דגימה i</td></tr><tr><td>‏ŷᵢ</td><td>‏הערך שהמודל חזה</td></tr><tr><td>‏ȳ</td><td>‏הממוצע של הערכים האמיתיים</td></tr><tr><td>‏n</td><td>‏מספר הדגימות</td></tr></table>
+<h4 class='sec-h'>מתאים לסוג למידה ומשימה</h4>
+<table class='kbtable'><tr><td><strong>‏סוג למידה</strong></td><td><strong>‏משימה</strong></td><td><strong>‏מתאים?</strong></td><td><strong>‏הערות</strong></td></tr><tr><td>‏מפוקחת</td><td>‏Regression</td><td>‏✅</td><td>‏ייעודם המרכזי</td></tr><tr><td>‏מפוקחת</td><td>‏Classification</td><td>‏❌</td><td>‏אין רציפות; F1/ROC-AUC</td></tr><tr><td>‏לא מפוקחת</td><td>‏Clustering</td><td>‏❌</td><td>‏אין ערך יעד</td></tr><tr><td>‏עמוקה</td><td>‏תחזית ערך רציף / סדרות זמן</td><td>‏✅</td><td>‏RMSE/MAE נפוצים גם ב-DL</td></tr></table>
+<h4 class='sec-h'>טווח ערכים ופרשנות</h4>
+<table class='kbtable'><tr><td><strong>‏מדד</strong></td><td><strong>‏טווח</strong></td><td><strong>‏פרשנות</strong></td></tr><tr><td>‏MAE / MSE / RMSE</td><td>‏0 עד ∞</td><td>‏0 = מושלם; ביחידות היעד (MSE בריבוע)</td></tr><tr><td>‏R²</td><td>‏עד 1</td><td>‏1 = מושלם, 0 = כמו הממוצע, שלילי = גרוע ממנו</td></tr><tr><td>‏MAPE</td><td>‏0 עד ∞</td><td>‏באחוזים; 10% = סטייה ממוצעת של עשירית</td></tr></table>
+<h4 class='sec-h'>מתי עדיף על מדדים אחרים?</h4>
+<ul><li>‏MAE — כשרוצים מדד עמיד ל-outliers ופרשנות ישירה ("טעות של X יחידות").</li><li>‏RMSE — כששגיאות גדולות יקרות במיוחד; ביחידות היעד ולכן קריא.</li><li>‏R² — להסבר כמה מהשונות נתפסת ולהשוואה בין מודלים על אותו דאטה.</li><li>‏MAPE — כשרוצים שגיאה יחסית (%) שאפשר להשוות בין סקאלות.</li></ul>
+<h4 class='sec-h'>מגבלות</h4>
+<ul><li>‏RMSE/MSE רגישים מאוד ל-outliers — דגימה חריגה אחת שולטת במדד.</li><li>‏MAPE מתפוצץ כש-yᵢ מתקרב לאפס, ולא סימטרי בין תחזית-יתר לתחזית-חסר.</li><li>‏R² עולה תמיד כשמוסיפים פיצ'רים — לכן R² מתוקן (adjusted) להשוואה הוגנת.</li></ul>
+<h4 class='sec-h'>מימוש בקוד</h4>
+<pre class='code-block'><code>from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import numpy as np
+ 
+mae  = mean_absolute_error(y_true, y_pred)
+rmse = np.sqrt(mean_squared_error(y_true, y_pred))
+r2   = r2_score(y_true, y_pred)</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: ‏מתי תעדיף MAE על RMSE?</strong></p>
+<p><strong>ת: </strong>‏כשיש outliers שאני לא רוצה שישלטו במדד. RMSE מעלה שגיאות בריבוע ולכן רגיש מאוד לחריגים; MAE נותן משקל ליניארי ועמיד יותר.</p>
+<p><strong>ש: ‏מה המשמעות של R² שלילי?</strong></p>
+<p><strong>ת: </strong>‏המודל גרוע מלנבא פשוט את ממוצע ה-target. זה קורה כשהמודל לא למד, או עשה overfit חמור שלא מכליל ל-test.</p>
+<p><strong>ש: ‏למה מדווחים RMSE ולא MSE?</strong></p>
+<p><strong>ת: </strong>‏RMSE הוא באותן יחידות של היעד ("שגיאה של 3.2 ק"מ") ולכן קריא; MSE ביחידות בריבוע. לדירוג מודלים הם שקולים.</p>

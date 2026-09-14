@@ -1,0 +1,45 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>‏רגולריזציה היא הוספת "עונש" על גודל המקדמים לפונקציית ה-Loss, כדי לרסן את מורכבות המודל ולמנוע overfitting. במקום למזער רק את שגיאת ההתאמה, המודל ממזער שגיאה + עונש — מה שמושך את המקדמים לכיוון אפס ומשפר את ההכללה. זהו המנוף המרכזי לניהול ה-Bias–Variance Tradeoff.</p>
+<h4 class='sec-h'>נוסחאות</h4>
+<p class='formula-label'><em>‏Ridge (L2) — מכווץ מקדמים אך לא מאפס</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="L_{Ridge}=\sum_{i=1}^{n}(y_{i}−\hat{y}_{i})^{2}+λ\sum_{j=1}^{p}w_{j}^{2}">L_{Ridge}=∑_{i=1}^{n}(y_i−ŷ_i)^2+λ∑_{j=1}^{p}w_{j}^{2}</span></div>
+<p class='formula-label'><em>‏Lasso (L1) — מאפס מקדמים ולכן בורר פיצ'רים</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="L_{Lasso}=\sum_{i=1}^{n}(y_{i}−\hat{y}_{i})^{2}+λ\sum_{j=1}^{p}|w_{j}|">L_{Lasso}=∑_{i=1}^{n}(y_i−ŷ_i)^2+λ∑_{j=1}^{p}|w_j|</span></div>
+<p class='formula-label'><em>‏Elastic Net — שילוב של L1 ו-L2</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="L_{EN}=\sum_{i=1}^{n}(y_{i}−\hat{y}_{i})^{2}+λ_{1}\sum_{j}|w_{j}|+λ_{2}\sum_{j}w_{j}^{2}">L_{EN}=∑_{i=1}^{n}(y_i−ŷ_i)^2+λ_1∑_{j}|w_j|+λ_2∑_{j}w_{j}^{2}</span></div>
+<h4 class='sec-h'>מתי משתמשים?</h4>
+<ul><li>‏כשיש הרבה פיצ'רים יחסית למספר הדגימות (ממד גבוה, סיכון ל-overfit).</li><li>‏כשפיצ'רים מתואמים (multicollinearity) — Ridge מייצב את הפתרון.</li><li>‏כשרוצים מודל דליל ופרשני שמשתמש בתת-קבוצת פיצ'רים — Lasso.</li><li>‏קיים גם במודלים אחרים: פרמטר C ב-Logistic/SVM, weight decay ברשתות.</li></ul>
+<h4 class='sec-h'>איך מזהים צורך?</h4>
+<ul><li>‏פער גדול בין ביצועי train (מעולים) ל-test (חלשים) — סימן ל-overfit.</li><li>‏מקדמים בגדלים קיצוניים או לא יציבים בין קפלי Cross-Validation.</li><li>‏מודל עם יותר מדי פיצ'רים ומעט דגימות.</li></ul>
+<h4 class='sec-h'>איך פותרים / מיישמים?</h4>
+<ul><li>‏בוחרים את λ באמצעות Cross-Validation (RidgeCV / LassoCV).</li><li>‏תמיד מתקננים פיצ'רים לפני רגולריזציה — העונש רגיש לסקאלת המקדמים.</li><li>‏מתחילים ב-Ridge; עוברים ל-Lasso לבחירת פיצ'רים; Elastic Net כשיש הרבה פיצ'רים מתואמים.</li></ul>
+<h4 class='sec-h'>קשר לנושאים אחרים</h4>
+<p>‏רגולריזציה היא המנוף המרכזי לניהול Bias–Variance: הגדלת λ מעלה Bias ומורידה Variance. זו המקבילה הקלאסית ל-Dropout ו-Weight Decay בלמידה עמוקה, ומשלימה טכניקות ולידציה כמו train/test split ו-Cross-Validation.</p>
+<h4 class='sec-h'>קוד לדוגמה (Python / sklearn)</h4>
+<pre class='code-block'><code>from sklearn.linear_model import Ridge, Lasso, ElasticNet
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import GridSearchCV
+
+# חובה לתקנן לפני רגולריזציה — אחרת העונש מוטה לטובת פיצ'רים בסקאלה גדולה
+ridge = make_pipeline(StandardScaler(), Ridge(alpha=1.0))
+lasso = make_pipeline(StandardScaler(), Lasso(alpha=0.1))
+enet  = make_pipeline(StandardScaler(), ElasticNet(alpha=0.1, l1_ratio=0.5))
+
+# כיול alpha בעזרת cross-validation
+grid = GridSearchCV(ridge, {'ridge__alpha': [0.01, 0.1, 1, 10, 100]},
+                    cv=5, scoring='neg_mean_squared_error')
+grid.fit(X_train, y_train)
+print('alpha הטוב ביותר:', grid.best_params_)
+
+# Lasso מאפס מקדמים — בחירת פיצ'רים אוטומטית
+lasso.fit(X_train, y_train)
+coefs = lasso[-1].coef_
+print(f'{(coefs == 0).sum()} מתוך {len(coefs)} מקדמים אופסו')</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: ‏מה ההבדל המהותי בין Ridge ל-Lasso?</strong></p>
+<p><strong>ת: </strong>‏Ridge (L2) מכווץ מקדמים באופן רציף אך כמעט אף פעם לא מאפס; Lasso (L1) יכול לאפס מקדמים לחלוטין ולכן מבצע בחירת פיצ'רים. גיאומטרית, ה"יהלום" של L1 גורם לפתרון לפגוש קודקוד שבו מקדם = 0.</p>
+<p><strong>ש: ‏למה חייבים לתקנן פיצ'רים לפני רגולריזציה?</strong></p>
+<p><strong>ת: </strong>‏העונש מתבסס על גודל המקדמים, שתלוי ביחידות הפיצ'ר. בלי תקנון, פיצ'ר בסקאלה גדולה ייענש פחות ובסקאלה קטנה ייענש יתר על המידה — שרירותי.</p>
+<p><strong>ש: ‏איך λ משפיע על Bias ו-Variance?</strong></p>
+<p><strong>ת: </strong>‏λ גדול → מודל פשוט → Variance נמוך, Bias גבוה. λ קטן → קרוב לרגרסיה רגילה → Variance גבוה, Bias נמוך. בוחרים λ שממזער שגיאת ולידציה.</p>

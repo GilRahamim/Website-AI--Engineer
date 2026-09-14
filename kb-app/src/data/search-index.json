@@ -638,5 +638,81 @@
   {
     "id": "RAG, Agents, MCP::metrics::66_YOLO_Evaluation_Metrics_mAP.docx",
     "search": "מדדי הערכה ל object detection map50 ו map50 95 מדדי הערכה ל object detection בודקים גם אם האובייקט זוהה (כמו classification) וגם אם מיקומו (bounding box) מדויק מדד iou (intersection over union) מכמת חפיפה גיאומטרית, ו map (mean average precision) משקלל את הדיוק על פני קטגוריות וספי iou שונים."
+  },
+  {
+    "id": "Intro to Data Science::metrics::09_Classification_Metrics.docx",
+    "search": "classification metrics מדדי הערכה לסיווג ‏מדדי הערכה לבעיות סיווג (classification) מכמתים כמה טוב המודל מבחין בין מחלקות. כולם נגזרים מ confusion matrix טבלה הסופרת חיזויים נכונים ושגויים לכל מחלקה. אין מדד אחד נכון: הבחירה תלויה בשאלה האם המחלקות מאוזנות, ובאיזו שגיאה יקר יותר לטעות false positive מול false negative."
+  },
+  {
+    "id": "Intro to Data Science::metrics::10_Regression_Metrics.docx",
+    "search": "regression metrics מדדי הערכה לרגרסיה ‏מדדי הערכה לרגרסיה מכמתים את הפער בין הערך החזוי לערך האמיתי עבור פלט רציף. בניגוד לסיווג, אין נכון/לא נכון אלא גודל שגיאה. ההבדל המרכזי בין המדדים הוא כיצד הם מענישים שגיאות גדולות, והאם הם תלויי יחידות."
+  },
+  {
+    "id": "Intro to Data Science::algorithms::11_Ensemble_Methods.docx",
+    "search": "ensemble methods שיטות אנסמבל (bagging, random forest, boosting, xgboost) ‏שיטות אנסמבל משלבות מספר מודלים חלשים (בדרך כלל עצי החלטה) למודל אחד חזק ויציב יותר. שתי המשפחות המרכזיות: bagging אימון מודלים במקביל על תת דגימות ומיצוע (מפחית variance), ו boosting אימון מודלים בסדרה כשכל אחד מתקן את שגיאות קודמו (מפחית bias). זהו סטנדרט התעשייה לנתונים טבלאיים."
+  },
+  {
+    "id": "Intro to Data Science::algorithms::12_Naive_Bayes.docx",
+    "search": "naive bayes מסווג בייסיאני נאיבי ‏מסווג הסתברותי המבוסס על משפט בייס, עם הנחה נאיבית שכל הפיצרים בלתי תלויים זה בזה בהינתן המחלקה. חרף ההנחה הלא ריאליסטית הוא מהיר ביותר ועובד מצוין לסיווג טקסט (ספאם, סנטימנט) וכ baseline מהיר לפני מודלים כבדים."
+  },
+  {
+    "id": "Intro to Data Science::concepts::13_Regularization_Ridge_Lasso.docx",
+    "search": "regularization רגולריזציה (ridge / lasso / elastic net) ‏רגולריזציה היא הוספת עונש על גודל המקדמים לפונקציית ה loss, כדי לרסן את מורכבות המודל ולמנוע overfitting. במקום למזער רק את שגיאת ההתאמה, המודל ממזער שגיאה + עונש מה שמושך את המקדמים לכיוון אפס ומשפר את ההכללה. זהו המנוף המרכזי לניהול ה bias variance tradeoff."
+  },
+  {
+    "id": "Intro to Data Science::concepts::14_NumPy.docx",
+    "search": "numpy מערכים מספריים ב python ספריית החישוב המספרי שעליה בנוי כל הסטאק של מדעי הנתונים ב python. הרעיון המרכזי הוא ה ndarray מערך רב ממדי הומוגני שנשמר כבלוק רציף בזיכרון, מה שמאפשר פעולות וקטוריות מהירות בלי לולאות python. pandas, scikit learn ו pytorch כולם עומדים על המבנה הזה."
+  },
+  {
+    "id": "Intro to Data Science::concepts::15_Pandas.docx",
+    "search": "pandas עבודה עם דאטה טבלאי ספריית מניפולציית הדאטה המרכזית ב python, בנויה מעל numpy. היא מוסיפה את מה שחסר ב ndarray: תוויות לצירים, טיפוסים מעורבים באותה טבלה, וטיפול מובנה בערכים חסרים. שני מבני הנתונים הם series (עמודה מתויגת אחת) ו dataframe (כמה series שחולקות אותו אינדקס)."
+  },
+  {
+    "id": "Intro to Data Science::concepts::16_Matplotlib.docx",
+    "search": "matplotlib ויזואליזציה בסיסית ספריית הגרפים הוותיקה של python והבסיס שעליו בנויות seaborn ו pandas.plot. היא מציעה שליטה מלאה בכל אלמנט בגרף, במחיר של קוד ארוך יותר מאשר בעטיפות ברמה גבוהה."
+  },
+  {
+    "id": "Intro to Data Science::concepts::17_Seaborn.docx",
+    "search": "seaborn ויזואליזציה סטטיסטית שכבה סטטיסטית מעל matplotlib, שמקבלת dataframe ושמות עמודות במקום מערכים גולמיים. גרף שדורש עשרות שורות ב matplotlib כולל אגרגציה, רווחי סמך וצבע לפי קטגוריה נכתב כאן בשורה אחת."
+  },
+  {
+    "id": "Topic 1 - Unsupervised Learning::formulas::19_Distance_Metrics.docx",
+    "search": "distance metrics מדדי מרחק ודמיון ‏מדד מרחק הוא פונקציה d(x,y) שמכמתת עד כמה שתי תצפיות רחוקות (או דומות) זו לזו במרחב הפיצרים. בלמידה לא מונחית זה לא פרט טכני אלא חלק מהמודל עצמו: כל אלגוריתמי ה clustering וגם knn נשענים על ההגדרה של קרוב ורחוק, והבחירה במדד קובעת אילו מבנים האלגוריתם בכלל מסוגל למצוא. העיקרון המנחה הוא intra class similarity גבוה לצד inter class dissimilarity מדד לא מתאים (למשל euclidean על טקסט דליל) יכול לגרום לאלגוריתם מצוין להיכשל."
+  },
+  {
+    "id": "Topic 1 - Unsupervised Learning::concepts::20_Feature_Scaling_and_Encoding.docx",
+    "search": "feature scaling & encoding תקנון וקידוד פיצרים ‏עיבוד מקדים שממיר פיצרים גולמיים לייצוג מספרי אחיד: scaling מיישר את כל הפיצרים הנומריים לאותה סקאלה, ו encoding ממיר משתנים קטגוריאליים למספרים. זהו השלב שקובע אם האלגוריתם בכלל יעבוד: אלגוריתמים מבוססי מרחק (k means, dbscan, knn) רגישים לסקאלה, ובלי תקנון פיצר בטווח גדול ירסק את ההשפעה של פיצר בטווח קטן פשוט כי המספרים גדולים יותר, לא כי הוא חשוב יותר. זהו אחד ה gotchas הנפוצים ביותר: לשכוח scaling לפני clustering."
+  },
+  {
+    "id": "Topic 2 - Natural Language Processing::algorithms::25_SVD_LSA_Topic_Modeling.docx",
+    "search": "svd / lsa latent semantic analysis פירוק לערכים סינגולריים (singular value decomposition) המופעל על מטריצת tf idf כדי להוריד את ממדיה מעשרות אלפי פיצרים דלילים למאה שלוש מאות ממדים צפופים. כשמפעילים את זה על טקסט קוראים לזה latent semantic analysis (או lsi latent semantic indexing). כל ממד חדש מייצג קונספט סמוי צירוף מילים שנוטות להופיע יחד."
+  },
+  {
+    "id": "Topic 3 - Deep Learning::algorithms::44_Gradient_Descent.docx",
+    "search": "gradient descent ירידה בגרדיאנט אלגוריתם האופטימיזציה שעליו בנויה כל למידת המכונה המודרנית: במקום לסרוק את כל מרחב הפרמטרים, מחשבים את הגרדיאנט של פונקציית ה loss ביחס לכל פרמטר ומזיזים את הפרמטרים צעד קטן בכיוון ההפוך לגרדיאנט הכיוון שבו ה loss יורד הכי מהר."
+  },
+  {
+    "id": "Topic 3 - Deep Learning::concepts::45_Learning_Rate_and_Schedulers.docx",
+    "search": "learning rate & schedulers קצב הלמידה ותזמונו קצב הלמידה α הוא גודל הצעד שהאופטימייזר עושה בכיוון ההפוך לגרדיאנט. זהו ההיפר פרמטר היחיד שמופיע בכל אופטימייזר ללא יוצא מן הכלל, והוא הרגיש ביותר מביניהם: כל שאר השיטות (momentum, adagrad, rmsprop, adam) הן וריאציות על השאלה כיצד לקבוע ולעדכן אותו. scheduler הוא מדיניות שמשנה את α לאורך האימון."
+  },
+  {
+    "id": "Topic 3 - Deep Learning::concepts::46_Batch_Size_and_Epochs.docx",
+    "search": "batch size & epochs גודל אצווה ומחזורי אימון batch size הוא מספר התצפיות שעליהן מחושב ה loss לפני כל עדכון פרמטרים. epoch הוא מעבר מלא אחד של כל דאטה האימון דרך המודל. שני הפרמטרים האלה קובעים יחד כמה עדכוני פרמטרים מתבצעים באימון וכמה זיכרון הוא צורך."
+  },
+  {
+    "id": "Topic 3 - Deep Learning::algorithms::47_Early_Stopping.docx",
+    "search": "early stopping עצירה מוקדמת טכניקת רגולריזציה שעוצרת את האימון ברגע שה validation loss מפסיק להשתפר, במקום להריץ מספר epochs קבוע מראש. הקריטריון נקבע לפני תחילת האימון לא מסתכלים על התוצאות ואז מחליטים איפה לעצור."
+  },
+  {
+    "id": "Topic 3 - Deep Learning::architectures::48_Perceptron.docx",
+    "search": "perceptron הנוירון המלאכותי יחידת החישוב הבסיסית ברשתות נוירונים: מקבלת מספר כניסות, מחשבת שקלול לינארי שלהן בתוספת bias, ומעבירה את התוצאה דרך פונקציית activation. בשנות ה 50 קראו לזה פרספטרון; כשזה הפך לדימוי למוח האנושי עברו לקרוא לזה נוירון. שני השמות מתייחסים לאותו דבר."
+  },
+  {
+    "id": "RAG, Agents, MCP::concepts::68_Token_Cost_Management.docx",
+    "search": "token cost management ניהול עלויות טוקנים הניטור והבקרה של צריכת הטוקנים בכל קריאה למודל, ותרגומה לעלות כספית. במערכות rag ו agents זהו אילוץ הנדסי ראשון במעלה: כל וריאנט ארכיטקטוני query rewrite, conversational rag, react מוסיף קריאות llm ומאריך פרומפטים, והעלות מצטברת מהר."
+  },
+  {
+    "id": "RAG, Agents, MCP::concepts::69_Multimodal_Agents.docx",
+    "search": "multimodal agents סוכנים רב מודליים סוכנים שמקבלים קלט שאינו טקסט תמונה, אודיו או וידאו ומתרגמים אותו לטקסט לפני שהוא נכנס לפייפליין הרגיל של ה agent. העיקרון המנחה: כמעט תמיד ממירים כל מודליות לטקסט בשלב מוקדם, ואז כל הכלים הקיימים rag, tools, crews עובדים כרגיל."
   }
 ]

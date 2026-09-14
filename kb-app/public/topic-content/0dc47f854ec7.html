@@ -1,0 +1,30 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>‏עיבוד מקדים שממיר פיצ'רים גולמיים לייצוג מספרי אחיד: Scaling מיישר את כל הפיצ'רים הנומריים לאותה סקאלה, ו-Encoding ממיר משתנים קטגוריאליים למספרים. זהו השלב שקובע אם האלגוריתם בכלל יעבוד: אלגוריתמים מבוססי מרחק (K-Means, DBSCAN, KNN) רגישים לסקאלה, ובלי תקנון פיצ'ר בטווח גדול "ירסק" את ההשפעה של פיצ'ר בטווח קטן — פשוט כי המספרים גדולים יותר, לא כי הוא חשוב יותר. זהו אחד ה-gotchas הנפוצים ביותר: לשכוח scaling לפני clustering.</p>
+<h4 class='sec-h'>מתי משתמשים?</h4>
+<ul><li>‏1. תמיד לפני אלגוריתם מבוסס מרחק או גרדיאנט (clustering, KNN, PCA, רשתות).</li><li>‏2. Scaling פחות קריטי למודלים מבוססי-עצים (Random Forest) האדישים לסקאלה.</li><li>‏3. Encoding בכל פעם שיש עמודה קטגוריאלית (צבע, עיר, מגדר) להכניס למודל.</li></ul>
+<h4 class='sec-h'>נוסחאות</h4>
+<p class='formula-label'><em>‏Standardization (z-score) — ממוצע 0, סטיית תקן 1</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="z=\frac{x−μ}{σ}">z=(x−μ)/(σ)</span></div>
+<p class='formula-label'><em>‏Min-Max Scaling — דחיסה לטווח [0,1]</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="x=\frac{x−x_{min}}{x_{max}−x_{min}}">x=(x−x_{min})/(x_{max}−x_{min})</span></div>
+<h4 class='sec-h'>נקודות קריטיות</h4>
+<ul><li>‏1. fit רק על train — מחשבים μ, σ (או min/max, או מיפוי הקטגוריות) על האימון בלבד, ומיישמים על test. אחרת יש data leakage.</li><li>‏2. סוגי משתנים: נומרי → scaling; קטגוריאלי ללא סדר → One-Hot; אורדינלי (low/medium/high) → Ordinal Encoding ששומר על הסדר.</li><li>‏3. One-Hot: עבור N קטגוריות יוצרים N−1 עמודות (drop-first) כדי למנוע multicollinearity.</li><li>‏4. Pipeline + ColumnTransformer ב-sklearn מבטיחים עקביות בין train/test ובפרודקשן.</li></ul>
+<h4 class='sec-h'>קשר לנושאים אחרים</h4>
+<p>‏זהו הבסיס לכל מדדי המרחק — בלי תקנון המרחקים חסרי משמעות. משפיע ישירות על K-Means, DBSCAN ו-PCA (ש-scaling הוא תנאי מקדים שלו), וקשור להנדסת הפיצ'רים כשלב הראשון בבניית מרחב תכונות יציב.</p>
+<h4 class='sec-h'>מימוש בקוד</h4>
+<pre class='code-block'><code>from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+ 
+pre = ColumnTransformer([
+    ("num", StandardScaler(), numeric_cols),
+    ("cat", OneHotEncoder(drop="first", handle_unknown="ignore"), cat_cols),
+])
+X_ready = pre.fit_transform(X_train)   # fit על train בלבד
+X_test_ready = pre.transform(X_test)   # רק transform על test</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: ‏למה מחשבים μ ו-σ רק על ה-train?</strong></p>
+<p><strong>ת: </strong>‏כדי למנוע data leakage — אם התקנון "רואה" את ה-test, מידע מסט הבדיקה מדליף לאימון וההערכה נעשית אופטימית מדי. ה-scaler הוא חלק מהמודל: fit על train, transform על test.</p>
+<p><strong>ש: ‏למה N−1 עמודות ב-One-Hot ולא N?</strong></p>
+<p><strong>ת: </strong>‏כדי למנוע multicollinearity (dummy variable trap) — אם N−1 העמודות 0, הקטגוריה האחרונה ידועה בהכרח, כך שהעמודה ה-N מיותרת ויוצרת תלות לינארית מלאה שפוגעת ברגרסיה.</p>
+<p><strong>ש: ‏מתי אפשר לוותר על scaling?</strong></p>
+<p><strong>ת: </strong>‏במודלים מבוססי-עצים (Decision Tree, Random Forest, XGBoost) — הם מפצלים לפי ספים ואדישים לטרנספורמציה מונוטונית. לכל מודל מבוסס מרחק/גרדיאנט זה חובה.</p>

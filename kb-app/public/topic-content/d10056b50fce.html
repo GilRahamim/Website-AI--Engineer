@@ -1,0 +1,39 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>Batch Size הוא מספר התצפיות שעליהן מחושב ה-Loss לפני כל עדכון פרמטרים. Epoch הוא מעבר מלא אחד של כל דאטה האימון דרך המודל. שני הפרמטרים האלה קובעים יחד כמה עדכוני פרמטרים מתבצעים באימון וכמה זיכרון הוא צורך.</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/42fac3e2db79.png" loading="lazy" alt="diagram"></div>
+<h4 class='sec-h'>שלוש שיטות העדכון</h4>
+<ul><li>Stochastic GD — batch size = 1. כל עדכון מחושב על תצפית אחת בלבד. השיטה ה``רועשת'' ביותר: כל תצפית מזיזה את הפרמטרים לכיוון שלה.</li><li>Mini-Batch SGD — batch size = k (למשל 16, 32, 64). פשרה בין שתי הקיצוניות, וזו השיטה הנפוצה ביותר בפועל.</li><li>Full Batch GD — batch size = N, כל הדאטה. עדכון אחד לפי הממוצע על כל התצפיות. הכי פחות רועש, אך לא בהכרח הכי טוב.</li></ul>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/61be726d6f4d.png" loading="lazy" alt="diagram"></div>
+<h4 class='sec-h'>הקשר בין Batch ל-Epoch</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/13a7285b948a.png" loading="lazy" alt="formula"></div>
+<p>דוגמה: 1000 תצפיות עם batch size של 100 — epoch אחד שווה 10 עדכוני פרמטרים.</p>
+<h4 class='sec-h'>יתרונות וחסרונות לפי גודל ה-Batch</h4>
+<table class='kbtable'><tr><td><strong>גודל Batch</strong></td><td><strong>יתרונות</strong></td><td><strong>חסרונות</strong></td></tr><tr><td>קטן (1, אונליין)</td><td>חישוב מהיר לכל עדכון, פחות זיכרון</td><td>רועש מאוד, התכנסות איטית או בלתי-יציבה</td></tr><tr><td>בינוני (Mini-Batch)</td><td>איזון בין מהירות לדיוק, ניצול GPU יעיל</td><td>דורש כיוון של הפרמטר</td></tr><tr><td>גדול (Full Batch)</td><td>עדכון חלק ומדויק, גרדיאנט אמין</td><td>יקר בזיכרון, עלול להתכנס לנקודה לא אופטימלית</td></tr></table>
+<h4 class='sec-h'>נקודה פרקטית קריטית — זיכרון</h4>
+<p>Batch Size הוא הפרמטר הכי משפיע על ביצועי החומרה: הוא קובע כמה דאטה שמור בזיכרון הפעיל, כולל ה-GPU, בכל רגע. בחירה גרועה תגרום ל-CUDA out of memory או לקריסת Python. ערכים נפוצים: 8, 16, 32, 64. תמיד לוודא שהמודל בכלל רץ לפני שמתחילים לכייל ביצועים.</p>
+<h4 class='sec-h'>ערבוב אקראי של ה-Batches</h4>
+<p>לפני החלוקה ל-batches חובה לערבב את התצפיות. אם הדאטה מגיע ממוין לפי קטגוריה, כל batch יכיל רק סוג אחד ויגרום להטיה חמורה בתהליך האימון. ב-PyTorch, DataLoader עם shuffle=True מטפל בזה אוטומטית.</p>
+<h4 class='sec-h'>קוד לדוגמה (PyTorch)</h4>
+<pre class='code-block'><code>from torch.utils.data import DataLoader
+
+BATCH_SIZE = 32
+train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE,
+                          shuffle=True,      # קריטי — מונע הטיה מדאטה ממוין
+                          drop_last=False)
+
+print(f"{len(train_ds)} samples / {BATCH_SIZE} = "
+      f"{len(train_loader)} updates per epoch")
+
+for epoch in range(EPOCHS):                  # מעבר מלא על כל הדאטה
+    for X_batch, y_batch in train_loader:    # עדכון פרמטרים אחד לכל batch
+        optimizer.zero_grad()
+        loss = criterion(model(X_batch), y_batch)
+        loss.backward()
+        optimizer.step()</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין batch ל-epoch?</strong></p>
+<p><strong>ת: </strong>Batch הוא חלק קטן מהדאטה; epoch הוא מעבר אחד שבו כל הדאטה עבר דרך המודל. אם יש 100 תצפיות ו-batch size שווה 5, צריך 20 batches ל-epoch אחד — כלומר 20 עדכוני פרמטרים ב-epoch אחד.</p>
+<p><strong>ש: למה בכלל להשתמש ב-batch size של 1 אם הוא כל כך רועש?</strong></p>
+<p><strong>ת: </strong>בפועל כמעט לא משתמשים בקיצוניות הזו. הסיבה שהיא קיימת היא זיכרון: לא תמיד אפשר להכניס את כל הדאטה בבת אחת. ברגע שמבינים את המגבלה הזו, מתחילים לשחק עם הפרמטר. בפרקטיקה: SGD עם Mini-Batch, או Adam.</p>
+<p><strong>ש: איך גודל ה-batch משפיע על קצב הלמידה שצריך לבחור?</strong></p>
+<p><strong>ת: </strong>batch גדול יותר נותן אומדן גרדיאנט אמין יותר, ולכן מאפשר — ולעיתים דורש — קצב למידה גבוה יותר. כלל אצבע נפוץ: הכפלת ה-batch size מלווה בהכפלת α (linear scaling rule).</p>

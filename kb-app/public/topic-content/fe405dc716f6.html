@@ -1,0 +1,54 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>סוכנים שמקבלים קלט שאינו טקסט — תמונה, אודיו או וידאו — ומתרגמים אותו לטקסט לפני שהוא נכנס לפייפליין הרגיל של ה-agent. העיקרון המנחה: כמעט תמיד ממירים כל מודליות לטקסט בשלב מוקדם, ואז כל הכלים הקיימים — RAG, Tools, Crews — עובדים כרגיל.</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/4b56bac101d9.png" loading="lazy" alt="diagram"></div>
+<h4 class='sec-h'>שלוש המודליות ואיך ממירים אותן</h4>
+<table class='kbtable'><tr><td><strong>מודליות</strong></td><td><strong>שיטת ההמרה</strong></td><td><strong>כלים טיפוסיים</strong></td></tr><tr><td>תמונה</td><td>מודל מולטי-מודלי מקבל את התמונה כ-data URL</td><td>GPT-4o דרך LiteLLM, BLIP מקומי, Gemini</td></tr><tr><td>תמונה עם טקסט</td><td>OCR כ-Tool נפרד לפני או במקביל למודל</td><td>Tesseract / pytesseract, EasyOCR</td></tr><tr><td>אודיו</td><td>תמלול אוטומטי לטקסט</td><td>Whisper מקומי, או whisper-1 ב-API</td></tr><tr><td>וידאו</td><td>פיצול לשני ערוצים: פס קול לתמלול + פריימים לניתוח</td><td>yt-dlp, FFmpeg, OpenCV, Whisper</td></tr></table>
+<h4 class='sec-h'>איך זה עובד — פייפליין וידאו מלא</h4>
+<ul><li>1. מורידים את הווידאו (yt-dlp) לתיקייה מקומית.</li><li>2. מפרידים את פס הקול ומתמללים אותו עם Whisper — מקבלים transcript.</li><li>3. דוגמים פריימים בקצב קבוע עם OpenCV או FFmpeg ושומרים כתמונות.</li><li>4. מגדירים שני Tools ל-agent: אחד לניתוח תמונה ואחד לניתוח transcript.</li><li>5. ה-Crew מריץ שתי משימות במקביל ומאחד את הממצאים לדוח אחד.</li></ul>
+<h4 class='sec-h'>שימושים עיקריים</h4>
+<ul><li>עיבוד מסמכים סרוקים וכתב יד — PDF לתמונה ל-LLM לטקסט מובנה.</li><li>סיכום פגישות ושיחות מוקלטות.</li><li>ניתוח תוכן וידאו: מה נאמר לצד מה נראה על המסך.</li><li>בקרת איכות ויזואלית והפקת מטא-דאטה מתמונות.</li></ul>
+<h4 class='sec-h'>יתרונות</h4>
+<ul><li>פותח מקורות דאטה שהיו סגורים לחלוטין למערכות טקסט.</li><li>לאחר ההמרה לטקסט, כל התשתית הקיימת (RAG, Agents, Guardrails) עובדת ללא שינוי.</li><li>אפשר לשלב מודלים: OCR זול ומהיר למקרים פשוטים, מודל מולטי-מודלי רק כשצריך הבנה סמנטית.</li></ul>
+<h4 class='sec-h'>מגבלות</h4>
+<ul><li>עלות גבוהה — תמונה שקולה למאות טוקנים; ניתוח וידאו עם עשרות פריימים מתייקר במהירות.</li><li>תלות בכלים חיצוניים: FFmpeg, Tesseract, yt-dlp — נקודות כשל נפוצות בסביבות Windows.</li><li>איכות התמלול מתדרדרת ברעש רקע, מבטאים ומונחים מקצועיים.</li><li>OCR על כתב יד עדיין לא אמין — כדאי מודל מולטי-מודלי במקום.</li><li>דגימת פריימים היא פשרה: קצב נמוך מפספס אירועים, קצב גבוה מתפוצץ בעלות.</li></ul>
+<h4 class='sec-h'>קוד לדוגמה — תמונה לטקסט (LiteLLM)</h4>
+<pre class='code-block'><code>import base64, mimetypes
+from litellm import completion
+
+def to_data_url(path):
+    mime = mimetypes.guess_type(path)[0] or "image/png"
+    b64  = base64.b64encode(open(path, "rb").read()).decode()
+    return f"data:{mime};base64,{b64}"
+
+messages = [{
+    "role": "user",
+    "content": [
+        {"type": "text", "text": "Describe this photo briefly."},
+        {"type": "image_url",
+         "image_url": {"url": to_data_url("local_data/example.png")}},
+    ],
+}]
+resp = completion(model="gpt-4o", messages=messages, temperature=0.2)
+description = resp.choices[0].message.content</code></pre>
+<h4 class='sec-h'>קוד לדוגמה — אודיו לטקסט (Whisper)</h4>
+<pre class='code-block'><code>import whisper
+
+model  = whisper.load_model("base")      # tiny / base / small / medium / large
+result = model.transcribe("audio/meeting.mp3")
+transcript = result["text"]
+
+# לחלופין דרך ה-API, בלי FFmpeg מקומי:
+# from openai import OpenAI
+# client = OpenAI()
+# transcript = client.audio.transcriptions.create(
+#     model="whisper-1", file=open("audio/meeting.mp3", "rb")).text
+
+# מכאן הטקסט נכנס ל-agent הרגיל
+summary = agent_summarize(transcript)</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: למה ממירים הכל לטקסט במקום להזין מודל מולטי-מודלי ישירות?</strong></p>
+<p><strong>ת: </strong>כי אחרי ההמרה כל התשתית הקיימת עובדת: אפשר לאנדקס את הטקסט ב-vector store, להריץ עליו RAG, לשמור אותו בזיכרון של ה-agent ולהעביר אותו בין agents. טקסט הוא גם זול ובר-בדיקה, בעוד שהזנת תמונה בכל שלב מייקרת ומקשה על דיבאג.</p>
+<p><strong>ש: מתי OCR ומתי מודל מולטי-מודלי?</strong></p>
+<p><strong>ת: </strong>OCR כשצריך את הטקסט המדויק ממסמך מודפס ונקי — הוא מהיר, זול ורץ מקומית. מודל מולטי-מודלי כשצריך הבנה של התמונה עצמה, כשהפריסה מורכבת, או בכתב יד — שם OCR קלאסי נכשל.</p>
+<p><strong>ש: איך מנתחים וידאו ביעילות?</strong></p>
+<p><strong>ת: </strong>מפצלים לשני ערוצים: פס הקול מתומלל פעם אחת ונותן את רוב המידע בעלות נמוכה; הפריימים נדגמים בקצב נמוך ומנותחים רק כשהתמלול אינו מספיק. דגימת כל פריים היא כמעט תמיד בזבוז.</p>

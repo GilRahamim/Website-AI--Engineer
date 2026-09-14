@@ -1,0 +1,36 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>‏מדדי הערכה לבעיות סיווג (Classification) מכמתים כמה טוב המודל מבחין בין מחלקות. כולם נגזרים מ-Confusion Matrix — טבלה הסופרת חיזויים נכונים ושגויים לכל מחלקה. אין מדד "אחד נכון": הבחירה תלויה בשאלה האם המחלקות מאוזנות, ובאיזו שגיאה יקר יותר לטעות — False Positive מול False Negative.</p>
+<h4 class='sec-h'>נוסחאות</h4>
+<p class='formula-label'><em>‏Accuracy — שיעור החיזויים הנכונים מכלל הדגימות</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="Accuracy=\frac{TP+TN}{TP+TN+FP+FN}">Accuracy=(TP+TN)/(TP+TN+FP+FN)</span></div>
+<p class='formula-label'><em>‏Precision ו-Recall — דיוק החיזויים החיוביים מול הכיסוי</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="Precision=\frac{TP}{TP+FP}  Recall=\frac{TP}{TP+FN}">Precision=(TP)/(TP+FP)  Recall=(TP)/(TP+FN)</span></div>
+<p class='formula-label'><em>‏F1-Score — ממוצע הרמוני של Precision ו-Recall</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="F_{1}=2⋅\frac{Precision⋅Recall}{Precision+Recall}">F_1=2⋅(Precision⋅Recall)/(Precision+Recall)</span></div>
+<p class='formula-label'><em>‏Specificity ו-FPR — ביצועים על המחלקה השלילית</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="Specificity=\frac{TN}{TN+FP}  FPR=1−Specificity">Specificity=(TN)/(TN+FP)  FPR=1−Specificity</span></div>
+<p>‏ROC-AUC הוא השטח מתחת לעקומת ROC (Recall כפונקציה של FPR על פני כל ספי ההחלטה). PR-AUC הוא השטח מתחת לעקומת Precision–Recall, ומועדף כשהמחלקה החיובית נדירה מאוד.</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/2b88e92a0abb.png" loading="lazy" alt="diagram"></div>
+<h4 class='sec-h'>פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>‏משתנה</strong></td><td><strong>‏משמעות</strong></td></tr><tr><td>‏TP</td><td>‏חיזוי חיובי שהיה נכון (True Positive)</td></tr><tr><td>‏TN</td><td>‏חיזוי שלילי שהיה נכון (True Negative)</td></tr><tr><td>‏FP</td><td>‏חיזוי חיובי שגוי — False Alarm (Type I error)</td></tr><tr><td>‏FN</td><td>‏חיזוי שלילי שגוי — Miss (Type II error)</td></tr></table>
+<h4 class='sec-h'>מתאים לסוג למידה ומשימה</h4>
+<table class='kbtable'><tr><td><strong>‏סוג למידה</strong></td><td><strong>‏משימה</strong></td><td><strong>‏מתאים?</strong></td><td><strong>‏הערות</strong></td></tr><tr><td>‏מפוקחת</td><td>‏Classification (מאוזן)</td><td>‏✅</td><td>‏Accuracy תקין כשהמחלקות מאוזנות</td></tr><tr><td>‏מפוקחת</td><td>‏Classification (לא מאוזן)</td><td>‏⚠️</td><td>‏להעדיף Precision/Recall/F1/PR-AUC</td></tr><tr><td>‏מפוקחת</td><td>‏Regression</td><td>‏❌</td><td>‏אין מחלקות; להשתמש ב-RMSE/MAE/R²</td></tr><tr><td>‏לא מפוקחת</td><td>‏Clustering</td><td>‏❌</td><td>‏אין labels; Silhouette/Modularity</td></tr></table>
+<h4 class='sec-h'>טווח ערכים ופרשנות</h4>
+<table class='kbtable'><tr><td><strong>‏מדד</strong></td><td><strong>‏טווח</strong></td><td><strong>‏פרשנות</strong></td></tr><tr><td>‏Accuracy / Precision / Recall / F1</td><td>‏0–1</td><td>‏1 = מושלם, גבוה יותר טוב יותר</td></tr><tr><td>‏ROC-AUC</td><td>‏0–1</td><td>‏0.5 = אקראי, 1.0 = הפרדה מושלמת</td></tr><tr><td>‏PR-AUC</td><td>‏0–1</td><td>‏ה-baseline = שכיחות המחלקה החיובית</td></tr></table>
+<h4 class='sec-h'>מתי עדיף על מדדים אחרים?</h4>
+<ul><li>‏Precision — כשה-FP יקר: סינון ספאם, המלצה שתוצג למשתמש.</li><li>‏Recall — כשה-FN יקר: גילוי מחלה או הונאה, עדיף אזעקת שווא מלפספס.</li><li>‏F1 — כשצריך איזון בין השניים, טוב במיוחד לנתונים לא מאוזנים.</li><li>‏ROC-AUC להשוואת מודלים ללא סף קבוע; PR-AUC כשהמחלקה החיובית נדירה.</li></ul>
+<h4 class='sec-h'>מגבלות</h4>
+<ul><li>‏Accuracy מטעה ב-imbalance — מנבא-רוב טריוויאלי מגיע לאחוזים גבוהים.</li><li>‏Precision ו-Recall תלויים בסף ההחלטה (threshold) וזזים בכיוונים הפוכים.</li><li>‏ROC-AUC יכול להיראות אופטימי מדי כשהמחלקה החיובית נדירה מאוד.</li></ul>
+<h4 class='sec-h'>מימוש בקוד</h4>
+<pre class='code-block'><code>from sklearn.metrics import classification_report, roc_auc_score, f1_score
+ 
+print(classification_report(y_true, y_pred))   # precision/recall/f1 לכל מחלקה
+auc = roc_auc_score(y_true, y_proba)           # y_proba = הסתברויות
+f1  = f1_score(y_true, y_pred, average="macro")</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: ‏מודל מגיע ל-98% Accuracy אך חסר תועלת — איך ייתכן?</strong></p>
+<p><strong>ת: </strong>‏כנראה נתונים לא מאוזנים. אם 98% מהדגימות ממחלקה אחת, מנבא-רוב מגיע ל-98% בלי ללמוד. בודקים Precision/Recall/F1 או PR-AUC למחלקת המיעוט.</p>
+<p><strong>ש: ‏מתי תעדיף Recall על Precision?</strong></p>
+<p><strong>ת: </strong>‏כשעלות ה-False Negative גבוהה מזו של ה-False Positive — למשל גילוי סרטן או הונאה, שם עדיף לבדוק מקרים תקינים בטעות מלפספס מקרה אמיתי.</p>
+<p><strong>ש: ‏מה ההבדל בין ROC-AUC ל-PR-AUC?</strong></p>
+<p><strong>ת: </strong>‏ROC משרטט Recall מול FPR; PR משרטט Precision מול Recall. ב-imbalance קיצוני ROC-AUC נראה טוב מדי, בעוד PR-AUC רגיש לביצועים על המחלקה הנדירה.</p>

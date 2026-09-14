@@ -1,0 +1,36 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>‏שיטות אנסמבל משלבות מספר מודלים "חלשים" (בדרך כלל עצי החלטה) למודל אחד חזק ויציב יותר. שתי המשפחות המרכזיות: Bagging — אימון מודלים במקביל על תת-דגימות ומיצוע (מפחית Variance), ו-Boosting — אימון מודלים בסדרה כשכל אחד מתקן את שגיאות קודמו (מפחית Bias). זהו סטנדרט התעשייה לנתונים טבלאיים.</p>
+<h4 class='sec-h'>איך זה עובד</h4>
+<ul><li>‏1. Bagging: דוגמים B תת-מדגמי Bootstrap (עם החזרה), מאמנים עץ עמוק ועצמאי על כל אחד, וממצעים (רגרסיה) או מצביעים ברוב (סיווג).</li><li>‏2. Random Forest: Bagging של עצים + בכל פיצול בוחרים תת-קבוצה אקראית של פיצ'רים — מפחית קורלציה בין העצים.</li><li>‏3. Gradient Boosting: מתחילים ממודל בסיס, מחשבים את השאריות (residuals), ומאמנים עץ קטן שמנבא אותן. חוזרים עם קצב למידה η.</li><li>‏4. XGBoost / LightGBM: מימושים יעילים של Boosting עם רגולריזציה, טיפול בערכים חסרים ומקביליות.</li></ul>
+<h4 class='sec-h'>נוסחאות</h4>
+<p class='formula-label'><em>‏חיזוי אנסמבל — סכום ממושקל של M לומדים בסיסיים</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="\hat{y}=\sum_{m=1}^{M}η h_{m}(x)">ŷ=∑_{m=1}^{M}η h_m(x)</span></div>
+<p class='formula-label'><em>‏Gradient Boosting — כל עץ מותאם לגרדיאנט השלילי של ה-Loss</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="F_{m}(x)=F_{m−1}(x)+η h_{m}(x)">F_m(x)=F_{m−1}(x)+η h_m(x)</span></div>
+<p class='formula-label'><em>‏מטרת XGBoost — Loss בתוספת רגולריזציה על מורכבות העצים</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="L=\sum_{i}L(y_{i},\hat{y}_{i})+\sum_{m}Ω(h_{m})">L=∑_{i}L(y_i,ŷ_i)+∑_{m}Ω(h_m)</span></div>
+<h4 class='sec-h'>שימושים עיקריים</h4>
+<ul><li>‏נתונים טבלאיים (tabular) — התחום שבו אנסמבלים עדיין מנצחים רשתות עמוקות.</li><li>‏סיווג ורגרסיה עם יחסים לא-לינאריים ואינטראקציות בין פיצ'רים.</li><li>‏Feature Importance — הבנה אילו משתנים משפיעים.</li></ul>
+<h4 class='sec-h'>יתרונות</h4>
+<ul><li>‏דיוק גבוה ויציבות — מפחיתים Variance (Bagging) או Bias (Boosting) לעומת עץ בודד.</li><li>‏עמידים יחסית ל-outliers ולפיצ'רים לא רלוונטיים; לא דורשים סקיילינג.</li><li>‏Random Forest כמעט לא עושה overfit עם עוד עצים, ומקבילי.</li></ul>
+<h4 class='sec-h'>חסרונות / מגבלות</h4>
+<ul><li>‏פחות פרשניים מעץ בודד ("קופסה אפורה").</li><li>‏Boosting רגיש ל-overfit אם יותר מדי עצים או η גבוה — דורש early stopping.</li><li>‏XGBoost דורש כוונון היפר-פרמטרים לא טריוויאלי (depth, η, subsample, λ).</li></ul>
+<h4 class='sec-h'>מדדי הערכה מומלצים</h4>
+<table class='kbtable'><tr><td><strong>‏סוג משימה</strong></td><td><strong>‏מדדים מומלצים</strong></td></tr><tr><td>‏Classification</td><td>‏Accuracy, F1, ROC-AUC, PR-AUC</td></tr><tr><td>‏Regression</td><td>‏RMSE, MAE, R²</td></tr><tr><td>‏כוונון</td><td>‏Cross-Validation + early stopping על validation</td></tr></table>
+<h4 class='sec-h'>השוואה למושגים קרובים</h4>
+<table class='kbtable'><tr><td><strong>‏שיטה</strong></td><td><strong>‏מפחית</strong></td><td><strong>‏חוזק עיקרי</strong></td><td><strong>‏סיכון עיקרי</strong></td></tr><tr><td>‏עץ בודד</td><td>‏—</td><td>‏פרשני</td><td>‏Variance גבוה / overfit</td></tr><tr><td>‏Bagging / Random Forest</td><td>‏Variance</td><td>‏יציב, קל לכוונון</td><td>‏פחות מדויק מ-Boosting</td></tr><tr><td>‏Gradient Boosting / XGBoost</td><td>‏Bias</td><td>‏דיוק מקסימלי</td><td>‏overfit, כוונון מורכב</td></tr></table>
+<h4 class='sec-h'>קוד לדוגמה (Python)</h4>
+<pre class='code-block'><code>from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
+ 
+rf  = RandomForestClassifier(n_estimators=300, max_features="sqrt", n_jobs=-1)
+xgb = XGBClassifier(n_estimators=500, learning_rate=0.05, max_depth=4,
+                    subsample=0.8, reg_lambda=1.0, eval_metric="auc")
+xgb.fit(X_train, y_train, eval_set=[(X_val, y_val)])</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: ‏מה ההבדל המהותי בין Bagging ל-Boosting?</strong></p>
+<p><strong>ת: </strong>‏Bagging מאמן מודלים במקביל על תת-מדגמים וממצע — מפחית Variance. Boosting מאמן מודלים בסדרה, כל אחד מתקן את קודמו — מפחית Bias. Bagging עמיד ל-overfit, Boosting מדויק יותר אך רגיש יותר.</p>
+<p><strong>ש: ‏למה ב-Random Forest בוחרים תת-קבוצת פיצ'רים בכל פיצול?</strong></p>
+<p><strong>ת: </strong>‏כדי להקטין קורלציה בין העצים. אם קיים פיצ'ר דומיננטי, כל העצים היו בוחרים בו ומדמים זה את זה; בחירה אקראית מגַוונת אותם ומשפרת את המיצוע.</p>
+<p><strong>ש: ‏למה XGBoost כה חזק על נתונים טבלאיים?</strong></p>
+<p><strong>ת: </strong>‏שילוב של Boosting מדויק עם רגולריזציה מובנית, טיפול בערכים חסרים, subsampling של שורות ועמודות, ומימוש יעיל ומקבילי — דיוק גבוה עם שליטה ב-overfit.</p>

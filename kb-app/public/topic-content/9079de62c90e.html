@@ -1,0 +1,45 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>יחידת החישוב הבסיסית ברשתות נוירונים: מקבלת מספר כניסות, מחשבת שקלול לינארי שלהן בתוספת bias, ומעבירה את התוצאה דרך פונקציית activation. בשנות ה-50 קראו לזה ``פרספטרון''; כשזה הפך לדימוי למוח האנושי עברו לקרוא לזה ``נוירון''. שני השמות מתייחסים לאותו דבר.</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/7505e240959e.png" loading="lazy" alt="diagram"></div>
+<h4 class='sec-h'>מבנה</h4>
+<ul><li>כניסות x₁…xₙ — הפיצ'רים של התצפית. הם אינם נוירונים: לא מתבצעת בהם פעולה חישובית, הם רק מחזיקים את ערכי הכניסה.</li><li>משקולות w₁…wₙ — הפרמטרים שהמכונה לומדת.</li><li>Bias b — פרמטר נוסף אחד שמאפשר לנוירון להזיז את סף ההפעלה ולא להיות כבול לאפס.</li><li>פעולה 1 — טרנספורמציה לינארית: סכימה משוקללת של הכניסות.</li><li>פעולה 2 — פונקציית Activation שמכניסה אי-לינאריות.</li></ul>
+<p>זה כל מה שנוירון עושה. המורכבות של הרשת כולה נובעת מחיבור הרבה נוירונים יחד, לא מהמורכבות של נוירון בודד.</p>
+<h4 class='sec-h'>נוסחאות מפתח</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/f209da725d07.png" loading="lazy" alt="formula"></div>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/bd30c64cf1b6.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>במונחים וקטוריים, עבור batch שלם:</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/6bed8d414245.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>רגרסיה לוגיסטית היא פרספטרון אחד</h4>
+<p>רגרסיה לוגיסטית היא בדיוק נוירון בודד עם Sigmoid כפונקציית activation: הנוירון מחשב את הטרנספורמציה הלינארית a, וה-Sigmoid ממירה אותה להסתברות בין 0 ל-1. לכן פרספטרון עם BCE loss ו-Sigmoid ב-PyTorch נותן תוצאות כמעט זהות ל-LogisticRegression של Scikit-Learn.</p>
+<h4 class='sec-h'>בחירת פונקציית ה-Activation ביציאה</h4>
+<table class='kbtable'><tr><td><strong>סוג בעיה</strong></td><td><strong>Activation ביציאה</strong></td><td><strong>Loss מתאים</strong></td></tr><tr><td>סיווג בינארי</td><td>Sigmoid</td><td>BCE</td></tr><tr><td>סיווג מרובה-קלאסים</td><td>Softmax</td><td>CrossEntropy (כולל Softmax בפנים)</td></tr><tr><td>רגרסיה</td><td>ליניארי (ללא)</td><td>MSE / MAE / Huber</td></tr><tr><td>שכבות נסתרות</td><td>ReLU (ברירת מחדל)</td><td>—</td></tr></table>
+<h4 class='sec-h'>יתרונות</h4>
+<ul><li>פשוט להבנה ולמימוש — אבן הבניין של כל רשת עמוקה.</li><li>מהיר וזול חישובית.</li><li>גשר מושגי מרגרסיה לוגיסטית לרשתות נוירונים.</li></ul>
+<h4 class='sec-h'>מגבלות</h4>
+<ul><li>התועלת של פרספטרון בודד מוגבלת — הוא מפריד רק בצורה לינארית.</li><li>אינו יכול לפתור בעיות שאינן ניתנות להפרדה לינארית (XOR הקלאסי).</li><li>הפתרון: לסדר נוירונים רבים בשכבות — כך מגיעים ל-MLP.</li></ul>
+<h4 class='sec-h'>קוד לדוגמה (PyTorch)</h4>
+<pre class='code-block'><code>import torch.nn as nn
+
+# פרספטרון בודד לסיווג בינארי = רגרסיה לוגיסטית
+perceptron = nn.Sequential(
+    nn.Linear(in_features=n_features, out_features=1),   # a = b + sum(w*x)
+    nn.Sigmoid()                                          # y = g(a)
+)
+criterion = nn.BCELoss()
+
+# מימוש מפורש של אותו דבר
+class Perceptron(nn.Module):
+    def __init__(self, n_features):
+        super().__init__()
+        self.linear = nn.Linear(n_features, 1)
+        self.activation = nn.Sigmoid()
+
+    def forward(self, x):
+        return self.activation(self.linear(x))</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: האם הכניסות x נחשבות נוירונים?</strong></p>
+<p><strong>ת: </strong>לא. שכבת הכניסה רק מחזיקה את ערכי הפיצ'רים ולא מבצעת חישוב. נוירון מוגדר כיחידה שמבצעת חישוב — טרנספורמציה לינארית ואחריה activation. בציורים מסמנים לפעמים גם את הכניסות כעיגולים, וזה מבלבל.</p>
+<p><strong>ש: לכל נוירון יש loss function משלו?</strong></p>
+<p><strong>ת: </strong>לא. Loss function יש אחד לכל הרשת, והוא מחושב רק אחרי שהתצפית עברה דרך כל הרשת. פונקציית ה-activation לעומת זאת נמצאת בתוך כל נוירון. ה-loss הוא חיצוני לרשת — הוא מודד את המרחק בין החיזוי לתשובה.</p>
+<p><strong>ש: למה צריך Bias?</strong></p>
+<p><strong>ת: </strong>בלי b, ההיפר-מישור שהנוירון מגדיר חייב לעבור דרך הראשית. ה-bias מאפשר להזיז אותו במרחב, כלומר לשלוט בסף ההפעלה של הנוירון באופן בלתי תלוי בערכי הכניסה.</p>

@@ -19,7 +19,7 @@
       "Intro to Data Science::algorithms::04_Logistic_Regression.docx",
       "Intro to Data Science::concepts::03_Bias_Variance_Tradeoff.docx",
       null,
-      null
+      "Topic 3 - Deep Learning::algorithms::44_Gradient_Descent.docx"
     ],
     "contentPath": "/topic-content/e9a67384824c.html"
   },
@@ -112,7 +112,7 @@
     "related_match": [
       "Intro to Data Science::algorithms::06_SVM.docx",
       "Intro to Data Science::concepts::03_Bias_Variance_Tradeoff.docx",
-      null,
+      "Topic 1 - Unsupervised Learning::formulas::19_Distance_Metrics.docx",
       "Topic 1 - Unsupervised Learning::concepts::12_Curse_of_Dimensionality.docx"
     ],
     "contentPath": "/topic-content/9bb0ad258a1d.html"
@@ -161,7 +161,7 @@
     ],
     "related_match": [
       "Topic 3 - Deep Learning::concepts::14_Overfitting.docx",
-      null,
+      "Intro to Data Science::concepts::13_Regularization_Ridge_Lasso.docx",
       null,
       "Intro to Data Science::concepts::08_Model_Optimization_and_Validation.docx"
     ],
@@ -2562,10 +2562,10 @@
       "LoRA/QLoRA Fine-Tuning"
     ],
     "related_match": [
-      null,
+      "RAG, Agents, MCP::architectures::22_RAG_Architecture_Core.docx",
       "RAG, Agents, MCP::concepts::31_AI_Agents_Core_Concepts.docx",
       "RAG, Agents, MCP::architectures::37_CrewAI_Architecture.docx",
-      null,
+      "RAG, Agents, MCP::concepts::43_MCP_Production_Security_Best_Practices.docx",
       "RAG, Agents, MCP::concepts::44_Anthropic_Skills_Architecture.docx",
       "RAG, Agents, MCP::algorithms::52_LoRA_QLoRA_FineTuning.docx"
     ],
@@ -2694,7 +2694,7 @@
       "Embedding Strategies & Retrieval (Similarity Matching בפועל)"
     ],
     "related_match": [
-      null,
+      "RAG, Agents, MCP::concepts::09_Specialist_vs_Generalist_Models.docx",
       "Topic 2 - Natural Language Processing::algorithms::08_Fuzzy_String_Matching.docx"
     ],
     "contentPath": "/topic-content/473750636dfb.html"
@@ -2714,8 +2714,8 @@
       "מסגרת קבלת החלטות ארכיטקטוניות ב-AI"
     ],
     "related_match": [
-      null,
-      null
+      "RAG, Agents, MCP::concepts::08_ML_Tasks_Taxonomy.docx",
+      "RAG, Agents, MCP::concepts::01_AI_Architecture_Decision_Framework.docx"
     ],
     "contentPath": "/topic-content/82d76fd050da.html"
   },
@@ -2734,7 +2734,7 @@
       "Embedding Strategies & Retrieval Pipelines"
     ],
     "related_match": [
-      null,
+      "RAG, Agents, MCP::concepts::02_LLM_Provider_Landscape.docx",
       null
     ],
     "contentPath": "/topic-content/e163f084dd8c.html"
@@ -3544,5 +3544,539 @@
       "RAG, Agents, MCP::architectures::61_YOLO_Object_Detection_Architecture.docx"
     ],
     "contentPath": "/topic-content/a9b3b1418efa.html"
+  },
+  {
+    "id": "Intro to Data Science::metrics::09_Classification_Metrics.docx",
+    "module": "Intro to Data Science",
+    "module_label": "מבוא למדעי הנתונים",
+    "category": "metrics",
+    "category_label": "מדדי הערכה",
+    "num": 9,
+    "slug_name": "Classification Metrics",
+    "title": "Classification Metrics - מדדי הערכה לסיווג",
+    "definition": "‏מדדי הערכה לבעיות סיווג (Classification) מכמתים כמה טוב המודל מבחין בין מחלקות. כולם נגזרים מ-Confusion Matrix — טבלה הסופרת חיזויים נכונים ושגויים לכל מחלקה. אין מדד \"אחד נכון\": הבחירה תלויה בשאלה האם המחלקות מאוזנות, ובאיזו שגיאה יקר יותר לטעות — False Positive מול False Negative.",
+    "related_raw": [
+      "Logistic Regression",
+      "SVM",
+      "KNN",
+      "Tree Methods",
+      "Regression Metrics",
+      "Model Optimization & Validation"
+    ],
+    "related_match": [
+      "Intro to Data Science::algorithms::04_Logistic_Regression.docx",
+      "Intro to Data Science::algorithms::06_SVM.docx",
+      "Intro to Data Science::algorithms::07_KNN.docx",
+      "Intro to Data Science::algorithms::05_Tree_Methods.docx",
+      "Intro to Data Science::metrics::10_Regression_Metrics.docx",
+      "Intro to Data Science::concepts::08_Model_Optimization_and_Validation.docx"
+    ],
+    "contentPath": "/topic-content/a23a64b6e895.html"
+  },
+  {
+    "id": "Intro to Data Science::metrics::10_Regression_Metrics.docx",
+    "module": "Intro to Data Science",
+    "module_label": "מבוא למדעי הנתונים",
+    "category": "metrics",
+    "category_label": "מדדי הערכה",
+    "num": 10,
+    "slug_name": "Regression Metrics",
+    "title": "Regression Metrics - מדדי הערכה לרגרסיה",
+    "definition": "‏מדדי הערכה לרגרסיה מכמתים את הפער בין הערך החזוי לערך האמיתי עבור פלט רציף. בניגוד לסיווג, אין \"נכון/לא נכון\" אלא גודל שגיאה. ההבדל המרכזי בין המדדים הוא כיצד הם מענישים שגיאות גדולות, והאם הם תלויי-יחידות.",
+    "related_raw": [
+      "Linear Regression",
+      "Bias-Variance Tradeoff",
+      "Regularization",
+      "Classification Metrics",
+      "Model Optimization & Validation"
+    ],
+    "related_match": [
+      "Intro to Data Science::algorithms::02_Linear_Regression.docx",
+      "Intro to Data Science::concepts::03_Bias_Variance_Tradeoff.docx",
+      "Intro to Data Science::concepts::13_Regularization_Ridge_Lasso.docx",
+      "Intro to Data Science::metrics::09_Classification_Metrics.docx",
+      "Intro to Data Science::concepts::08_Model_Optimization_and_Validation.docx"
+    ],
+    "contentPath": "/topic-content/b686bb803ea2.html"
+  },
+  {
+    "id": "Intro to Data Science::algorithms::11_Ensemble_Methods.docx",
+    "module": "Intro to Data Science",
+    "module_label": "מבוא למדעי הנתונים",
+    "category": "algorithms",
+    "category_label": "אלגוריתמים",
+    "num": 11,
+    "slug_name": "Ensemble Methods",
+    "title": "Ensemble Methods - שיטות אנסמבל (Bagging, Random Forest, Boosting, XGBoost)",
+    "definition": "‏שיטות אנסמבל משלבות מספר מודלים \"חלשים\" (בדרך כלל עצי החלטה) למודל אחד חזק ויציב יותר. שתי המשפחות המרכזיות: Bagging — אימון מודלים במקביל על תת-דגימות ומיצוע (מפחית Variance), ו-Boosting — אימון מודלים בסדרה כשכל אחד מתקן את שגיאות קודמו (מפחית Bias). זהו סטנדרט התעשייה לנתונים טבלאיים.",
+    "related_raw": [
+      "Tree Methods",
+      "Bias-Variance Tradeoff",
+      "Classification Metrics",
+      "Regression Metrics",
+      "Machine Learning Overview"
+    ],
+    "related_match": [
+      "Intro to Data Science::algorithms::05_Tree_Methods.docx",
+      "Intro to Data Science::concepts::03_Bias_Variance_Tradeoff.docx",
+      "Intro to Data Science::metrics::09_Classification_Metrics.docx",
+      "Intro to Data Science::metrics::10_Regression_Metrics.docx",
+      "Intro to Data Science::concepts::01_Machine_Learning_Overview.docx"
+    ],
+    "contentPath": "/topic-content/d803d04588bd.html"
+  },
+  {
+    "id": "Intro to Data Science::algorithms::12_Naive_Bayes.docx",
+    "module": "Intro to Data Science",
+    "module_label": "מבוא למדעי הנתונים",
+    "category": "algorithms",
+    "category_label": "אלגוריתמים",
+    "num": 12,
+    "slug_name": "Naive Bayes",
+    "title": "Naive Bayes - מסווג בייסיאני נאיבי",
+    "definition": "‏מסווג הסתברותי המבוסס על משפט בייס, עם הנחה \"נאיבית\" שכל הפיצ'רים בלתי תלויים זה בזה בהינתן המחלקה. חרף ההנחה הלא-ריאליסטית הוא מהיר ביותר ועובד מצוין לסיווג טקסט (ספאם, סנטימנט) וכ-baseline מהיר לפני מודלים כבדים.",
+    "related_raw": [
+      "Logistic Regression",
+      "SVM",
+      "Machine Learning Overview",
+      "Classification Metrics"
+    ],
+    "related_match": [
+      "Intro to Data Science::algorithms::04_Logistic_Regression.docx",
+      "Intro to Data Science::algorithms::06_SVM.docx",
+      "Intro to Data Science::concepts::01_Machine_Learning_Overview.docx",
+      "Intro to Data Science::metrics::09_Classification_Metrics.docx"
+    ],
+    "contentPath": "/topic-content/0cec00bd5cb7.html"
+  },
+  {
+    "id": "Intro to Data Science::concepts::13_Regularization_Ridge_Lasso.docx",
+    "module": "Intro to Data Science",
+    "module_label": "מבוא למדעי הנתונים",
+    "category": "concepts",
+    "category_label": "מושגים תיאורטיים",
+    "num": 13,
+    "slug_name": "Regularization Ridge Lasso",
+    "title": "Regularization - רגולריזציה (Ridge / Lasso / Elastic Net)",
+    "definition": "‏רגולריזציה היא הוספת \"עונש\" על גודל המקדמים לפונקציית ה-Loss, כדי לרסן את מורכבות המודל ולמנוע overfitting. במקום למזער רק את שגיאת ההתאמה, המודל ממזער שגיאה + עונש — מה שמושך את המקדמים לכיוון אפס ומשפר את ההכללה. זהו המנוף המרכזי לניהול ה-Bias–Variance Tradeoff.",
+    "related_raw": [
+      "Linear Regression",
+      "Logistic Regression",
+      "Bias-Variance Tradeoff",
+      "Model Optimization & Validation",
+      "Regression Metrics"
+    ],
+    "related_match": [
+      "Intro to Data Science::algorithms::02_Linear_Regression.docx",
+      "Intro to Data Science::algorithms::04_Logistic_Regression.docx",
+      "Intro to Data Science::concepts::03_Bias_Variance_Tradeoff.docx",
+      "Intro to Data Science::concepts::08_Model_Optimization_and_Validation.docx",
+      "Intro to Data Science::metrics::10_Regression_Metrics.docx"
+    ],
+    "contentPath": "/topic-content/d5c6f1f6b522.html"
+  },
+  {
+    "id": "Intro to Data Science::concepts::14_NumPy.docx",
+    "module": "Intro to Data Science",
+    "module_label": "מבוא למדעי הנתונים",
+    "category": "concepts",
+    "category_label": "מושגים תיאורטיים",
+    "num": 14,
+    "slug_name": "NumPy",
+    "title": "NumPy - מערכים מספריים ב-Python",
+    "definition": "ספריית החישוב המספרי שעליה בנוי כל הסטאק של מדעי הנתונים ב-Python. הרעיון המרכזי הוא ה-ndarray — מערך רב-ממדי הומוגני שנשמר כבלוק רציף בזיכרון, מה שמאפשר פעולות וקטוריות מהירות בלי לולאות Python. Pandas, scikit-learn ו-PyTorch כולם עומדים על המבנה הזה.",
+    "related_raw": [
+      "Pandas",
+      "Matplotlib",
+      "Seaborn",
+      "Tensors",
+      "Feature Scaling and Encoding",
+      "Linear Regression"
+    ],
+    "related_match": [
+      "Intro to Data Science::concepts::15_Pandas.docx",
+      "Intro to Data Science::concepts::16_Matplotlib.docx",
+      "Intro to Data Science::concepts::17_Seaborn.docx",
+      "Topic 3 - Deep Learning::concepts::02_Tensors.docx",
+      "Topic 1 - Unsupervised Learning::concepts::20_Feature_Scaling_and_Encoding.docx",
+      "Intro to Data Science::algorithms::02_Linear_Regression.docx"
+    ],
+    "contentPath": "/topic-content/44e0349d9c1c.html"
+  },
+  {
+    "id": "Intro to Data Science::concepts::15_Pandas.docx",
+    "module": "Intro to Data Science",
+    "module_label": "מבוא למדעי הנתונים",
+    "category": "concepts",
+    "category_label": "מושגים תיאורטיים",
+    "num": 15,
+    "slug_name": "Pandas",
+    "title": "Pandas - עבודה עם דאטה טבלאי",
+    "definition": "ספריית מניפולציית הדאטה המרכזית ב-Python, בנויה מעל NumPy. היא מוסיפה את מה שחסר ב-ndarray: תוויות לצירים, טיפוסים מעורבים באותה טבלה, וטיפול מובנה בערכים חסרים. שני מבני הנתונים הם Series (עמודה מתויגת אחת) ו-DataFrame (כמה Series שחולקות אותו אינדקס).",
+    "related_raw": [
+      "NumPy",
+      "Matplotlib",
+      "Seaborn",
+      "Feature Space and Feature Engineering",
+      "Feature Scaling and Encoding",
+      "Machine Learning Overview"
+    ],
+    "related_match": [
+      "Intro to Data Science::concepts::14_NumPy.docx",
+      "Intro to Data Science::concepts::16_Matplotlib.docx",
+      "Intro to Data Science::concepts::17_Seaborn.docx",
+      "Topic 1 - Unsupervised Learning::concepts::10_Feature_Space_and_Feature_Engineering.docx",
+      "Topic 1 - Unsupervised Learning::concepts::20_Feature_Scaling_and_Encoding.docx",
+      "Intro to Data Science::concepts::01_Machine_Learning_Overview.docx"
+    ],
+    "contentPath": "/topic-content/15a59ab34997.html"
+  },
+  {
+    "id": "Intro to Data Science::concepts::16_Matplotlib.docx",
+    "module": "Intro to Data Science",
+    "module_label": "מבוא למדעי הנתונים",
+    "category": "concepts",
+    "category_label": "מושגים תיאורטיים",
+    "num": 16,
+    "slug_name": "Matplotlib",
+    "title": "Matplotlib - ויזואליזציה בסיסית",
+    "definition": "ספריית הגרפים הוותיקה של Python והבסיס שעליו בנויות Seaborn ו-pandas.plot. היא מציעה שליטה מלאה בכל אלמנט בגרף, במחיר של קוד ארוך יותר מאשר בעטיפות ברמה גבוהה.",
+    "related_raw": [
+      "Seaborn",
+      "NumPy",
+      "Pandas",
+      "Model Optimization and Validation",
+      "Classification Metrics"
+    ],
+    "related_match": [
+      "Intro to Data Science::concepts::17_Seaborn.docx",
+      "Intro to Data Science::concepts::14_NumPy.docx",
+      "Intro to Data Science::concepts::15_Pandas.docx",
+      "Intro to Data Science::concepts::08_Model_Optimization_and_Validation.docx",
+      "Intro to Data Science::metrics::09_Classification_Metrics.docx"
+    ],
+    "contentPath": "/topic-content/4761d42102cd.html"
+  },
+  {
+    "id": "Intro to Data Science::concepts::17_Seaborn.docx",
+    "module": "Intro to Data Science",
+    "module_label": "מבוא למדעי הנתונים",
+    "category": "concepts",
+    "category_label": "מושגים תיאורטיים",
+    "num": 17,
+    "slug_name": "Seaborn",
+    "title": "Seaborn - ויזואליזציה סטטיסטית",
+    "definition": "שכבה סטטיסטית מעל Matplotlib, שמקבלת DataFrame ושמות עמודות במקום מערכים גולמיים. גרף שדורש עשרות שורות ב-Matplotlib — כולל אגרגציה, רווחי סמך וצבע לפי קטגוריה — נכתב כאן בשורה אחת.",
+    "related_raw": [
+      "Matplotlib",
+      "Pandas",
+      "NumPy",
+      "Feature Space and Feature Engineering",
+      "Bias-Variance Tradeoff",
+      "Classification Metrics"
+    ],
+    "related_match": [
+      "Intro to Data Science::concepts::16_Matplotlib.docx",
+      "Intro to Data Science::concepts::15_Pandas.docx",
+      "Intro to Data Science::concepts::14_NumPy.docx",
+      "Topic 1 - Unsupervised Learning::concepts::10_Feature_Space_and_Feature_Engineering.docx",
+      "Intro to Data Science::concepts::03_Bias_Variance_Tradeoff.docx",
+      "Intro to Data Science::metrics::09_Classification_Metrics.docx"
+    ],
+    "contentPath": "/topic-content/9c59de27d7c4.html"
+  },
+  {
+    "id": "Topic 1 - Unsupervised Learning::formulas::19_Distance_Metrics.docx",
+    "module": "Topic 1 - Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
+    "category": "formulas",
+    "category_label": "נוסחאות",
+    "num": 19,
+    "slug_name": "Distance Metrics",
+    "title": "Distance Metrics - מדדי מרחק ודמיון",
+    "definition": "‏מדד מרחק הוא פונקציה d(x,y) שמכמתת עד כמה שתי תצפיות רחוקות (או דומות) זו לזו במרחב הפיצ'רים. בלמידה לא-מונחית זה לא \"פרט טכני\" אלא חלק מהמודל עצמו: כל אלגוריתמי ה-clustering וגם KNN נשענים על ההגדרה של \"קרוב\" ו\"רחוק\", והבחירה במדד קובעת אילו מבנים האלגוריתם בכלל מסוגל למצוא. העיקרון המנחה הוא Intra-class similarity גבוה לצד Inter-class dissimilarity — מדד לא מתאים (למשל Euclidean על טקסט דליל) יכול לגרום לאלגוריתם מצוין להיכשל.",
+    "related_raw": [
+      "K-Means Clustering",
+      "DBSCAN",
+      "Hierarchical Clustering",
+      "Feature Scaling & Encoding",
+      "Curse of Dimensionality"
+    ],
+    "related_match": [
+      "Topic 1 - Unsupervised Learning::algorithms::01_K-Means_Clustering.docx",
+      "Topic 1 - Unsupervised Learning::algorithms::03_DBSCAN.docx",
+      "Topic 1 - Unsupervised Learning::algorithms::02_Hierarchical_Clustering.docx",
+      "Topic 1 - Unsupervised Learning::concepts::20_Feature_Scaling_and_Encoding.docx",
+      "Topic 1 - Unsupervised Learning::concepts::12_Curse_of_Dimensionality.docx"
+    ],
+    "contentPath": "/topic-content/a832db440849.html"
+  },
+  {
+    "id": "Topic 1 - Unsupervised Learning::concepts::20_Feature_Scaling_and_Encoding.docx",
+    "module": "Topic 1 - Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
+    "category": "concepts",
+    "category_label": "מושגים תיאורטיים",
+    "num": 20,
+    "slug_name": "Feature Scaling and Encoding",
+    "title": "Feature Scaling & Encoding - תקנון וקידוד פיצ'רים",
+    "definition": "‏עיבוד מקדים שממיר פיצ'רים גולמיים לייצוג מספרי אחיד: Scaling מיישר את כל הפיצ'רים הנומריים לאותה סקאלה, ו-Encoding ממיר משתנים קטגוריאליים למספרים. זהו השלב שקובע אם האלגוריתם בכלל יעבוד: אלגוריתמים מבוססי מרחק (K-Means, DBSCAN, KNN) רגישים לסקאלה, ובלי תקנון פיצ'ר בטווח גדול \"ירסק\" את ההשפעה של פיצ'ר בטווח קטן — פשוט כי המספרים גדולים יותר, לא כי הוא חשוב יותר. זהו אחד ה-gotchas הנפוצים ביותר: לשכוח scaling לפני clustering.",
+    "related_raw": [
+      "Distance Metrics",
+      "Feature Space & Feature Engineering",
+      "PCA",
+      "K-Means Clustering",
+      "Curse of Dimensionality"
+    ],
+    "related_match": [
+      "Topic 1 - Unsupervised Learning::formulas::19_Distance_Metrics.docx",
+      "Topic 1 - Unsupervised Learning::concepts::10_Feature_Space_and_Feature_Engineering.docx",
+      "Topic 1 - Unsupervised Learning::algorithms::06_PCA.docx",
+      "Topic 1 - Unsupervised Learning::algorithms::01_K-Means_Clustering.docx",
+      "Topic 1 - Unsupervised Learning::concepts::12_Curse_of_Dimensionality.docx"
+    ],
+    "contentPath": "/topic-content/0dc47f854ec7.html"
+  },
+  {
+    "id": "Topic 2 - Natural Language Processing::algorithms::25_SVD_LSA_Topic_Modeling.docx",
+    "module": "Topic 2 - Natural Language Processing",
+    "module_label": "נושא 2 - NLP",
+    "category": "algorithms",
+    "category_label": "אלגוריתמים",
+    "num": 25,
+    "slug_name": "SVD LSA Topic Modeling",
+    "title": "SVD / LSA - Latent Semantic Analysis",
+    "definition": "פירוק לערכים סינגולריים (Singular Value Decomposition) המופעל על מטריצת TF-IDF כדי להוריד את ממדיה מעשרות אלפי פיצ'רים דלילים למאה-שלוש מאות ממדים צפופים. כשמפעילים את זה על טקסט קוראים לזה Latent Semantic Analysis (או LSI — Latent Semantic Indexing). כל ממד חדש מייצג ``קונספט'' סמוי — צירוף מילים שנוטות להופיע יחד.",
+    "related_raw": [
+      "TF-IDF",
+      "PCA",
+      "LDA — Latent Dirichlet Allocation",
+      "Curse of Dimensionality",
+      "Cosine Similarity",
+      "t-SNE / UMAP / PaCMAP",
+      "Word Embeddings Overview",
+      "Vector Representation of Documents"
+    ],
+    "related_match": [
+      "Topic 2 - Natural Language Processing::formulas::05_TF-IDF.docx",
+      "Topic 1 - Unsupervised Learning::algorithms::06_PCA.docx",
+      "Topic 2 - Natural Language Processing::algorithms::11_LDA_Latent_Dirichlet_Allocation.docx",
+      "Topic 1 - Unsupervised Learning::concepts::12_Curse_of_Dimensionality.docx",
+      "Topic 2 - Natural Language Processing::formulas::06_Cosine_Similarity.docx",
+      "Topic 1 - Unsupervised Learning::algorithms::07_t-SNE_UMAP_PaCMAP.docx",
+      "Topic 2 - Natural Language Processing::concepts::16_Word_Embeddings_Overview.docx",
+      "Topic 2 - Natural Language Processing::concepts::01_Vector_Representation_of_Documents.docx"
+    ],
+    "contentPath": "/topic-content/332d05918b66.html"
+  },
+  {
+    "id": "Topic 3 - Deep Learning::algorithms::44_Gradient_Descent.docx",
+    "module": "Topic 3 - Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
+    "category": "algorithms",
+    "category_label": "אלגוריתמים",
+    "num": 44,
+    "slug_name": "Gradient Descent",
+    "title": "Gradient Descent - ירידה בגרדיאנט",
+    "definition": "אלגוריתם האופטימיזציה שעליו בנויה כל למידת המכונה המודרנית: במקום לסרוק את כל מרחב הפרמטרים, מחשבים את הגרדיאנט של פונקציית ה-Loss ביחס לכל פרמטר ומזיזים את הפרמטרים צעד קטן בכיוון ההפוך לגרדיאנט — הכיוון שבו ה-Loss יורד הכי מהר.",
+    "related_raw": [
+      "SGD",
+      "Momentum",
+      "Adam",
+      "Backpropagation",
+      "Autograd",
+      "Learning Rate & Schedulers",
+      "Batch Size & Epochs",
+      "Regression Loss Functions"
+    ],
+    "related_match": [
+      "Topic 3 - Deep Learning::algorithms::09_SGD.docx",
+      "Topic 3 - Deep Learning::algorithms::10_Momentum.docx",
+      "Topic 3 - Deep Learning::algorithms::13_Adam.docx",
+      "Topic 3 - Deep Learning::algorithms::05_Backpropagation.docx",
+      "Topic 3 - Deep Learning::concepts::03_Autograd.docx",
+      "Topic 3 - Deep Learning::concepts::45_Learning_Rate_and_Schedulers.docx",
+      "Topic 3 - Deep Learning::concepts::46_Batch_Size_and_Epochs.docx",
+      "Topic 3 - Deep Learning::formulas::07_Regression_Loss_Functions.docx"
+    ],
+    "contentPath": "/topic-content/a2b165b7018f.html"
+  },
+  {
+    "id": "Topic 3 - Deep Learning::concepts::45_Learning_Rate_and_Schedulers.docx",
+    "module": "Topic 3 - Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
+    "category": "concepts",
+    "category_label": "מושגים תיאורטיים",
+    "num": 45,
+    "slug_name": "Learning Rate and Schedulers",
+    "title": "Learning Rate & Schedulers - קצב הלמידה ותזמונו",
+    "definition": "קצב הלמידה α הוא גודל הצעד שהאופטימייזר עושה בכיוון ההפוך לגרדיאנט. זהו ההיפר-פרמטר היחיד שמופיע בכל אופטימייזר ללא יוצא מן הכלל, והוא הרגיש ביותר מביניהם: כל שאר השיטות (Momentum, AdaGrad, RMSProp, Adam) הן וריאציות על השאלה כיצד לקבוע ולעדכן אותו. Scheduler הוא מדיניות שמשנה את α לאורך האימון.",
+    "related_raw": [
+      "Gradient Descent",
+      "SGD",
+      "Momentum",
+      "AdaGrad",
+      "RMSProp / AdaDelta",
+      "Adam",
+      "Early Stopping",
+      "Batch Size & Epochs"
+    ],
+    "related_match": [
+      "Topic 3 - Deep Learning::algorithms::44_Gradient_Descent.docx",
+      "Topic 3 - Deep Learning::algorithms::09_SGD.docx",
+      "Topic 3 - Deep Learning::algorithms::10_Momentum.docx",
+      "Topic 3 - Deep Learning::algorithms::11_AdaGrad.docx",
+      "Topic 3 - Deep Learning::algorithms::12_RMSProp_AdaDelta.docx",
+      "Topic 3 - Deep Learning::algorithms::13_Adam.docx",
+      "Topic 3 - Deep Learning::algorithms::47_Early_Stopping.docx",
+      "Topic 3 - Deep Learning::concepts::46_Batch_Size_and_Epochs.docx"
+    ],
+    "contentPath": "/topic-content/ea5ca82e36a1.html"
+  },
+  {
+    "id": "Topic 3 - Deep Learning::concepts::46_Batch_Size_and_Epochs.docx",
+    "module": "Topic 3 - Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
+    "category": "concepts",
+    "category_label": "מושגים תיאורטיים",
+    "num": 46,
+    "slug_name": "Batch Size and Epochs",
+    "title": "Batch Size & Epochs - גודל אצווה ומחזורי אימון",
+    "definition": "Batch Size הוא מספר התצפיות שעליהן מחושב ה-Loss לפני כל עדכון פרמטרים. Epoch הוא מעבר מלא אחד של כל דאטה האימון דרך המודל. שני הפרמטרים האלה קובעים יחד כמה עדכוני פרמטרים מתבצעים באימון וכמה זיכרון הוא צורך.",
+    "related_raw": [
+      "SGD",
+      "Gradient Descent",
+      "Learning Rate & Schedulers",
+      "Tensors",
+      "Hardware for Deep Learning",
+      "Batch Normalization"
+    ],
+    "related_match": [
+      "Topic 3 - Deep Learning::algorithms::09_SGD.docx",
+      "Topic 3 - Deep Learning::algorithms::44_Gradient_Descent.docx",
+      "Topic 3 - Deep Learning::concepts::45_Learning_Rate_and_Schedulers.docx",
+      "Topic 3 - Deep Learning::concepts::02_Tensors.docx",
+      "Topic 3 - Deep Learning::concepts::01_Hardware_for_Deep_Learning.docx",
+      "Topic 3 - Deep Learning::algorithms::16_Batch_Normalization.docx"
+    ],
+    "contentPath": "/topic-content/d10056b50fce.html"
+  },
+  {
+    "id": "Topic 3 - Deep Learning::algorithms::47_Early_Stopping.docx",
+    "module": "Topic 3 - Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
+    "category": "algorithms",
+    "category_label": "אלגוריתמים",
+    "num": 47,
+    "slug_name": "Early Stopping",
+    "title": "Early Stopping - עצירה מוקדמת",
+    "definition": "טכניקת רגולריזציה שעוצרת את האימון ברגע שה-validation loss מפסיק להשתפר, במקום להריץ מספר epochs קבוע מראש. הקריטריון נקבע לפני תחילת האימון — לא מסתכלים על התוצאות ואז מחליטים איפה לעצור.",
+    "related_raw": [
+      "Overfitting",
+      "Dropout",
+      "Batch Normalization",
+      "Learning Rate & Schedulers",
+      "Model Optimization and Validation",
+      "Regularization Ridge Lasso"
+    ],
+    "related_match": [
+      "Topic 3 - Deep Learning::concepts::14_Overfitting.docx",
+      "Topic 3 - Deep Learning::algorithms::15_Dropout.docx",
+      "Topic 3 - Deep Learning::algorithms::16_Batch_Normalization.docx",
+      "Topic 3 - Deep Learning::concepts::45_Learning_Rate_and_Schedulers.docx",
+      "Intro to Data Science::concepts::08_Model_Optimization_and_Validation.docx",
+      "Intro to Data Science::concepts::13_Regularization_Ridge_Lasso.docx"
+    ],
+    "contentPath": "/topic-content/28de3a008635.html"
+  },
+  {
+    "id": "Topic 3 - Deep Learning::architectures::48_Perceptron.docx",
+    "module": "Topic 3 - Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
+    "category": "architectures",
+    "category_label": "ארכיטקטורות",
+    "num": 48,
+    "slug_name": "Perceptron",
+    "title": "Perceptron - הנוירון המלאכותי",
+    "definition": "יחידת החישוב הבסיסית ברשתות נוירונים: מקבלת מספר כניסות, מחשבת שקלול לינארי שלהן בתוספת bias, ומעבירה את התוצאה דרך פונקציית activation. בשנות ה-50 קראו לזה ``פרספטרון''; כשזה הפך לדימוי למוח האנושי עברו לקרוא לזה ``נוירון''. שני השמות מתייחסים לאותו דבר.",
+    "related_raw": [
+      "MLP — Multi-Layer Perceptron",
+      "Activation Functions",
+      "Logistic Regression",
+      "Classification Loss Functions",
+      "Backpropagation",
+      "Gradient Descent"
+    ],
+    "related_match": [
+      "Topic 3 - Deep Learning::architectures::04_MLP_Multi-Layer_Perceptron.docx",
+      "Topic 3 - Deep Learning::formulas::06_Activation_Functions.docx",
+      "Intro to Data Science::algorithms::04_Logistic_Regression.docx",
+      "Topic 3 - Deep Learning::formulas::08_Classification_Loss_Functions.docx",
+      "Topic 3 - Deep Learning::algorithms::05_Backpropagation.docx",
+      "Topic 3 - Deep Learning::algorithms::44_Gradient_Descent.docx"
+    ],
+    "contentPath": "/topic-content/9079de62c90e.html"
+  },
+  {
+    "id": "RAG, Agents, MCP::concepts::68_Token_Cost_Management.docx",
+    "module": "RAG, Agents, MCP",
+    "module_label": "RAG, Agents, MCP",
+    "category": "concepts",
+    "category_label": "מושגים תיאורטיים",
+    "num": 68,
+    "slug_name": "Token Cost Management",
+    "title": "Token Cost Management - ניהול עלויות טוקנים",
+    "definition": "הניטור והבקרה של צריכת הטוקנים בכל קריאה למודל, ותרגומה לעלות כספית. במערכות RAG ו-Agents זהו אילוץ הנדסי ראשון במעלה: כל וריאנט ארכיטקטוני — Query Rewrite, Conversational RAG, ReAct — מוסיף קריאות LLM ומאריך פרומפטים, והעלות מצטברת מהר.",
+    "related_raw": [
+      "RAG Production Best Practices",
+      "Chunking Strategies",
+      "Reranking Strategies",
+      "Agentic Memory",
+      "Model Selection Strategy",
+      "LLM Provider Landscape",
+      "Streaming RAG",
+      "CrewAI Architecture"
+    ],
+    "related_match": [
+      "RAG, Agents, MCP::concepts::30_RAG_Production_Best_Practices.docx",
+      "RAG, Agents, MCP::concepts::11_Chunking_Strategies.docx",
+      "RAG, Agents, MCP::concepts::19_Reranking_Strategies.docx",
+      "RAG, Agents, MCP::concepts::33_Agentic_Memory.docx",
+      "RAG, Agents, MCP::concepts::10_Model_Selection_Strategy.docx",
+      "RAG, Agents, MCP::concepts::02_LLM_Provider_Landscape.docx",
+      "RAG, Agents, MCP::concepts::28_Streaming_RAG.docx",
+      "RAG, Agents, MCP::architectures::37_CrewAI_Architecture.docx"
+    ],
+    "contentPath": "/topic-content/22f0d8dfc841.html"
+  },
+  {
+    "id": "RAG, Agents, MCP::concepts::69_Multimodal_Agents.docx",
+    "module": "RAG, Agents, MCP",
+    "module_label": "RAG, Agents, MCP",
+    "category": "concepts",
+    "category_label": "מושגים תיאורטיים",
+    "num": 69,
+    "slug_name": "Multimodal Agents",
+    "title": "Multimodal Agents - סוכנים רב-מודליים",
+    "definition": "סוכנים שמקבלים קלט שאינו טקסט — תמונה, אודיו או וידאו — ומתרגמים אותו לטקסט לפני שהוא נכנס לפייפליין הרגיל של ה-agent. העיקרון המנחה: כמעט תמיד ממירים כל מודליות לטקסט בשלב מוקדם, ואז כל הכלים הקיימים — RAG, Tools, Crews — עובדים כרגיל.",
+    "related_raw": [
+      "AI Agents Core Concepts",
+      "Function Calling",
+      "CrewAI Architecture",
+      "Document Ingestion PDF OCR",
+      "Token Cost Management",
+      "Model Selection Strategy",
+      "CV Task Types Comparison"
+    ],
+    "related_match": [
+      "RAG, Agents, MCP::concepts::31_AI_Agents_Core_Concepts.docx",
+      "RAG, Agents, MCP::concepts::12_Function_Calling.docx",
+      "RAG, Agents, MCP::architectures::37_CrewAI_Architecture.docx",
+      "RAG, Agents, MCP::concepts::14_Document_Ingestion_PDF_OCR.docx",
+      "RAG, Agents, MCP::concepts::68_Token_Cost_Management.docx",
+      "RAG, Agents, MCP::concepts::10_Model_Selection_Strategy.docx",
+      "RAG, Agents, MCP::concepts::62_CV_Task_Types_Comparison.docx"
+    ],
+    "contentPath": "/topic-content/fe405dc716f6.html"
   }
 ]
