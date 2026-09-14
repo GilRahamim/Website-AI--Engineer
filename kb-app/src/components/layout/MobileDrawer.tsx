@@ -1,6 +1,7 @@
 import { useEffect, useRef, type KeyboardEvent, type ReactNode } from 'react';
 import { X } from 'lucide-react';
 import { useUiStore } from '../../store/uiStore';
+import { lockBodyScroll } from '../../lib/lockBodyScroll';
 
 interface MobileDrawerProps {
   title: string;
@@ -30,6 +31,11 @@ export default function MobileDrawer({ title, children }: MobileDrawerProps) {
       previousFocusRef.current.focus();
       previousFocusRef.current = null;
     }
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    return lockBodyScroll();
   }, [open]);
 
   if (!open) return null;
@@ -72,7 +78,7 @@ export default function MobileDrawer({ title, children }: MobileDrawerProps) {
         aria-modal="true"
         aria-label={title}
         onKeyDown={handleKeyDown}
-        className="absolute inset-y-0 start-0 flex w-[min(20rem,85vw)] flex-col overflow-y-auto bg-[var(--kb-surface)] shadow-[var(--kb-shadow-lg)]"
+        className="absolute inset-y-0 start-0 flex w-[min(20rem,85vw)] flex-col overflow-y-auto bg-[var(--kb-surface)] pb-[env(safe-area-inset-bottom)] shadow-[var(--kb-shadow-lg)]"
       >
         <div className="flex items-center justify-between border-b border-[var(--kb-border)] px-4 py-3">
           <h2 className="text-base font-bold text-[var(--kb-text)]">{title}</h2>

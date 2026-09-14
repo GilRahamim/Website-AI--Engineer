@@ -10,6 +10,7 @@ import RelatedTopics from './RelatedTopics';
 import PrevNextNav from './PrevNextNav';
 import ReaderAside from './ReaderAside';
 import TopicNotes from '../topic/TopicNotes';
+import { sizeFormulaImage } from '../../lib/formulaSizing';
 
 interface TopicReaderProps {
   topic: Topic;
@@ -30,6 +31,7 @@ function readingTimeLabel(minutes: number): string {
 export default function TopicReader({ topic, topics, topicsById }: TopicReaderProps) {
   const [content, setContent] = useState<ContentState | null>(null);
   const notesRef = useRef<HTMLTextAreaElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -60,6 +62,30 @@ export default function TopicReader({ topic, topics, topicsById }: TopicReaderPr
   const error = isCurrent && content.status === 'error' ? content : null;
 
   const toc = useMemo(() => (rawHtml === null ? EMPTY_TOC : buildToc(rawHtml)), [rawHtml]);
+
+  // Formula images were rasterised at wildly different resolutions and
+  // carry no width/height attributes, so left alone they paint at full
+  // pixel size (a one-line fraction came out ~650px wide on desktop).
+  // scripts/measure-formulas.mjs measured each raster's glyph x-height;
+  // here every formula is scaled so that x-height matches the surrounding
+  // text, and gets an aspect-ratio so its space is reserved before load.
+  // Diagrams (x-height 0) are left at natural size, capped by max-width.
+  useEffect(() => {
+    const root = contentRef.current;
+    if (!root || toc.html === '') return;
+    const images = root.querySelectorAll<HTMLImageElement>(
+      'img.block-formula-img, img.cell-formula-img, img.inline-formula-img',
+    );
+    for (const img of images) sizeFormulaImage(img);
+  }, [toc.html]);
+
+  // React 19 re-assigns innerHTML whenever the dangerouslySetInnerHTML prop
+  // is a new object, even with identical markup. A fresh `{ __html }` literal
+  // on every render therefore rebuilt the whole article on each re-render
+  // (store hydration, the table of contents highlight changing on scroll),
+  // which detached the headings the IntersectionObserver was watching and
+  // threw away the formula sizing above. One object per html string.
+  const articleHtml = useMemo(() => ({ __html: toc.html }), [toc.html]);
   const headingIds = useMemo(() => toc.headings.map((h) => h.id), [toc]);
   const activeHeadingId = useActiveHeading(headingIds);
   const readingMinutes = rawHtml === null ? null : estimateReadingMinutes(rawHtml);
@@ -81,7 +107,7 @@ export default function TopicReader({ topic, topics, topicsById }: TopicReaderPr
   // sticky second column spanning both rows. A single aside instance keeps
   // the radiogroup and table of contents unique in the accessibility tree.
   return (
-    <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_260px] lg:gap-x-10 lg:gap-y-6 lg:px-8">
+    <div className="mx-auto grid max-w-[1040px] grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_260px] lg:gap-x-10 lg:gap-y-6 lg:px-8">
       <article className="contents">
         <div className="min-w-0 max-w-[75ch] lg:col-start-1">
           <nav
@@ -149,7 +175,7 @@ export default function TopicReader({ topic, topics, topicsById }: TopicReaderPr
                 </div>
               )
             ) : (
-              <div className="kb-topic-content" dangerouslySetInnerHTML={{ __html: toc.html }} />
+              <div ref={contentRef} className="kb-topic-content" dangerouslySetInnerHTML={articleHtml} />
             )}
           </div>
 

@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { CircleHelp, Home, Layers, Map } from 'lucide-react';
 
 interface TabBarProps {
@@ -14,6 +14,10 @@ const TABS = [
 
 /** Phone-only bottom navigation; the header nav takes over from md up. */
 export default function TabBar({ dueCount }: TabBarProps) {
+  // Topic pages are reached from Home's catalog, so Home stays the current
+  // tab while reading instead of no tab at all.
+  const { pathname } = useLocation();
+  const readingTopic = pathname.startsWith('/topic/');
   return (
     <nav
       aria-label="ניווט תחתון"
@@ -25,9 +29,10 @@ export default function TabBar({ dueCount }: TabBarProps) {
             <NavLink
               to={to}
               end={to === '/'}
+              aria-current={to === '/' && readingTopic ? 'page' : undefined}
               className={({ isActive }) =>
                 `flex min-h-14 flex-col items-center justify-center gap-0.5 text-xs no-underline ${
-                  isActive ? 'font-semibold text-[var(--kb-accent)]' : 'font-medium text-[var(--kb-muted)]'
+                  isActive || (to === '/' && readingTopic) ? 'font-semibold text-[var(--kb-accent)]' : 'font-medium text-[var(--kb-muted)]'
                 }`
               }
             >

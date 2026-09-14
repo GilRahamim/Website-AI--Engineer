@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Layers } from 'lucide-react';
-import topicsRaw from '../data/topics.clean.json';
-import modulesRaw from '../data/modules.json';
-import type { ModulesMap, ProgressStatus, SrsRating, Topic } from '../types';
+import type { ProgressStatus, SrsRating } from '../types';
 import { isDue } from '../lib/srs';
 import { ALL_STATUSES, STATUS_LABELS } from '../lib/progressStatus';
-import { buildCategoryLabels } from '../lib/categoryLabels';
+import { categoryLabels, modules, topics, topicsById } from '../lib/catalog';
 import { useUserDataStore } from '../store/userDataStore';
 import { usePageTitle } from '../hooks/usePageTitle';
 import Header from '../components/layout/Header';
@@ -15,10 +13,6 @@ import TopicFilters from '../components/browse/TopicFilters';
 const PRIMARY_BUTTON = 'min-h-11 rounded-[10px] bg-[var(--kb-accent)] px-5 text-sm font-semibold text-[var(--kb-on-accent)] hover:opacity-90 disabled:opacity-50';
 const SECONDARY_BUTTON = 'min-h-11 rounded-[10px] border border-[var(--kb-border-strong)] bg-[var(--kb-surface)] px-4 text-sm font-semibold text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]';
 
-const topics = topicsRaw as Topic[];
-const modules = modulesRaw as ModulesMap;
-const topicsById = new Map(topics.map((t) => [t.id, t]));
-const categoryLabels = buildCategoryLabels(topics);
 
 // Rating buttons: "good" is the default answer in spaced repetition, so it
 // is the one primary control; the others stay secondary. Number hints mirror
@@ -218,7 +212,19 @@ export default function Flashcards() {
         )}
 
         {!queueEmpty && sessionDone && (
-          <p role="status" className="text-[var(--kb-text)]">{`סיימת! ${reviewedCount} כרטיסים נסקרו.`}</p>
+          <div
+            role="status"
+            className="flex flex-col items-center gap-3 rounded-xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-6 text-center shadow-[var(--kb-shadow-sm)]"
+          >
+            <p className="text-lg font-bold text-[var(--kb-text)]">{`סיימת! ${reviewedCount} כרטיסים נסקרו.`}</p>
+            <button
+              type="button"
+              onClick={() => resetSession(buildQueue(selectedModule, selectedCategory, selectedStatus, dueOnly))}
+              className={PRIMARY_BUTTON}
+            >
+              סבב נוסף
+            </button>
+          </div>
         )}
 
         {currentTopic && (

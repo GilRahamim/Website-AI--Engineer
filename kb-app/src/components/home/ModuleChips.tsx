@@ -5,7 +5,7 @@ interface ModuleChipsProps {
   modules: ModulesMap;
 }
 
-const chipBase = 'shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-[13px] transition-colors';
+const chipBase = 'inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-full border px-3.5 text-[13px] transition-colors';
 const chipOn = 'border-[var(--kb-accent-soft)] bg-[var(--kb-accent-soft)] font-semibold text-[var(--kb-accent)]';
 const chipOff = 'border-[var(--kb-border)] bg-[var(--kb-surface)] font-medium text-[var(--kb-text2)]';
 

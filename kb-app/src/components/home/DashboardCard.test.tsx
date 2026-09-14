@@ -54,9 +54,16 @@ describe('DashboardCard', () => {
     expect(screen.getByText(/87 נושאים חדשים/)).toBeInTheDocument();
   });
 
-  it('says nothing is due when the due count is zero', () => {
+  it('offers the new cards when nothing is scheduled but topics are still unreviewed', () => {
     renderCard({ dueCount: 0 });
-    expect(screen.getByRole('link', { name: /אין כרטיסים לחזרה היום/ })).toHaveAttribute('href', '/flashcards');
+    expect(screen.getByText('אין חזרות מתוזמנות להיום')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /למד כרטיסים חדשים.*87/ })).toHaveAttribute('href', '/flashcards');
+  });
+
+  it('says everything is up to date only when nothing is due and nothing is new', () => {
+    renderCard({ dueCount: 0, newCount: 0 });
+    expect(screen.getByText('הכול מעודכן להיום')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'פתח כרטיסיות' })).toHaveAttribute('href', '/flashcards');
   });
 
   it('links the random topic and the continue-reading topic to their reader pages', () => {

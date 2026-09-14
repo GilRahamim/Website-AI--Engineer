@@ -12,14 +12,16 @@ import { requestMainFocus } from '../../lib/routeFocus';
  */
 export default function ScrollToTop() {
   const { pathname } = useLocation();
-  const isFirstRender = useRef(true);
+  // Compared against the last path seen rather than a "first run" flag: in
+  // development React 19's StrictMode runs this effect twice for the same
+  // path, and a boolean flag would treat the second run as a navigation and
+  // steal focus (with a visible ring) on the very first page load.
+  const lastPathRef = useRef(pathname);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
+    if (lastPathRef.current === pathname) return;
+    lastPathRef.current = pathname;
     requestMainFocus();
   }, [pathname]);
 

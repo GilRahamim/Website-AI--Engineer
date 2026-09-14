@@ -149,10 +149,10 @@ export default function Home() {
             </div>
             <FilterChips modules={modules} categoryLabels={categoryLabels} />
             <div className="flex gap-3 text-[13px]">
-              <button type="button" onClick={expandAllGroups} className="min-h-9 font-medium text-[var(--kb-accent)] hover:underline">
+              <button type="button" onClick={expandAllGroups} className="min-h-10 px-1 font-medium text-[var(--kb-accent)] hover:underline">
                 הרחב הכול
               </button>
-              <button type="button" onClick={collapseAllGroups} className="min-h-9 font-medium text-[var(--kb-accent)] hover:underline">
+              <button type="button" onClick={collapseAllGroups} className="min-h-10 px-1 font-medium text-[var(--kb-accent)] hover:underline">
                 כווץ הכול
               </button>
             </div>

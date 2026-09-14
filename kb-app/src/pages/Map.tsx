@@ -1,18 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ForceGraph2D, { type LinkObject, type NodeObject } from 'react-force-graph-2d';
-import topicsRaw from '../data/topics.clean.json';
-import modulesRaw from '../data/modules.json';
-import type { Category, ModulesMap, Topic } from '../types';
+import ForceGraph2D, { type ForceGraphMethods, type LinkObject, type NodeObject } from 'react-force-graph-2d';
+import type { Category } from '../types';
 import { buildGraphData, type GraphLink, type GraphNode } from '../lib/graph';
-import { buildCategoryLabels } from '../lib/categoryLabels';
+import { categoryLabels, modules, topics } from '../lib/catalog';
 import { usePageTitle } from '../hooks/usePageTitle';
 import Header from '../components/layout/Header';
 import TopicFilters from '../components/browse/TopicFilters';
 
-const topics = topicsRaw as Topic[];
-const modules = modulesRaw as ModulesMap;
-const categoryLabels = buildCategoryLabels(topics);
 
 const CATEGORY_TOKEN_VARS: Record<Category, string> = {
   algorithms: '--kb-cat-algorithms',
@@ -90,6 +85,14 @@ export default function Map() {
 
   const [prefersReducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
+  // The simulation spreads nodes well beyond the initial viewport (whole
+  // clusters used to sit clipped above and below the frame); once the
+  // layout settles, zoom so every node is inside the box with some margin.
+  const graphRef = useRef<ForceGraphMethods<GraphNode, GraphLink> | undefined>(undefined);
+  function fitGraph() {
+    graphRef.current?.zoomToFit(prefersReducedMotion ? 0 : 400, 24);
+  }
+
   const graphData = useMemo(
     () => buildGraphData(topics, selectedModule, selectedCategory),
     [selectedModule, selectedCategory],
@@ -109,6 +112,23 @@ export default function Map() {
             onModuleChange={setSelectedModule}
             onCategoryChange={setSelectedCategory}
           />
+          <label className="flex flex-col text-sm text-[var(--kb-text)]">
+            קפוץ לנושא
+            <select
+              value=""
+              onChange={(e) => {
+                if (e.target.value) navigate(`/topic/${encodeURIComponent(e.target.value)}`);
+              }}
+              className="min-h-11 max-w-64 rounded-md border border-[var(--kb-border-input)] bg-[var(--kb-surface)] px-2 text-base text-[var(--kb-text)]"
+            >
+              <option value="">בחר נושא מהמפה…</option>
+              {graphData.nodes.map((node) => (
+                <option key={node.id} value={node.id}>
+                  {node.title}
+                </option>
+              ))}
+            </select>
+          </label>
           <p className="text-sm text-[var(--kb-muted)]">{`${graphData.nodes.length} נושאים, ${graphData.links.length} קשרים`}</p>
         </div>
         <ul aria-label="מקרא קטגוריות" className="mb-3 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-[var(--kb-text2)]">
@@ -122,11 +142,13 @@ export default function Map() {
         <div
           ref={containerRef}
           aria-label="גרף אינטראקטיבי המציג קשרים בין נושאים"
-          className="h-[70dvh] min-h-80 overflow-hidden rounded-xl border border-[var(--kb-border)]"
+          className="h-[70dvh] min-h-80 overflow-hidden rounded-xl border border-[var(--kb-border)] bg-[var(--kb-surface)]"
         >
           {dimensions && (
             <ForceGraph2D<GraphNode, GraphLink>
+              ref={graphRef}
               graphData={graphData}
+              onEngineStop={fitGraph}
               width={dimensions.width}
               height={dimensions.height}
               nodeId="id"
@@ -142,7 +164,11 @@ export default function Map() {
                 if (node.id) navigate(`/topic/${encodeURIComponent(String(node.id))}`);
               }}
               onNodeHover={(node: NodeObject<GraphNode> | null) => setHoveredNodeId(node ? String(node.id) : null)}
-              cooldownTicks={prefersReducedMotion ? 0 : undefined}
+              // A bounded tick budget lets the layout settle in a second or
+              // two (instead of the library's 15s wall clock) so the
+              // fit-to-view above runs while the user is still looking.
+              warmupTicks={prefersReducedMotion ? 200 : 60}
+              cooldownTicks={prefersReducedMotion ? 0 : 120}
             />
           )}
         </div>

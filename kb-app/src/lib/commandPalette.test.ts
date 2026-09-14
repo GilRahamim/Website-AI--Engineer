@@ -72,6 +72,22 @@ describe('filterResults', () => {
     expect(result.topics).toHaveLength(8);
   });
 
+  it('falls back to definition (search index) and note matches after title matches', () => {
+    const searchIndex = [
+      { id: 'a', search: 'רגרסיה לוגיסטית סיווג בינארי' },
+      { id: 'c', search: 'עצי החלטה פיצול רקורסיבי' },
+    ];
+    const notes = new Map([['b', 'לחזור על הפיצול של העץ']]);
+    const result = filterResults('פיצול', actions, topics, searchIndex, notes);
+    expect(result.topics.map((t) => t.id)).toEqual(['b', 'c']);
+  });
+
+  it('lists title matches before definition matches and never repeats a topic', () => {
+    const searchIndex = [{ id: 'a', search: 'רגרסיה לוגיסטית עצי החלטה' }];
+    const result = filterResults('עצי', actions, topics, searchIndex);
+    expect(result.topics.map((t) => t.id)).toEqual(['c', 'a']);
+  });
+
   it('returns empty arrays when nothing matches', () => {
     const result = filterResults('zzzzzzz', actions, topics);
     expect(result.actions).toEqual([]);

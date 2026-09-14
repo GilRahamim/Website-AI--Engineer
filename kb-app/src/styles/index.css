@@ -30,6 +30,28 @@ a {
   box-shadow: var(--kb-focus-ring);
   outline: none;
 }
+/* <main> receives programmatic focus after a client-side navigation (see
+   lib/routeFocus) purely as a landing point for keyboard and screen-reader
+   users; it is not an interactive control, so it must not be outlined. */
+main:focus,
+main:focus-visible {
+  box-shadow: none;
+  outline: none;
+}
+
+/* Native checkboxes come out of preflight at 13px; the label carries the
+   44px hit area, but the box itself should still be legible on phones. */
+input[type='checkbox'] {
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: var(--kb-accent);
+}
+
+/* Modal layers (drawer, palette, shortcuts) pin the page behind them so a
+   touch scroll inside the overlay never drags the document along. */
+body[data-scroll-locked] {
+  overflow: hidden;
+}
 
 a, button, [role="button"], input, select, textarea, [tabindex] {
   transition: background-color 160ms var(--kb-ease), color 160ms var(--kb-ease), box-shadow 160ms var(--kb-ease), transform 160ms var(--kb-ease);
@@ -330,15 +352,25 @@ summary:active {
   font-size: 0.8rem;
   color: var(--kb-muted);
 }
+/* Formula rasters come in wildly different resolutions; TopicReader sets
+   each image's width (and aspect-ratio) from measured glyph size, see
+   lib/formulaSizing. Only the overflow guards and layout live here. */
 .kb-topic-content img.block-formula-img {
   display: block;
+  width: auto;
   max-width: 100%;
+  height: auto;
   margin: 1rem auto;
 }
 .kb-topic-content img.cell-formula-img,
 .kb-topic-content img.inline-formula-img {
-  height: 1.1em;
+  width: auto;
+  max-width: 100%;
+  height: auto;
   vertical-align: middle;
+}
+.kb-topic-content .formula-block {
+  overflow-x: auto;
 }
 [data-theme='dark'] .kb-topic-content img.block-formula-img,
 [data-theme='dark'] .kb-topic-content img.cell-formula-img,

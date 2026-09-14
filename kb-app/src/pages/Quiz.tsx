@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, X } from 'lucide-react';
-import topicsRaw from '../data/topics.clean.json';
-import modulesRaw from '../data/modules.json';
-import type { ModulesMap, ProgressStatus, Topic } from '../types';
+import type { ProgressStatus, Topic } from '../types';
 import { buildQuiz, type QuizQuestion } from '../lib/quiz';
 import { ALL_STATUSES, STATUS_LABELS } from '../lib/progressStatus';
-import { buildCategoryLabels } from '../lib/categoryLabels';
+import { categoryLabels, modules, topics, topicsById } from '../lib/catalog';
 import { useUserDataStore } from '../store/userDataStore';
 import { usePageTitle } from '../hooks/usePageTitle';
 import Header from '../components/layout/Header';
@@ -14,10 +12,6 @@ import TopicFilters from '../components/browse/TopicFilters';
 
 const PRIMARY_BUTTON = 'min-h-11 rounded-[10px] bg-[var(--kb-accent)] px-5 text-sm font-semibold text-[var(--kb-on-accent)] hover:opacity-90 disabled:opacity-50';
 
-const topics = topicsRaw as Topic[];
-const modules = modulesRaw as ModulesMap;
-const topicsById = new Map(topics.map((t) => [t.id, t]));
-const categoryLabels = buildCategoryLabels(topics);
 
 const QUESTION_COUNT_OPTIONS = [5, 10, 20] as const;
 
@@ -197,6 +191,9 @@ export default function Quiz() {
             className="rounded-xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-6 text-center shadow-[var(--kb-shadow-sm)]"
           >
             <p className="mb-4 text-lg font-bold text-[var(--kb-text)]">{`סיימת! ${correctCount} מתוך ${questions.length} נכונות`}</p>
+            <button type="button" onClick={() => setQuestions(null)} className={`mb-4 ${PRIMARY_BUTTON}`}>
+              מבחן חדש
+            </button>
             {missedTopicIds.length > 0 && (
               <div className="text-start">
                 <h2 className="mb-2 text-sm font-bold text-[var(--kb-muted)]">נושאים שכדאי לחזור עליהם:</h2>

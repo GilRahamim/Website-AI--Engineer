@@ -1,4 +1,5 @@
 import { useEffect, useRef, type KeyboardEvent } from 'react';
+import { lockBodyScroll } from '../../lib/lockBodyScroll';
 
 interface ShortcutsHelpProps {
   open: boolean;
@@ -27,6 +28,11 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
       previousFocusRef.current.focus();
       previousFocusRef.current = null;
     }
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    return lockBodyScroll();
   }, [open]);
 
   if (!open) return null;

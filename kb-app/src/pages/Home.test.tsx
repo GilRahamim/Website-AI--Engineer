@@ -233,7 +233,7 @@ describe('Home', () => {
       </MemoryRouter>,
     );
     expect(screen.getByText(`0 בלמידה · ${topicsData.length} נושאים חדשים`)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /אין כרטיסים לחזרה היום/ })).toHaveAttribute('href', '/flashcards');
+    expect(screen.getByRole('link', { name: /למד כרטיסים חדשים/ })).toHaveAttribute('href', '/flashcards');
     const randomLink = screen.getByRole('link', { name: /מושג אקראי/ });
     const linkedId = decodeURIComponent(randomLink.getAttribute('href')!.replace('/topic/', ''));
     expect(topicsData.some((t) => t.id === linkedId)).toBe(true);

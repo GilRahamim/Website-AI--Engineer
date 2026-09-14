@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText } from 'lucide-react';
-import topicsRaw from '../../data/topics.clean.json';
+import { searchIndex, topics } from '../../lib/catalog';
 import type { Topic } from '../../types';
+import { useUserDataStore } from '../../store/userDataStore';
 import { buildActionList, filterResults, type PaletteAction } from '../../lib/commandPalette';
 import { getCurrentTheme, setTheme } from '../../lib/theme';
+import { lockBodyScroll } from '../../lib/lockBodyScroll';
 
-const topics = topicsRaw as Topic[];
 const allActions = buildActionList();
 
 const ACTION_ROUTES: Record<string, string> = {
@@ -85,7 +86,13 @@ export default function CommandPalette() {
     }
   }, [open]);
 
-  const results = useMemo(() => filterResults(query, allActions, topics), [query]);
+  useEffect(() => {
+    if (!open) return;
+    return lockBodyScroll();
+  }, [open]);
+
+  const notes = useUserDataStore((s) => s.notes);
+  const results = useMemo(() => filterResults(query, allActions, topics, searchIndex, notes), [query, notes]);
   const combined: PaletteItem[] = [
     ...results.actions.map((action): PaletteItem => ({ kind: 'action', action })),
     ...results.topics.map((topic): PaletteItem => ({ kind: 'topic', topic })),
@@ -149,7 +156,7 @@ export default function CommandPalette() {
   if (!open) return null;
 
   return (
-    <div onClick={close} className="fixed inset-0 z-30 flex justify-center bg-[var(--kb-overlay)] p-4 pt-24">
+    <div onClick={close} className="fixed inset-0 z-30 flex justify-center bg-[var(--kb-overlay)] p-4 pt-[max(1.5rem,10vh)]">
       <div
         role="dialog"
         aria-modal="true"

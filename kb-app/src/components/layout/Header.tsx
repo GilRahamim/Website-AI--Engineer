@@ -1,15 +1,12 @@
 import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Download, Menu, Search, SlidersHorizontal, Sparkles } from 'lucide-react';
-import topicsRaw from '../../data/topics.clean.json';
-import type { Topic } from '../../types';
+import { topics } from '../../lib/catalog';
 import { getDueStats } from '../../lib/srs';
 import { useUserDataStore } from '../../store/userDataStore';
 import { useUiStore } from '../../store/uiStore';
 import { useInstallPrompt } from '../../hooks/useInstallPrompt';
 import ThemeToggle from '../theme/ThemeToggle';
-
-const topics = topicsRaw as Topic[];
 
 const NAV_ITEMS: { to: string; label: string }[] = [
   { to: '/', label: 'בית' },
@@ -28,6 +25,7 @@ export default function Header() {
   const { canInstall, promptInstall } = useInstallPrompt();
   const drawerOpen = useUiStore((s) => s.drawerOpen);
   const setDrawerOpen = useUiStore((s) => s.setDrawerOpen);
+  const readingTopic = useLocation().pathname.startsWith('/topic/');
 
   return (
     <header className="sticky top-0 z-10 border-b border-[var(--kb-border)] bg-[var(--kb-surface)] shadow-[var(--kb-shadow-sm)]">
@@ -56,9 +54,10 @@ export default function Header() {
               key={item.to}
               to={item.to}
               end={item.to === '/'}
+              aria-current={item.to === '/' && readingTopic ? 'page' : undefined}
               className={({ isActive }) =>
                 `flex min-h-10 items-center gap-2 rounded-lg px-3 text-sm no-underline transition-colors ${
-                  isActive
+                  isActive || (item.to === '/' && readingTopic)
                     ? 'bg-[var(--kb-accent-soft)] font-semibold text-[var(--kb-accent)]'
                     : 'font-medium text-[var(--kb-text2)] hover:bg-[var(--kb-surface2)] hover:text-[var(--kb-text)]'
                 }`
