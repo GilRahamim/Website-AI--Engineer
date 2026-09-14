@@ -24,7 +24,7 @@ export default function StatusSegmented({ topicId }: StatusSegmentedProps) {
             role="radio"
             aria-checked={checked}
             onClick={() => setStatus(topicId, option)}
-            className={`min-h-9 flex-1 rounded-lg px-2 text-sm transition-colors ${
+            className={`min-h-11 flex-1 rounded-lg px-2 text-sm transition-colors lg:min-h-9 ${
               checked
                 ? 'bg-[var(--kb-surface)] font-semibold text-[var(--kb-accent)] shadow-[var(--kb-shadow-sm)]'
                 : 'font-medium text-[var(--kb-text2)] hover:text-[var(--kb-text)]'

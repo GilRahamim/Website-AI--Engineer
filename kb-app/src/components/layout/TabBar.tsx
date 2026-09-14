@@ -26,7 +26,7 @@ export default function TabBar({ dueCount }: TabBarProps) {
               to={to}
               end={to === '/'}
               className={({ isActive }) =>
-                `flex min-h-14 flex-col items-center justify-center gap-0.5 text-[11px] no-underline ${
+                `flex min-h-14 flex-col items-center justify-center gap-0.5 text-xs no-underline ${
                   isActive ? 'font-semibold text-[var(--kb-accent)]' : 'font-medium text-[var(--kb-muted)]'
                 }`
               }
@@ -36,7 +36,7 @@ export default function TabBar({ dueCount }: TabBarProps) {
                 {to === '/flashcards' && dueCount > 0 && (
                   <span
                     aria-label={`${dueCount} כרטיסים ממתינים לחזרה`}
-                    className="absolute -end-2.5 -top-1.5 inline-flex min-w-4 items-center justify-center rounded-full bg-[var(--kb-accent)] px-1 text-[10px] font-bold text-white"
+                    className="absolute -end-2.5 -top-1.5 inline-flex min-w-4 items-center justify-center rounded-full bg-[var(--kb-accent)] px-1 text-[11px] font-bold text-[var(--kb-on-accent)]"
                   >
                     {dueCount}
                   </span>

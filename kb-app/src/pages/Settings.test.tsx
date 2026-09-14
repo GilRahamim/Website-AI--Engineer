@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { IDBFactory } from 'fake-indexeddb';
@@ -362,6 +362,31 @@ describe('Settings — import', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('קובץ לא תקין');
     expect(confirmSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe('Settings — app install', () => {
+  it('explains how to install when the browser offers no prompt', () => {
+    renderSettings();
+    expect(screen.getByText(/הוסף למסך הבית/)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'התקן אפליקציה' })).not.toBeInTheDocument();
+  });
+
+  it('shows an install button once the browser fires beforeinstallprompt', async () => {
+    const user = userEvent.setup();
+    renderSettings();
+    const promptSpy = vi.fn(async () => {});
+    const event = new Event('beforeinstallprompt', { cancelable: true }) as Event & {
+      prompt: () => Promise<void>;
+      userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+    };
+    event.prompt = promptSpy;
+    event.userChoice = Promise.resolve({ outcome: 'accepted' });
+    act(() => {
+      window.dispatchEvent(event);
+    });
+    await user.click(within(screen.getByRole('main')).getByRole('button', { name: 'התקן אפליקציה' }));
+    expect(promptSpy).toHaveBeenCalledTimes(1);
   });
 });
 

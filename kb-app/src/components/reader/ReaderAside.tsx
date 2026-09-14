@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Keyboard } from 'lucide-react';
+import { ChevronDown, Keyboard, List } from 'lucide-react';
 import type { Topic } from '../../types';
 import type { TocHeading } from '../../lib/tocFromHtml';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { useUserDataStore } from '../../store/userDataStore';
 import TableOfContents from './TableOfContents';
 import StatusSegmented from './StatusSegmented';
@@ -36,12 +37,35 @@ export default function ReaderAside({ topic, headings, activeHeadingId, onSelect
   const isFavorite = useUserDataStore((s) => s.favorites.has(topic.id));
   const [now] = useState(() => Date.now());
   const reviewText = describeReview(card?.dueAt, now);
+  // The table of contents is rendered exactly once: as a sticky list from lg
+  // up, and as a collapsible disclosure above the article on phones (where
+  // a long topic would otherwise have no in-page navigation at all). One
+  // instance keeps the "בעמוד זה" landmark unique in the accessibility tree.
+  const isWide = useMediaQuery('(min-width: 1024px)');
 
   return (
     <aside className="flex flex-col gap-4 lg:sticky lg:top-20 lg:self-start">
-      <div className="hidden lg:block">
+      {isWide ? (
         <TableOfContents headings={headings} activeId={activeHeadingId} onSelect={onSelectHeading} />
-      </div>
+      ) : (
+        headings.length > 0 && (
+          <details className="kb-toc-disclosure rounded-xl border border-[var(--kb-border)] bg-[var(--kb-surface)]">
+            <summary>
+              <List aria-hidden="true" size={16} className="text-[var(--kb-muted)]" />
+              {`בעמוד זה · ${headings.length} סעיפים`}
+              <ChevronDown aria-hidden="true" size={16} className="kb-toc-chevron text-[var(--kb-muted)]" />
+            </summary>
+            <div className="border-t border-[var(--kb-border)]">
+              <TableOfContents
+                headings={headings}
+                activeId={activeHeadingId}
+                onSelect={onSelectHeading}
+                showHeading={false}
+              />
+            </div>
+          </details>
+        )
+      )}
 
       <section
         aria-labelledby="reader-progress-heading"

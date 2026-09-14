@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FileText } from 'lucide-react';
 import topicsRaw from '../../data/topics.clean.json';
 import type { Topic } from '../../types';
 import { buildActionList, filterResults, type PaletteAction } from '../../lib/commandPalette';
@@ -175,7 +176,7 @@ export default function CommandPalette() {
             setSelectedIndex(0);
           }}
           placeholder="חפש נושא או פעולה..."
-          className="min-h-11 w-full rounded-t-xl border-b border-[var(--kb-border)] bg-transparent px-4 text-[var(--kb-text)] outline-none"
+          className="min-h-11 w-full rounded-t-xl border-b border-[var(--kb-border-input)] bg-transparent px-4 text-base text-[var(--kb-text)] outline-none"
         />
         <ul id="command-palette-listbox" role="listbox" aria-label="תוצאות" className="max-h-80 overflow-y-auto p-2">
           {combined.length === 0 && <li className="px-3 py-2 text-sm text-[var(--kb-muted)]">אין תוצאות</li>}
@@ -196,9 +197,7 @@ export default function CommandPalette() {
                 }`}
               >
                 {item.kind === 'topic' && (
-                  <span aria-hidden="true" className="me-2 text-[var(--kb-muted)]">
-                    📄
-                  </span>
+                  <FileText aria-hidden="true" size={16} className="me-2 shrink-0 text-[var(--kb-muted)]" />
                 )}
                 {label}
               </li>

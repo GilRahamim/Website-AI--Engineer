@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
+import { useUiStore } from './store/uiStore';
+import { __resetRouteFocusForTests } from './lib/routeFocus';
 import App, { RouteErrorBoundary } from './App';
 import topicsData from './data/topics.clean.json';
 import { useUserDataStore } from './store/userDataStore';
@@ -16,6 +19,8 @@ let startSpy: ReturnType<typeof vi.spyOn>;
 
 beforeEach(() => {
   vi.restoreAllMocks();
+  __resetRouteFocusForTests();
+  useUiStore.setState({ drawerOpen: false, selectedModules: new Set() });
   initSpy = vi.spyOn(useAuthStore.getState(), 'init').mockImplementation(() => {});
   startSpy = vi.spyOn(useSyncStore.getState(), 'start').mockImplementation(() => {});
   global.fetch = vi.fn().mockResolvedValue({ ok: true, text: () => Promise.resolve('<p>content</p>') }) as unknown as typeof fetch;
@@ -187,6 +192,70 @@ describe('App', () => {
       expect(document.title).toBe(`${title} · AI Engineer`);
       unmount();
     }
+  });
+
+  it('renders the bottom tab bar on every route, not only Home', async () => {
+    render(
+      <MemoryRouter initialEntries={['/settings']}>
+        <App />
+      </MemoryRouter>,
+    );
+    await screen.findByRole('heading', { name: 'הגדרות' });
+    expect(screen.getByRole('navigation', { name: 'ניווט תחתון' })).toBeInTheDocument();
+  });
+
+  it('opens the drawer with the filters from the header menu button on Home', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+    await user.click(screen.getByRole('button', { name: 'פתח תפריט' }));
+    const dialog = screen.getByRole('dialog', { name: 'סינון וניווט' });
+    expect(within(dialog).getByRole('navigation', { name: 'ניווט קטגוריות' })).toBeInTheDocument();
+    expect(within(dialog).getByRole('link', { name: 'הגדרות' })).toHaveAttribute('href', '/settings');
+  });
+
+  it('opens a navigation drawer (without the Home filters) from the header menu button on other pages', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/settings']}>
+        <App />
+      </MemoryRouter>,
+    );
+    await screen.findByRole('heading', { name: 'הגדרות' });
+    await user.click(screen.getByRole('button', { name: 'פתח תפריט' }));
+    const dialog = screen.getByRole('dialog', { name: 'ניווט' });
+    expect(within(dialog).queryByRole('navigation', { name: 'ניווט קטגוריות' })).not.toBeInTheDocument();
+    expect(within(dialog).getByRole('link', { name: 'הגדרות' })).toBeInTheDocument();
+  });
+
+  it('closes the drawer when a link inside it navigates away', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+    await user.click(screen.getByRole('button', { name: 'פתח תפריט' }));
+    await user.click(within(screen.getByRole('dialog')).getByRole('link', { name: 'הגדרות' }));
+    await screen.findByRole('heading', { name: 'הגדרות' });
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(useUiStore.getState().drawerOpen).toBe(false);
+  });
+
+  it('moves focus to the main region after a client-side navigation', async () => {
+    const user = userEvent.setup();
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+    await user.click(within(screen.getByRole('navigation', { name: 'ניווט ראשי' })).getByRole('link', { name: 'מבחן' }));
+    await screen.findByRole('heading', { name: 'מבחן' });
+    await waitFor(() => expect(screen.getByRole('main')).toHaveFocus());
   });
 
   it('scrolls to the top when the route changes', async () => {

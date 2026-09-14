@@ -11,6 +11,8 @@ interface SidebarProps {
   categoryLabels: Record<string, string>;
   categoryCounts: Record<string, number>;
   topicsById: Map<string, Topic>;
+  /** Module/category filters only make sense while Home is on screen. */
+  showFilters?: boolean;
 }
 
 const CATEGORY_DOT: Record<string, string> = {
@@ -57,6 +59,7 @@ export default function Sidebar({
   categoryLabels,
   categoryCounts,
   topicsById,
+  showFilters = true,
 }: SidebarProps) {
   const selectedModules = useUiStore((s) => s.selectedModules);
   const selectedCategories = useUiStore((s) => s.selectedCategories);
@@ -74,6 +77,7 @@ export default function Sidebar({
 
   return (
     <div className="flex flex-col gap-6 p-4">
+      {showFilters && (
       <nav aria-label="ניווט מודולים">
         <SectionHeading>מודולים</SectionHeading>
         <ul className="flex flex-col gap-1">
@@ -106,7 +110,9 @@ export default function Sidebar({
           })}
         </ul>
       </nav>
+      )}
 
+      {showFilters && (
       <nav aria-label="ניווט קטגוריות">
         <SectionHeading>קטגוריות</SectionHeading>
         <ul className="flex flex-col gap-0.5">
@@ -137,9 +143,13 @@ export default function Sidebar({
           })}
         </ul>
       </nav>
+      )}
 
       {favoriteTopics.length > 0 && <TopicLinkList label="מועדפים" topics={favoriteTopics} Icon={Star} />}
       {recentTopics.length > 0 && <TopicLinkList label="נצפו לאחרונה" topics={recentTopics} Icon={BookOpen} />}
+      {!showFilters && favoriteTopics.length === 0 && recentTopics.length === 0 && (
+        <p className="text-sm text-[var(--kb-muted)]">נושאים שתסמן במועדפים או תפתח יופיעו כאן לגישה מהירה.</p>
+      )}
     </div>
   );
 }

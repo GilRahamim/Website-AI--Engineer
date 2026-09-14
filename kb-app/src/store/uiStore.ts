@@ -28,6 +28,8 @@ interface UiState {
 
   setSearchQuery: (query: string) => void;
   toggleModule: (moduleKey: string) => void;
+  /** Replaces the module filter with exactly this module (breadcrumb jump). */
+  selectOnlyModule: (moduleKey: string) => void;
   toggleCategory: (category: string) => void;
   toggleStatus: (status: ProgressStatus) => void;
   toggleIncludeNotesInSearch: () => void;
@@ -54,6 +56,7 @@ export const useUiStore = create<UiState>()((set) => ({
   setSearchQuery: (query) => set({ searchQuery: query }),
   toggleModule: (moduleKey) =>
     set((state) => ({ selectedModules: toggleInSet(state.selectedModules, moduleKey) })),
+  selectOnlyModule: (moduleKey) => set({ selectedModules: new Set([moduleKey]) }),
   toggleCategory: (category) =>
     set((state) => ({ selectedCategories: toggleInSet(state.selectedCategories, category) })),
   toggleStatus: (status) =>

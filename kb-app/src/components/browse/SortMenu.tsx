@@ -18,7 +18,7 @@ export default function SortMenu() {
         aria-label="מיין נושאים לפי"
         value={sortOrder}
         onChange={(event) => setSortOrder(event.target.value as SortOrder)}
-        className="min-h-11 rounded-md border border-[var(--kb-border)] bg-[var(--kb-surface)] px-2"
+        className="min-h-11 rounded-md border border-[var(--kb-border-input)] bg-[var(--kb-surface)] px-2 text-base"
       >
         {SORT_OPTIONS.map((option) => (
           <option key={option.value} value={option.value}>

@@ -81,6 +81,25 @@ describe('Flashcards', () => {
     expect(screen.getByRole('status')).toHaveTextContent('אין כרטיסים לחזרה');
   });
 
+  it('offers to practise every card when the due-only queue is empty', async () => {
+    const now = Date.now();
+    const farFuture = now + 1000 * 60 * 60 * 24 * 365;
+    useUserDataStore.setState({
+      srsCards: new Map(
+        topicsData.map((t) => [
+          t.id,
+          { topicId: t.id, ease: 2.5, intervalDays: 365, dueAt: farFuture, reps: 1, lapses: 0, updatedAt: now },
+        ]),
+      ),
+    });
+    const user = userEvent.setup();
+    renderPage();
+    expect(screen.getByRole('status')).toHaveTextContent('אין כרטיסים לחזרה');
+    await user.click(screen.getByRole('button', { name: 'תרגל את כל הכרטיסים' }));
+    expect(screen.getByRole('checkbox', { name: 'רק כרטיסים לחזרה היום' })).not.toBeChecked();
+    expect(screen.getByText(`1 מתוך ${topicsData.length}`)).toBeInTheDocument();
+  });
+
   it('shows an end-of-session message after rating the only matching card', async () => {
     const progress = new Map<string, 'mastered' | 'new'>(topicsData.map((t) => [t.id, 'mastered']));
     progress.set(topicsData[0].id, 'new');

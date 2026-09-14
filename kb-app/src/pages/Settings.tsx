@@ -1,5 +1,7 @@
 import { type FormEvent, useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { Download } from 'lucide-react';
 import Header from '../components/layout/Header';
+import { useInstallPrompt } from '../hooks/useInstallPrompt';
 import { exportAllData, importAllData, type ExportPayload } from '../lib/db';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { getThemePreference, setThemePreference, type ThemePreference } from '../lib/theme';
@@ -13,6 +15,11 @@ const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
   { value: 'dark', label: 'כהה' },
   { value: 'system', label: 'לפי המערכת' },
 ];
+
+const SECTION_CLASS =
+  'flex flex-col gap-2 rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-4 shadow-[var(--kb-shadow-sm)]';
+const BUTTON_CLASS =
+  'inline-flex min-h-11 w-fit items-center gap-2 rounded-[10px] border border-[var(--kb-border-strong)] px-4 text-sm font-semibold text-[var(--kb-text)] hover:bg-[var(--kb-surface2)] disabled:opacity-50';
 
 const VALID_PROGRESS_STATUSES = new Set(['new', 'learning', 'mastered']);
 
@@ -93,6 +100,7 @@ export default function Settings() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [themePreference, setThemePreferenceState] = useState<ThemePreference>(getThemePreference);
   const syncAvailable = isSupabaseConfigured();
+  const { canInstall, promptInstall } = useInstallPrompt();
 
   // The header toggle and the command palette also change the theme; keep
   // the radio group in step with whichever control was used last.
@@ -183,7 +191,7 @@ export default function Settings() {
   return (
     <>
       <Header />
-      <main className="flex flex-col gap-8 p-4">
+      <main className="mx-auto flex max-w-xl flex-col gap-5 p-4 sm:px-6">
         <h1 className="text-xl font-bold text-[var(--kb-text)]">הגדרות</h1>
 
         {message && (
@@ -192,7 +200,7 @@ export default function Settings() {
           </p>
         )}
 
-        <section className="flex flex-col gap-2">
+        <section className={SECTION_CLASS}>
           <h2 className="font-semibold text-[var(--kb-text)]">מראה</h2>
           <fieldset className="flex flex-col gap-2">
             <legend className="text-sm text-[var(--kb-muted)]">ערכת נושא</legend>
@@ -224,7 +232,7 @@ export default function Settings() {
           </fieldset>
         </section>
 
-        <section className="flex flex-col gap-2">
+        <section className={SECTION_CLASS}>
           <h2 className="font-semibold text-[var(--kb-text)]">חשבון</h2>
           {!syncAvailable ? (
             <p className="text-sm text-[var(--kb-muted)]">
@@ -236,7 +244,7 @@ export default function Settings() {
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="min-h-11 w-fit rounded-md border border-[var(--kb-border)] px-4 text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
+                className={BUTTON_CLASS}
               >
                 התנתק
               </button>
@@ -244,7 +252,7 @@ export default function Settings() {
               <button
                 type="button"
                 onClick={handleSyncNow}
-                className="min-h-11 w-fit rounded-md border border-[var(--kb-border)] px-4 text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
+                className={BUTTON_CLASS}
               >
                 סנכרן עכשיו
               </button>
@@ -252,21 +260,25 @@ export default function Settings() {
           ) : (
             <form onSubmit={handleSendMagicLink} className="flex flex-col gap-2">
               <p className="text-sm text-[var(--kb-muted)]">התחבר כדי לסנכרן נתונים בין מכשירים.</p>
-              <label className="flex min-h-11 items-center gap-2 rounded-lg border border-[var(--kb-border)] bg-[var(--kb-surface)] px-3">
-                <span className="sr-only">כתובת אימייל</span>
-                <input
-                  type="email"
-                  required
-                  value={emailInput}
-                  onChange={(e) => setEmailInput(e.target.value)}
-                  placeholder="you@example.com"
-                  className="w-full bg-transparent py-2 text-[var(--kb-text)] outline-none placeholder:text-[var(--kb-muted)]"
-                />
+              <label htmlFor="settings-email" className="text-sm font-medium text-[var(--kb-text)]">
+                כתובת אימייל
               </label>
+              <input
+                id="settings-email"
+                type="email"
+                required
+                autoComplete="email"
+                inputMode="email"
+                value={emailInput}
+                onChange={(e) => setEmailInput(e.target.value)}
+                placeholder="you@example.com"
+                dir="ltr"
+                className="min-h-11 w-full rounded-lg border border-[var(--kb-border-input)] bg-[var(--kb-surface)] px-3 text-base text-[var(--kb-text)] outline-none placeholder:text-[var(--kb-muted)] focus:border-[var(--kb-accent)]"
+              />
               <button
                 type="submit"
                 disabled={isSending}
-                className="min-h-11 w-fit rounded-md border border-[var(--kb-border)] px-4 text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)] disabled:opacity-50"
+                className={BUTTON_CLASS}
               >
                 שלח קישור התחברות
               </button>
@@ -274,7 +286,24 @@ export default function Settings() {
           )}
         </section>
 
-        <section className="flex flex-col gap-2">
+        <section className={SECTION_CLASS}>
+          <h2 className="font-semibold text-[var(--kb-text)]">אפליקציה</h2>
+          {canInstall ? (
+            <>
+              <p className="text-sm text-[var(--kb-muted)]">התקן את האתר כאפליקציה במסך הבית לגישה מהירה ולעבודה ללא חיבור.</p>
+              <button type="button" onClick={promptInstall} className={BUTTON_CLASS}>
+                <Download aria-hidden="true" size={16} />
+                התקן אפליקציה
+              </button>
+            </>
+          ) : (
+            <p className="text-sm text-[var(--kb-muted)]">
+              האפליקציה כבר מותקנת, או שהדפדפן הזה לא מציע התקנה. ב-iOS: שיתוף ← "הוסף למסך הבית".
+            </p>
+          )}
+        </section>
+
+        <section className={SECTION_CLASS}>
           <h2 className="font-semibold text-[var(--kb-text)]">ייצוא נתונים</h2>
           <p className="text-sm text-[var(--kb-muted)]">
             שמור קובץ גיבוי של כל הנתונים האישיים שלך — התקדמות, מועדפים, הערות וכרטיסיות.
@@ -282,13 +311,13 @@ export default function Settings() {
           <button
             type="button"
             onClick={handleExport}
-            className="min-h-11 w-fit rounded-md border border-[var(--kb-border)] px-4 text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
+            className={BUTTON_CLASS}
           >
             ייצא את הנתונים שלי
           </button>
         </section>
 
-        <section className="flex flex-col gap-2">
+        <section className={SECTION_CLASS}>
           <h2 className="font-semibold text-[var(--kb-text)]">ייבוא נתונים</h2>
           <p className="text-sm text-[var(--kb-muted)]">
             שחזר נתונים מקובץ גיבוי. הפעולה תחליף את כל הנתונים המקומיים הקיימים.
@@ -304,7 +333,7 @@ export default function Settings() {
           <button
             type="button"
             onClick={handleImportClick}
-            className="min-h-11 w-fit rounded-md border border-[var(--kb-border)] px-4 text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
+            className={BUTTON_CLASS}
           >
             ייבוא נתונים
           </button>

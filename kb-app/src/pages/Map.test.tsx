@@ -85,6 +85,15 @@ describe('Map', () => {
     expect(screen.getByText(`nodes:${categoryCount}`)).toBeInTheDocument();
   });
 
+  it('renders a category legend matching the node colors', () => {
+    renderPage();
+    const legend = screen.getByRole('list', { name: 'מקרא קטגוריות' });
+    const labels = [...new Set(topicsData.map((t) => t.category_label))];
+    for (const label of labels) {
+      expect(legend).toHaveTextContent(label);
+    }
+  });
+
   it('clicking a node navigates to its reader page', async () => {
     const user = userEvent.setup();
     renderPage();

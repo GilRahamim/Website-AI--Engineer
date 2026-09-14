@@ -60,6 +60,20 @@ describe('TopicNotes', () => {
     expect(useUserDataStore.getState().notes.get('topic-a')).toBe('hi');
   });
 
+  it('reports "שומר…" while an edit is pending and "נשמר" once it is written', async () => {
+    const user = userEvent.setup({ delay: null });
+    render(<TopicNotes topicId="topic-a" />);
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+
+    await user.type(screen.getByLabelText('ההערות שלי'), 'hi');
+    expect(screen.getByRole('status')).toHaveTextContent('שומר');
+
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+    expect(screen.getByRole('status')).toHaveTextContent('נשמר');
+  });
+
   it('resets the debounce timer on every keystroke (no save mid-typing)', async () => {
     const user = userEvent.setup({ delay: null });
     render(<TopicNotes topicId="topic-a" />);

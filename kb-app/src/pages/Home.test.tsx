@@ -43,27 +43,31 @@ describe('Home', () => {
     expect(screen.getByRole('progressbar', { name: 'התקדמות כללית' })).toHaveAttribute('aria-valuenow', '0');
   });
 
-  it('renders the mobile module chips, the tab bar, and the desktop sidebar', () => {
+  it('renders the mobile module chips and the desktop sidebar (tab bar and drawer live in App)', () => {
     render(
       <MemoryRouter>
         <Home />
       </MemoryRouter>,
     );
     expect(screen.getByRole('group', { name: 'סינון לפי מודול' })).toBeInTheDocument();
-    expect(screen.getByRole('navigation', { name: 'ניווט תחתון' })).toBeInTheDocument();
     expect(screen.getByRole('navigation', { name: 'ניווט מודולים' })).toBeInTheDocument();
+    expect(screen.queryByRole('navigation', { name: 'ניווט תחתון' })).not.toBeInTheDocument();
   });
 
-  it('opens the filter drawer with the sidebar content from the header menu button', async () => {
+  it('offers a clear-filters action in the empty state when a search matches nothing', async () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter>
         <Home />
       </MemoryRouter>,
     );
-    await user.click(screen.getByRole('button', { name: 'פתח תפריט' }));
-    const dialog = screen.getByRole('dialog', { name: 'סינון וניווט' });
-    expect(within(dialog).getByRole('navigation', { name: 'ניווט קטגוריות' })).toBeInTheDocument();
+    act(() => {
+      useUiStore.getState().setSearchQuery('zzz-no-such-topic-anywhere');
+    });
+    expect(screen.getByRole('status')).toHaveTextContent('לא נמצאו נושאים');
+    await user.click(screen.getByRole('button', { name: 'נקה סינון והצג הכול' }));
+    expect(useUiStore.getState().searchQuery).toBe('');
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 
   it('points a brand-new user at the first topic under "start here"', () => {

@@ -1,3 +1,4 @@
+import { ChevronDown } from 'lucide-react';
 import type { GridItemProps } from '../../hooks/useGridKeyboardNav';
 import type { TopicGroup, ViewMode } from '../../types';
 import TopicGrid from './TopicGrid';
@@ -37,7 +38,11 @@ export default function AccordionGroup({
           <span>{group.moduleLabel}</span>
           <span className="flex items-center gap-2 text-sm text-[var(--kb-muted)]">
             {group.topics.length}
-            <span aria-hidden="true">{expanded ? '▾' : '◂'}</span>
+            <ChevronDown
+              aria-hidden="true"
+              size={18}
+              className={`transition-transform ${expanded ? '' : 'rotate-90'}`}
+            />
           </span>
         </button>
       </h2>

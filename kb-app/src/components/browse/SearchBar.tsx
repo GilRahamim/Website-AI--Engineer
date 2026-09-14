@@ -33,7 +33,7 @@ export default function SearchBar() {
   }, [setSearchQuery]);
 
   return (
-    <label className="flex min-h-11 flex-1 items-center gap-2 rounded-lg border border-[var(--kb-border)] bg-[var(--kb-surface)] px-3">
+    <label className="flex min-h-11 flex-1 items-center gap-2 rounded-lg border border-[var(--kb-border-input)] bg-[var(--kb-surface)] px-3 focus-within:border-[var(--kb-accent)]">
       <span className="sr-only">חיפוש נושאים</span>
       <Search aria-hidden="true" size={18} className="shrink-0 text-[var(--kb-muted)]" />
       <input

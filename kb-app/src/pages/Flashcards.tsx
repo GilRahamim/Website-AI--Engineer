@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Layers } from 'lucide-react';
 import topicsRaw from '../data/topics.clean.json';
 import modulesRaw from '../data/modules.json';
 import type { ModulesMap, ProgressStatus, SrsRating, Topic } from '../types';
@@ -11,10 +12,23 @@ import { usePageTitle } from '../hooks/usePageTitle';
 import Header from '../components/layout/Header';
 import TopicFilters from '../components/browse/TopicFilters';
 
+const PRIMARY_BUTTON = 'min-h-11 rounded-[10px] bg-[var(--kb-accent)] px-5 text-sm font-semibold text-[var(--kb-on-accent)] hover:opacity-90 disabled:opacity-50';
+const SECONDARY_BUTTON = 'min-h-11 rounded-[10px] border border-[var(--kb-border-strong)] bg-[var(--kb-surface)] px-4 text-sm font-semibold text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]';
+
 const topics = topicsRaw as Topic[];
 const modules = modulesRaw as ModulesMap;
 const topicsById = new Map(topics.map((t) => [t.id, t]));
 const categoryLabels = buildCategoryLabels(topics);
+
+// Rating buttons: "good" is the default answer in spaced repetition, so it
+// is the one primary control; the others stay secondary. Number hints mirror
+// the 1-4 keyboard shortcuts and are hidden from the accessible name.
+const RATINGS: { rating: SrsRating; label: string; key: string }[] = [
+  { rating: 'again', label: 'שוב', key: '1' },
+  { rating: 'hard', label: 'קשה', key: '2' },
+  { rating: 'good', label: 'טוב', key: '3' },
+  { rating: 'easy', label: 'קל', key: '4' },
+];
 
 function shuffle<T>(items: T[]): T[] {
   const result = [...items];
@@ -170,7 +184,7 @@ export default function Flashcards() {
             <select
               value={selectedStatus}
               onChange={(e) => handleStatusChange(e.target.value as ProgressStatus | 'all')}
-              className="min-h-11 rounded-md border border-[var(--kb-border)] bg-[var(--kb-surface)] px-2 text-[var(--kb-text)]"
+              className="min-h-11 rounded-md border border-[var(--kb-border-input)] bg-[var(--kb-surface)] px-2 text-base text-[var(--kb-text)]"
             >
               <option value="all">הכול</option>
               {ALL_STATUSES.map((status) => (
@@ -187,9 +201,20 @@ export default function Flashcards() {
         </div>
 
         {queueEmpty && (
-          <p role="status" className="text-[var(--kb-muted)]">
-            אין כרטיסים לחזרה.
-          </p>
+          <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-[var(--kb-border-strong)] px-4 py-10 text-center">
+            <Layers aria-hidden="true" size={28} className="text-[var(--kb-muted)]" />
+            <p role="status" className="font-semibold text-[var(--kb-text)]">
+              אין כרטיסים לחזרה.
+            </p>
+            <p className="text-sm text-[var(--kb-muted)]">
+              {dueOnly ? 'הכול מעודכן להיום. אפשר לתרגל גם כרטיסים שעוד לא הגיע זמנם.' : 'שנה את הסינון כדי למצוא כרטיסים לתרגול.'}
+            </p>
+            {dueOnly && (
+              <button type="button" onClick={() => handleDueOnlyChange(false)} className={`mt-1 ${PRIMARY_BUTTON}`}>
+                תרגל את כל הכרטיסים
+              </button>
+            )}
+          </div>
         )}
 
         {!queueEmpty && sessionDone && (
@@ -204,12 +229,7 @@ export default function Flashcards() {
             <p className="mb-1 text-sm text-[var(--kb-muted)]">{`${currentIndex + 1} מתוך ${queue.length}`}</p>
             <h2 className="mb-4 text-xl font-bold text-[var(--kb-text)]">{currentTopic.title}</h2>
             {!revealed ? (
-              <button
-                ref={revealButtonRef}
-                type="button"
-                onClick={() => setRevealed(true)}
-                className="min-h-11 rounded-md border border-[var(--kb-border)] px-4 text-[var(--kb-text)]"
-              >
+              <button ref={revealButtonRef} type="button" onClick={() => setRevealed(true)} className={PRIMARY_BUTTON}>
                 לחץ לחשיפה
               </button>
             ) : (
@@ -221,35 +241,23 @@ export default function Flashcards() {
                 >
                   פתח את הנושא המלא
                 </Link>
-                <div className="flex flex-wrap justify-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleRate('again')}
-                    className="min-h-11 rounded-md border border-[var(--kb-border)] px-3 text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
-                  >
-                    שוב
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleRate('hard')}
-                    className="min-h-11 rounded-md border border-[var(--kb-border)] px-3 text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
-                  >
-                    קשה
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleRate('good')}
-                    className="min-h-11 rounded-md border border-[var(--kb-border)] px-3 text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
-                  >
-                    טוב
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleRate('easy')}
-                    className="min-h-11 rounded-md border border-[var(--kb-border)] px-3 text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
-                  >
-                    קל
-                  </button>
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {RATINGS.map(({ rating, label, key }) => (
+                    <button
+                      key={rating}
+                      type="button"
+                      onClick={() => handleRate(rating)}
+                      className={`flex items-center justify-center gap-2 ${rating === 'good' ? PRIMARY_BUTTON : SECONDARY_BUTTON}`}
+                    >
+                      {label}
+                      <kbd
+                        aria-hidden="true"
+                        className="hidden rounded border border-current/30 px-1 font-mono text-[11px] font-normal opacity-70 sm:inline"
+                      >
+                        {key}
+                      </kbd>
+                    </button>
+                  ))}
                 </div>
               </>
             )}

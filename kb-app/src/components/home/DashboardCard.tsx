@@ -99,7 +99,7 @@ export default function DashboardCard({
         <div className="mt-auto flex flex-wrap gap-2">
           <Link
             to="/flashcards"
-            className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[10px] bg-[var(--kb-accent)] px-4 text-sm font-semibold text-white no-underline hover:opacity-90"
+            className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[10px] bg-[var(--kb-accent)] px-4 text-sm font-semibold text-[var(--kb-on-accent)] no-underline hover:opacity-90"
           >
             {dueCount > 0 ? `התחל חזרה · ${dueCount} ממתינים` : 'אין כרטיסים לחזרה היום · פתח כרטיסיות'}
           </Link>

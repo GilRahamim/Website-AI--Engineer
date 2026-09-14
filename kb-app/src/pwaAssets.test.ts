@@ -18,8 +18,10 @@ describe('PWA manifest', () => {
     expect(manifest.dir).toBe('rtl');
     expect(manifest.start_url).toBe('/');
     expect(manifest.display).toBe('standalone');
-    expect(manifest.background_color).toBe('#0f1220');
-    expect(manifest.theme_color).toBe('#0f1220');
+    // Matches the light --kb-bg and index.html's default theme-color; the
+    // runtime meta tag takes over once lib/theme.ts applies the real theme.
+    expect(manifest.background_color).toBe('#f5f7fa');
+    expect(manifest.theme_color).toBe('#f5f7fa');
   });
 
   it('lists three icons including exactly one maskable', () => {

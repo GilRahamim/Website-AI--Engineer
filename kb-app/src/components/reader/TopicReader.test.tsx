@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import TopicReader from './TopicReader';
 import { useUserDataStore } from '../../store/userDataStore';
+import { useUiStore } from '../../store/uiStore';
 import type { Topic } from '../../types';
 
 const topic: Topic = {
@@ -61,6 +62,29 @@ describe('TopicReader', () => {
     expect(screen.getByText('אלגוריתמים')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: topic.title })).toBeInTheDocument();
     expect(screen.getByText(topic.definition)).toBeInTheDocument();
+  });
+
+  it('narrows the Home module filter to this module when the breadcrumb module link is used', async () => {
+    const user = userEvent.setup();
+    useUiStore.setState({ selectedModules: new Set(['Some other module']) });
+    renderWithRouter();
+    await user.click(screen.getByRole('link', { name: 'מבוא למדעי הנתונים' }));
+    expect([...useUiStore.getState().selectedModules]).toEqual(['Intro to Data Science']);
+  });
+
+  it('wraps the table of contents in a disclosure on narrow viewports (matchMedia false in jsdom)', async () => {
+    renderWithRouter();
+    await screen.findByRole('navigation', { name: 'בעמוד זה' });
+    const summary = screen.getByText(/בעמוד זה · 2 סעיפים/);
+    expect(summary.closest('details')).not.toBeNull();
+  });
+
+  it('shows a busy skeleton with an accessible loading label before the content arrives', () => {
+    global.fetch = vi.fn(() => new Promise(() => {})) as unknown as typeof fetch;
+    renderWithRouter();
+    const status = screen.getByRole('status');
+    expect(status).toHaveAttribute('aria-busy', 'true');
+    expect(status).toHaveTextContent('טוען תוכן');
   });
 
   it('shows the topic position within its module', () => {

@@ -111,6 +111,26 @@ describe('Sidebar', () => {
     expect(screen.getAllByRole('link')).toHaveLength(1);
   });
 
+  it('hides the module and category filters when showFilters is false, keeping quick links', () => {
+    useUserDataStore.setState({ favorites: new Set(['fav-1']) });
+    render(
+      <MemoryRouter>
+        <Sidebar
+          modules={modules}
+          moduleCounts={moduleCounts}
+          moduleMasteredCounts={moduleMasteredCounts}
+          categoryLabels={categoryLabels}
+          categoryCounts={categoryCounts}
+          topicsById={topicsById}
+          showFilters={false}
+        />
+      </MemoryRouter>,
+    );
+    expect(screen.queryByRole('navigation', { name: 'ניווט מודולים' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('navigation', { name: 'ניווט קטגוריות' })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Favorite Topic' })).toBeInTheDocument();
+  });
+
   it('renders the recently-viewed section with resolved topic links', () => {
     useUserDataStore.setState({ recents: [{ topicId: 'recent-1', viewedAt: 1 }] });
     renderSidebar();

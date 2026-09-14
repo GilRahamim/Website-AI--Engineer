@@ -6,6 +6,7 @@ import NotFound from './pages/NotFound';
 import { useUserDataStore } from './store/userDataStore';
 import CommandPalette from './components/palette/CommandPalette';
 import ScrollToTop from './components/layout/ScrollToTop';
+import AppChrome from './components/layout/AppChrome';
 
 const Flashcards = lazy(() => import('./pages/Flashcards'));
 const Quiz = lazy(() => import('./pages/Quiz'));
@@ -107,6 +108,8 @@ export default function App() {
           App in <BrowserRouter>, so useNavigate() works inside it. Renders
           nothing until Cmd/Ctrl+K opens it. */}
       <CommandPalette />
+      {/* Phone drawer + bottom tab bar, once for every route (see AppChrome). */}
+      <AppChrome />
     </>
   );
 }

@@ -24,7 +24,7 @@ export default function TopicFilters({
         <select
           value={selectedModule}
           onChange={(e) => onModuleChange(e.target.value)}
-          className="min-h-11 rounded-md border border-[var(--kb-border)] bg-[var(--kb-surface)] px-2 text-[var(--kb-text)]"
+          className="min-h-11 rounded-md border border-[var(--kb-border-input)] bg-[var(--kb-surface)] px-2 text-base text-[var(--kb-text)]"
         >
           <option value="all">הכול</option>
           {Object.entries(modules).map(([key, label]) => (
@@ -39,7 +39,7 @@ export default function TopicFilters({
         <select
           value={selectedCategory}
           onChange={(e) => onCategoryChange(e.target.value)}
-          className="min-h-11 rounded-md border border-[var(--kb-border)] bg-[var(--kb-surface)] px-2 text-[var(--kb-text)]"
+          className="min-h-11 rounded-md border border-[var(--kb-border-input)] bg-[var(--kb-surface)] px-2 text-base text-[var(--kb-text)]"
         >
           <option value="all">הכול</option>
           {Object.entries(categoryLabels).map(([key, label]) => (

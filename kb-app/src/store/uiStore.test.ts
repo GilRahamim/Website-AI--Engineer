@@ -114,3 +114,11 @@ describe('uiStore', () => {
     expect(useUiStore.getState().expandedGroups.size).toBe(allModuleKeys.length);
   });
 });
+
+describe('selectOnlyModule', () => {
+  it('replaces any existing module selection with exactly the given module', () => {
+    useUiStore.setState({ selectedModules: new Set(['a', 'b']) });
+    useUiStore.getState().selectOnlyModule('c');
+    expect([...useUiStore.getState().selectedModules]).toEqual(['c']);
+  });
+});

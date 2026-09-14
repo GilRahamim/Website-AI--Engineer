@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useUiStore } from '../../store/uiStore';
 import type { Topic } from '../../types';
 import { buildToc } from '../../lib/tocFromHtml';
 import { estimateReadingMinutes, getModulePosition, getPrevNext } from '../../lib/topicNav';
@@ -82,7 +83,7 @@ export default function TopicReader({ topic, topics, topicsById }: TopicReaderPr
   return (
     <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_260px] lg:gap-x-10 lg:gap-y-6 lg:px-8">
       <article className="contents">
-        <div className="min-w-0 lg:col-start-1">
+        <div className="min-w-0 max-w-[75ch] lg:col-start-1">
           <nav
             aria-label="breadcrumb"
             className="mb-4 flex flex-wrap items-center gap-2 text-sm text-[var(--kb-muted)]"
@@ -91,7 +92,11 @@ export default function TopicReader({ topic, topics, topicsById }: TopicReaderPr
               בית
             </Link>
             <span aria-hidden="true">›</span>
-            <Link to="/" className="no-underline hover:underline">
+            <Link
+              to="/"
+              onClick={() => useUiStore.getState().selectOnlyModule(topic.module)}
+              className="no-underline hover:underline"
+            >
               {topic.module_label}
             </Link>
           </nav>
@@ -126,7 +131,7 @@ export default function TopicReader({ topic, topics, topicsById }: TopicReaderPr
           />
         </div>
 
-        <div className="min-w-0 lg:col-start-1">
+        <div className="min-w-0 max-w-[75ch] lg:col-start-1">
           <div className="border-t border-[var(--kb-border)] pt-6">
             {rawHtml === null ? (
               error ? (
@@ -136,9 +141,12 @@ export default function TopicReader({ topic, topics, topicsById }: TopicReaderPr
                     : 'שגיאה בטעינת התוכן.'}
                 </p>
               ) : (
-                <p role="status" className="text-[var(--kb-muted)]">
-                  טוען תוכן…
-                </p>
+                <div role="status" aria-busy="true" className="kb-skeleton">
+                  <span className="sr-only">טוען תוכן…</span>
+                  {Array.from({ length: 9 }, (_, i) => (
+                    <span key={i} aria-hidden="true" />
+                  ))}
+                </div>
               )
             ) : (
               <div className="kb-topic-content" dangerouslySetInnerHTML={{ __html: toc.html }} />

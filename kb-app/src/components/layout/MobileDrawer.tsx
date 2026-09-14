@@ -81,7 +81,7 @@ export default function MobileDrawer({ title, children }: MobileDrawerProps) {
             type="button"
             onClick={close}
             aria-label="סגור"
-            className="grid size-10 place-items-center rounded-[10px] bg-[var(--kb-surface2)] text-[var(--kb-text2)]"
+            className="grid size-11 place-items-center rounded-[10px] bg-[var(--kb-surface2)] text-[var(--kb-text2)]"
           >
             <X aria-hidden="true" size={18} />
           </button>

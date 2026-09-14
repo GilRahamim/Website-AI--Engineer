@@ -15,6 +15,9 @@ export default function TopicNotes({ topicId, inputRef }: TopicNotesProps) {
   const setNote = useUserDataStore((s) => s.setNote);
   const [value, setValue] = useState(storedText);
   const [isDirty, setIsDirty] = useState(false);
+  // Flips to true on the first successful write and stays there for the
+  // topic, so the field can confirm the save without a transient toast.
+  const [hasSaved, setHasSaved] = useState(false);
   const timeoutRef = useRef<number | null>(null);
   // Tracks the most recent locally-typed text; updated ONLY inside onChange
   // below (an event handler, never during render — react-hooks/refs rejects
@@ -49,6 +52,7 @@ export default function TopicNotes({ topicId, inputRef }: TopicNotesProps) {
     setPrevTopicId(topicId);
     setValue(storedText);
     setIsDirty(false);
+    setHasSaved(false);
   } else if (!hasHydrated && isLoaded) {
     setHasHydrated(true);
     if (!isDirty) {
@@ -77,6 +81,7 @@ export default function TopicNotes({ topicId, inputRef }: TopicNotesProps) {
     timeoutRef.current = window.setTimeout(() => {
       timeoutRef.current = null;
       setIsDirty(false);
+      setHasSaved(true);
       setNote(topicId, text);
     }, SAVE_DEBOUNCE_MS);
   }
@@ -88,14 +93,22 @@ export default function TopicNotes({ topicId, inputRef }: TopicNotesProps) {
     }
     if (!isDirty) return;
     setIsDirty(false);
+    setHasSaved(true);
     setNote(topicId, text);
   }
 
   return (
     <div className="mt-8 border-t border-[var(--kb-border)] pt-4">
-      <label htmlFor={`topic-notes-${topicId}`} className="mb-2 block text-sm font-bold text-[var(--kb-text)]">
-        ההערות שלי
-      </label>
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <label htmlFor={`topic-notes-${topicId}`} className="text-sm font-bold text-[var(--kb-text)]">
+          ההערות שלי
+        </label>
+        {(isDirty || hasSaved) && (
+          <span role="status" className="text-xs text-[var(--kb-muted)]">
+            {isDirty ? 'שומר…' : 'נשמר'}
+          </span>
+        )}
+      </div>
       <textarea
         id={`topic-notes-${topicId}`}
         ref={inputRef}
@@ -110,7 +123,7 @@ export default function TopicNotes({ topicId, inputRef }: TopicNotesProps) {
         onBlur={(event) => flush(event.target.value)}
         placeholder="כתוב כאן הערות אישיות על הנושא…"
         rows={4}
-        className="w-full rounded-lg border border-[var(--kb-border)] bg-[var(--kb-surface)] p-3 text-[var(--kb-text)] outline-none placeholder:text-[var(--kb-muted)]"
+        className="w-full rounded-lg border border-[var(--kb-border-input)] bg-[var(--kb-surface)] p-3 text-[var(--kb-text)] outline-none placeholder:text-[var(--kb-muted)]"
       />
     </div>
   );

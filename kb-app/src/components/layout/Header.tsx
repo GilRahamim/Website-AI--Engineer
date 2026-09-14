@@ -19,7 +19,7 @@ const NAV_ITEMS: { to: string; label: string }[] = [
 ];
 
 const iconButtonClass =
-  'grid size-10 place-items-center rounded-[10px] bg-[var(--kb-surface2)] text-[var(--kb-text2)] transition-colors hover:bg-[var(--kb-border)] hover:text-[var(--kb-text)]';
+  'grid size-11 place-items-center rounded-[10px] bg-[var(--kb-surface2)] text-[var(--kb-text2)] transition-colors hover:bg-[var(--kb-border)] hover:text-[var(--kb-text)]';
 
 export default function Header() {
   const srsCards = useUserDataStore((s) => s.srsCards);
@@ -67,7 +67,7 @@ export default function Header() {
               {item.label}
               {item.to === '/flashcards' && dueCount > 0 && (
                 <span
-                  className="inline-flex min-w-5 items-center justify-center rounded-full bg-[var(--kb-accent)] px-1.5 text-[11px] font-bold text-white"
+                  className="inline-flex min-w-5 items-center justify-center rounded-full bg-[var(--kb-accent)] px-1.5 text-[11px] font-bold text-[var(--kb-on-accent)]"
                   aria-label={`${dueCount} כרטיסים ממתינים לחזרה`}
                 >
                   {dueCount}
@@ -82,7 +82,7 @@ export default function Header() {
             type="button"
             onClick={() => window.dispatchEvent(new Event('kb-open-palette'))}
             aria-label="חיפוש מהיר (Ctrl+K)"
-            className="flex min-h-10 items-center gap-2 rounded-[10px] bg-[var(--kb-surface2)] px-3 text-sm text-[var(--kb-muted)] transition-colors hover:bg-[var(--kb-border)] hover:text-[var(--kb-text)] lg:w-64"
+            className="flex min-h-11 items-center gap-2 rounded-[10px] bg-[var(--kb-surface2)] px-3 text-sm text-[var(--kb-muted)] transition-colors hover:bg-[var(--kb-border)] hover:text-[var(--kb-text)] lg:w-64"
           >
             <Search aria-hidden="true" size={18} />
             <span className="hidden min-w-0 flex-1 truncate text-start lg:inline">חפש נושא, הגדרה או הערה…</span>
@@ -101,7 +101,7 @@ export default function Header() {
             <button
               type="button"
               onClick={promptInstall}
-              className="hidden min-h-10 items-center gap-2 rounded-[10px] border border-[var(--kb-border)] bg-[var(--kb-surface)] px-3 text-sm font-semibold text-[var(--kb-text)] hover:bg-[var(--kb-surface2)] sm:flex"
+              className="hidden min-h-11 items-center gap-2 rounded-[10px] border border-[var(--kb-border)] bg-[var(--kb-surface)] px-3 text-sm font-semibold text-[var(--kb-text)] hover:bg-[var(--kb-surface2)] sm:flex"
             >
               <Download aria-hidden="true" size={16} />
               התקן אפליקציה

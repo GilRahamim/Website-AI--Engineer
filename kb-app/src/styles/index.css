@@ -35,6 +35,32 @@ a, button, [role="button"], input, select, textarea, [tabindex] {
   transition: background-color 160ms var(--kb-ease), color 160ms var(--kb-ease), box-shadow 160ms var(--kb-ease), transform 160ms var(--kb-ease);
 }
 
+/* Tailwind v4's preflight leaves buttons on the UA default (arrow) cursor. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+select:not(:disabled),
+summary {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* Pressed feedback for touch: a small scale keeps layout bounds intact. */
+button:not(:disabled):active,
+a[href]:active,
+summary:active {
+  transform: scale(0.97);
+}
+
+/* Phones: the fixed bottom tab bar (3.5rem + home-indicator inset, see
+   TabBar.tsx) must never cover the end of a page's scrollable content. */
+@media (max-width: 767px) {
+  body {
+    padding-bottom: calc(3.5rem + env(safe-area-inset-bottom));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
@@ -99,6 +125,11 @@ a, button, [role="button"], input, select, textarea, [tabindex] {
   transform: translateY(-2px);
   box-shadow: var(--kb-shadow-md);
 }
+.kb-topic-card:active,
+.kb-topic-list-row:active {
+  transform: translateY(0) scale(0.99);
+  box-shadow: var(--kb-shadow-sm);
+}
 /* Focus now lands on the inner .kb-stretched-link <a>, not this outer div. */
 .kb-topic-card:has(a:focus-visible),
 .kb-topic-list-row:has(a:focus-visible) {
@@ -120,6 +151,57 @@ a, button, [role="button"], input, select, textarea, [tabindex] {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1rem;
+}
+
+/* Content-loading placeholder for the reader: reserves roughly a screen of
+   height so the real content does not push everything below it down when
+   it arrives (CLS), and pulses only when motion is allowed. */
+.kb-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-height: 24rem;
+}
+.kb-skeleton > span {
+  display: block;
+  height: 0.95rem;
+  border-radius: 6px;
+  background: var(--kb-surface2);
+  animation: kb-skeleton-pulse 1.4s ease-in-out infinite;
+}
+.kb-skeleton > span:nth-child(1) { width: 36%; height: 1.25rem; margin-bottom: 0.5rem; }
+.kb-skeleton > span:nth-child(3) { width: 92%; }
+.kb-skeleton > span:nth-child(4) { width: 85%; }
+.kb-skeleton > span:nth-child(5) { width: 60%; }
+.kb-skeleton > span:nth-child(6) { width: 40%; height: 1.25rem; margin-top: 1.25rem; }
+.kb-skeleton > span:nth-child(8) { width: 88%; }
+.kb-skeleton > span:nth-child(9) { width: 70%; }
+@keyframes kb-skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* Phone table of contents: a native disclosure above the article body. */
+.kb-toc-disclosure > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--kb-text2);
+}
+.kb-toc-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+.kb-toc-disclosure > summary .kb-toc-chevron {
+  margin-inline-start: auto;
+  transition: transform 160ms var(--kb-ease);
+}
+.kb-toc-disclosure[open] > summary .kb-toc-chevron {
+  transform: rotate(180deg);
 }
 
 /* Topic content is raw HTML fetched from /topic-content/*.html and injected

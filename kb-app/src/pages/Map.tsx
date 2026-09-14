@@ -111,10 +111,18 @@ export default function Map() {
           />
           <p className="text-sm text-[var(--kb-muted)]">{`${graphData.nodes.length} נושאים, ${graphData.links.length} קשרים`}</p>
         </div>
+        <ul aria-label="מקרא קטגוריות" className="mb-3 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-[var(--kb-text2)]">
+          {Object.entries(categoryLabels).map(([key, label]) => (
+            <li key={key} className="flex items-center gap-1.5">
+              <span className="kb-category-dot" data-category={key} aria-hidden="true" />
+              {label}
+            </li>
+          ))}
+        </ul>
         <div
           ref={containerRef}
           aria-label="גרף אינטראקטיבי המציג קשרים בין נושאים"
-          className="h-[70vh] overflow-hidden rounded-xl border border-[var(--kb-border)]"
+          className="h-[70dvh] min-h-80 overflow-hidden rounded-xl border border-[var(--kb-border)]"
         >
           {dimensions && (
             <ForceGraph2D<GraphNode, GraphLink>
