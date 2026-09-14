@@ -1,5 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { applyTheme, getInitialTheme, getStoredTheme, initTheme, setTheme } from './theme';
+import {
+  applyTheme,
+  getInitialTheme,
+  getStoredTheme,
+  getThemePreference,
+  initTheme,
+  setTheme,
+  setThemePreference,
+} from './theme';
 
 function mockMatchMedia(prefersDark: boolean) {
   window.matchMedia = vi.fn().mockImplementation((query: string) => ({
@@ -86,6 +94,45 @@ describe('theme', () => {
 
     initTheme();
     changeHandler?.({ matches: true } as MediaQueryListEvent);
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+  });
+
+  it('applyTheme keeps the browser chrome color (meta theme-color) in step with the theme', () => {
+    const meta = document.createElement('meta');
+    meta.name = 'theme-color';
+    document.head.appendChild(meta);
+    applyTheme('dark');
+    const darkColor = meta.getAttribute('content');
+    applyTheme('light');
+    const lightColor = meta.getAttribute('content');
+    expect(darkColor).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(lightColor).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(darkColor).not.toBe(lightColor);
+    expect(document.documentElement.style.colorScheme).toBe('light');
+    meta.remove();
+  });
+
+  it('getThemePreference reports "system" when nothing is stored and the stored value otherwise', () => {
+    expect(getThemePreference()).toBe('system');
+    setTheme('dark');
+    expect(getThemePreference()).toBe('dark');
+  });
+
+  it('setThemePreference("system") clears the override and follows the OS preference', () => {
+    mockMatchMedia(true);
+    setTheme('light');
+    const handler = vi.fn();
+    window.addEventListener('kb-theme-change', handler);
+    setThemePreference('system');
+    expect(localStorage.getItem('kb-theme')).toBeNull();
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+    expect(handler).toHaveBeenCalledTimes(1);
+    window.removeEventListener('kb-theme-change', handler);
+  });
+
+  it('setThemePreference with an explicit theme behaves like setTheme', () => {
+    setThemePreference('dark');
+    expect(localStorage.getItem('kb-theme')).toBe('dark');
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
   });
 

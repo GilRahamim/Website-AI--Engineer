@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import Header from '../components/layout/Header';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function NotFound() {
+  usePageTitle('הדף לא נמצא');
   return (
     <>
       <Header />

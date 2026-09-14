@@ -10,6 +10,15 @@ import { useSyncStore } from '../store/syncStore';
 import * as db from '../lib/db';
 import { __resetDbForTests, setProgress } from '../lib/db';
 
+// The account section only renders the magic-link form when a Supabase
+// project is configured (env vars present). Tests default to "configured";
+// the unconfigured case flips this flag explicitly.
+let supabaseConfigured = true;
+vi.mock('../lib/supabase', () => ({
+  getSupabase: () => null,
+  isSupabaseConfigured: () => supabaseConfigured,
+}));
+
 function renderSettings() {
   return render(
     <MemoryRouter>
@@ -28,6 +37,9 @@ function validBackupFile(progress: unknown[] = [{ topicId: 'topic-a', status: 'm
 }
 
 beforeEach(() => {
+  supabaseConfigured = true;
+  localStorage.clear();
+  document.documentElement.setAttribute('data-theme', 'light');
   // eslint-disable-next-line no-global-assign
   indexedDB = new IDBFactory();
   __resetDbForTests();
@@ -90,11 +102,41 @@ describe('Settings — export', () => {
   });
 });
 
+describe('Settings — theme', () => {
+  it('renders a three-way theme choice with "system" selected when nothing is stored', () => {
+    renderSettings();
+    const group = screen.getByRole('radiogroup', { name: 'ערכת נושא' });
+    expect(group).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: 'לפי המערכת' })).toBeChecked();
+    expect(screen.getByRole('radio', { name: 'בהירה' })).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: 'כהה' })).not.toBeChecked();
+  });
+
+  it('choosing dark stores it and applies it; choosing system clears the override', async () => {
+    const user = userEvent.setup();
+    renderSettings();
+    await user.click(screen.getByRole('radio', { name: 'כהה' }));
+    expect(localStorage.getItem('kb-theme')).toBe('dark');
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+    await user.click(screen.getByRole('radio', { name: 'לפי המערכת' }));
+    expect(localStorage.getItem('kb-theme')).toBeNull();
+    expect(screen.getByRole('radio', { name: 'לפי המערכת' })).toBeChecked();
+  });
+});
+
 describe('Settings — account', () => {
   it('renders the signed-out email form', () => {
     renderSettings();
     expect(screen.getByLabelText('כתובת אימייל')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'שלח קישור התחברות' })).toBeInTheDocument();
+  });
+
+  it('explains that sync is unavailable, instead of a form, when no Supabase project is configured', () => {
+    supabaseConfigured = false;
+    renderSettings();
+    expect(screen.queryByLabelText('כתובת אימייל')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'שלח קישור התחברות' })).not.toBeInTheDocument();
+    expect(screen.getByText(/סנכרון בין מכשירים אינו זמין/)).toBeInTheDocument();
   });
 
   it('submitting the form calls sendMagicLink with the entered email', async () => {

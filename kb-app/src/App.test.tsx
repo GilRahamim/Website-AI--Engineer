@@ -162,6 +162,31 @@ describe('App', () => {
     );
     expect(screen.getByRole('heading', { level: 1, name: 'הדף לא נמצא' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'חזרה לדף הבית' })).toHaveAttribute('href', '/');
+    expect(document.title).toBe('הדף לא נמצא · AI Engineer');
+  });
+
+  it('titles the home, flashcards, quiz, map and settings pages', async () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+    expect(document.title).toBe('AI Engineer');
+    for (const [path, title] of [
+      ['/flashcards', 'כרטיסיות'],
+      ['/quiz', 'מבחן'],
+      ['/map', 'מפת ידע'],
+      ['/settings', 'הגדרות'],
+    ] as const) {
+      const { unmount } = render(
+        <MemoryRouter initialEntries={[path]}>
+          <App />
+        </MemoryRouter>,
+      );
+      await screen.findByRole('heading', { name: title });
+      expect(document.title).toBe(`${title} · AI Engineer`);
+      unmount();
+    }
   });
 
   it('scrolls to the top when the route changes', async () => {

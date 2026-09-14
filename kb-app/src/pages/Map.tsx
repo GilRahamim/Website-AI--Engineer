@@ -6,6 +6,7 @@ import modulesRaw from '../data/modules.json';
 import type { Category, ModulesMap, Topic } from '../types';
 import { buildGraphData, type GraphLink, type GraphNode } from '../lib/graph';
 import { buildCategoryLabels } from '../lib/categoryLabels';
+import { usePageTitle } from '../hooks/usePageTitle';
 import Header from '../components/layout/Header';
 import TopicFilters from '../components/browse/TopicFilters';
 
@@ -55,6 +56,7 @@ function linkEndpointId(endpoint: string | number | NodeObject<GraphNode>): stri
 }
 
 export default function Map() {
+  usePageTitle('מפת ידע');
   const navigate = useNavigate();
   const [selectedModule, setSelectedModule] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');

@@ -1,9 +1,18 @@
-import { type FormEvent, useRef, useState, type ChangeEvent } from 'react';
+import { type FormEvent, useEffect, useRef, useState, type ChangeEvent } from 'react';
 import Header from '../components/layout/Header';
 import { exportAllData, importAllData, type ExportPayload } from '../lib/db';
+import { isSupabaseConfigured } from '../lib/supabase';
+import { getThemePreference, setThemePreference, type ThemePreference } from '../lib/theme';
+import { usePageTitle } from '../hooks/usePageTitle';
 import { useUserDataStore } from '../store/userDataStore';
 import { useAuthStore } from '../store/authStore';
 import { useSyncStore } from '../store/syncStore';
+
+const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
+  { value: 'light', label: 'בהירה' },
+  { value: 'dark', label: 'כהה' },
+  { value: 'system', label: 'לפי המערכת' },
+];
 
 const VALID_PROGRESS_STATUSES = new Set(['new', 'learning', 'mastered']);
 
@@ -75,12 +84,29 @@ function formatLastSynced(lastSyncedAt: number | null): string {
 }
 
 export default function Settings() {
+  usePageTitle('הגדרות');
   const email = useAuthStore((s) => s.email);
   const isSending = useAuthStore((s) => s.status === 'sending');
   const lastSyncedAt = useSyncStore((s) => s.lastSyncedAt);
   const [emailInput, setEmailInput] = useState('');
   const [message, setMessage] = useState<{ kind: 'success' | 'error'; text: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [themePreference, setThemePreferenceState] = useState<ThemePreference>(getThemePreference);
+  const syncAvailable = isSupabaseConfigured();
+
+  // The header toggle and the command palette also change the theme; keep
+  // the radio group in step with whichever control was used last.
+  useEffect(() => {
+    function handleThemeChange() {
+      setThemePreferenceState(getThemePreference());
+    }
+    window.addEventListener('kb-theme-change', handleThemeChange);
+    return () => window.removeEventListener('kb-theme-change', handleThemeChange);
+  }, []);
+
+  function handleThemeChoice(preference: ThemePreference) {
+    setThemePreference(preference);
+  }
 
   async function handleExport() {
     setMessage(null);
@@ -167,8 +193,44 @@ export default function Settings() {
         )}
 
         <section className="flex flex-col gap-2">
+          <h2 className="font-semibold text-[var(--kb-text)]">מראה</h2>
+          <fieldset className="flex flex-col gap-2">
+            <legend className="text-sm text-[var(--kb-muted)]">ערכת נושא</legend>
+            <div role="radiogroup" aria-label="ערכת נושא" className="flex w-fit rounded-[10px] bg-[var(--kb-surface2)] p-[3px]">
+              {THEME_OPTIONS.map((option) => {
+                const checked = option.value === themePreference;
+                return (
+                  <label
+                    key={option.value}
+                    className={`flex min-h-10 cursor-pointer items-center rounded-lg px-4 text-sm ${
+                      checked
+                        ? 'bg-[var(--kb-surface)] font-semibold text-[var(--kb-accent)] shadow-[var(--kb-shadow-sm)]'
+                        : 'font-medium text-[var(--kb-text2)]'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="theme"
+                      value={option.value}
+                      checked={checked}
+                      onChange={() => handleThemeChoice(option.value)}
+                      className="sr-only"
+                    />
+                    {option.label}
+                  </label>
+                );
+              })}
+            </div>
+          </fieldset>
+        </section>
+
+        <section className="flex flex-col gap-2">
           <h2 className="font-semibold text-[var(--kb-text)]">חשבון</h2>
-          {email ? (
+          {!syncAvailable ? (
+            <p className="text-sm text-[var(--kb-muted)]">
+              סנכרון בין מכשירים אינו זמין בהתקנה זו. כל הנתונים נשמרים במכשיר הזה בלבד; לגיבוי השתמש בייצוא למטה.
+            </p>
+          ) : email ? (
             <>
               <p className="text-sm text-[var(--kb-text)]">{`מחובר כ: \u2066${email}\u2069`}</p>
               <button

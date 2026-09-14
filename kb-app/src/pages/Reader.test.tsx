@@ -39,6 +39,17 @@ describe('Reader', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('הנושא לא נמצא');
   });
 
+  it('sets the document title to the topic title', () => {
+    const knownTopic = topicsData[0];
+    renderAt(`/topic/${encodeURIComponent(knownTopic.id)}`);
+    expect(document.title).toBe(`${knownTopic.title} · AI Engineer`);
+  });
+
+  it('titles the not-found state', () => {
+    renderAt(`/topic/${encodeURIComponent('does-not-exist')}`);
+    expect(document.title).toBe('הנושא לא נמצא · AI Engineer');
+  });
+
   it('always renders the Header', () => {
     const knownTopic = topicsData[0];
     renderAt(`/topic/${encodeURIComponent(knownTopic.id)}`);

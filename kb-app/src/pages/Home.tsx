@@ -10,6 +10,7 @@ import { ALL_STATUSES, STATUS_LABELS } from '../lib/progressStatus';
 import { getDueStats } from '../lib/srs';
 import { useGridKeyboardNav } from '../hooks/useGridKeyboardNav';
 import { useMediaQuery } from '../hooks/useMediaQuery';
+import { usePageTitle } from '../hooks/usePageTitle';
 import { useUiStore } from '../store/uiStore';
 import { useUserDataStore } from '../store/userDataStore';
 import Header from '../components/layout/Header';
@@ -43,6 +44,7 @@ const statusChipClass =
   'flex min-h-10 items-center rounded-full border px-3 text-[13px] transition-colors aria-pressed:border-[var(--kb-accent-soft)] aria-pressed:bg-[var(--kb-accent-soft)] aria-pressed:font-semibold aria-pressed:text-[var(--kb-accent)] border-[var(--kb-border)] bg-[var(--kb-surface)] font-medium text-[var(--kb-text2)] hover:bg-[var(--kb-surface2)]';
 
 export default function Home() {
+  usePageTitle();
   const navigate = useNavigate();
   const searchQuery = useUiStore((s) => s.searchQuery);
   const selectedModules = useUiStore((s) => s.selectedModules);

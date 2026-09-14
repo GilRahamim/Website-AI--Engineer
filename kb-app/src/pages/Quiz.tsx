@@ -7,6 +7,7 @@ import { buildQuiz, type QuizQuestion } from '../lib/quiz';
 import { ALL_STATUSES, STATUS_LABELS } from '../lib/progressStatus';
 import { buildCategoryLabels } from '../lib/categoryLabels';
 import { useUserDataStore } from '../store/userDataStore';
+import { usePageTitle } from '../hooks/usePageTitle';
 import Header from '../components/layout/Header';
 import TopicFilters from '../components/browse/TopicFilters';
 
@@ -18,6 +19,7 @@ const categoryLabels = buildCategoryLabels(topics);
 const QUESTION_COUNT_OPTIONS = [5, 10, 20] as const;
 
 export default function Quiz() {
+  usePageTitle('מבחן');
   const gradeCard = useUserDataStore((s) => s.gradeCard);
 
   const [selectedModule, setSelectedModule] = useState('all');

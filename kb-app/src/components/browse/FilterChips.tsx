@@ -1,3 +1,4 @@
+import { X } from 'lucide-react';
 import type { ModulesMap, ProgressStatus } from '../../types';
 import { useUiStore } from '../../store/uiStore';
 import { STATUS_LABELS } from '../../lib/progressStatus';
@@ -36,22 +37,26 @@ export default function FilterChips({ modules, categoryLabels }: FilterChipsProp
   }
 
   return (
-    <div role="list" aria-label="סינון פעיל" className="flex flex-wrap gap-2 py-2">
-      {chips.map((chip) => (
-        <button
-          key={`${chip.kind}-${chip.key}`}
-          type="button"
-          role="listitem"
-          onClick={() => removeChip(chip)}
-          className="flex min-h-11 items-center gap-1 rounded-full bg-[var(--kb-accent-soft)] px-3 text-sm text-[var(--kb-text)]"
-        >
-          {chip.label} <span aria-hidden="true">✕</span>
-        </button>
-      ))}
+    <div className="flex flex-wrap items-center gap-2 py-1">
+      <ul aria-label="סינון פעיל" className="flex flex-wrap gap-2">
+        {chips.map((chip) => (
+          <li key={`${chip.kind}-${chip.key}`}>
+            <button
+              type="button"
+              onClick={() => removeChip(chip)}
+              aria-label={`הסר סינון: ${chip.label}`}
+              className="flex min-h-10 items-center gap-1.5 rounded-full bg-[var(--kb-accent-soft)] px-3 text-[13px] font-medium text-[var(--kb-accent)] hover:opacity-90"
+            >
+              {chip.label}
+              <X aria-hidden="true" size={14} />
+            </button>
+          </li>
+        ))}
+      </ul>
       <button
         type="button"
         onClick={clearFilters}
-        className="min-h-11 rounded-full border border-[var(--kb-border-strong)] px-3 text-sm text-[var(--kb-muted)]"
+        className="min-h-10 rounded-full border border-[var(--kb-border-strong)] px-3 text-[13px] font-medium text-[var(--kb-muted)] hover:bg-[var(--kb-surface2)]"
       >
         נקה הכול
       </button>

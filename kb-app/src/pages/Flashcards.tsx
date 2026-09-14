@@ -7,6 +7,7 @@ import { isDue } from '../lib/srs';
 import { ALL_STATUSES, STATUS_LABELS } from '../lib/progressStatus';
 import { buildCategoryLabels } from '../lib/categoryLabels';
 import { useUserDataStore } from '../store/userDataStore';
+import { usePageTitle } from '../hooks/usePageTitle';
 import Header from '../components/layout/Header';
 import TopicFilters from '../components/browse/TopicFilters';
 
@@ -56,6 +57,7 @@ function buildQueue(
 }
 
 export default function Flashcards() {
+  usePageTitle('כרטיסיות');
   const gradeCard = useUserDataStore((s) => s.gradeCard);
 
   const [selectedModule, setSelectedModule] = useState('all');

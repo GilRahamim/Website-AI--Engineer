@@ -29,6 +29,23 @@ describe('FilterChips', () => {
     expect(screen.getByText(/אלגוריתמים/)).toBeInTheDocument();
   });
 
+  it('exposes each chip as a real list item containing a button (no role overrides on the button)', () => {
+    useUiStore.setState({
+      selectedModules: new Set(['Intro to Data Science']),
+      selectedStatuses: new Set(['mastered']),
+    });
+    render(<FilterChips modules={modules} categoryLabels={categoryLabels} />);
+    const list = screen.getByRole('list', { name: 'סינון פעיל' });
+    const items = screen.getAllByRole('listitem');
+    expect(items).toHaveLength(2);
+    for (const item of items) {
+      expect(list.contains(item)).toBe(true);
+      expect(item.querySelector('button')).not.toBeNull();
+      expect(item.tagName).toBe('LI');
+    }
+    expect(screen.getByRole('button', { name: /מבוא למדעי הנתונים/ })).not.toHaveAttribute('role');
+  });
+
   it('renders a chip for an active status filter, with its Hebrew label', () => {
     useUiStore.setState({ selectedStatuses: new Set(['mastered']) });
     render(<FilterChips modules={modules} categoryLabels={categoryLabels} />);

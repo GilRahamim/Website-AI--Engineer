@@ -19,6 +19,11 @@ export function getSupabase(): SupabaseClient | null {
   return client;
 }
 
+/** True when both env vars are present — i.e. sign-in/sync can work at all. */
+export function isSupabaseConfigured(): boolean {
+  return Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY);
+}
+
 /** Test-only: clears the memoized client so each test starts from a clean
  *  slate. Not used by application code. */
 export function __resetSupabaseForTests(): void {
