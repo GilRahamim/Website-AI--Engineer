@@ -1,0 +1,60 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>ספריית החישוב המספרי שעליה בנוי כל הסטאק של מדעי הנתונים ב-Python. הרעיון המרכזי הוא ה-ndarray — מערך רב-ממדי הומוגני שנשמר כבלוק רציף בזיכרון, מה שמאפשר פעולות וקטוריות מהירות בלי לולאות Python. Pandas, scikit-learn ו-PyTorch כולם עומדים על המבנה הזה.</p>
+<h4 class='sec-h'>למה לא פשוט רשימות Python?</h4>
+<ul><li>רשימה מחזיקה מצביעים לאובייקטים מפוזרים בזיכרון; ndarray מחזיק את הנתונים עצמם ברצף — גישה מהירה בהרבה.</li><li>פעולות על ndarray מתבצעות בקוד C מהודר (vectorization) במקום בלולאת Python — שיפור של סדר גודל ויותר.</li><li>רשימה יכולה לערבב טיפוסים; מערך הוא הומוגני, ולכן אפשר לדעת מראש כמה בתים כל איבר תופס.</li><li>Broadcasting מאפשר פעולות בין מערכים בגדלים שונים בלי לשכפל דאטה.</li></ul>
+<h4 class='sec-h'>יצירת מערכים</h4>
+<table class='kbtable'><tr><td><strong>פונקציה</strong></td><td><strong>מה היא עושה</strong></td><td><strong>דוגמה</strong></td></tr><tr><td>np.array(lst)</td><td>המרה מרשימה או מרשימת רשימות</td><td>np.array([1,2,3])</td></tr><tr><td>np.arange(a,b,step)</td><td>ערכים במרווחים שווים לפי צעד</td><td>np.arange(0,10,2)</td></tr><tr><td>np.linspace(a,b,n)</td><td>n ערכים במרווחים שווים כולל הקצוות</td><td>np.linspace(0,1,5)</td></tr><tr><td>np.zeros / np.ones</td><td>מערך מאותחל באפסים או באחדות</td><td>np.zeros((3,4))</td></tr><tr><td>np.eye(n)</td><td>מטריצת יחידה</td><td>np.eye(3)</td></tr><tr><td>np.random.rand</td><td>אחיד בין 0 ל-1</td><td>np.random.rand(2,3)</td></tr><tr><td>np.random.randn</td><td>נורמלי סטנדרטי — ממוצע 0, סטיית תקן 1</td><td>np.random.randn(100)</td></tr><tr><td>np.random.randint</td><td>שלמים אקראיים בטווח</td><td>np.random.randint(0,50,10)</td></tr></table>
+<h4 class='sec-h'>תכונות ושינוי צורה</h4>
+<ul><li>arr.shape — הממדים. זו התכונה שתבדוק הכי הרבה פעמים בדיבאג.</li><li>arr.dtype — טיפוס הנתונים (int64, float64 וכו').</li><li>arr.reshape(rows, cols) — שינוי צורה. מכפלת הממדים החדשים חייבת להיות שווה למספר האיברים הקיים.</li><li>arr.max() / arr.min() — ערכי קיצון; argmax() / argmin() מחזירים את המיקום שלהם ולא את הערך.</li></ul>
+<h4 class='sec-h'>אינדוקס ופריסה</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/afc9e54f5300.png" loading="lazy" alt="diagram"></div>
+<ul><li>חד-ממדי: arr[3], arr[1:5], arr[::2] — בדיוק כמו רשימות.</li><li>דו-ממדי: arr[row, col] — הפסיק מפריד בין הצירים. arr[1][2] עובד אבל איטי יותר ופחות קריא.</li><li>פריסה דו-ממדית: arr[0:2, 1:3] — שורות ואז עמודות.</li><li>השמה משודרת: arr[0:3] = 50 מציב את הערך בכל התאים בבת אחת.</li><li>בחירה בוליאנית: arr[arr &gt; 5]. הביטוי arr &gt; 5 מחזיר מערך של True/False שמשמש כמסכה.</li></ul>
+<h4 class='sec-h'>המלכודת המרכזית — View לעומת Copy</h4>
+<p>פריסה של מערך NumPy אינה יוצרת עותק אלא מחזירה חלון על אותו בלוק זיכרון. שינוי בפריסה משנה את המערך המקורי. זו ההתנהגות שמייצרת את רוב הבאגים הסמויים בקוד NumPy של מתחילים. אם צריך עותק עצמאי, יש לבקש אותו במפורש עם arr.copy().</p>
+<h4 class='sec-h'>פעולות ופונקציות אוניברסליות</h4>
+<p>כל האופרטורים האריתמטיים פועלים איבר-איבר:</p>
+<pre class='code-block'><code>arr + arr        # חיבור איבר-איבר
+arr * arr        # כפל איבר-איבר, לא כפל מטריצות
+arr @ arr        # זה כפל מטריצות
+arr ** 2
+arr / arr        # 0/0 -&gt; nan (עם אזהרה), 1/0 -&gt; inf
+
+np.sqrt(arr)     # שורש
+np.exp(arr)      # e בחזקת x
+np.log(arr)      # לוגריתם טבעי
+np.sin(arr)      # פונקציות טריגונומטריות
+arr.sum(axis=0)  # סכום לפי עמודות; axis=1 לפי שורות</code></pre>
+<p>חלוקה באפס אינה זורקת חריגה: 0/0 מחזיר nan ו-1/0 מחזיר inf, בליווי RuntimeWarning. הערכים האלה ימשיכו להתפשט בחישוב ויהרסו אותו בשקט — כדאי לבדוק אותם עם np.isnan.</p>
+<h4 class='sec-h'>יתרונות</h4>
+<ul><li>מהירות — פעולות וקטוריות בקוד מהודר במקום לולאות Python.</li><li>יעילות זיכרון — בלוק רציף וטיפוס אחיד.</li><li>התשתית של כל הסטאק: Pandas, scikit-learn, Matplotlib ו-PyTorch כולם מקבלים ומחזירים ndarray.</li></ul>
+<h4 class='sec-h'>מגבלות</h4>
+<ul><li>הומוגני — לא מתאים לדאטה מעורב (מספרים וטקסט); לשם כך Pandas.</li><li>אין תוויות לצירים — עמודה 3 היא רק מספר, בלי שם.</li><li>View לעומת Copy הוא מקור באגים קבוע.</li><li>גודל קבוע — הוספת איברים דורשת הקצאה מחדש של כל המערך.</li></ul>
+<h4 class='sec-h'>קוד לדוגמה</h4>
+<pre class='code-block'><code>import numpy as np
+
+arr = np.arange(0, 11)              # [0 1 2 ... 10]
+mat = np.arange(16).reshape(4, 4)   # מטריצה 4x4
+
+print(mat.shape, mat.dtype)         # (4, 4) int64
+print(mat[1:3, 1:3])                # [[5 6] [9 10]]
+print(arr[arr &gt; 5])                 # [6 7 8 9 10]
+
+# View מול Copy
+slice_of_arr = arr[0:5]
+slice_of_arr[:] = 99
+print(arr)                          # arr השתנה!
+
+safe = arr.copy()[0:5]
+safe[:] = 0
+print(arr)                          # arr לא נגע
+
+# סטטיסטיקה לפי ציר
+print(mat.mean(axis=0))             # ממוצע לכל עמודה
+print(mat.sum(axis=1))              # סכום לכל שורה</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: למה NumPy מהיר יותר מרשימות Python?</strong></p>
+<p><strong>ת: </strong>שתי סיבות. ראשית, הנתונים שמורים כבלוק רציף בזיכרון עם טיפוס אחיד, בעוד שרשימה מחזיקה מצביעים לאובייקטים מפוזרים. שנית, הפעולות מתבצעות בקוד C מהודר על כל המערך בבת אחת (vectorization) במקום בלולאת Python שמפרשת כל איטרציה מחדש.</p>
+<p><strong>ש: מה ההבדל בין arr[1:3] ל-arr[1:3].copy()?</strong></p>
+<p><strong>ת: </strong>הראשון מחזיר view — חלון על אותו זיכרון, ושינוי בו משנה את המערך המקורי. השני מקצה זיכרון חדש ומעתיק את הנתונים, כך שהשינויים מבודדים. NumPy בוחר ב-view כברירת מחדל מטעמי ביצועים.</p>
+<p><strong>ש: מה ההבדל בין arr * arr ל-arr @ arr?</strong></p>
+<p><strong>ת: </strong>הכוכבית היא כפל איבר-איבר (Hadamard); הסימן @ הוא כפל מטריצות אמיתי. זו טעות נפוצה כשעוברים מנוסחה מתמטית לקוד.</p>

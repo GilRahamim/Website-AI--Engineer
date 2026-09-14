@@ -1,0 +1,50 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>הניטור והבקרה של צריכת הטוקנים בכל קריאה למודל, ותרגומה לעלות כספית. במערכות RAG ו-Agents זהו אילוץ הנדסי ראשון במעלה: כל וריאנט ארכיטקטוני — Query Rewrite, Conversational RAG, ReAct — מוסיף קריאות LLM ומאריך פרומפטים, והעלות מצטברת מהר.</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/cc0cbec21f76.png" loading="lazy" alt="diagram"></div>
+<h4 class='sec-h'>חישוב העלות</h4>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/e574b40333c7.png" loading="lazy" alt="formula"></div>
+<p>כאשר p מבוטא בדולרים למיליון טוקנים. טוקני פלט יקרים בדרך כלל פי 3–5 מטוקני קלט, ולכן הגבלת אורך התשובה משפיעה יותר ממה שנדמה.</p>
+<h4 class='sec-h'>לאן הולכים הטוקנים בבקשת RAG טיפוסית</h4>
+<table class='kbtable'><tr><td><strong>רכיב</strong></td><td><strong>מי שולט בו</strong></td><td><strong>איך מקטינים</strong></td></tr><tr><td>System prompt</td><td>המפתח</td><td>לקצר, לא לחזור על הוראות</td></tr><tr><td>היסטוריית שיחה</td><td>מדיניות הזיכרון</td><td>ConversationSummaryBufferMemory עם max_token_limit</td></tr><tr><td>Chunks שאוחזרו</td><td>top_k × chunk_size</td><td>הרכיב הגדול ביותר — להקטין top_k, Reranking במקום k גדול</td></tr><tr><td>שאלת המשתמש</td><td>המשתמש</td><td>כמעט זניח</td></tr><tr><td>תשובת המודל</td><td>max_tokens</td><td>להגביל אורך, לבקש תמציתיות</td></tr></table>
+<h4 class='sec-h'>איך מודדים בפועל</h4>
+<ul><li>כל ספק מחזיר usage בתשובה — prompt_tokens ו-completion_tokens.</li><li>ב-CrewAI רושמים Event Listener שיורש מ-BaseEventListener ומאזין ל-LLMCallCompletedEvent, וכך אוספים טוקנים לכל קריאה בתוך ה-Crew.</li><li>מגדירים טבלת מחירים MODEL_COSTS (דולר למיליון טוקנים) ומכפילים.</li><li>מייצאים דוח לכל ריצה — קריאה, מודל, טוקנים, עלות — כדי להשוות בין וריאנטים ארכיטקטוניים על אותה משימה.</li></ul>
+<h4 class='sec-h'>עלות לפי וריאנט RAG</h4>
+<table class='kbtable'><tr><td><strong>וריאנט</strong></td><td><strong>קריאות LLM לשאילתה</strong></td><td><strong>עלות יחסית</strong></td></tr><tr><td>RAG בסיסי</td><td>1</td><td>בסיס</td></tr><tr><td>Query Rewrite</td><td>2</td><td>גבוהה מעט — קריאת LLM נוספת</td></tr><tr><td>Conversational RAG</td><td>1–2</td><td>גבוהה — פרומפטים ארוכים וניהול זיכרון</td></tr><tr><td>ReAct RAG</td><td>רבות</td><td>גבוהה מאוד — הסקה איטרטיבית וכמה אחזורים</td></tr><tr><td>Multi-Agent Crew</td><td>רבות מאוד</td><td>הגבוהה ביותר — כל agent צורך בנפרד</td></tr></table>
+<h4 class='sec-h'>אסטרטגיות הקטנת עלות</h4>
+<ul><li>Prompt Caching — חלקים קבועים של הפרומפט מתומחרים בהנחה משמעותית.</li><li>Model Routing — מודל קטן וזול למשימות פשוטות, מודל גדול רק כשצריך.</li><li>Reranking — לאחזר top_k גדול מ-vector store זול, ולהעביר ל-LLM רק 3–5 מסמכים אחרי דירוג מחדש.</li><li>הגבלת max_token_limit בזיכרון השיחה כדי למנוע גדילה בלתי מבוקרת.</li><li>Chunking נכון — chunks גדולים מדי מבזבזים טוקנים על טקסט לא רלוונטי.</li><li>Streaming אינו מוזיל, אך משפר את הזמן לטוקן הראשון ואת חוויית המשתמש בעלות זהה.</li></ul>
+<h4 class='sec-h'>קוד לדוגמה (CrewAI Event Listener)</h4>
+<pre class='code-block'><code>from crewai.events import BaseEventListener, LLMCallCompletedEvent
+
+MODEL_COSTS = {
+    "gpt-4o-mini":  {"input_per_1m": 0.15, "output_per_1m": 0.60},
+    "gpt-4.1-mini": {"input_per_1m": 0.80, "output_per_1m": 3.20},
+}
+
+class CostTracker(BaseEventListener):
+    def __init__(self):
+        super().__init__()
+        self.calls, self.total_usd = [], 0.0
+
+    def setup_listeners(self, crewai_event_bus):
+        @crewai_event_bus.on(LLMCallCompletedEvent)
+        def on_llm_call(source, event):
+            usage = getattr(event, "usage", None) or {}
+            t_in  = usage.get("prompt_tokens", 0)
+            t_out = usage.get("completion_tokens", 0)
+            price = MODEL_COSTS.get(event.model, {})
+            usd   = (t_in  / 1e6) * price.get("input_per_1m", 0) + \
+                    (t_out / 1e6) * price.get("output_per_1m", 0)
+            self.total_usd += usd
+            self.calls.append({"model": event.model, "in": t_in,
+                               "out": t_out, "usd": round(usd, 6)})
+
+tracker = CostTracker()
+crew.kickoff()
+print(f"{len(tracker.calls)} LLM calls, total ${tracker.total_usd:.4f}")</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: איפה מתחילים כשעלות מערכת RAG בפרודקשן גבוהה מדי?</strong></p>
+<p><strong>ת: </strong>מודדים קודם. ברוב המערכות הרכיב הדומיננטי הוא ה-chunks שאוחזרו: top_k כפול chunk_size נכנס לכל בקשה. הקטנת top_k בשילוב Reranker, ו-Prompt Caching על ה-system prompt, נותנות בדרך כלל את החיסכון הגדול ביותר במאמץ הקטן ביותר.</p>
+<p><strong>ש: למה טוקני פלט יקרים יותר מטוקני קלט?</strong></p>
+<p><strong>ת: </strong>טוקני קלט מעובדים במקביל במעבר אחד (prefill), בעוד שכל טוקן פלט דורש מעבר forward נפרד דרך המודל (decode). זה תהליך סדרתי שאינו מקבילי, ולכן יקר יותר לספק.</p>
+<p><strong>ש: איך משווים עלות בין שתי ארכיטקטורות?</strong></p>
+<p><strong>ת: </strong>מריצים את שתיהן על אותו סט שאילתות, אוספים usage לכל קריאה, ומשווים עלות ממוצעת לשאילתה לצד מדדי איכות — Faithfulness, Recall@k. ארכיטקטורה יקרה יותר מוצדקת רק אם היא משפרת את האיכות משמעותית.</p>

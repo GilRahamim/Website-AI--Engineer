@@ -1,0 +1,31 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>‏מדד מרחק הוא פונקציה d(x,y) שמכמתת עד כמה שתי תצפיות רחוקות (או דומות) זו לזו במרחב הפיצ'רים. בלמידה לא-מונחית זה לא "פרט טכני" אלא חלק מהמודל עצמו: כל אלגוריתמי ה-clustering וגם KNN נשענים על ההגדרה של "קרוב" ו"רחוק", והבחירה במדד קובעת אילו מבנים האלגוריתם בכלל מסוגל למצוא. העיקרון המנחה הוא Intra-class similarity גבוה לצד Inter-class dissimilarity — מדד לא מתאים (למשל Euclidean על טקסט דליל) יכול לגרום לאלגוריתם מצוין להיכשל.</p>
+<h4 class='sec-h'>נוסחאות</h4>
+<p class='formula-label'><em>‏Euclidean — מרחק "בקו ישר", ברירת המחדל לנתונים נומריים</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="d(x,y)=\sqrt{\sum_{i=1}^{D}(x_{i}−y_{i})^{2}}">d(x,y)=√(∑_{i=1}^{D}(x_i−y_i)^2)</span></div>
+<p class='formula-label'><em>‏Manhattan (L1) — סכום ההפרשים המוחלטים</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="d(x,y)=\sum_{i=1}^{D}|x_{i}−y_{i}|">d(x,y)=∑_{i=1}^{D}|x_i−y_i|</span></div>
+<p class='formula-label'><em>‏Cosine distance — זווית בין וקטורים, מתעלם מגודל</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="d_{cos}(x,y)=1−\frac{\sum_{i}x_{i}y_{i}}{\sqrt{\sum_{i}x_{i}^{2}} \sqrt{\sum_{i}y_{i}^{2}}}">d_{cos}(x,y)=1−(∑_{i}x_iy_i)/(√(∑_{i}x_{i}^{2}) √(∑_{i}y_{i}^{2}))</span></div>
+<p class='formula-label'><em>‏Minkowski — הכללה (p=2 → Euclidean, p=1 → Manhattan)</em></p>
+<div class='formula-block'><span class='katex-tex' data-tex="d(x,y)=\left(\sum_{i=1}^{D}|x_{i}−y_{i}|^{p}\right)^{1/p}">d(x,y)=(∑_{i=1}^{D}|x_i−y_i|^p)^{1/p}</span></div>
+<h4 class='sec-h'>פירוש משתנים</h4>
+<table class='kbtable'><tr><td><strong>‏משתנה</strong></td><td><strong>‏משמעות</strong></td></tr><tr><td>‏x, y</td><td>‏שתי תצפיות (וקטורי פיצ'רים)</td></tr><tr><td>‏D</td><td>‏מספר הממדים (פיצ'רים)</td></tr><tr><td>‏xᵢ</td><td>‏הערך של פיצ'ר i בתצפית x</td></tr><tr><td>‏p</td><td>‏פרמטר ה-norm ב-Minkowski</td></tr></table>
+<h4 class='sec-h'>תכונות חשובות</h4>
+<table class='kbtable'><tr><td><strong>‏מדד</strong></td><td><strong>‏טווח</strong></td><td><strong>‏רגיש לסקאלה?</strong></td><td><strong>‏מתי מתאים</strong></td></tr><tr><td>‏Euclidean</td><td>‏0 עד ∞</td><td>‏כן — חובה לתקנן</td><td>‏נומרי צפוף בסקאלה דומה</td></tr><tr><td>‏Manhattan</td><td>‏0 עד ∞</td><td>‏כן</td><td>‏ממדים גבוהים, עמיד ל-outliers</td></tr><tr><td>‏Cosine</td><td>‏0–1</td><td>‏לא לגודל, כן לכיוון</td><td>‏טקסט/וקטורים דלילים</td></tr><tr><td>‏Gower</td><td>‏0–1</td><td>‏מנרמל פנימית</td><td>‏נתונים מעורבים (נומרי+קטגוריאלי)</td></tr></table>
+<h4 class='sec-h'>מתי משתמשים?</h4>
+<ul><li>‏1. Euclidean — ברירת המחדל ל-K-Means ולנתונים נומריים לאחר תקנון.</li><li>‏2. Cosine — טקסט ו-embeddings, שם מעניין הכיוון (הנושא) ולא האורך.</li><li>‏3. Manhattan — כשיש הרבה ממדים או outliers; פחות "מעניש" סטיות גדולות.</li><li>‏4. Gower — כשיש עמודות מעורבות (גיל + עיר + כן/לא).</li></ul>
+<h4 class='sec-h'>השוואה לפונקציות דומות</h4>
+<table class='kbtable'><tr><td><strong>‏מדד</strong></td><td><strong>‏מודד</strong></td><td><strong>‏חולשה עיקרית</strong></td></tr><tr><td>‏Euclidean</td><td>‏מרחק גאומטרי</td><td>‏מתפרק ב-Curse of Dimensionality; מושפע מאורך</td></tr><tr><td>‏Cosine</td><td>‏זווית / כיוון</td><td>‏מתעלם ממגניטודה (לפעמים חשובה)</td></tr><tr><td>‏Manhattan</td><td>‏הפרש לאורך צירים</td><td>‏פחות אינטואיטיבי גאומטרית</td></tr></table>
+<h4 class='sec-h'>מימוש בקוד</h4>
+<pre class='code-block'><code>from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances
+import gower   # pip install gower  — לנתונים מעורבים
+ 
+euclidean_distances(X)          # מטריצת מרחקים אוקלידיים
+1 - cosine_similarity(X)        # מרחק קוסינוס
+gower.gower_matrix(df_mixed)    # מרחק Gower על DataFrame מעורב</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: ‏למה Cosine עדיף על Euclidean בטקסט?</strong></p>
+<p><strong>ת: </strong>‏מרחק אוקלידי מושפע מאורך המסמך — מסמך ארוך "רחוק" מקצר גם אם הם על אותו נושא. Cosine מודד רק את הזווית, מנרמל אוטומטית לאורך, ולכן עמיד יותר גם בממדים הגבוהים של ייצוגי טקסט.</p>
+<p><strong>ש: ‏למה תקנון קריטי לפני מדד מרחק?</strong></p>
+<p><strong>ת: </strong>‏מדדים מבוססי מרחק סוכמים על פני הפיצ'רים. פיצ'ר בסקאלה גדולה (שכר בשקלים) ישתלט על פיצ'ר בסקאלה קטנה (גיל) ויעוות את המרחק. תקנון (z-score) מיישר את כולם.</p>

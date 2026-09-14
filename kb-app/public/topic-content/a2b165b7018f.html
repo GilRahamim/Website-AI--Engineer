@@ -1,0 +1,48 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>אלגוריתם האופטימיזציה שעליו בנויה כל למידת המכונה המודרנית: במקום לסרוק את כל מרחב הפרמטרים, מחשבים את הגרדיאנט של פונקציית ה-Loss ביחס לכל פרמטר ומזיזים את הפרמטרים צעד קטן בכיוון ההפוך לגרדיאנט — הכיוון שבו ה-Loss יורד הכי מהר.</p>
+<h4 class='sec-h'>איך זה עובד</h4>
+<ul><li>1. מאתחלים את הפרמטרים θ בערכים אקראיים.</li><li>2. מריצים forward pass ומחשבים את ה-Loss על הדאטה.</li><li>3. מחשבים את הנגזרת החלקית של ה-Loss ביחס לכל פרמטר — ∂L/∂θᵢ. הנגזרת אומרת איך ה-Loss מגיב לשינוי באותו פרמטר.</li><li>4. אם הנגזרת חיובית — ה-Loss גדל כשהפרמטר גדל, ולכן מקטינים את הפרמטר; אם היא שלילית — מגדילים אותו.</li><li>5. מעדכנים כל פרמטר בגודל פרופורציונלי לנגזרת ולקצב הלמידה α.</li><li>6. חוזרים עד שמתקיים תנאי עצירה — מספר איטרציות, יעד Loss או התכנסות.</li></ul>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/e6b19ca342ae.png" loading="lazy" alt="diagram"></div>
+<h4 class='sec-h'>נוסחאות</h4>
+<p class='formula-label'><em>כלל העדכון הבסיסי — זהה בכל האופטימייזרים שנלמדו בקורס:</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/5cec59df1239.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>גרדיאנט נומרי (discretized) — הקירוב שהוצג בשיעור לפני שעברו לנגזרות אנליטיות:</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/d34bbf6c56eb.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>כלל השרשרת — הבסיס לחישוב האנליטי ול-Backpropagation:</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/0753dc0f18a9.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>ארבע רמות המימוש שנלמדו בקורס</h4>
+<table class='kbtable'><tr><td><strong>רמה</strong></td><td><strong>איך מחשבים את הגרדיאנט</strong></td><td><strong>מגבלה עיקרית</strong></td></tr><tr><td>Complete Enumeration</td><td>סורקים את כל צירופי הפרמטרים</td><td>סקיילינג של xⁿ — בלתי אפשרי מעבר ל-2-3 פרמטרים</td></tr><tr><td>Discretized (נומרי)</td><td>הפרש סופי עם Δ קטן</td><td>לא מדויק, ויקר: שתי הרצות מודל לכל פרמטר</td></tr><tr><td>Analytical</td><td>גוזרים ידנית עם כלל השרשרת</td><td>מדויק, אך צריך לגזור מחדש לכל ארכיטקטורה</td></tr><tr><td>Autograd (PyTorch)</td><td>גרף חישובי שגוזר אוטומטית</td><td>מה שמשתמשים בו בפועל</td></tr></table>
+<h4 class='sec-h'>שימושים עיקריים</h4>
+<ul><li>אימון כל רשת נוירונים — מ-Perceptron בודד ועד Transformer.</li><li>רגרסיה לינארית ולוגיסטית כאשר Normal Equation יקרה מדי חישובית.</li><li>כל בעיה שבה פונקציית המטרה גזירה ביחס לפרמטרים.</li></ul>
+<h4 class='sec-h'>יתרונות</h4>
+<ul><li>דגימה דלילה מאוד של מרחב הפרמטרים — לא צריך לסרוק את כולו.</li><li>מסתדר עם מיליוני פרמטרים, שם Complete Enumeration קורסת.</li><li>אדפטיבי — אפשר לשנות את גודל הצעד לאורך כל ציר בנפרד (זה בדיוק מה ש-AdaGrad ו-Adam עושים).</li></ul>
+<h4 class='sec-h'>חסרונות / מגבלות</h4>
+<ul><li>עלול להיתקע במינימום לוקאלי או בנקודת אוכף.</li><li>רגיש לבחירת α — צעד גדול מדי גורם ל-overshooting והתבדרות, צעד קטן מדי גורם להתכנסות איטית מאוד.</li><li>דורש שפונקציית ה-Loss תהיה גזירה.</li><li>הגרדיאנט הנומרי אינו מדויק ויקר — ולכן בפועל תמיד autograd.</li></ul>
+<h4 class='sec-h'>קוד לדוגמה (PyTorch)</h4>
+<pre class='code-block'><code>import torch
+
+# הפרמטרים שנלמדים
+w = torch.tensor([0.5], requires_grad=True)
+b = torch.tensor([0.0], requires_grad=True)
+lr = 0.01
+
+for step in range(100):
+    y_pred = w * x + b
+    loss = ((y_pred - y) ** 2).mean()      # MSE
+
+    loss.backward()                        # autograd -&gt; w.grad, b.grad
+    with torch.no_grad():
+        w -= lr * w.grad                   # theta := theta - alpha * grad
+        b -= lr * b.grad
+    w.grad.zero_(); b.grad.zero_()         # אחרת הגרדיאנטים מצטברים
+
+# בפועל משתמשים ב-optimizer שעושה בדיוק את זה:
+optimizer = torch.optim.SGD([w, b], lr=lr)
+optimizer.step(); optimizer.zero_grad()</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: למה לא פשוט סורקים את כל מרחב הפרמטרים במקום Gradient Descent?</strong></p>
+<p><strong>ת: </strong>כי הסקיילינג הוא xⁿ עם n מספר הפרמטרים. לרשת עם מיליון פרמטרים זה בלתי אפשרי. Gradient Descent דוגם את המרחב בצורה דלילה מאוד ועדיין מתכנס, כי הגרדיאנט אומר לנו לאן ללכת.</p>
+<p><strong>ש: מה ההבדל בין גרדיאנט נומרי לאנליטי?</strong></p>
+<p><strong>ת: </strong>נומרי מקרב את הנגזרת בהפרש סופי עם Δ קטן — לא מדויק ודורש שתי הערכות מודל לכל פרמטר. אנליטי גוזר את הפונקציה עצמה בעזרת כלל השרשרת — מדויק וזול. Autograd מבצע את החישוב האנליטי אוטומטית דרך הגרף החישובי.</p>
+<p><strong>ש: למה צריך zero_grad() בכל איטרציה?</strong></p>
+<p><strong>ת: </strong>PyTorch צובר גרדיאנטים ב-.grad במקום לדרוס אותם. בלי איפוס, העדכון באיטרציה הנוכחית יתבסס על סכום כל הגרדיאנטים מכל האיטרציות הקודמות.</p>

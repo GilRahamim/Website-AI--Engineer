@@ -1,0 +1,46 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>קצב הלמידה α הוא גודל הצעד שהאופטימייזר עושה בכיוון ההפוך לגרדיאנט. זהו ההיפר-פרמטר היחיד שמופיע בכל אופטימייזר ללא יוצא מן הכלל, והוא הרגיש ביותר מביניהם: כל שאר השיטות (Momentum, AdaGrad, RMSProp, Adam) הן וריאציות על השאלה כיצד לקבוע ולעדכן אותו. Scheduler הוא מדיניות שמשנה את α לאורך האימון.</p>
+<h4 class='sec-h'>מתי זה קורה?</h4>
+<ul><li>α נמוך מדי — ההתכנסות איטית מאוד; המודל ``זוחל'' ולא מגיע למינימום בתקציב ה-epochs שהוקצה.</li><li>α גבוה מדי — האלגוריתם עושה overshooting מעל המינימום; ה-Loss מתנודד ובמקרה הקיצוני מתבדר ל-NaN.</li><li>α קבוע לאורך כל האימון — בהתחלה הוא מתאים, אך לקראת סוף האימון הצעדים גדולים מדי ביחס לקרבה למינימום, והמודל ``מקפץ'' סביבו.</li></ul>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/12ffbe8d8711.png" loading="lazy" alt="diagram"></div>
+<h4 class='sec-h'>איך מזהים?</h4>
+<ul><li>Loss שמתנודד או קופץ למעלה בין epochs — α גבוה מדי.</li><li>Loss שיורד בקו כמעט ישר ואיטי לאורך עשרות epochs — α נמוך מדי.</li><li>Loss שהופך ל-NaN או inf אחרי מספר איטרציות — התבדרות מוחלטת.</li><li>Loss שנעצר על מדף (plateau) — סימן שהגיע הזמן להוריד את α.</li></ul>
+<h4 class='sec-h'>איך פותרים / מטפלים?</h4>
+<ul><li>LR Range Test — מריצים כמה מאות איטרציות עם α שגדל אקספוננציאלית ובוחרים את הערך שלפני שה-Loss מתחיל להתפוצץ.</li><li>Step Decay — מכפילים את α בגורם γ כל k epochs (StepLR).</li><li>Cosine Annealing — מורידים את α בעקומת קוסינוס עד כמעט אפס.</li><li>ReduceLROnPlateau — מורידים את α רק כשה-validation loss מפסיק להשתפר. פרקטי במיוחד כשלא יודעים מראש כמה epochs צריך.</li><li>Warmup — מתחילים מ-α קטן מאוד ומעלים אותו ליניארית במאות האיטרציות הראשונות. חובה כמעט באימון Transformers.</li><li>אופטימייזר אדפטיבי (Adam) — מכייל α לכל פרמטר בנפרד ומקטין את הרגישות לבחירה הראשונית.</li></ul>
+<h4 class='sec-h'>נוסחאות</h4>
+<p class='formula-label'><em>כלל העדכון — α הוא המקדם היחיד שכופל את הגרדיאנט:</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/99a6c8f4fc11.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>Step Decay:</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/221b931c71a2.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>Cosine Annealing:</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/b1170e8729d0.png" loading="lazy" alt="formula"></div>
+<p class='formula-label'><em>AdaGrad — קצב למידה יורד ונפרד לכל פרמטר (כפי שהוצג בשיעור):</em></p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/553b5d299f7d.png" loading="lazy" alt="formula"></div>
+<h4 class='sec-h'>השוואה בין Schedulers</h4>
+<table class='kbtable'><tr><td><strong>Scheduler</strong></td><td><strong>מתי משתמשים</strong></td><td><strong>הערה</strong></td></tr><tr><td>StepLR</td><td>לוח זמנים ידוע מראש</td><td>הכי פשוט, דורש כיוון של k ו-γ</td></tr><tr><td>CosineAnnealingLR</td><td>אימון עם מספר epochs קבוע</td><td>ברירת מחדל טובה לרשתות ראייה</td></tr><tr><td>ReduceLROnPlateau</td><td>לא יודעים כמה epochs צריך</td><td>מגיב ל-validation, משתלב היטב עם Early Stopping</td></tr><tr><td>OneCycleLR</td><td>אימון קצר ואגרסיבי</td><td>Warmup ואז דעיכה במחזור אחד</td></tr><tr><td>Warmup + Decay</td><td>Transformers ו-Fine-Tuning</td><td>מונע התפוצצות גרדיאנטים באיטרציות הראשונות</td></tr></table>
+<h4 class='sec-h'>קוד לדוגמה (PyTorch)</h4>
+<pre class='code-block'><code>import torch
+
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+
+# אפשרות 1 — דעיכה מתוזמנת מראש
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+    optimizer, T_max=50, eta_min=1e-6)
+
+# אפשרות 2 — דעיכה מגיבה ל-validation
+# scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+#     optimizer, mode='min', factor=0.5, patience=5)
+
+for epoch in range(50):
+    train_one_epoch(model, train_loader, optimizer)
+    val_loss = evaluate(model, val_loader)
+
+    scheduler.step()             # ל-ReduceLROnPlateau: scheduler.step(val_loss)
+    print(epoch, optimizer.param_groups[0]['lr'], val_loss)</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: למה בכלל להוריד את קצב הלמידה לאורך האימון?</strong></p>
+<p><strong>ת: </strong>בתחילת האימון אנחנו רחוקים מהמינימום וכדאי לעשות צעדים גדולים. ככל שמתקרבים, צעד גדול גורם לקפיצה מעל המינימום ולתנודות. הורדת α מאפשרת התכנסות עדינה לתחתית העמק במקום ריקוד סביבו.</p>
+<p><strong>ש: אם משתמשים ב-Adam, עדיין צריך Scheduler?</strong></p>
+<p><strong>ת: </strong>כן. Adam מכייל את גודל הצעד היחסי לכל פרמטר, אבל α הגלובלי עדיין כופל את כולם. בפרקטיקה Adam עם Cosine או Warmup נותן תוצאות טובות יותר מ-Adam עם α קבוע, ובאימון Transformers Warmup הוא כמעט חובה.</p>
+<p><strong>ש: מה ההבדל בין Learning Rate ל-Momentum?</strong></p>
+<p><strong>ת: </strong>α קובע כמה גדול הצעד; Momentum קובע את הכיוון על ידי ממוצע משוקלל של הגרדיאנטים האחרונים. הם עונים על שתי שאלות שונות ולכן מופיעים יחד באותו כלל עדכון.</p>

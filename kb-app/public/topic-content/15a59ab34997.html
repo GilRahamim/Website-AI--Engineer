@@ -1,0 +1,45 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>ספריית מניפולציית הדאטה המרכזית ב-Python, בנויה מעל NumPy. היא מוסיפה את מה שחסר ב-ndarray: תוויות לצירים, טיפוסים מעורבים באותה טבלה, וטיפול מובנה בערכים חסרים. שני מבני הנתונים הם Series (עמודה מתויגת אחת) ו-DataFrame (כמה Series שחולקות אותו אינדקס).</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/d467d8c4bc40.png" loading="lazy" alt="diagram"></div>
+<h4 class='sec-h'>בחירה — הבלבול הנפוץ ביותר</h4>
+<table class='kbtable'><tr><td><strong>מה רוצים</strong></td><td><strong>התחביר</strong></td><td><strong>מה מקבלים</strong></td></tr><tr><td>עמודה אחת</td><td>df['col']</td><td>Series</td></tr><tr><td>כמה עמודות</td><td>df[['c1','c2']]</td><td>DataFrame</td></tr><tr><td>שורה לפי תווית</td><td>df.loc['B']</td><td>Series</td></tr><tr><td>שורה לפי מיקום</td><td>df.iloc[1]</td><td>Series</td></tr><tr><td>תת-טבלה</td><td>df.loc[['A','B'], ['W','X']]</td><td>DataFrame</td></tr><tr><td>תא בודד</td><td>df.loc['B','X']</td><td>ערך בודד</td></tr><tr><td>סינון שורות</td><td>df[df['col'] &gt; 5]</td><td>DataFrame</td></tr></table>
+<p>סוגריים בודדים מחזירים Series, סוגריים כפולים מחזירים DataFrame. loc עובד עם תוויות, iloc עם מיקומים מספריים — גם אם האינדקס עצמו מספרי.</p>
+<h4 class='sec-h'>סינון לפי כמה תנאים</h4>
+<p>חובה להשתמש ב-&amp; , | ו-~ במקום and, or ו-not, וחובה לעטוף כל תנאי בסוגריים. הסיבה: and של Python מצפה לערך בוליאני יחיד, בעוד שכאן משווים סדרה שלמה איבר-איבר, ולכן תיזרק שגיאת ``truth value of a Series is ambiguous''.</p>
+<pre class='code-block'><code>df[(df['W'] &gt; 0) &amp; (df['Y'] &gt; 1)]      # נכון
+df[df['W'] &gt; 0 and df['Y'] &gt; 1]        # ValueError</code></pre>
+<h4 class='sec-h'>ערכים חסרים</h4>
+<ul><li>df.isnull() / df.isna() — מסכה בוליאנית של התאים החסרים. df.isnull().sum() נותן ספירה לכל עמודה.</li><li>df.dropna(axis=0) — הסרת שורות עם ערך חסר; axis=1 מסיר עמודות.</li><li>df.dropna(thresh=2) — שמירת שורות עם לפחות 2 ערכים לא-חסרים.</li><li>df.fillna(value=...) — מילוי. מילוי בממוצע העמודה נפוץ, אבל חובה לחשב את הממוצע מסט האימון בלבד כדי למנוע זליגת מידע.</li></ul>
+<h4 class='sec-h'>GroupBy — פיצול, החלה, איחוד</h4>
+<p>df.groupby('col') לבדו אינו מחשב דבר — הוא מחזיר אובייקט עצל. החישוב קורה רק כשמפעילים אגרגציה: sum, mean, std, count, min, max או describe. אפשר לקבץ לפי כמה עמודות ולקבל אינדקס היררכי.</p>
+<pre class='code-block'><code>df.groupby('Company').mean(numeric_only=True)
+df.groupby(['Company', 'Year'])['Sales'].sum()
+df.groupby('Company').describe()
+df.groupby('Company').agg({'Sales': ['sum', 'mean'], 'Units': 'max'})</code></pre>
+<h4 class='sec-h'>חיבור טבלאות — שלוש שיטות</h4>
+<table class='kbtable'><tr><td><strong>פעולה</strong></td><td><strong>לפי מה מחברים</strong></td><td><strong>מתי משתמשים</strong></td></tr><tr><td>pd.concat([df1, df2])</td><td>לפי הצירים — הדבקה</td><td>אותן עמודות, שורות נוספות</td></tr><tr><td>pd.merge(l, r, on='key')</td><td>לפי ערך של עמודת מפתח</td><td>כמו JOIN ב-SQL</td></tr><tr><td>left.join(right)</td><td>לפי האינדקס</td><td>כשהמפתח כבר האינדקס</td></tr></table>
+<p>ל-merge יש ארבעה סוגים: inner (רק התאמות — ברירת המחדל), outer (הכול), left ו-right. בחירה שגויה כאן היא הסיבה הנפוצה ביותר לכך ששורות נעלמות או משתכפלות בלי ששמים לב.</p>
+<h4 class='sec-h'>שיטות שימושיות</h4>
+<pre class='code-block'><code>df['col'].unique()          # ערכים ייחודיים
+df['col'].nunique()         # כמה ייחודיים
+df['col'].value_counts()    # ספירה לכל ערך
+df['col'].apply(lambda x: x * 2)
+df.sort_values(by='col', ascending=False)
+df.columns, df.index
+df.head(), df.info(), df.describe()
+
+# קלט ופלט
+df = pd.read_csv('file.csv')
+df = pd.read_excel('file.xlsx', sheet_name='Sheet1')
+df.to_csv('out.csv', index=False)   # index=False כדי לא לכתוב עמודת אינדקס מיותרת</code></pre>
+<h4 class='sec-h'>יתרונות</h4>
+<ul><li>תוויות לצירים — הקוד קריא ועמיד לשינוי סדר עמודות.</li><li>טיפוסים מעורבים באותה טבלה.</li><li>טיפול מובנה בערכים חסרים.</li><li>קלט ופלט לכל פורמט נפוץ: CSV, Excel, SQL, JSON, Parquet.</li></ul>
+<h4 class='sec-h'>מגבלות</h4>
+<ul><li>הכול נטען לזיכרון — דאטה שגדול מה-RAM דורש Dask, Polars או עיבוד ב-chunks.</li><li>איטי יותר מ-NumPy טהור בלולאות; apply על שורות איטי במיוחד.</li><li>SettingWithCopyWarning — תוצאה של אותה בעיית view/copy שיורשת מ-NumPy. הפתרון: לעבוד עם .loc בהשמה או להשתמש ב-.copy() מפורש.</li></ul>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: מה ההבדל בין loc ל-iloc?</strong></p>
+<p><strong>ת: </strong>loc בוחר לפי תוויות (שם השורה או העמודה), iloc לפי מיקום מספרי. ההבדל קריטי כשהאינדקס עצמו מספרי אך אינו רציף: df.loc[2] מחפש שורה שתווית האינדקס שלה היא 2, ואילו df.iloc[2] תמיד מחזיר את השורה השלישית.</p>
+<p><strong>ש: למה df[df['a'] &gt; 0 and df['b'] &gt; 0] נכשל?</strong></p>
+<p><strong>ת: </strong>כי and של Python מנסה להמיר כל צד לערך בוליאני יחיד, וסדרה עם כמה ערכים אינה חד-משמעית. צריך &amp; שפועל איבר-איבר, ולעטוף כל תנאי בסוגריים כי ל-&amp; יש קדימות גבוהה מאופרטורי ההשוואה.</p>
+<p><strong>ש: מה groupby מחזיר לפני האגרגציה?</strong></p>
+<p><strong>ת: </strong>אובייקט DataFrameGroupBy עצל שרק מתאר את הפיצול לקבוצות ולא מחשב דבר. החישוב מתרחש כשקוראים לאגרגציה. זה מה שמאפשר ל-Pandas לייעל את הפעולה על פני כל הקבוצות בבת אחת.</p>

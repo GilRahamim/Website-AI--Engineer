@@ -1,0 +1,57 @@
+<h4 class='sec-h'>הגדרה</h4>
+<p>שכבה סטטיסטית מעל Matplotlib, שמקבלת DataFrame ושמות עמודות במקום מערכים גולמיים. גרף שדורש עשרות שורות ב-Matplotlib — כולל אגרגציה, רווחי סמך וצבע לפי קטגוריה — נכתב כאן בשורה אחת.</p>
+<div class='formula-block'><img class="block-formula-img" src="/topic-assets/d9b457712753.png" loading="lazy" alt="diagram"></div>
+<h4 class='sec-h'>גרפי התפלגות</h4>
+<ul><li>histplot(df['col'], bins=30, kde=True) — התפלגות משתנה יחיד.</li><li>kdeplot — אומדן צפיפות חלק, בלי הרעש של בחירת ה-bins.</li><li>jointplot(x=, y=, data=, kind=) — קשר בין שני משתנים עם ההתפלגויות השוליות בשוליים. kind יכול להיות scatter, reg, kde או hex.</li><li>pairplot(df, hue='cat') — כל זוגות המשתנים הרציפים בטבלה בבת אחת. הכלי הראשון שכדאי להריץ על דאטה חדש.</li></ul>
+<h4 class='sec-h'>גרפים קטגוריאליים</h4>
+<table class='kbtable'><tr><td><strong>גרף</strong></td><td><strong>מה מציג</strong></td><td><strong>הערה</strong></td></tr><tr><td>countplot</td><td>כמה שורות בכל קטגוריה</td><td>ספירה בלבד, בלי משתנה מספרי</td></tr><tr><td>barplot</td><td>אגרגציה של משתנה מספרי לכל קטגוריה</td><td>ברירת המחדל היא ממוצע — אפשר estimator=np.median</td></tr><tr><td>boxplot</td><td>חציון, רבעונים, שפמים וחריגים</td><td>מצוין להשוואת פיזור</td></tr><tr><td>violinplot</td><td>אותו דבר + צורת ההתפלגות המלאה</td><td>split=True משווה שתי קבוצות באותו כינור</td></tr><tr><td>stripplot / swarmplot</td><td>כל תצפית כנקודה</td><td>טוב לשלב מעל boxplot כשיש מעט נתונים</td></tr></table>
+<h4 class='sec-h'>מטריצות ורשתות</h4>
+<ul><li>heatmap(df.corr(), annot=True, cmap='coolwarm') — מטריצת מתאמים. annot מציג את הערכים, cmap קובע את סקאלת הצבע.</li><li>FacetGrid(df, col='c1', row='c2') — אותו גרף חוזר לכל שילוב קטגוריות. השיטה הישירה: relplot או displot עם col ו-row.</li><li>PairGrid — גרסה ידנית של pairplot: אפשר גרף שונה באלכסון, במשולש העליון ובתחתון.</li><li>lmplot(x=, y=, data=, hue=, col=) — פיזור עם קו רגרסיה ורצועת אי-ודאות, מפוצל לפי קטגוריות.</li></ul>
+<h4 class='sec-h'>סגנון וצבע</h4>
+<pre class='code-block'><code>import seaborn as sns
+
+sns.set_style('whitegrid')     # white, dark, darkgrid, ticks
+sns.set_context('talk', font_scale=1.1)   # paper, notebook, talk, poster
+sns.despine(left=True)         # הסרת מסגרות
+
+# פלטות
+sns.boxplot(x='day', y='total_bill', data=tips, palette='coolwarm')
+
+# גודל: גרף רגיל דרך Matplotlib, גרף-רשת דרך height ו-aspect
+plt.figure(figsize=(10, 5))
+sns.lmplot(x='total_bill', y='tip', data=tips, height=5, aspect=1.4)</code></pre>
+<h4 class='sec-h'>שמות פונקציות שהשתנו</h4>
+<p>המחברות של הקורס כתובות מול גרסה ישנה של Seaborn. שלוש פונקציות שמופיעות בהן הוסרו או שונו, וקוד שמעתיקים משם ייכשל בגרסאות עדכניות:</p>
+<table class='kbtable'><tr><td><strong>בקוד הישן</strong></td><td><strong>החלופה העדכנית</strong></td><td><strong>הערה</strong></td></tr><tr><td>sns.distplot(x)</td><td>sns.histplot(x, kde=True)</td><td>או sns.displot לגרסת figure-level</td></tr><tr><td>sns.factorplot(...)</td><td>sns.catplot(...)</td><td>שינוי שם בלבד</td></tr><tr><td>size=</td><td>height=</td><td>בכל הגרפים ברמת figure</td></tr></table>
+<h4 class='sec-h'>יתרונות</h4>
+<ul><li>עובד ישירות מול DataFrame — מעביר שמות עמודות ולא מערכים.</li><li>אגרגציה ורווחי סמך מחושבים אוטומטית.</li><li>hue, col ו-row מפצלים לפי קטגוריה בלי לולאות.</li><li>ברירות מחדל עיצוביות טובות בהרבה מ-Matplotlib.</li></ul>
+<h4 class='sec-h'>מגבלות</h4>
+<ul><li>פחות שליטה מ-Matplotlib; לכוונון עדין יורדים לאובייקט ה-Axes שהפונקציה מחזירה.</li><li>איטי על טבלאות גדולות מאוד — pairplot על עשרות עמודות ייתקע.</li><li>ה-API השתנה בין גרסאות, ומדריכים ישנים ברשת כבר לא רצים.</li><li>אינו אינטראקטיבי.</li></ul>
+<h4 class='sec-h'>קוד לדוגמה</h4>
+<pre class='code-block'><code>import seaborn as sns
+import matplotlib.pyplot as plt
+
+tips = sns.load_dataset('tips')      # גם 'flights' ו-'iris' מובנים
+sns.set_style('whitegrid')
+
+# התפלגות
+sns.histplot(tips['total_bill'], bins=30, kde=True)
+
+# קשר בין שני משתנים, מפוצל לפי קטגוריה
+sns.lmplot(x='total_bill', y='tip', data=tips, hue='sex', col='time')
+
+# השוואה בין קבוצות
+sns.boxplot(x='day', y='total_bill', data=tips, hue='smoker',
+            palette='coolwarm')
+
+# מתאמים
+plt.figure(figsize=(8, 6))
+sns.heatmap(tips.corr(numeric_only=True), annot=True, cmap='coolwarm',
+            linewidths=1)</code></pre>
+<h4 class='sec-h'>שאלות ראיון נפוצות</h4>
+<p><strong>ש: מתי Seaborn ומתי Matplotlib?</strong></p>
+<p><strong>ת: </strong>Seaborn לגרפים סטטיסטיים סטנדרטיים מתוך DataFrame — התפלגויות, השוואות בין קבוצות, מתאמים. Matplotlib כשצריך שליטה מדויקת בפריסה או גרף לא סטנדרטי. הן לא מתחרות: Seaborn מחזירה אובייקט Axes של Matplotlib, אז אפשר להתחיל בגבוהה ולרדת לנמוכה לכוונון.</p>
+<p><strong>ש: מה ההבדל בין barplot ל-countplot?</strong></p>
+<p><strong>ת: </strong>countplot סופר כמה שורות יש בכל קטגוריה ומקבל רק ציר אחד. barplot מקבל גם משתנה מספרי ומציג אגרגציה שלו לכל קטגוריה — ברירת המחדל ממוצע, עם רצועת רווח סמך. countplot שקול ל-barplot עם ספירה.</p>
+<p><strong>ש: מה boxplot מסתיר ש-violinplot מראה?</strong></p>
+<p><strong>ת: </strong>boxplot מציג חמישה מספרים בלבד, ולכן שתי התפלגויות שונות לגמרי — למשל חד-שיאית מול דו-שיאית — יכולות להיראות זהות בו. violinplot מוסיף את אומדן הצפיפות ומגלה את הצורה האמיתית.</p>
