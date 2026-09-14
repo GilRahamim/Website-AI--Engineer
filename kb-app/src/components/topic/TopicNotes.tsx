@@ -1,13 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import { useUserDataStore } from '../../store/userDataStore';
 
 interface TopicNotesProps {
   topicId: string;
+  /** Lets the reader focus the textarea (N shortcut). */
+  inputRef?: RefObject<HTMLTextAreaElement | null>;
 }
 
 const SAVE_DEBOUNCE_MS = 500;
 
-export default function TopicNotes({ topicId }: TopicNotesProps) {
+export default function TopicNotes({ topicId, inputRef }: TopicNotesProps) {
   const isLoaded = useUserDataStore((s) => s.isLoaded);
   const storedText = useUserDataStore((s) => s.notes.get(topicId) ?? '');
   const setNote = useUserDataStore((s) => s.setNote);
@@ -96,6 +98,7 @@ export default function TopicNotes({ topicId }: TopicNotesProps) {
       </label>
       <textarea
         id={`topic-notes-${topicId}`}
+        ref={inputRef}
         value={value}
         onChange={(event) => {
           const text = event.target.value;

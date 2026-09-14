@@ -2,8 +2,10 @@ import { Component, lazy, Suspense, useEffect, type ReactNode } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Reader from './pages/Reader';
+import NotFound from './pages/NotFound';
 import { useUserDataStore } from './store/userDataStore';
 import CommandPalette from './components/palette/CommandPalette';
+import ScrollToTop from './components/layout/ScrollToTop';
 
 const Flashcards = lazy(() => import('./pages/Flashcards'));
 const Quiz = lazy(() => import('./pages/Quiz'));
@@ -65,6 +67,7 @@ export default function App() {
 
   return (
     <>
+      <ScrollToTop />
       <RouteErrorBoundary>
         <Suspense fallback={<RouteFallback />}>
           <Routes>
@@ -96,6 +99,7 @@ export default function App() {
                 export/import UI for data backup, so it carries none of the
                 hydration hazard the routes above had to design around. */}
             <Route path="/settings" element={<Settings />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </RouteErrorBoundary>

@@ -26,6 +26,16 @@ export default defineConfig({
         // outright isn't what we want (below is the deliberate, on-demand
         // alternative), so both directories stay excluded from the precache.
         globIgnores: ['**/topic-content/**', '**/topic-assets/**'],
+        // Fonts: @fontsource ships every weight × unicode subset as its own
+        // woff2 (33 files). Only the Hebrew + Latin subsets are ever used
+        // by this app's text, so precache just those (≈12 small files) and
+        // let the rest fall back to system fonts if they're ever requested
+        // offline.
+        globPatterns: [
+          '**/*.{js,wasm,css,html}',
+          'assets/heebo-{hebrew,latin}-[0-9]*-normal-*.woff2',
+          'assets/jetbrains-mono-latin-{400,500}-normal-*.woff2',
+        ],
         // Runtime caching: once a topic's HTML or an image has been
         // fetched once (the user opened that topic while online), every
         // future request for that exact URL is served from the cache —

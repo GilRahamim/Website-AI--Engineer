@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import TopicReader from './TopicReader';
 import { useUserDataStore } from '../../store/userDataStore';
@@ -15,30 +16,40 @@ const topic: Topic = {
   slug_name: 'Linear Regression',
   title: 'Linear Regression — רגרסיה לינארית',
   definition: 'שיטת למידה מונחית לחיזוי ערך רציף.',
-  related_raw: [],
-  related_match: ['related-id'],
+  related_raw: ['Related Topic', 'R²'],
+  related_match: ['related-id', null],
   contentPath: '/topic-content/x.html',
 };
 
-const relatedTopic: Topic = { ...topic, id: 'related-id', title: 'Related Topic' };
-const topicsById = new Map([[relatedTopic.id, relatedTopic]]);
+const relatedTopic: Topic = { ...topic, id: 'related-id', title: 'Related Topic', num: 3, related_raw: [], related_match: [] };
+const topics = [topic, relatedTopic];
+const topicsById = new Map(topics.map((t) => [t.id, t]));
+
+const CONTENT = "<h4 class='sec-h'>הגדרה</h4><p>תוכן הנושא המלא</p><h4 class='sec-h'>השוואה</h4><p>עוד</p>";
 
 beforeEach(() => {
   global.fetch = vi.fn().mockResolvedValue({
     ok: true,
-    text: () => Promise.resolve('<p>תוכן הנושא המלא</p>'),
+    text: () => Promise.resolve(CONTENT),
   }) as unknown as typeof fetch;
-  useUserDataStore.setState({ progress: new Map(), favorites: new Set(), recents: [], notes: new Map(), isLoaded: true });
+  useUserDataStore.setState({
+    progress: new Map(),
+    favorites: new Set(),
+    recents: [],
+    notes: new Map(),
+    srsCards: new Map(),
+    isLoaded: true,
+  });
 });
 
 afterEach(() => {
   vi.restoreAllMocks();
 });
 
-function renderWithRouter() {
+function renderWithRouter(current: Topic = topic) {
   return render(
     <MemoryRouter>
-      <TopicReader topic={topic} topicsById={topicsById} />
+      <TopicReader topic={current} topics={topics} topicsById={topicsById} />
     </MemoryRouter>,
   );
 }
@@ -46,10 +57,15 @@ function renderWithRouter() {
 describe('TopicReader', () => {
   it('renders the breadcrumb, category badge, title and definition', () => {
     renderWithRouter();
-    expect(screen.getByText('מבוא למדעי הנתונים')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'מבוא למדעי הנתונים' })).toHaveAttribute('href', '/');
     expect(screen.getByText('אלגוריתמים')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: topic.title })).toBeInTheDocument();
     expect(screen.getByText(topic.definition)).toBeInTheDocument();
+  });
+
+  it('shows the topic position within its module', () => {
+    renderWithRouter();
+    expect(screen.getByText('נושא 1 מתוך 2 במודול')).toBeInTheDocument();
   });
 
   it('fetches and renders the full content from contentPath', async () => {
@@ -58,9 +74,37 @@ describe('TopicReader', () => {
     await waitFor(() => expect(screen.getByText('תוכן הנושא המלא')).toBeInTheDocument());
   });
 
-  it('renders resolved related topics', async () => {
+  it('shows an estimated reading time once the content has loaded', async () => {
     renderWithRouter();
-    await waitFor(() => expect(screen.getByText('Related Topic')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(/דקת קריאה|דקות קריאה/)).toBeInTheDocument());
+  });
+
+  it('builds a table of contents from the content headings and scrolls to a selected one', async () => {
+    const scrollIntoView = vi.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    const user = userEvent.setup();
+    renderWithRouter();
+    const toc = await screen.findByRole('navigation', { name: 'בעמוד זה' });
+    expect(toc).toHaveTextContent('הגדרה');
+    expect(toc).toHaveTextContent('השוואה');
+    await user.click(screen.getByRole('link', { name: 'השוואה' }));
+    expect(scrollIntoView).toHaveBeenCalled();
+    expect(document.getElementById('sec-2')).toHaveTextContent('השוואה');
+  });
+
+  it('renders previous/next navigation within the module', () => {
+    renderWithRouter();
+    expect(screen.getByRole('link', { name: /הבא.*Related Topic/ })).toHaveAttribute(
+      'href',
+      `/topic/${encodeURIComponent(relatedTopic.id)}`,
+    );
+    expect(screen.queryByRole('link', { name: /הקודם/ })).not.toBeInTheDocument();
+  });
+
+  it('renders resolved related topics and unresolved names', async () => {
+    renderWithRouter();
+    await waitFor(() => expect(screen.getByRole('link', { name: 'Related Topic' })).toBeInTheDocument());
+    expect(screen.getByText('R² (לא במאגר)')).toBeInTheDocument();
   });
 
   it('renders an error state when the content fetch fails', async () => {
@@ -89,14 +133,27 @@ describe('TopicReader', () => {
     );
   });
 
-  it('renders status and favorite controls for the topic', () => {
+  it('renders the learning-state control and favorite button for the topic', () => {
     renderWithRouter();
-    expect(screen.getByRole('button', { name: /מצב למידה/ })).toBeInTheDocument();
+    expect(screen.getByRole('radiogroup', { name: 'מצב למידה' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /מועדפים/ })).toBeInTheDocument();
   });
 
-  it('renders the personal notes textarea for the topic', () => {
+  it('shows the next review date from the SRS card', () => {
+    const now = Date.now();
+    useUserDataStore.setState({
+      srsCards: new Map([
+        [topic.id, { topicId: topic.id, ease: 2.5, intervalDays: 4, dueAt: now + 4 * 86400000, reps: 3, lapses: 0, updatedAt: now }],
+      ]),
+    });
     renderWithRouter();
-    expect(screen.getByLabelText('ההערות שלי')).toBeInTheDocument();
+    expect(screen.getByText(/חזרה הבאה בעוד 4 ימים/)).toBeInTheDocument();
+  });
+
+  it('renders the personal notes textarea and focuses it on the N shortcut', () => {
+    renderWithRouter();
+    const notes = screen.getByLabelText('ההערות שלי');
+    fireEvent.keyDown(window, { key: 'n' });
+    expect(notes).toHaveFocus();
   });
 });

@@ -43,6 +43,12 @@ describe('CommandPalette', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
+  it('opens when the header search control dispatches the kb-open-palette event', () => {
+    renderPalette();
+    fireEvent(window, new Event('kb-open-palette'));
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
   it('shows all six actions and no topics when opened with an empty query', async () => {
     const user = userEvent.setup();
     renderPalette();

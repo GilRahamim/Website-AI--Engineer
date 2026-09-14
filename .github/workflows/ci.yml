@@ -13,9 +13,9 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version-file: kb-app/.nvmrc
           cache: npm
@@ -41,6 +41,8 @@ jobs:
         working-directory: kb-app
         run: npm run build
 
-      - name: Verify SPA fallback in build output
+      # The SPA fallback lives in wrangler.jsonc (Cloudflare's current
+      # Workers-assets flow), not in a _redirects file — see docs/DEPLOY.md.
+      - name: Verify SPA fallback config
         working-directory: kb-app
-        run: grep -qxF '/* /index.html 200' dist/_redirects
+        run: grep -q '"not_found_handling": "single-page-application"' wrangler.jsonc

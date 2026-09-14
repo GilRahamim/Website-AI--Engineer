@@ -33,6 +33,12 @@ describe('TopicNotes', () => {
     expect(screen.getByLabelText('ההערות שלי')).toHaveValue('');
   });
 
+  it('exposes the textarea through inputRef so the reader can focus it', () => {
+    const ref = { current: null as HTMLTextAreaElement | null };
+    render(<TopicNotes topicId="topic-a" inputRef={ref} />);
+    expect(ref.current).toBe(screen.getByLabelText('ההערות שלי'));
+  });
+
   it('renders the existing note text as the initial value', () => {
     useUserDataStore.setState({ notes: new Map([['topic-a', 'existing note']]) });
     render(<TopicNotes topicId="topic-a" />);

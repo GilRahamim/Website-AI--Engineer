@@ -34,21 +34,40 @@ export default function CommandPalette() {
   // happens inside this same event-handler callback (not a bare useEffect
   // body), so it never trips react-hooks/set-state-in-effect.
   useEffect(() => {
+    function toggle() {
+      setOpen((wasOpen) => {
+        const next = !wasOpen;
+        if (next) {
+          setQuery('');
+          setSelectedIndex(0);
+        }
+        return next;
+      });
+    }
     function handleGlobalKeyDown(event: globalThis.KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && (event.key.toLowerCase() === 'k' || event.code === 'KeyK')) {
         event.preventDefault();
-        setOpen((wasOpen) => {
-          const next = !wasOpen;
-          if (next) {
-            setQuery('');
-            setSelectedIndex(0);
-          }
-          return next;
-        });
+        toggle();
       }
     }
+    // The header's search control (a pointer-friendly stand-in for Ctrl+K)
+    // asks for the palette via this window event rather than importing
+    // palette state, keeping the two components decoupled.
+    function handleOpenRequest() {
+      setOpen((wasOpen) => {
+        if (!wasOpen) {
+          setQuery('');
+          setSelectedIndex(0);
+        }
+        return true;
+      });
+    }
     window.addEventListener('keydown', handleGlobalKeyDown);
-    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+    window.addEventListener('kb-open-palette', handleOpenRequest);
+    return () => {
+      window.removeEventListener('keydown', handleGlobalKeyDown);
+      window.removeEventListener('kb-open-palette', handleOpenRequest);
+    };
   }, []);
 
   // Focus management only (ref writes + .focus() calls) — same pattern as

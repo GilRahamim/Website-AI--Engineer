@@ -154,6 +154,27 @@ describe('App', () => {
     await waitFor(() => expect(startSpy).toHaveBeenCalledTimes(1));
   });
 
+  it('renders a not-found page with a home link for an unknown route', () => {
+    render(
+      <MemoryRouter initialEntries={['/no-such-page']}>
+        <App />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('heading', { level: 1, name: 'הדף לא נמצא' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'חזרה לדף הבית' })).toHaveAttribute('href', '/');
+  });
+
+  it('scrolls to the top when the route changes', async () => {
+    const scrollSpy = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    const knownTopic = topicsData[0];
+    render(
+      <MemoryRouter initialEntries={['/', `/topic/${encodeURIComponent(knownTopic.id)}`]} initialIndex={1}>
+        <App />
+      </MemoryRouter>,
+    );
+    await waitFor(() => expect(scrollSpy).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'instant' }));
+  });
+
   it('RouteErrorBoundary shows a reload message when a child throws during render', () => {
     function Boom(): never {
       throw new Error('boom');

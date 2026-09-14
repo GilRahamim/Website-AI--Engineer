@@ -17,9 +17,9 @@ function reset() {
   });
 }
 
-function renderWithRouter() {
+function renderWithRouter(path = '/') {
   return render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[path]}>
       <Header />
     </MemoryRouter>,
   );
@@ -47,7 +47,24 @@ describe('Header', () => {
 
   it('renders the theme toggle button', () => {
     renderWithRouter();
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /ערכת נושא/ })).toBeInTheDocument();
+  });
+
+  it('renders a home link in the nav and marks the current page with aria-current', () => {
+    renderWithRouter('/quiz');
+    expect(screen.getByRole('link', { name: 'בית' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: 'מבחן' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('link', { name: 'בית' })).not.toHaveAttribute('aria-current');
+  });
+
+  it('renders a search control that opens the command palette', async () => {
+    const user = userEvent.setup();
+    const listener = vi.fn();
+    window.addEventListener('kb-open-palette', listener);
+    renderWithRouter();
+    await user.click(screen.getByRole('button', { name: /חיפוש מהיר/ }));
+    expect(listener).toHaveBeenCalledTimes(1);
+    window.removeEventListener('kb-open-palette', listener);
   });
 
   it('uses the header landmark', () => {

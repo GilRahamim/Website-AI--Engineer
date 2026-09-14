@@ -56,4 +56,17 @@ describe('RelatedTopics', () => {
     renderWithRouter(<RelatedTopics relatedIds={['a']} topicsById={topicsById} />);
     expect(screen.getByRole('link')).toHaveAttribute('href', `/topic/${encodeURIComponent('a')}`);
   });
+
+  it('shows unresolved raw names as non-link chips marked as missing from the dataset', () => {
+    renderWithRouter(<RelatedTopics relatedIds={['a', null]} relatedRaw={['Logistic Regression', 'R²']} topicsById={topicsById} />);
+    expect(screen.getAllByRole('link')).toHaveLength(1);
+    const missing = screen.getByText(/R²/);
+    expect(missing).toHaveTextContent('R² (לא במאגר)');
+    expect(missing.closest('a')).toBeNull();
+  });
+
+  it('renders the section when only unresolved names exist', () => {
+    renderWithRouter(<RelatedTopics relatedIds={[null]} relatedRaw={['R²']} topicsById={topicsById} />);
+    expect(screen.getByRole('navigation', { name: 'נושאים קשורים' })).toBeInTheDocument();
+  });
 });

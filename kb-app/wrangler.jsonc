@@ -15,6 +15,11 @@
     // output of `npm run build`, which must run before `wrangler deploy`
     // (set as the dashboard's "Build command").
     "directory": "./dist",
+    // Cloudflare's default ("auto-trailing-slash") 307-redirects every
+    // /topic-content/x.html request to the extensionless URL before serving
+    // it — a wasted round trip on every topic open, and a cache-key mismatch
+    // for the service worker. Serve .html files exactly as requested.
+    "html_handling": "none",
     // Cloudflare's documented mechanism for SPA fallback on this
     // product: any request that doesn't match a real file in dist/ is
     // served index.html with a 200, so React Router's BrowserRouter can

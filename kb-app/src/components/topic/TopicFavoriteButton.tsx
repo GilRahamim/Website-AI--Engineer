@@ -1,3 +1,4 @@
+import { Star } from 'lucide-react';
 import { useUserDataStore } from '../../store/userDataStore';
 
 interface TopicFavoriteButtonProps {
@@ -22,10 +23,10 @@ export default function TopicFavoriteButton({ topicId, size = 'sm', tabIndex = 0
       aria-pressed={isFavorite}
       aria-label={isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}
       className={`kb-favorite-star grid place-items-center rounded-full border border-[var(--kb-border)] bg-[var(--kb-surface)] ${
-        size === 'lg' ? 'size-12 text-2xl' : 'size-11 text-base'
+        size === 'lg' ? 'size-12' : 'size-11'
       }`}
     >
-      <span aria-hidden="true">{isFavorite ? '★' : '☆'}</span>
+      <Star aria-hidden="true" size={size === 'lg' ? 22 : 18} fill={isFavorite ? 'currentColor' : 'none'} />
     </button>
   );
 }

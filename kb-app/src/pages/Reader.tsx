@@ -22,8 +22,14 @@ export default function Reader() {
   return (
     <>
       <Header />
-      <main className="p-4">
-        {topic ? <TopicReader topic={topic} topicsById={topicsById} /> : <p role="alert">הנושא לא נמצא.</p>}
+      <main>
+        {topic ? (
+          <TopicReader topic={topic} topics={topics} topicsById={topicsById} />
+        ) : (
+          <p role="alert" className="p-8 text-center text-[var(--kb-text)]">
+            הנושא לא נמצא.
+          </p>
+        )}
       </main>
     </>
   );

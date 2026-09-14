@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Moon, Sun } from 'lucide-react';
 import { getCurrentTheme, setTheme } from '../../lib/theme';
 
 export default function ThemeToggle() {
@@ -25,9 +26,9 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={theme === 'dark' ? 'עבור לערכת נושא בהירה' : 'עבור לערכת נושא כהה'}
-      className="grid size-11 place-items-center rounded-full border border-[var(--kb-border)] bg-[var(--kb-surface)] text-base transition hover:bg-[var(--kb-surface2)]"
+      className="grid size-10 place-items-center rounded-[10px] bg-[var(--kb-surface2)] text-[var(--kb-text2)] transition-colors hover:bg-[var(--kb-border)] hover:text-[var(--kb-text)]"
     >
-      <span aria-hidden="true">{theme === 'dark' ? '☀️' : '🌙'}</span>
+      {theme === 'dark' ? <Sun aria-hidden="true" size={18} /> : <Moon aria-hidden="true" size={18} />}
     </button>
   );
 }

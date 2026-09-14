@@ -13,8 +13,17 @@ body {
   margin: 0;
   background: var(--kb-bg);
   color: var(--kb-text);
-  font-family: system-ui, sans-serif;
+  font-family: var(--kb-font-sans);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+code, kbd, pre, .font-mono {
+  font-family: var(--kb-font-mono);
+}
+
+a {
+  color: inherit;
 }
 
 :focus-visible {
@@ -33,20 +42,34 @@ a, button, [role="button"], input, select, textarea, [tabindex] {
   }
 }
 
+/* Category chip: neutral pill + colored dot. A solid colored pill with light
+   text failed AA contrast for the lighter category hues; the dot carries the
+   category color while the label stays on the regular text palette. */
 .kb-category-chip {
-  display: inline-block;
-  padding: 0.125rem 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.1875rem 0.625rem;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
-  color: var(--kb-bg);
-  background: var(--kb-muted);
+  color: var(--kb-text2);
+  background: var(--kb-surface2);
+  --kb-chip-dot: var(--kb-muted);
 }
-.kb-category-chip[data-category='algorithms'] { background: var(--kb-cat-algorithms); }
-.kb-category-chip[data-category='concepts'] { background: var(--kb-cat-concepts); }
-.kb-category-chip[data-category='metrics'] { background: var(--kb-cat-metrics); }
-.kb-category-chip[data-category='formulas'] { background: var(--kb-cat-formulas); }
-.kb-category-chip[data-category='architectures'] { background: var(--kb-cat-architectures); }
+.kb-category-chip::after {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--kb-chip-dot);
+  flex-shrink: 0;
+}
+.kb-category-chip[data-category='algorithms'] { --kb-chip-dot: var(--kb-cat-algorithms); }
+.kb-category-chip[data-category='concepts'] { --kb-chip-dot: var(--kb-cat-concepts); }
+.kb-category-chip[data-category='metrics'] { --kb-chip-dot: var(--kb-cat-metrics); }
+.kb-category-chip[data-category='formulas'] { --kb-chip-dot: var(--kb-cat-formulas); }
+.kb-category-chip[data-category='architectures'] { --kb-chip-dot: var(--kb-cat-architectures); }
 
 .kb-topic-card,
 .kb-topic-list-row {
@@ -97,15 +120,31 @@ a, button, [role="button"], input, select, textarea, [tabindex] {
 
 .kb-topic-content p {
   color: var(--kb-text2);
+  font-size: 1.0625rem;
+  line-height: 1.7;
 }
 
+/* Section headings get an id at render time (lib/tocFromHtml) so the table
+   of contents can jump to them; scroll-margin keeps the sticky header from
+   covering the heading after the jump. */
 .kb-topic-content .sec-h {
-  margin-top: 2rem;
-  padding-bottom: 0.35rem;
-  border-bottom: 2px solid var(--kb-border);
-  font-size: 1.05rem;
+  position: relative;
+  margin-top: 2.25rem;
+  padding-bottom: 0.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--kb-text);
+  scroll-margin-top: 5.5rem;
+}
+.kb-topic-content .sec-h::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  bottom: 0;
+  width: 2.25rem;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--kb-accent);
 }
 .kb-topic-content > .sec-h:first-child {
   margin-top: 0;
@@ -152,7 +191,7 @@ a, button, [role="button"], input, select, textarea, [tabindex] {
   width: max-content;
   min-width: 100%;
   white-space: pre;
-  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', monospace;
+  font-family: var(--kb-font-mono);
   color: var(--kb-text);
 }
 

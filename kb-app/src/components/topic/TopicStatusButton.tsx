@@ -1,5 +1,7 @@
+import { Circle, CircleCheck, CircleDot } from 'lucide-react';
 import { useUserDataStore } from '../../store/userDataStore';
-import { NEXT_STATUS, STATUS_GLYPHS, STATUS_LABELS } from '../../lib/progressStatus';
+import { NEXT_STATUS, STATUS_LABELS } from '../../lib/progressStatus';
+import type { ProgressStatus } from '../../types';
 
 interface TopicStatusButtonProps {
   topicId: string;
@@ -7,9 +9,16 @@ interface TopicStatusButtonProps {
   tabIndex?: number;
 }
 
+const STATUS_ICONS: Record<ProgressStatus, typeof Circle> = {
+  new: Circle,
+  learning: CircleDot,
+  mastered: CircleCheck,
+};
+
 export default function TopicStatusButton({ topicId, size = 'sm', tabIndex = 0 }: TopicStatusButtonProps) {
   const status = useUserDataStore((s) => s.progress.get(topicId) ?? 'new');
   const cycleStatus = useUserDataStore((s) => s.cycleStatus);
+  const Icon = STATUS_ICONS[status];
 
   return (
     <button
@@ -26,10 +35,10 @@ export default function TopicStatusButton({ topicId, size = 'sm', tabIndex = 0 }
       aria-label={`מצב למידה: ${STATUS_LABELS[status]}. לחץ למעבר ל'${STATUS_LABELS[NEXT_STATUS[status]]}'`}
       data-status={status}
       className={`kb-status-pill grid place-items-center rounded-full border border-[var(--kb-border)] bg-[var(--kb-surface)] ${
-        size === 'lg' ? 'size-12 text-2xl' : 'size-11 text-base'
+        size === 'lg' ? 'size-12' : 'size-11'
       }`}
     >
-      <span aria-hidden="true">{STATUS_GLYPHS[status]}</span>
+      <Icon aria-hidden="true" size={size === 'lg' ? 22 : 18} />
     </button>
   );
 }
