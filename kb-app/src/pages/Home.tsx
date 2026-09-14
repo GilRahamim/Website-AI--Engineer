@@ -19,7 +19,6 @@ import ShortcutsHelp from '../components/layout/ShortcutsHelp';
 import SearchBar from '../components/browse/SearchBar';
 import FilterChips from '../components/browse/FilterChips';
 import SortMenu from '../components/browse/SortMenu';
-import ViewToggle from '../components/browse/ViewToggle';
 import AccordionGroup from '../components/browse/AccordionGroup';
 
 const topics = topicsRaw as Topic[];
@@ -152,7 +151,6 @@ export default function Home() {
               ))}
             </div>
             <SortMenu />
-            <ViewToggle />
           </div>
           <FilterChips modules={modules} categoryLabels={categoryLabels} />
           <div className="mb-4 flex gap-2 text-sm">
