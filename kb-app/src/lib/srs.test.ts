@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { gradeCard, getDueTopicIds, isDue } from './srs';
+import { getDueStats, gradeCard, getDueTopicIds, isDue } from './srs';
 import type { SrsCard, Topic } from '../types';
 
 const NOW = 1_700_000_000_000;
@@ -113,5 +113,41 @@ describe('getDueTopicIds', () => {
       ['c', card({ topicId: 'c', dueAt: NOW + DAY_MS })],
     ]);
     expect(getDueTopicIds(topics, srsCards, NOW)).toEqual(['a', 'b']);
+  });
+});
+
+describe('getDueStats', () => {
+  function topic(id: string): Topic {
+    return {
+      id,
+      module: 'm',
+      module_label: 'M',
+      category: 'concepts',
+      category_label: 'C',
+      num: 1,
+      slug_name: id,
+      title: id,
+      definition: 'd',
+      related_raw: [],
+      related_match: [],
+      contentPath: '/x.html',
+    };
+  }
+
+  it('counts only scheduled past-due cards as due, never-reviewed topics as new, and reviewed cards', () => {
+    const topics = [topic('a'), topic('b'), topic('c'), topic('d')];
+    const srsCards = new Map<string, SrsCard>([
+      ['b', card({ topicId: 'b', dueAt: NOW - 1, reps: 2 })],
+      ['c', card({ topicId: 'c', dueAt: NOW + DAY_MS, reps: 1 })],
+    ]);
+    expect(getDueStats(topics, srsCards, NOW)).toEqual({ dueCount: 1, newCount: 2, reviewedCount: 2 });
+  });
+
+  it('reports zero due for a fresh user', () => {
+    expect(getDueStats([topic('a'), topic('b')], new Map(), NOW)).toEqual({
+      dueCount: 0,
+      newCount: 2,
+      reviewedCount: 0,
+    });
   });
 });

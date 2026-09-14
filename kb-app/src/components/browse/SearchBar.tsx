@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Search } from 'lucide-react';
 import { useUiStore } from '../../store/uiStore';
 
 export default function SearchBar() {
@@ -34,7 +35,7 @@ export default function SearchBar() {
   return (
     <label className="flex min-h-11 flex-1 items-center gap-2 rounded-lg border border-[var(--kb-border)] bg-[var(--kb-surface)] px-3">
       <span className="sr-only">חיפוש נושאים</span>
-      <span aria-hidden="true">🔍</span>
+      <Search aria-hidden="true" size={18} className="shrink-0 text-[var(--kb-muted)]" />
       <input
         ref={inputRef}
         type="search"
@@ -42,7 +43,7 @@ export default function SearchBar() {
         aria-label="חיפוש נושאים"
         value={localValue}
         onChange={(event) => setLocalValue(event.target.value)}
-        placeholder="חפש נושא… (לחץ / למיקוד)"
+        placeholder="חפש נושא…"
         className="w-full bg-transparent py-2 text-[var(--kb-text)] outline-none placeholder:text-[var(--kb-muted)]"
       />
     </label>

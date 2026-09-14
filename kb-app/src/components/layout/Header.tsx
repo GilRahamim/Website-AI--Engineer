@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Download, Search, SlidersHorizontal, Sparkles } from 'lucide-react';
+import { Download, Menu, Search, SlidersHorizontal, Sparkles } from 'lucide-react';
 import topicsRaw from '../../data/topics.clean.json';
 import type { Topic } from '../../types';
-import { getDueTopicIds } from '../../lib/srs';
+import { getDueStats } from '../../lib/srs';
 import { useUserDataStore } from '../../store/userDataStore';
+import { useUiStore } from '../../store/uiStore';
 import { useInstallPrompt } from '../../hooks/useInstallPrompt';
 import ThemeToggle from '../theme/ThemeToggle';
 
@@ -23,20 +24,33 @@ const iconButtonClass =
 export default function Header() {
   const srsCards = useUserDataStore((s) => s.srsCards);
   const [now] = useState(() => Date.now());
-  const dueCount = getDueTopicIds(topics, srsCards, now).length;
+  const { dueCount } = getDueStats(topics, srsCards, now);
   const { canInstall, promptInstall } = useInstallPrompt();
+  const drawerOpen = useUiStore((s) => s.drawerOpen);
+  const setDrawerOpen = useUiStore((s) => s.setDrawerOpen);
 
   return (
     <header className="sticky top-0 z-10 border-b border-[var(--kb-border)] bg-[var(--kb-surface)] shadow-[var(--kb-shadow-sm)]">
       <div className="mx-auto flex min-h-16 max-w-[1440px] items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-2.5 text-[var(--kb-text)] no-underline">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setDrawerOpen(true)}
+            aria-label="פתח תפריט"
+            aria-expanded={drawerOpen}
+            className={`${iconButtonClass} md:hidden`}
+          >
+            <Menu aria-hidden="true" size={20} />
+          </button>
+          <Link to="/" className="flex items-center gap-2.5 text-[var(--kb-text)] no-underline">
           <span className="grid size-9 place-items-center rounded-[10px] bg-[var(--kb-accent-soft)] text-[var(--kb-accent)]">
             <Sparkles aria-hidden="true" size={18} />
           </span>
           <strong className="text-lg font-extrabold max-sm:sr-only">AI Engineer</strong>
         </Link>
+        </div>
 
-        <nav aria-label="ניווט ראשי" className="flex items-center gap-0.5 sm:gap-1">
+        <nav aria-label="ניווט ראשי" className="hidden items-center gap-1 md:flex">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}

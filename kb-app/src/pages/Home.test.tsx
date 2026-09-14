@@ -16,7 +16,7 @@ function reset() {
     selectedStatuses: new Set(),
     sortOrder: 'original',
     viewMode: 'grid',
-    sidebarCollapsed: false,
+    drawerOpen: false,
     expandedGroups: new Set(allModuleKeys),
     includeNotesInSearch: false,
   });
@@ -33,14 +33,63 @@ function reset() {
 describe('Home', () => {
   beforeEach(reset);
 
-  it('renders the hero with the real topic count', () => {
-    const { container } = render(
+  it('renders the dashboard with the real topic count and zero mastered by default', () => {
+    render(
       <MemoryRouter>
         <Home />
       </MemoryRouter>,
     );
-    const hero = container.querySelector('section') as HTMLElement;
-    expect(within(hero).getByText(String(topicsData.length))).toBeInTheDocument();
+    expect(screen.getByText(`0 מתוך ${topicsData.length} נושאים נשלטו`)).toBeInTheDocument();
+    expect(screen.getByRole('progressbar', { name: 'התקדמות כללית' })).toHaveAttribute('aria-valuenow', '0');
+  });
+
+  it('renders the mobile module chips, the tab bar, and the desktop sidebar', () => {
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('group', { name: 'סינון לפי מודול' })).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'ניווט תחתון' })).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'ניווט מודולים' })).toBeInTheDocument();
+  });
+
+  it('opens the filter drawer with the sidebar content from the header menu button', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>,
+    );
+    await user.click(screen.getByRole('button', { name: 'פתח תפריט' }));
+    const dialog = screen.getByRole('dialog', { name: 'סינון וניווט' });
+    expect(within(dialog).getByRole('navigation', { name: 'ניווט קטגוריות' })).toBeInTheDocument();
+  });
+
+  it('points a brand-new user at the first topic under "start here"', () => {
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('link', { name: /התחל כאן/ })).toHaveAttribute(
+      'href',
+      `/topic/${encodeURIComponent(topicsData[0].id)}`,
+    );
+  });
+
+  it('shows the most recently viewed topic as "continue reading"', () => {
+    const recent = topicsData[3];
+    useUserDataStore.setState({ recents: [{ topicId: recent.id, viewedAt: Date.now() }] });
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('link', { name: new RegExp(`המשך קריאה.*${recent.title.slice(0, 10)}`) })).toHaveAttribute(
+      'href',
+      `/topic/${encodeURIComponent(recent.id)}`,
+    );
   });
 
   it('renders every module as an accordion group, expanded by default', () => {
@@ -125,7 +174,7 @@ describe('Home', () => {
         <Home />
       </MemoryRouter>,
     );
-    expect(screen.getByText(`מתוך ${topicsData.length} נשלטו`)).toBeInTheDocument();
+    expect(screen.getByText(`1 מתוך ${topicsData.length} נושאים נשלטו`)).toBeInTheDocument();
   });
 
   it('narrows visible topics when a status filter is toggled from the store', () => {
@@ -173,14 +222,14 @@ describe('Home', () => {
     expect(within(screen.getByRole('main')).getAllByRole('link')).toHaveLength(1);
   });
 
-  it('renders the Daily Review card with the correct due count and a random-concept link', () => {
+  it('reports nothing due for a fresh user (never-reviewed topics are new, not due) and links a random concept', () => {
     render(
       <MemoryRouter>
         <Home />
       </MemoryRouter>,
     );
-    expect(screen.getByText(`${topicsData.length} ממתינים היום`)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'התחל חזרה' })).toHaveAttribute('href', '/flashcards');
+    expect(screen.getByText(`0 בלמידה · ${topicsData.length} נושאים חדשים`)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /אין כרטיסים לחזרה היום/ })).toHaveAttribute('href', '/flashcards');
     const randomLink = screen.getByRole('link', { name: /מושג אקראי/ });
     const linkedId = decodeURIComponent(randomLink.getAttribute('href')!.replace('/topic/', ''));
     expect(topicsData.some((t) => t.id === linkedId)).toBe(true);
@@ -195,8 +244,8 @@ describe('Home', () => {
           {
             topicId: topicsData[0].id,
             ease: 2.5,
-            intervalDays: 30,
-            dueAt: now + 1000 * 60 * 60 * 24 * 30,
+            intervalDays: 1,
+            dueAt: now - 1000,
             reps: 1,
             lapses: 0,
             updatedAt: now,
@@ -209,6 +258,6 @@ describe('Home', () => {
         <Home />
       </MemoryRouter>,
     );
-    expect(screen.getByText(`${topicsData.length - 1} ממתינים היום`)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /התחל חזרה · 1 ממתינים/ })).toHaveAttribute('href', '/flashcards');
   });
 });

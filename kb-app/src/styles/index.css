@@ -53,6 +53,7 @@ a, button, [role="button"], input, select, textarea, [tabindex] {
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
   color: var(--kb-text2);
   background: var(--kb-surface2);
   --kb-chip-dot: var(--kb-muted);
@@ -65,15 +66,29 @@ a, button, [role="button"], input, select, textarea, [tabindex] {
   background: var(--kb-chip-dot);
   flex-shrink: 0;
 }
-.kb-category-chip[data-category='algorithms'] { --kb-chip-dot: var(--kb-cat-algorithms); }
-.kb-category-chip[data-category='concepts'] { --kb-chip-dot: var(--kb-cat-concepts); }
-.kb-category-chip[data-category='metrics'] { --kb-chip-dot: var(--kb-cat-metrics); }
-.kb-category-chip[data-category='formulas'] { --kb-chip-dot: var(--kb-cat-formulas); }
-.kb-category-chip[data-category='architectures'] { --kb-chip-dot: var(--kb-cat-architectures); }
+/* Stand-alone dot for compact rows, same category → color mapping. */
+.kb-category-dot {
+  display: inline-block;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 999px;
+  background: var(--kb-chip-dot, var(--kb-muted));
+}
+.kb-category-chip[data-category='algorithms'],
+.kb-category-dot[data-category='algorithms'] { --kb-chip-dot: var(--kb-cat-algorithms); }
+.kb-category-chip[data-category='concepts'],
+.kb-category-dot[data-category='concepts'] { --kb-chip-dot: var(--kb-cat-concepts); }
+.kb-category-chip[data-category='metrics'],
+.kb-category-dot[data-category='metrics'] { --kb-chip-dot: var(--kb-cat-metrics); }
+.kb-category-chip[data-category='formulas'],
+.kb-category-dot[data-category='formulas'] { --kb-chip-dot: var(--kb-cat-formulas); }
+.kb-category-chip[data-category='architectures'],
+.kb-category-dot[data-category='architectures'] { --kb-chip-dot: var(--kb-cat-architectures); }
 
+/* Unlayered rules beat Tailwind's utility layer, so no `display` here — the
+   components set their own flex layout via utilities. */
 .kb-topic-card,
 .kb-topic-list-row {
-  display: block;
   border-radius: 12px;
   border: 1px solid var(--kb-border);
   background: var(--kb-surface);

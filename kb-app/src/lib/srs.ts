@@ -42,3 +42,34 @@ export function gradeCard(topicId: string, card: SrsCard | undefined, rating: Sr
 export function getDueTopicIds(topics: Topic[], srsCards: Map<string, SrsCard>, now: number): string[] {
   return topics.filter((topic) => isDue(srsCards.get(topic.id), now)).map((topic) => topic.id);
 }
+
+export interface DueStats {
+  /** Scheduled cards whose review date has arrived. */
+  dueCount: number;
+  /** Topics that have never been reviewed (no card yet). */
+  newCount: number;
+  /** Cards reviewed at least once. */
+  reviewedCount: number;
+}
+
+/**
+ * Splits the "due" notion used by the flashcard queue (where a never-reviewed
+ * topic counts as due so it can be introduced) into what the dashboard and
+ * badges should show: only cards on a real schedule count as due, so a fresh
+ * user sees zero waiting rather than the whole course.
+ */
+export function getDueStats(topics: Topic[], srsCards: Map<string, SrsCard>, now: number): DueStats {
+  let dueCount = 0;
+  let newCount = 0;
+  let reviewedCount = 0;
+  for (const topic of topics) {
+    const card = srsCards.get(topic.id);
+    if (!card) {
+      newCount += 1;
+      continue;
+    }
+    if (card.reps > 0) reviewedCount += 1;
+    if (card.dueAt <= now) dueCount += 1;
+  }
+  return { dueCount, newCount, reviewedCount };
+}

@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import Header from './Header';
 import { useUserDataStore } from '../../store/userDataStore';
+import { useUiStore } from '../../store/uiStore';
 import topicsData from '../../data/topics.clean.json';
 
 function reset() {
@@ -92,9 +93,31 @@ describe('Header', () => {
     expect(screen.getByRole('link', { name: 'הגדרות' })).toHaveAttribute('href', '/settings');
   });
 
-  it('shows a due-count badge when cards are due (every topic starts never-reviewed = due)', () => {
+  it('shows no badge for a fresh user (never-reviewed topics are new, not due)', () => {
     renderWithRouter();
-    expect(screen.getByLabelText(`${topicsData.length} כרטיסים ממתינים לחזרה`)).toBeInTheDocument();
+    expect(screen.queryByText(/כרטיסים ממתינים לחזרה/)).not.toBeInTheDocument();
+  });
+
+  it('shows a due-count badge counting only scheduled cards whose review date has arrived', () => {
+    const now = Date.now();
+    useUserDataStore.setState({
+      srsCards: new Map([
+        [topicsData[0].id, { topicId: topicsData[0].id, ease: 2.5, intervalDays: 1, dueAt: now - 1, reps: 1, lapses: 0, updatedAt: now }],
+        [topicsData[1].id, { topicId: topicsData[1].id, ease: 2.5, intervalDays: 9, dueAt: now + 86400000, reps: 1, lapses: 0, updatedAt: now }],
+      ]),
+    });
+    renderWithRouter();
+    expect(screen.getByLabelText('1 כרטיסים ממתינים לחזרה')).toBeInTheDocument();
+  });
+
+  it('renders a menu button that opens the mobile drawer via the ui store', async () => {
+    const user = userEvent.setup();
+    useUiStore.setState({ drawerOpen: false });
+    renderWithRouter();
+    const menu = screen.getByRole('button', { name: 'פתח תפריט' });
+    expect(menu).toHaveAttribute('aria-expanded', 'false');
+    await user.click(menu);
+    expect(useUiStore.getState().drawerOpen).toBe(true);
   });
 
   it('hides the badge when nothing is due', () => {

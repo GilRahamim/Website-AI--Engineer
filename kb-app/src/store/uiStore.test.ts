@@ -12,7 +12,7 @@ function reset() {
     selectedStatuses: new Set(),
     sortOrder: 'original',
     viewMode: 'grid',
-    sidebarCollapsed: false,
+    drawerOpen: false,
     expandedGroups: new Set(allModuleKeys),
     includeNotesInSearch: false,
   });
@@ -93,11 +93,11 @@ describe('uiStore', () => {
     expect(useUiStore.getState().viewMode).toBe('list');
   });
 
-  it('toggleSidebarCollapsed flips the flag', () => {
-    useUiStore.getState().toggleSidebarCollapsed();
-    expect(useUiStore.getState().sidebarCollapsed).toBe(true);
-    useUiStore.getState().toggleSidebarCollapsed();
-    expect(useUiStore.getState().sidebarCollapsed).toBe(false);
+  it('setDrawerOpen sets the mobile drawer flag', () => {
+    useUiStore.getState().setDrawerOpen(true);
+    expect(useUiStore.getState().drawerOpen).toBe(true);
+    useUiStore.getState().setDrawerOpen(false);
+    expect(useUiStore.getState().drawerOpen).toBe(false);
   });
 
   it('toggleGroup, expandAllGroups, collapseAllGroups manage expandedGroups', () => {

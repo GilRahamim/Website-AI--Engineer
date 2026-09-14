@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { BookOpen, Star } from 'lucide-react';
 import type { ModulesMap, Topic } from '../../types';
 import { useUiStore } from '../../store/uiStore';
 import { useUserDataStore } from '../../store/userDataStore';
@@ -12,6 +13,43 @@ interface SidebarProps {
   topicsById: Map<string, Topic>;
 }
 
+const CATEGORY_DOT: Record<string, string> = {
+  algorithms: 'var(--kb-cat-algorithms)',
+  concepts: 'var(--kb-cat-concepts)',
+  metrics: 'var(--kb-cat-metrics)',
+  formulas: 'var(--kb-cat-formulas)',
+  architectures: 'var(--kb-cat-architectures)',
+};
+
+function SectionHeading({ children }: { children: string }) {
+  return <h2 className="mb-2 text-xs font-semibold text-[var(--kb-muted)]">{children}</h2>;
+}
+
+function TopicLinkList({ label, topics, Icon }: { label: string; topics: Topic[]; Icon: typeof Star }) {
+  return (
+    <nav aria-label={label}>
+      <SectionHeading>{label}</SectionHeading>
+      <ul className="flex flex-col gap-0.5">
+        {topics.map((topic) => (
+          <li key={topic.id}>
+            <Link
+              to={`/topic/${encodeURIComponent(topic.id)}`}
+              className="flex min-h-10 items-center gap-2 rounded-lg px-2.5 text-[13px] font-medium text-[var(--kb-text2)] no-underline hover:bg-[var(--kb-surface2)] hover:text-[var(--kb-text)]"
+            >
+              <Icon aria-hidden="true" size={14} className="shrink-0 text-[var(--kb-accent)]" />
+              <span className="truncate">{topic.title}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+/**
+ * Filters and quick links. Pure content — Home decides where it lives: a
+ * sticky column from md up, the mobile drawer below that.
+ */
 export default function Sidebar({
   modules,
   moduleCounts,
@@ -22,10 +60,8 @@ export default function Sidebar({
 }: SidebarProps) {
   const selectedModules = useUiStore((s) => s.selectedModules);
   const selectedCategories = useUiStore((s) => s.selectedCategories);
-  const sidebarCollapsed = useUiStore((s) => s.sidebarCollapsed);
   const toggleModule = useUiStore((s) => s.toggleModule);
   const toggleCategory = useUiStore((s) => s.toggleCategory);
-  const toggleSidebarCollapsed = useUiStore((s) => s.toggleSidebarCollapsed);
   const favorites = useUserDataStore((s) => s.favorites);
   const recents = useUserDataStore((s) => s.recents);
 
@@ -37,103 +73,73 @@ export default function Sidebar({
     .filter((topic): topic is Topic => topic !== undefined);
 
   return (
-    <>
-      <button
-        type="button"
-        aria-label="פתח/סגור תפריט"
-        aria-expanded={!sidebarCollapsed}
-        onClick={toggleSidebarCollapsed}
-        className="min-h-11 min-w-11 rounded-lg border border-[var(--kb-border)] bg-[var(--kb-surface)] md:hidden"
-      >
-        <span aria-hidden="true">☰</span>
-      </button>
-      <aside
-        className={`shrink-0 border-e border-[var(--kb-border)] bg-[var(--kb-surface)] p-4 ${
-          sidebarCollapsed ? 'hidden md:block md:w-16' : 'block w-full md:w-64'
-        }`}
-      >
-        {favoriteTopics.length > 0 && (
-          <nav aria-label="מועדפים" className="mb-6">
-            <h2 className="mb-2 text-sm font-bold text-[var(--kb-muted)]">מועדפים</h2>
-            <ul className="flex flex-col gap-1">
-              {favoriteTopics.map((topic) => (
-                <li key={topic.id}>
-                  <Link
-                    to={`/topic/${encodeURIComponent(topic.id)}`}
-                    className="flex min-h-11 items-center rounded-md px-2 text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
-                  >
-                    {topic.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        )}
-        {recentTopics.length > 0 && (
-          <nav aria-label="נצפו לאחרונה" className="mb-6">
-            <h2 className="mb-2 text-sm font-bold text-[var(--kb-muted)]">נצפו לאחרונה</h2>
-            <ul className="flex flex-col gap-1">
-              {recentTopics.map((topic) => (
-                <li key={topic.id}>
-                  <Link
-                    to={`/topic/${encodeURIComponent(topic.id)}`}
-                    className="flex min-h-11 items-center rounded-md px-2 text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]"
-                  >
-                    {topic.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        )}
-        <nav aria-label="ניווט מודולים">
-          <h2 className="mb-2 text-sm font-bold text-[var(--kb-muted)]">מודולים</h2>
-          <ul className="flex flex-col gap-1">
-            {Object.entries(modules).map(([key, label]) => {
-              const total = moduleCounts[key] ?? 0;
-              const mastered = moduleMasteredCounts[key] ?? 0;
-              const percent = total > 0 ? Math.round((mastered / total) * 100) : 0;
-              return (
-                <li key={key}>
-                  <button
-                    type="button"
-                    aria-pressed={selectedModules.has(key)}
-                    onClick={() => toggleModule(key)}
-                    className="flex min-h-11 w-full flex-col justify-center gap-1 rounded-md px-2 py-1 text-start text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)] aria-pressed:bg-[var(--kb-accent-soft)]"
-                  >
-                    <span className="flex w-full items-center justify-between">
-                      <span>{label}</span>
-                      <span className="text-[var(--kb-muted)]">{total}</span>
-                    </span>
-                    <span className="h-1 w-full overflow-hidden rounded-full bg-[var(--kb-border)]" aria-hidden="true">
-                      <span className="block h-full rounded-full bg-[var(--kb-accent)]" style={{ width: `${percent}%` }} />
-                    </span>
-                    <span className="sr-only">{`${mastered} מתוך ${total} נשלטו`}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-        <nav aria-label="ניווט קטגוריות" className="mt-6">
-          <h2 className="mb-2 text-sm font-bold text-[var(--kb-muted)]">קטגוריות</h2>
-          <ul className="flex flex-col gap-1">
-            {Object.entries(categoryLabels).map(([key, label]) => (
+    <div className="flex flex-col gap-6 p-4">
+      <nav aria-label="ניווט מודולים">
+        <SectionHeading>מודולים</SectionHeading>
+        <ul className="flex flex-col gap-1">
+          {Object.entries(modules).map(([key, label]) => {
+            const total = moduleCounts[key] ?? 0;
+            const mastered = moduleMasteredCounts[key] ?? 0;
+            const percent = total > 0 ? Math.round((mastered / total) * 100) : 0;
+            const active = selectedModules.has(key);
+            return (
               <li key={key}>
                 <button
                   type="button"
-                  aria-pressed={selectedCategories.has(key)}
-                  onClick={() => toggleCategory(key)}
-                  className="flex min-h-11 w-full items-center justify-between rounded-md px-2 text-start text-sm text-[var(--kb-text)] hover:bg-[var(--kb-surface2)] aria-pressed:bg-[var(--kb-accent-soft)]"
+                  aria-pressed={active}
+                  onClick={() => toggleModule(key)}
+                  className={`flex min-h-11 w-full flex-col justify-center gap-1.5 rounded-lg px-2.5 py-2 text-start text-sm transition-colors hover:bg-[var(--kb-surface2)] ${
+                    active ? 'bg-[var(--kb-accent-soft)] font-semibold text-[var(--kb-accent)]' : 'font-medium text-[var(--kb-text)]'
+                  }`}
                 >
-                  <span>{label}</span>
-                  <span className="text-[var(--kb-muted)]">{categoryCounts[key] ?? 0}</span>
+                  <span className="flex w-full items-center justify-between gap-2">
+                    <span className="truncate">{label}</span>
+                    <span className="shrink-0 font-mono text-[11px] text-[var(--kb-muted)]">{`${mastered}/${total}`}</span>
+                  </span>
+                  <span className="h-1 w-full overflow-hidden rounded-full bg-[var(--kb-border)]" aria-hidden="true">
+                    <span className="block h-full rounded-full bg-[var(--kb-accent)]" style={{ width: `${percent}%` }} />
+                  </span>
+                  <span className="sr-only">{`${mastered} מתוך ${total} נשלטו`}</span>
                 </button>
               </li>
-            ))}
-          </ul>
-        </nav>
-      </aside>
-    </>
+            );
+          })}
+        </ul>
+      </nav>
+
+      <nav aria-label="ניווט קטגוריות">
+        <SectionHeading>קטגוריות</SectionHeading>
+        <ul className="flex flex-col gap-0.5">
+          {Object.entries(categoryLabels).map(([key, label]) => {
+            const active = selectedCategories.has(key);
+            return (
+              <li key={key}>
+                <button
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => toggleCategory(key)}
+                  className={`flex min-h-10 w-full items-center justify-between gap-2 rounded-lg px-2.5 text-start text-sm transition-colors hover:bg-[var(--kb-surface2)] ${
+                    active ? 'bg-[var(--kb-accent-soft)] font-semibold text-[var(--kb-accent)]' : 'font-medium text-[var(--kb-text)]'
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <span
+                      aria-hidden="true"
+                      className="size-2.5 shrink-0 rounded-full"
+                      style={{ background: CATEGORY_DOT[key] ?? 'var(--kb-muted)' }}
+                    />
+                    {label}
+                  </span>
+                  <span className="font-mono text-[11px] text-[var(--kb-muted)]">{categoryCounts[key] ?? 0}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      {favoriteTopics.length > 0 && <TopicLinkList label="מועדפים" topics={favoriteTopics} Icon={Star} />}
+      {recentTopics.length > 0 && <TopicLinkList label="נצפו לאחרונה" topics={recentTopics} Icon={BookOpen} />}
+    </div>
   );
 }

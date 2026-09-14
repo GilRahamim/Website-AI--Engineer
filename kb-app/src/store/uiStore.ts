@@ -21,7 +21,8 @@ interface UiState {
   selectedStatuses: Set<ProgressStatus>;
   sortOrder: SortOrder;
   viewMode: ViewMode;
-  sidebarCollapsed: boolean;
+  /** Mobile filter/navigation drawer (the sidebar's phone form). */
+  drawerOpen: boolean;
   expandedGroups: Set<string>;
   includeNotesInSearch: boolean;
 
@@ -33,7 +34,7 @@ interface UiState {
   clearFilters: () => void;
   setSortOrder: (order: SortOrder) => void;
   setViewMode: (mode: ViewMode) => void;
-  toggleSidebarCollapsed: () => void;
+  setDrawerOpen: (open: boolean) => void;
   toggleGroup: (moduleKey: string) => void;
   expandAllGroups: () => void;
   collapseAllGroups: () => void;
@@ -46,7 +47,7 @@ export const useUiStore = create<UiState>()((set) => ({
   selectedStatuses: new Set(),
   sortOrder: 'original',
   viewMode: 'grid',
-  sidebarCollapsed: false,
+  drawerOpen: false,
   expandedGroups: new Set(allModuleKeys),
   includeNotesInSearch: false,
 
@@ -69,7 +70,7 @@ export const useUiStore = create<UiState>()((set) => ({
     }),
   setSortOrder: (order) => set({ sortOrder: order }),
   setViewMode: (mode) => set({ viewMode: mode }),
-  toggleSidebarCollapsed: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
+  setDrawerOpen: (open) => set({ drawerOpen: open }),
   toggleGroup: (moduleKey) =>
     set((state) => ({ expandedGroups: toggleInSet(state.expandedGroups, moduleKey) })),
   expandAllGroups: () => set({ expandedGroups: new Set(allModuleKeys) }),

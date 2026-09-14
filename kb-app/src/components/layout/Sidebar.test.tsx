@@ -39,7 +39,7 @@ const topicsById = new Map([
 ]);
 
 function reset() {
-  useUiStore.setState({ selectedModules: new Set(), selectedCategories: new Set(), sidebarCollapsed: false });
+  useUiStore.setState({ selectedModules: new Set(), selectedCategories: new Set() });
   useUserDataStore.setState({ progress: new Map(), favorites: new Set(), recents: [], isLoaded: true });
 }
 
@@ -64,7 +64,7 @@ describe('Sidebar', () => {
   it('lists every module with its label and count', () => {
     renderSidebar();
     expect(screen.getByText('מבוא למדעי הנתונים')).toBeInTheDocument();
-    expect(screen.getByText('8')).toBeInTheDocument();
+    expect(screen.getByText('2/8')).toBeInTheDocument();
   });
 
   it('lists every category with its label and count', () => {
@@ -86,11 +86,6 @@ describe('Sidebar', () => {
     const button = screen.getByRole('button', { name: /מבוא למדעי הנתונים/ });
     await user.click(button);
     expect(button).toHaveAttribute('aria-pressed', 'true');
-  });
-
-  it('has a mobile-drawer toggle button with aria-expanded', () => {
-    renderSidebar();
-    expect(screen.getByRole('button', { name: 'פתח/סגור תפריט' })).toHaveAttribute('aria-expanded');
   });
 
   it('shows a per-module progress summary for screen readers', () => {
