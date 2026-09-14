@@ -36,7 +36,7 @@ describe('App', () => {
         <App />
       </MemoryRouter>,
     );
-    expect(screen.getByRole('heading', { level: 1, name: /מסד ידע/ })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: /AI Engineer/ })).toBeInTheDocument();
   });
 
   it('renders the Reader at "/topic/:id" for a real topic id', () => {

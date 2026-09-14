@@ -12,8 +12,8 @@ describe('PWA manifest', () => {
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
 
   it('has the required top-level fields', () => {
-    expect(manifest.name).toBe('מסד ידע — AI Engineer');
-    expect(manifest.short_name).toBe('מסד ידע');
+    expect(manifest.name).toBe('AI Engineer');
+    expect(manifest.short_name).toBe('AI Engineer');
     expect(manifest.lang).toBe('he');
     expect(manifest.dir).toBe('rtl');
     expect(manifest.start_url).toBe('/');

@@ -7,7 +7,7 @@ interface HeroProps {
 export default function Hero({ topicCount, moduleCount, masteredCount }: HeroProps) {
   return (
     <section className="px-4 py-8 text-center">
-      <h1 className="text-2xl font-extrabold text-[var(--kb-text)] sm:text-3xl">מסד ידע — AI Engineer</h1>
+      <h1 className="text-2xl font-extrabold text-[var(--kb-text)] sm:text-3xl">AI Engineer</h1>
       <p className="mx-auto mt-2 max-w-prose text-[var(--kb-text2)]">
         אוסף נושאים מרוכז ללימוד הנדסת AI — אלגוריתמים, מושגים, ארכיטקטורות ועוד.
       </p>

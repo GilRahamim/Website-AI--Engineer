@@ -42,7 +42,6 @@ describe('Header', () => {
 
   it('renders the brand name', () => {
     renderWithRouter();
-    expect(screen.getByText('מסד ידע')).toBeInTheDocument();
     expect(screen.getByText('AI Engineer')).toBeInTheDocument();
   });
 

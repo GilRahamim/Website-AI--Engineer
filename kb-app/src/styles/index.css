@@ -84,17 +84,129 @@ a, button, [role="button"], input, select, textarea, [tabindex] {
   gap: 1rem;
 }
 
+/* Topic content is raw HTML fetched from /topic-content/*.html and injected
+   via dangerouslySetInnerHTML (see TopicReader). Tailwind's preflight reset
+   strips all default spacing/list/table styling from that markup, so every
+   tag it can contain (headings, paragraphs, lists, tables, code, formulas)
+   needs its look defined here. The tags and classes below come from the
+   migration script's output — see golden rule 1 in CLAUDE.md: this only
+   restyles that markup, it never changes the text/HTML it renders. */
+.kb-topic-content > * + * {
+  margin-top: 1rem;
+}
+
+.kb-topic-content p {
+  color: var(--kb-text2);
+}
+
+.kb-topic-content .sec-h {
+  margin-top: 2rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid var(--kb-border);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--kb-text);
+}
+.kb-topic-content > .sec-h:first-child {
+  margin-top: 0;
+}
+
+.kb-topic-content ul,
+.kb-topic-content ol {
+  padding-inline-start: 1.5rem;
+  color: var(--kb-text2);
+}
+.kb-topic-content ul {
+  list-style: disc;
+}
+.kb-topic-content ol {
+  list-style: decimal;
+}
+.kb-topic-content li + li {
+  margin-top: 0.4rem;
+}
+.kb-topic-content li::marker {
+  color: var(--kb-accent);
+}
+
+.kb-topic-content strong {
+  color: var(--kb-text);
+}
+
+/* Code examples: framed, monospaced, and always LTR — RTL page direction
+   must not flip code or reverse the reading order of its lines. */
+.kb-topic-content pre.code-block {
+  direction: ltr;
+  overflow-x: auto;
+  border: 1px solid var(--kb-border);
+  border-radius: 10px;
+  background: var(--kb-surface2);
+  box-shadow: var(--kb-shadow-sm);
+  padding: 1rem;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  text-align: start;
+}
+.kb-topic-content pre.code-block code {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  white-space: pre;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', monospace;
+  color: var(--kb-text);
+}
+
+/* Tables: the generated markup has no wrapper div, so the horizontal-scroll
+   container is applied to the table element itself via `display: block`. */
+.kb-topic-content table.kbtable {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.kb-topic-content table.kbtable tr {
+  border-bottom: 1px solid var(--kb-border);
+}
+.kb-topic-content table.kbtable tr:last-child {
+  border-bottom: none;
+}
+.kb-topic-content table.kbtable tr:first-child {
+  background: var(--kb-surface2);
+  font-weight: 700;
+}
+.kb-topic-content table.kbtable td {
+  padding: 0.6rem 0.9rem;
+  text-align: start;
+  vertical-align: top;
+  border-inline-end: 1px solid var(--kb-border);
+}
+.kb-topic-content table.kbtable td:last-child {
+  border-inline-end: none;
+}
+
+.kb-topic-content .formula-block {
+  text-align: center;
+}
+.kb-topic-content .formula-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--kb-muted);
+}
 .kb-topic-content img.block-formula-img {
   display: block;
   max-width: 100%;
   margin: 1rem auto;
 }
-.kb-topic-content img.cell-formula-img {
+.kb-topic-content img.cell-formula-img,
+.kb-topic-content img.inline-formula-img {
   height: 1.1em;
   vertical-align: middle;
 }
 [data-theme='dark'] .kb-topic-content img.block-formula-img,
-[data-theme='dark'] .kb-topic-content img.cell-formula-img {
+[data-theme='dark'] .kb-topic-content img.cell-formula-img,
+[data-theme='dark'] .kb-topic-content img.inline-formula-img {
   filter: invert(1);
 }
 

@@ -49,7 +49,7 @@ export default function TopicReader({ topic, topicsById }: TopicReaderProps) {
     <article className="mx-auto max-w-3xl p-4">
       <nav aria-label="breadcrumb" className="mb-2 flex items-center gap-2 text-sm text-[var(--kb-muted)]">
         <Link to="/" className="hover:underline">
-          מסד ידע
+          AI Engineer
         </Link>
         <span aria-hidden="true">›</span>
         <span>{topic.module_label}</span>
