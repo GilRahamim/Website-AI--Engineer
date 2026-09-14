@@ -1,5 +1,5 @@
 <h4 class='sec-h'>הגדרה</h4>
-<p>הרחבה של Scaled Dot-Product Attention שבה מריצים כמה &quot;ראשי&quot; Attention במקביל, כל אחד במרחב תת-מימדי שונה, ולאחר מכן משרשרים (concat) ומשליכים (project) את כל הראשים לפלט אחד — מאפשר ללכוד סוגי קשרים שונים בין טוקנים בו-זמנית.</p>
+<p>הרחבה של Scaled Dot-Product Attention שבה מריצים כמה &quot;ראשי&quot; Attention במקביל, כל אחד במרחב תת-מימדי שונה, ולאחר מכן משרשרים (concat) ומשליכים (project) את כל הראשים לפלט אחד - מאפשר ללכוד סוגי קשרים שונים בין טוקנים בו-זמנית.</p>
 <h4 class='sec-h'>איך זה עובד</h4>
 <ol><li>מקרינים (linear projection) את Q, K, V ל-h מרחבים שונים בעזרת h סטים נפרדים של מטריצות משקל.</li><li>מריצים Scaled Dot-Product Attention באופן עצמאי בכל אחד מ-h הראשים.</li><li>משרשרים (concatenate) את פלטי כל הראשים לווקטור אחד.</li><li>מקרינים את הווקטור המשורשר בעזרת מטריצת משקל סופית W^O לקבלת הפלט הסופי.</li></ol>
 <h4 class='sec-h'>נוסחאות</h4>
@@ -8,11 +8,11 @@
 <p>שרשור והשלכה:</p>
 <div class='formula-block'><img class="block-formula-img" src="/topic-assets/de2348c4d9ed.png" loading="lazy" alt="formula"></div>
 <h4 class='sec-h'>שימושים עיקריים</h4>
-<ul><li>ארכיטקטורת Transformer — הרכיב המרכזי בכל שכבת Encoder/Decoder</li><li>מודלים כגון BERT, GPT, Vision Transformer (ViT)</li></ul>
+<ul><li>ארכיטקטורת Transformer - הרכיב המרכזי בכל שכבת Encoder/Decoder</li><li>מודלים כגון BERT, GPT, Vision Transformer (ViT)</li></ul>
 <h4 class='sec-h'>יתרונות</h4>
 <ul><li>מאפשר למודל ללכוד כמה סוגי קשרים בין טוקנים בו-זמנית (לדוגמה: קשר תחבירי בראש אחד, קשר סמנטי בראש אחר)</li><li>ניתן לחישוב מקביל לחלוטין (בניגוד ל-RNN הרקורסיבי)</li><li>מגדיל את כושר הביטוי של המודל בלי להגדיל את עומק הרשת</li></ul>
 <h4 class='sec-h'>חסרונות / מגבלות</h4>
-<ul><li>יקר חישובית ובזיכרון — סקלת ב-O(n2) עם אורך הרצף n</li><li>כל ראש לומד תת-מרחב קטן יותר, מה שיכול להגביל את הביטוי של ראש בודד</li><li>דורש כיוון של מספר הראשים (h) כהיפר-פרמטר</li></ul>
+<ul><li>יקר חישובית ובזיכרון - סקלת ב-O(n2) עם אורך הרצף n</li><li>כל ראש לומד תת-מרחב קטן יותר, מה שיכול להגביל את הביטוי של ראש בודד</li><li>דורש כיוון של מספר הראשים (h) כהיפר-פרמטר</li></ul>
 <h4 class='sec-h'>מדדי הערכה מומלצים</h4>
 <table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>NLP (Translation, Classification)</td><td>BLEU, Accuracy, F1</td></tr><tr><td>Computer Vision (ViT)</td><td>Accuracy, mAP</td></tr></table>
 <h4 class='sec-h'>השוואה למושגים קרובים</h4>

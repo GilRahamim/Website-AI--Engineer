@@ -7,16 +7,16 @@
 <div class='formula-block'><span class='katex-tex' data-tex="z={\beta}_{0}+{\beta}_{1}x_{1}+…+{\beta}_{n}x_{n}">z=β_0+β_1x_1+…+β_nx_n</span></div>
 <p class='formula-label'><em>‏</em><em>Sigmoid</em><em> (</em><em>Logistic Function</em><em>)</em></p>
 <div class='formula-block'><span class='katex-tex' data-tex="\phi(z)=\frac{1}{1+e^{-z}}">φ(z)=(1)/(1+e^{-z})</span></div>
-<p class='formula-label'><em>‏פונקציית עלות — </em><em>Log Loss / Binary Cross-Entropy</em></p>
+<p class='formula-label'><em>‏פונקציית עלות - </em><em>Log Loss / Binary Cross-Entropy</em></p>
 <div class='formula-block'><span class='katex-tex' data-tex="J(\beta)=-\frac{1}{n}\sum_{i=1}^{n} \left[y_{i}\log({\hat{y}}_{i})+(1-y_{i})\log(1-{\hat{y}}_{i})\right]">J(β)=-(1)/(n)∑_{i=1}^n[y_ilog(ŷ_i)+(1-y_i)log(1-ŷ_i)]</span></div>
 <p class='formula-label'><em>‏</em><em>Accuracy</em><em> (מתוך </em><em>Confusion Matrix</em><em>)</em></p>
 <div class='formula-block'><span class='katex-tex' data-tex="Accuracy=\frac{TP+TN}{TP+TN+FP+FN}">Accuracy=(TP+TN)/(TP+TN+FP+FN)</span></div>
 <p class='formula-label'><em>‏</em><em>Misclassification Rate</em></p>
 <div class='formula-block'><span class='katex-tex' data-tex="Error=\frac{FP+FN}{TP+TN+FP+FN}">Error=(FP+FN)/(TP+TN+FP+FN)</span></div>
 <h4 class='sec-h'>שימושים עיקריים</h4>
-<ul><li>‏סיווג ספאם מול דואר לגיטימי (Spam vs. Ham).</li><li>‏חיזוי כשל בהחזר הלוואה (Loan Default — כן/לא).</li><li>‏אבחון מחלות (חולה/לא חולה) וכל בעיית סיווג בינארי אחרת.</li></ul>
+<ul><li>‏סיווג ספאם מול דואר לגיטימי (Spam vs. Ham).</li><li>‏חיזוי כשל בהחזר הלוואה (Loan Default - כן/לא).</li><li>‏אבחון מחלות (חולה/לא חולה) וכל בעיית סיווג בינארי אחרת.</li></ul>
 <h4 class='sec-h'>יתרונות</h4>
-<ul><li>‏פשוט, מהיר לאימון ופרשני — המקדמים מתורגמים ל-log-odds.</li><li>‏מחזיר הסתברות (לא רק תווית), שמאפשרת קביעת סף לפי הצורך.</li><li>‏עובד טוב כ-baseline חזק לבעיות סיווג בינארי.</li></ul>
+<ul><li>‏פשוט, מהיר לאימון ופרשני - המקדמים מתורגמים ל-log-odds.</li><li>‏מחזיר הסתברות (לא רק תווית), שמאפשרת קביעת סף לפי הצורך.</li><li>‏עובד טוב כ-baseline חזק לבעיות סיווג בינארי.</li></ul>
 <h4 class='sec-h'>חסרונות / מגבלות</h4>
 <ul><li>‏מניח גבול הכרעה (Decision Boundary) לינארי בין המחלקות.</li><li>‏רגיש למשתנים בלתי-תלויים מתואמים ביניהם (Multicollinearity).</li><li>‏פחות מתאים למבני נתונים מורכבים/לא-לינאריים בהשוואה למודלים כמו עצים או רשתות נוירונים.</li></ul>
 <h4 class='sec-h'>מדדי הערכה מומלצים</h4>

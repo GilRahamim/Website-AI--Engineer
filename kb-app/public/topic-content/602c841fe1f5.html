@@ -1,8 +1,8 @@
 <h4 class='sec-h'>הגדרה</h4>
-<p>כדי לבנות Knowledge Graph נדרשים טריפלטים (subject, relation, object). במקום regex ידני, מבקשים מ-LLM לקרוא כל מסמך ולהפיק טריפלטים בפורמט JSON — לאחר מכן בונים מהם גרף מכוון (directed multigraph) ומפעילים עליו אלגוריתמי אחזור.</p>
+<p>כדי לבנות Knowledge Graph נדרשים טריפלטים (subject, relation, object). במקום regex ידני, מבקשים מ-LLM לקרוא כל מסמך ולהפיק טריפלטים בפורמט JSON - לאחר מכן בונים מהם גרף מכוון (directed multigraph) ומפעילים עליו אלגוריתמי אחזור.</p>
 <h4 class='sec-h'>איך זה עובד</h4>
-<ul><li>1. שליחת כל מסמך ל-LLM עם system prompt שמורה לו לחלץ triples בפורמט JSON תקני.</li><li>2. בניית גרף מכוון (NetworkX MultiDiGraph) — כל subject/object הוא node, כל triple הוא edge עם relation, doc_id ו-sentence תומך.</li><li>3. אחזור גרפי (graph_retrieve) — איתור seed entities מתאימים לשאלה, הרחבת frontier מספר hops, אגירת קשתות נתמכות.</li><li>4. אחזור מקביל ב-keyword (חפיפת token) ו-vector (embeddings) לצורך השוואה.</li><li>5. בניית context סופי מהתוצאות הממוספרות ([1], [2]...) להזנה ל-LLM.</li></ul>
-<h4 class='sec-h'>קוד לדוגמה — חילוץ טריפלטים עם LLM</h4>
+<ul><li>1. שליחת כל מסמך ל-LLM עם system prompt שמורה לו לחלץ triples בפורמט JSON תקני.</li><li>2. בניית גרף מכוון (NetworkX MultiDiGraph) - כל subject/object הוא node, כל triple הוא edge עם relation, doc_id ו-sentence תומך.</li><li>3. אחזור גרפי (graph_retrieve) - איתור seed entities מתאימים לשאלה, הרחבת frontier מספר hops, אגירת קשתות נתמכות.</li><li>4. אחזור מקביל ב-keyword (חפיפת token) ו-vector (embeddings) לצורך השוואה.</li><li>5. בניית context סופי מהתוצאות הממוספרות ([1], [2]...) להזנה ל-LLM.</li></ul>
+<h4 class='sec-h'>קוד לדוגמה - חילוץ טריפלטים עם LLM</h4>
 <pre class='code-block'><code>EXTRACTION_SYSTEM_PROMPT = &amp;quot;&amp;quot;&amp;quot;You extract knowledge-graph triples from short text about
 the automotive industry.
 Return ONLY valid JSON of the form:
@@ -15,7 +15,7 @@ messages=[
 {&amp;quot;role&amp;quot;: &amp;quot;user&amp;quot;, &amp;quot;content&amp;quot;: f&amp;quot;Document:\n{text}&amp;quot;},
 ],
 )</code></pre>
-<h4 class='sec-h'>קוד לדוגמה — בניית הגרף</h4>
+<h4 class='sec-h'>קוד לדוגמה - בניית הגרף</h4>
 <pre class='code-block'><code>G = nx.MultiDiGraph()
 for row in triples:
 G.add_node(row[&amp;quot;subject&amp;quot;], node_type=&amp;quot;entity&amp;quot;)
@@ -24,7 +24,7 @@ G.add_edge(row[&amp;quot;subject&amp;quot;], row[&amp;quot;object&amp;quot;],
 relation=row[&amp;quot;relation&amp;quot;], doc_id=row[&amp;quot;doc_id&amp;quot;], sentence=row[&amp;quot;sentence&amp;quot;])
 print(f&amp;quot;Number of nodes: {G.number_of_nodes()}&amp;quot;)   # 46
 print(f&amp;quot;Number of edges: {G.number_of_edges()}&amp;quot;)   # 41</code></pre>
-<h4 class='sec-h'>קוד לדוגמה — אחזור גרפי מרובה-hops</h4>
+<h4 class='sec-h'>קוד לדוגמה - אחזור גרפי מרובה-hops</h4>
 <pre class='code-block'><code>def graph_retrieve(query: str, max_hops: int = 2, max_sentences: int = 8):
 seeds = find_seed_entities(query)
 visited = set(seeds)

@@ -28,7 +28,7 @@ model = nn.Sequential(
 )
 
 model.train()  # Dropout פעיל
-model.eval()   # Dropout מושבת — נדרש לפני Inference</code></pre>
+model.eval()   # Dropout מושבת - נדרש לפני Inference</code></pre>
 <h4 class='sec-h'>שאלות ראיון נפוצות</h4>
 <p><strong>ש: </strong>למה Dropout צריך scaling ב-1/(1-p) בזמן אימון?</p>
 <p><strong>ת: </strong>כדי שהציפייה (expected value) של הפלט תישאר זהה בין אימון להסקה, ולכן בזמן הסקה (כש-Dropout מושבת) אין צורך לבצע נרמול נוסף.</p>

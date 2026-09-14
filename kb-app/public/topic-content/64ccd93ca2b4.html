@@ -1,16 +1,16 @@
 <h4 class='sec-h'>הגדרה</h4>
 <p>רשת עצבית בלתי-מפוקחת (Self-Supervised) שמטרתה ללמוד ייצוג מכווץ (Latent Representation) של הקלט, על ידי אימון לשחזר את הקלט עצמו מתוך ייצוג זה.</p>
-<h4 class='sec-h'>מבנה הרשת</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/c8bb8e1b63ba.png" loading="lazy" alt="Autoencoder — architecture diagram" /></div>
-<ul><li>Encoder — דוחס את הקלט $x$ לייצוג חבוי $z = f(x)$ במימד נמוך יותר (Bottleneck)</li><li>Bottleneck / Latent Space — השכבה הצרה ביותר, מכילה את הייצוג הדחוס</li><li>Decoder — משחזר מהייצוג $z$ קירוב לקלט המקורי $\hat{x} = g(z)$</li></ul>
+<h4 class='sec-h'>מבנה הרשת</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/c8bb8e1b63ba.png" loading="lazy" alt="Autoencoder - architecture diagram" /></div>
+<ul><li>Encoder - דוחס את הקלט $x$ לייצוג חבוי $z = f(x)$ במימד נמוך יותר (Bottleneck)</li><li>Bottleneck / Latent Space - השכבה הצרה ביותר, מכילה את הייצוג הדחוס</li><li>Decoder - משחזר מהייצוג $z$ קירוב לקלט המקורי $\hat{x} = g(z)$</li></ul>
 <h4 class='sec-h'>נוסחאות מפתח</h4>
 <div class='formula-block'><img class="block-formula-img" src="/topic-assets/826f812da82b.png" loading="lazy" alt="formula"></div>
 <div class='formula-block'><img class="block-formula-img" src="/topic-assets/f2249ec4a6ec.png" loading="lazy" alt="formula"></div>
 <h4 class='sec-h'>תחומי שימוש</h4>
-<ul><li>דחיסת מימד (Dimensionality Reduction) לא-לינארית — חלופה ל-PCA</li><li>גילוי אנומליות (Anomaly Detection) — שגיאת שחזור גבוהה מעידה על חריגה</li><li>Pretraining / Representation Learning ללא תוויות</li><li>Denoising — שחזור תמונה/אות נקי מתוך קלט רועש</li></ul>
+<ul><li>דחיסת מימד (Dimensionality Reduction) לא-לינארית - חלופה ל-PCA</li><li>גילוי אנומליות (Anomaly Detection) - שגיאת שחזור גבוהה מעידה על חריגה</li><li>Pretraining / Representation Learning ללא תוויות</li><li>Denoising - שחזור תמונה/אות נקי מתוך קלט רועש</li></ul>
 <h4 class='sec-h'>יתרונות</h4>
 <ul><li>לומד ייצוג שימושי ללא צורך בתוויות (Unsupervised)</li><li>יכול ללכוד קשרים לא-לינאריים מורכבים יותר מ-PCA</li><li>בסיס לארכיטקטורות גנרטיביות מתקדמות יותר (VAE)</li></ul>
 <h4 class='sec-h'>מגבלות</h4>
-<ul><li>לא בהכרח מייצר ייצוג חבוי בעל מובנות סמנטית (אלא אם מאלצים זאת, כמו ב-VAE)</li><li>רגיש לבחירת גודל ה-Bottleneck — קטן מדי מאבד מידע, גדול מדי לא דוחס מספיק</li><li>אינו מודל גנרטיבי טוב כברירת מחדל (לשם כך נדרש VAE/GAN)</li></ul>
+<ul><li>לא בהכרח מייצר ייצוג חבוי בעל מובנות סמנטית (אלא אם מאלצים זאת, כמו ב-VAE)</li><li>רגיש לבחירת גודל ה-Bottleneck - קטן מדי מאבד מידע, גדול מדי לא דוחס מספיק</li><li>אינו מודל גנרטיבי טוב כברירת מחדל (לשם כך נדרש VAE/GAN)</li></ul>
 <h4 class='sec-h'>מדדי הערכה מומלצים</h4>
 <table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Reconstruction</td><td>MSE, MAE, Reconstruction Loss</td></tr><tr><td>Anomaly Detection</td><td>AUC על שגיאת שחזור, Precision/Recall</td></tr></table>
 <h4 class='sec-h'>וריאנטים / גרסאות</h4>

@@ -35,6 +35,6 @@
 <p>cv2.imwrite(output_path, annotated)</p>
 <h4 class='sec-h'>שאלות ראיון נפוצות</h4>
 <p><strong>ש: מדוע face blur בדמו זה מבוסס על pose keypoints (אף, אוזניים) ולא על face-detection ייעודי?</strong></p>
-<p>ת: כי המודל כבר מריץ pose estimation לצרכים אחרים (זיהוי גוף) — שימוש בקואורדינטות nose/ears הקיימות חוסך הרצת מודל נפרד לזיהוי פנים, ומספק הערכה 'מספיק טובה' לאזור הפנים לצורך blur, במחיר דיוק גיאומטרי מדויק פחות מ-face detector מיועד.</p>
+<p>ת: כי המודל כבר מריץ pose estimation לצרכים אחרים (זיהוי גוף) - שימוש בקואורדינטות nose/ears הקיימות חוסך הרצת מודל נפרד לזיהוי פנים, ומספק הערכה 'מספיק טובה' לאזור הפנים לצורך blur, במחיר דיוק גיאומטרי מדויק פחות מ-face detector מיועד.</p>
 <p><strong>ש: מה ההבדל התשתיתי בין pipeline של static image detection ל-real-time webcam detection?</strong></p>
-<p>ת: ב-static image אין לולאת capture רציפה — תמונה בודדת נטענת, מורצת פעם אחת דרך המודל, והתוצאה נשמרת לקובץ (cv2.imwrite). ב-real-time יש לולאת capture-detect-display מתמשכת שמטרתה latency נמוך ו-FPS גבוה, ולא רק דיוק.</p>
+<p>ת: ב-static image אין לולאת capture רציפה - תמונה בודדת נטענת, מורצת פעם אחת דרך המודל, והתוצאה נשמרת לקובץ (cv2.imwrite). ב-real-time יש לולאת capture-detect-display מתמשכת שמטרתה latency נמוך ו-FPS גבוה, ולא רק דיוק.</p>

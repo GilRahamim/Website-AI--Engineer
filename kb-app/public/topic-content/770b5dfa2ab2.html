@@ -1,10 +1,10 @@
 <h4 class='sec-h'>הגדרה</h4>
 <p>Agent מבוסס-ReAct יכול לבצע נימוק איטרטיבי מעל Knowledge Graph: בכל שלב הוא בוחן אם יש לו מספיק עדות, קורא לכלי חיפוש-גרף, קורא את התוצאה, ומחליט אם להמשיך לחקור entity-גשר (bridge entity) חדש שהתגלה. כך ה-agent &quot;קופץ&quot; בין ישויות (multi-hop) עד שמגיע לתשובה מלאה.</p>
-<h4 class='sec-h'>זרימת העבודה (Full Demo Architecture)</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/300133c7214f.png" loading="lazy" alt="נימוק Multi-Hop באמצעות Agent מעל Knowledge Graph — architecture diagram" /></div>
+<h4 class='sec-h'>זרימת העבודה (Full Demo Architecture)</h4><div class="arch-diagram-block"><img class="arch-diagram-img" src="/topic-assets/300133c7214f.png" loading="lazy" alt="נימוק Multi-Hop באמצעות Agent מעל Knowledge Graph - architecture diagram" /></div>
 <p>User Query → LLM (ReAct reasoning) → Tool call → Neo4j → Graph results → LLM מחליט את השלב הבא → (חזרה לכלי או) → Final Answer.</p>
-<h4 class='sec-h'>לופ ReAct מקומי — צעד אחר צעד</h4>
-<ul><li>Thought — האם יש כבר מספיק עדות לענות?</li><li>Action — קריאה ל-graph_search_tool עם המוקד (focus) הנוכחי.</li><li>Observation — קריאת תוצאת הכלי.</li><li>Thought — האם ה-observation חשף entity-גשר חדש ששווה לחקור? אם כן — להגדיר focus חדש ולחזור ללופ; אם לא — לעצור.</li></ul>
-<h4 class='sec-h'>קוד לדוגמה — ReAct מקומי עם כלי גרף</h4>
+<h4 class='sec-h'>לופ ReAct מקומי - צעד אחר צעד</h4>
+<ul><li>Thought - האם יש כבר מספיק עדות לענות?</li><li>Action - קריאה ל-graph_search_tool עם המוקד (focus) הנוכחי.</li><li>Observation - קריאת תוצאת הכלי.</li><li>Thought - האם ה-observation חשף entity-גשר חדש ששווה לחקור? אם כן - להגדיר focus חדש ולחזור ללופ; אם לא - לעצור.</li></ul>
+<h4 class='sec-h'>קוד לדוגמה - ReAct מקומי עם כלי גרף</h4>
 <pre class='code-block'><code>def local_react_agent(query: str, max_steps: int = 2) -&amp;gt; dict:
 &amp;quot;&amp;quot;&amp;quot;Iterative ReAct loop: think, act, observe, decide whether to act again.&amp;quot;&amp;quot;&amp;quot;
 trace, evidence, explored = [], [], set()
@@ -16,7 +16,7 @@ observation = graph_search_tool(current_focus)
 # Thought: does observation surface a new bridge entity worth exploring?
 # If yes -&amp;gt; current_focus = bridge_entity; loop. If no -&amp;gt; stop.
 return {&amp;quot;trace&amp;quot;: trace, &amp;quot;evidence&amp;quot;: evidence}</code></pre>
-<h4 class='sec-h'>קוד לדוגמה — LangChain Agent + כלי גרף</h4>
+<h4 class='sec-h'>קוד לדוגמה - LangChain Agent + כלי גרף</h4>
 <pre class='code-block'><code>@tool
 def graph_search(query: str) -&amp;gt; str:
 &amp;quot;&amp;quot;&amp;quot;Searches the knowledge graph for relationships between automotive entities
@@ -31,7 +31,7 @@ response = agent.invoke({&amp;quot;messages&amp;quot;: [{&amp;quot;role&amp;quot
 &amp;quot;content&amp;quot;: &amp;quot;Which manufacturers source battery cells from CATL?&amp;quot;}]})
 print(response[&amp;quot;messages&amp;quot;][-1].content)
 # -&amp;gt; &amp;quot;The manufacturers that source battery cells from CATL include: Tesla, BMW, Volkswagen&amp;quot;</code></pre>
-<h4 class='sec-h'>קוד לדוגמה — שני כלי Neo4j משלימים</h4>
+<h4 class='sec-h'>קוד לדוגמה - שני כלי Neo4j משלימים</h4>
 <pre class='code-block'><code>@tool
 def neo4j_graph_search(query: str) -&amp;gt; str:
 &amp;quot;&amp;quot;&amp;quot;Best for open-ended exploration ('what is connected to X?').&amp;quot;&amp;quot;&amp;quot;
@@ -50,9 +50,9 @@ result = react_agent.invoke({&amp;quot;messages&amp;quot;: [{&amp;quot;role&amp;
 <h4 class='sec-h'>שימושים עיקריים</h4>
 <ul><li>שאלות חיתוך/קישוריות בין שתי קבוצות ישויות (&quot;מי מספק לשני יצרנים?&quot;).</li><li>שילוב כלי open-ended exploration (graph traversal) עם כלי factual lookup (text-to-Cypher) באותו agent, לפי אופי השאלה.</li></ul>
 <h4 class='sec-h'>יתרונות</h4>
-<ul><li>ה-agent יכול לעקוב אחר entity-גשר שמתגלה בזמן ריצה — לא תלוי בנתיב מוגדר מראש.</li><li>שילוב שני כלים (graph_search + cypher_query) מאפשר גמישות בין חקירה פתוחה לשאילתה מדויקת.</li></ul>
+<ul><li>ה-agent יכול לעקוב אחר entity-גשר שמתגלה בזמן ריצה - לא תלוי בנתיב מוגדר מראש.</li><li>שילוב שני כלים (graph_search + cypher_query) מאפשר גמישות בין חקירה פתוחה לשאילתה מדויקת.</li></ul>
 <h4 class='sec-h'>מגבלות</h4>
-<ul><li>מספר צעדים מקסימלי (max_steps/max_hops) נדרש כדי למנוע לופים אינסופיים.</li><li>תלוי באיכות הכלים (seed entity matching, Cypher generation) — שגיאה בשלב מוקדם מתפשטת.</li></ul>
+<ul><li>מספר צעדים מקסימלי (max_steps/max_hops) נדרש כדי למנוע לופים אינסופיים.</li><li>תלוי באיכות הכלים (seed entity matching, Cypher generation) - שגיאה בשלב מוקדם מתפשטת.</li></ul>
 <h4 class='sec-h'>שאלות ראיון נפוצות</h4>
 <p><strong>ש: מה ההבדל בין neo4j_graph_search ל-neo4j_cypher_query כשני כלים נפרדים?</strong></p>
 <p>ת: neo4j_graph_search מתאים לחקירה פתוחה (&quot;מה מחובר ל-X?&quot;) ומחזיר קשתות תומכות גולמיות; neo4j_cypher_query מתאים לשאלות עובדתיות ספציפיות (&quot;מי מספק X?&quot;) ומתרגם לשאילתת Cypher מדויקת ומחזיר תשובה ישירה.</p>

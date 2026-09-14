@@ -8,11 +8,11 @@
 <p>פונקציית מטרה עם רגולריזציה:</p>
 <div class='formula-block'><img class="block-formula-img" src="/topic-assets/d9cb3c21ee34.png" loading="lazy" alt="formula"></div>
 <h4 class='sec-h'>שימושים עיקריים</h4>
-<ul><li>מערכות המלצה (Recommender Systems) — חיזוי דירוג משתמש לפריט שלא נצפה</li><li>הקטנת מימד (dimensionality reduction) של דאטה דליל</li><li>Embedding של ישויות (משתמשים, פריטים, מילים) למרחב וקטורי סמוי</li></ul>
+<ul><li>מערכות המלצה (Recommender Systems) - חיזוי דירוג משתמש לפריט שלא נצפה</li><li>הקטנת מימד (dimensionality reduction) של דאטה דליל</li><li>Embedding של ישויות (משתמשים, פריטים, מילים) למרחב וקטורי סמוי</li></ul>
 <h4 class='sec-h'>יתרונות</h4>
 <ul><li>יעיל לדאטה דליל מאוד (כגון מטריצות דירוג עם רוב הערכים חסרים)</li><li>חולץ ייצוגים סמויים (latent factors) שמלמדים על העדפות/תכונות נסתרות</li><li>ניתן להרחבה עם רגולריזציה, bias terms, ושיטות הסתברותיות (Probabilistic MF)</li></ul>
 <h4 class='sec-h'>חסרונות / מגבלות</h4>
-<ul><li>מתקשה עם ה-Cold Start Problem — משתמשים/פריטים חדשים בלי היסטוריה</li><li>מניח קשר לינארי (מכפלה פנימית) בין U ו-V, מה שמגביל את הביטוי של דפוסים מורכבים</li><li>לא תמיד תופס הקשר זמני (temporal dynamics) בהעדפות</li></ul>
+<ul><li>מתקשה עם ה-Cold Start Problem - משתמשים/פריטים חדשים בלי היסטוריה</li><li>מניח קשר לינארי (מכפלה פנימית) בין U ו-V, מה שמגביל את הביטוי של דפוסים מורכבים</li><li>לא תמיד תופס הקשר זמני (temporal dynamics) בהעדפות</li></ul>
 <h4 class='sec-h'>מדדי הערכה מומלצים</h4>
 <table class='kbtable'><tr><td><strong>סוג משימה</strong></td><td><strong>מדדים מומלצים</strong></td></tr><tr><td>Recommendation</td><td>RMSE, MAE, Precision@K, Recall@K</td></tr><tr><td>Dimensionality Reduction</td><td>Reconstruction Error</td></tr></table>
 <h4 class='sec-h'>השוואה למושגים קרובים</h4>
@@ -31,6 +31,6 @@ class MatrixFactorization(nn.Module):
         return (self.U(user_ids) * self.V(item_ids)).sum(dim=1)  # מכפלה פנימית</code></pre>
 <h4 class='sec-h'>שאלות ראיון נפוצות</h4>
 <p><strong>ש: </strong>מה ה-Cold Start Problem וכיצד הוא קשור ל-Matrix Factorization?</p>
-<p><strong>ת: </strong>זו הבעיה של חיזוי דירוג למשתמש או פריט חדש שאין לו היסטוריית דירוגים — מאחר ש-MF לומד את הווקטורים הסמויים מתוך דירוגים ידועים בלבד, אין לו מידע ללמוד ממנו עבור ישויות חדשות.</p>
+<p><strong>ת: </strong>זו הבעיה של חיזוי דירוג למשתמש או פריט חדש שאין לו היסטוריית דירוגים - מאחר ש-MF לומד את הווקטורים הסמויים מתוך דירוגים ידועים בלבד, אין לו מידע ללמוד ממנו עבור ישויות חדשות.</p>
 <p><strong>ש: </strong>מה הקשר בין Matrix Factorization ל-Embedding Layer?</p>
 <p><strong>ת: </strong>שניהם מייצרים ייצוג וקטורי סמוי (latent vector) לישות בדידה; Matrix Factorization הוא בעצם מקרה פרטי שבו שתי טבלאות Embedding (משתמשים ופריטים) מאומנות יחד כך שהמכפלה הפנימית שלהן משחזרת מטריצת אינטראקציות.</p>

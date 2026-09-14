@@ -7,7 +7,7 @@
     "category_label": "אלגוריתמים",
     "num": 2,
     "slug_name": "Linear Regression",
-    "title": "Linear Regression — רגרסיה לינארית",
+    "title": "Linear Regression - רגרסיה לינארית",
     "definition": "‏שיטת למידה מונחית (Supervised Learning) לחיזוי ערך רציף (Regression), המתאימה קו (או מישור) לינארי בין משתנים בלתי-תלויים (features) למשתנה תלוי (target).",
     "related_raw": [
       "Logistic Regression",
@@ -31,7 +31,7 @@
     "category_label": "אלגוריתמים",
     "num": 4,
     "slug_name": "Logistic Regression",
-    "title": "Logistic Regression — רגרסיה לוגיסטית",
+    "title": "Logistic Regression - רגרסיה לוגיסטית",
     "definition": "‏שיטת למידה מונחית לבעיות סיווג (Classification), בעיקר בינארי, החוזה את ההסתברות שדגימה משתייכת למחלקה מסוימת, על ידי העברת קומבינציה לינארית של הפיצ'רים בפונקציית Sigmoid.",
     "related_raw": [
       "Linear Regression",
@@ -55,8 +55,8 @@
     "category_label": "אלגוריתמים",
     "num": 5,
     "slug_name": "Tree Methods",
-    "title": "Tree Methods — שיטות עצים (Decision Tree, Random Forest, Gradient Boosting)",
-    "definition": "‏משפחת שיטות למידה מונחית (לסיווג ולרגרסיה) המבוססות על חלוקה רקורסיבית (Recursive Splitting) של מרחב הפיצ'רים למבנה של עץ הכרעות. כוללת עץ בודד (Decision Tree) ושיטות אנסמבל המשלבות עצים רבים — Random Forest (Bagging) ו-Gradient Boosting (Boosting).",
+    "title": "Tree Methods - שיטות עצים (Decision Tree, Random Forest, Gradient Boosting)",
+    "definition": "‏משפחת שיטות למידה מונחית (לסיווג ולרגרסיה) המבוססות על חלוקה רקורסיבית (Recursive Splitting) של מרחב הפיצ'רים למבנה של עץ הכרעות. כוללת עץ בודד (Decision Tree) ושיטות אנסמבל המשלבות עצים רבים - Random Forest (Bagging) ו-Gradient Boosting (Boosting).",
     "related_raw": [
       "Entropy",
       "Bagging / Boosting",
@@ -79,7 +79,7 @@
     "category_label": "אלגוריתמים",
     "num": 6,
     "slug_name": "SVM",
-    "title": "Support Vector Machines (SVM) — מכונת וקטורים תומכים",
+    "title": "Support Vector Machines (SVM) - מכונת וקטורים תומכים",
     "definition": "‏שיטת למידה מונחית לסיווג (וגם רגרסיה) המוצאת את ה-Hyperplane המפריד בין מחלקות, כך שהשוליים (Margin) בינו לבין הדגימות הקרובות ביותר משתי המחלקות יהיו רחבים ביותר.",
     "related_raw": [
       "Logistic Regression",
@@ -125,7 +125,7 @@
     "category_label": "מושגים תיאורטיים",
     "num": 1,
     "slug_name": "Machine Learning Overview",
-    "title": "Machine Learning Overview — מבוא ללמידת מכונה",
+    "title": "Machine Learning Overview - מבוא ללמידת מכונה",
     "definition": "‏Machine Learning (למידת מכונה) הוא תחום ב-AI שבו מערכת לומדת לבצע משימה מתוך דוגמאות (Data) ושיפור עצמי על בסיס ניסיון, במקום להיות מתוכנתת באופן מפורש לכל מקרה. Deep Learning הוא תת-תחום של ML המבוסס על רשתות נוירונים עמוקות (Neural Networks) בעלות מספר שכבות נסתרות, המאפשרות למידת תכונות (features) מורכבות ישירות מהדאטה הגולמי.",
     "related_raw": [
       "Bias-Variance Tradeoff",
@@ -152,7 +152,7 @@
     "num": 3,
     "slug_name": "Bias Variance Tradeoff",
     "title": "Bias-Variance Tradeoff",
-    "definition": "‏Bias-Variance Tradeoff מתאר את הקשר בין שני מקורות שגיאה במודל למידת מכונה: Bias (הטיה — שגיאה שמקורה בהנחות פשטניות מדי של המודל) ו-Variance (שונות — רגישות גבוהה לתנודות בנתוני האימון). ‏הגדלת מורכבות (flexibility) המודל מקטינה את ה-Bias אך מגדילה את ה-Variance, ולהפך — לכן מחפשים את נקודת האיזון.",
+    "definition": "‏Bias-Variance Tradeoff מתאר את הקשר בין שני מקורות שגיאה במודל למידת מכונה: Bias (הטיה - שגיאה שמקורה בהנחות פשטניות מדי של המודל) ו-Variance (שונות - רגישות גבוהה לתנודות בנתוני האימון). ‏הגדלת מורכבות (flexibility) המודל מקטינה את ה-Bias אך מגדילה את ה-Variance, ולהפך - לכן מחפשים את נקודת האיזון.",
     "related_raw": [
       "Overfitting",
       "Regularization",
@@ -175,7 +175,7 @@
     "category_label": "מושגים תיאורטיים",
     "num": 8,
     "slug_name": "Model Optimization and Validation",
-    "title": "Model Optimization & Validation — אופטימיזציה ואימות מודלים",
+    "title": "Model Optimization & Validation - אופטימיזציה ואימות מודלים",
     "definition": "‏מסמך זה מכנס שיטות לשיפור ביצועי מודל (Polynomial Regression), לחלוקה נכונה של הדאטה ולאימות אמין שלו (Train/Validation/Test, Cross-Validation), למניעת Overfitting (Regularization), ולכיוון אוטומטי של היפר-פרמטרים (Hyperparameter Search).",
     "related_raw": [
       "Linear Regression",
@@ -196,7 +196,7 @@
   {
     "id": "Topic 1 - Unsupervised Learning::algorithms::01_K-Means_Clustering.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 1,
@@ -224,13 +224,13 @@
   {
     "id": "Topic 1 - Unsupervised Learning::algorithms::02_Hierarchical_Clustering.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 2,
     "slug_name": "Hierarchical Clustering",
     "title": "Hierarchical Clustering",
-    "definition": "Hierarchical Clustering הוא משפחת אלגוריתמים הבונה היררכיה של אשכולות, המיוצגת בעזרת דנדרוגרם (Dendrogram) — עץ המתאר כיצד נקודות וקבוצות מתמזגות (Agglomerative, bottom-up) או מתפצלות (Divisive, top-down) בכל רמה.",
+    "definition": "Hierarchical Clustering הוא משפחת אלגוריתמים הבונה היררכיה של אשכולות, המיוצגת בעזרת דנדרוגרם (Dendrogram) - עץ המתאר כיצד נקודות וקבוצות מתמזגות (Agglomerative, bottom-up) או מתפצלות (Divisive, top-down) בכל רמה.",
     "related_raw": [
       "K-Means Clustering",
       "DBSCAN",
@@ -248,7 +248,7 @@
   {
     "id": "Topic 1 - Unsupervised Learning::algorithms::03_DBSCAN.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 3,
@@ -272,7 +272,7 @@
   {
     "id": "Topic 1 - Unsupervised Learning::algorithms::04_Mean_Shift.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 4,
@@ -294,13 +294,13 @@
   {
     "id": "Topic 1 - Unsupervised Learning::algorithms::05_Gaussian_Mixture_Models_EM.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 5,
     "slug_name": "Gaussian Mixture Models EM",
     "title": "Gaussian Mixture Models (GMM)",
-    "definition": "Gaussian Mixture Model הוא מודל הסתברותי המניח שהנתונים נוצרו מתערובת (mixture) של כמה התפלגויות גאוסיות (נורמליות). בניגוד ל-K-Means, GMM מבצע שיוך 'רך' (soft assignment) — כל נקודה מקבלת הסתברות להשתייך לכל אשכול, ולא תווית בודדת.",
+    "definition": "Gaussian Mixture Model הוא מודל הסתברותי המניח שהנתונים נוצרו מתערובת (mixture) של כמה התפלגויות גאוסיות (נורמליות). בניגוד ל-K-Means, GMM מבצע שיוך 'רך' (soft assignment) - כל נקודה מקבלת הסתברות להשתייך לכל אשכול, ולא תווית בודדת.",
     "related_raw": [
       "K-Means Clustering",
       "DBSCAN",
@@ -316,13 +316,13 @@
   {
     "id": "Topic 1 - Unsupervised Learning::algorithms::06_PCA.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 6,
     "slug_name": "PCA",
-    "title": "PCA — Principal Component Analysis",
-    "definition": "PCA הוא טכניקה ליניארית להפחתת מימד שמוצאת מערכת צירים חדשה (Principal Components) — קומבינציות ליניאריות של הפיצ'רים המקוריים — כך שהציר הראשון לוכד את מירב השונות (Variance) בדאטה, הציר השני את מירב השונות הנותרת בניצוב לראשון, וכן הלאה.",
+    "title": "PCA - Principal Component Analysis",
+    "definition": "PCA הוא טכניקה ליניארית להפחתת מימד שמוצאת מערכת צירים חדשה (Principal Components) - קומבינציות ליניאריות של הפיצ'רים המקוריים - כך שהציר הראשון לוכד את מירב השונות (Variance) בדאטה, הציר השני את מירב השונות הנותרת בניצוב לראשון, וכן הלאה.",
     "related_raw": [
       "Curse of Dimensionality",
       "Dimensionality Reduction Overview",
@@ -340,7 +340,7 @@
   {
     "id": "Topic 1 - Unsupervised Learning::algorithms::07_t-SNE_UMAP_PaCMAP.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 7,
@@ -362,13 +362,13 @@
   {
     "id": "Topic 1 - Unsupervised Learning::algorithms::08_Louvain_Community_Detection.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 8,
     "slug_name": "Louvain Community Detection",
     "title": "Louvain Algorithm",
-    "definition": "Louvain (Blondel et al., 2008) הוא אלגוריתם גרידי ויעיל מאוד לחלוקת גרף לקהילות (community detection) — קבוצות צמתים (nodes) המחוברות בצפיפות גבוהה ביניהן ובדלילות לשאר הגרף — על-ידי מקסום איטרטיבי של מדד ה-Modularity.",
+    "definition": "Louvain (Blondel et al., 2008) הוא אלגוריתם גרידי ויעיל מאוד לחלוקת גרף לקהילות (community detection) - קבוצות צמתים (nodes) המחוברות בצפיפות גבוהה ביניהן ובדלילות לשאר הגרף - על-ידי מקסום איטרטיבי של מדד ה-Modularity.",
     "related_raw": [
       "Label Propagation",
       "Modularity",
@@ -386,13 +386,13 @@
   {
     "id": "Topic 1 - Unsupervised Learning::algorithms::09_Label_Propagation.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 9,
     "slug_name": "Label Propagation",
     "title": "Label Propagation Algorithm (LPA)",
-    "definition": "Label Propagation הוא אלגוריתם איתור קהילות מהיר ופשוט מאוד: כל צומת מקבל 'תווית' (label) ייחודית בתחילת התהליך, ובכל איטרציה כל צומת מאמץ את התווית הנפוצה ביותר בין שכניו — תהליך שמוביל באופן טבעי להתכנסות צמתים מחוברים-בצפיפות לאותה תווית, ובכך חושף את מבנה הקהילות.",
+    "definition": "Label Propagation הוא אלגוריתם איתור קהילות מהיר ופשוט מאוד: כל צומת מקבל 'תווית' (label) ייחודית בתחילת התהליך, ובכל איטרציה כל צומת מאמץ את התווית הנפוצה ביותר בין שכניו - תהליך שמוביל באופן טבעי להתכנסות צמתים מחוברים-בצפיפות לאותה תווית, ובכך חושף את מבנה הקהילות.",
     "related_raw": [
       "Louvain Algorithm",
       "Modularity",
@@ -408,7 +408,7 @@
   {
     "id": "Topic 1 - Unsupervised Learning::concepts::10_Feature_Space_and_Feature_Engineering.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 10,
@@ -430,7 +430,7 @@
   {
     "id": "Topic 1 - Unsupervised Learning::concepts::11_Supervised_vs_Unsupervised_Learning.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 11,
@@ -450,13 +450,13 @@
   {
     "id": "Topic 1 - Unsupervised Learning::concepts::12_Curse_of_Dimensionality.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 12,
     "slug_name": "Curse of Dimensionality",
     "title": "Curse of Dimensionality",
-    "definition": "Curse of Dimensionality מתייחס לאוסף תופעות בלתי-אינטואיטיביות שמתרחשות כאשר מספר המימדים (פיצ'רים) של הדאטה גדל — הדאטה הופך לדליל מאוד, מושג ה'מרחק' מאבד משמעות, וביצועי אלגוריתמים רבים (בעיקר מבוססי-מרחק) מתדרדרים.",
+    "definition": "Curse of Dimensionality מתייחס לאוסף תופעות בלתי-אינטואיטיביות שמתרחשות כאשר מספר המימדים (פיצ'רים) של הדאטה גדל - הדאטה הופך לדליל מאוד, מושג ה'מרחק' מאבד משמעות, וביצועי אלגוריתמים רבים (בעיקר מבוססי-מרחק) מתדרדרים.",
     "related_raw": [
       "PCA",
       "t-SNE / UMAP / PaCMAP",
@@ -476,12 +476,12 @@
   {
     "id": "Topic 1 - Unsupervised Learning::concepts::13_Dimensionality_Reduction_Overview.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 13,
     "slug_name": "Dimensionality Reduction Overview",
-    "title": "Dimensionality Reduction — סקירה כללית",
+    "title": "Dimensionality Reduction - סקירה כללית",
     "definition": "Dimensionality Reduction הוא תהליך הפחתת מספר הפיצ'רים (המימדים) המתאר נקודת דאטה, בעוד שואפים לשמר את המידע המשמעותי ביותר. השיטות מתחלקות לשתי משפחות עיקריות: שיטות ליניאריות (כמו PCA) ושיטות לא-ליניאריות / manifold learning (כמו t-SNE, UMAP, PaCMAP).",
     "related_raw": [
       "PCA",
@@ -498,13 +498,13 @@
   {
     "id": "Topic 1 - Unsupervised Learning::concepts::14_Graphs_and_Networks_Basics.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 14,
     "slug_name": "Graphs and Networks Basics",
-    "title": "Graphs ו-Networks — מושגי בסיס",
-    "definition": "גרף הוא מבנה מתמטי המורכב מקבוצת צמתים (Vertices/Nodes, ) וקבוצת קשתות (Edges, ) המחברות ביניהם. רשתות (Networks) הן גרפים המייצגים מערכות יחסים בעולם האמיתי — חברתיות, תקשורתיות, ביולוגיות, תחבורתיות ועוד.",
+    "title": "Graphs ו-Networks - מושגי בסיס",
+    "definition": "גרף הוא מבנה מתמטי המורכב מקבוצת צמתים (Vertices/Nodes, ) וקבוצת קשתות (Edges, ) המחברות ביניהם. רשתות (Networks) הן גרפים המייצגים מערכות יחסים בעולם האמיתי - חברתיות, תקשורתיות, ביולוגיות, תחבורתיות ועוד.",
     "related_raw": [
       "Community Detection Overview",
       "Louvain Algorithm",
@@ -520,13 +520,13 @@
   {
     "id": "Topic 1 - Unsupervised Learning::concepts::15_Community_Detection_Overview.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 15,
     "slug_name": "Community Detection Overview",
-    "title": "Community Detection — סקירה כללית",
-    "definition": "Community Detection הוא תהליך זיהוי קבוצות צמתים (קהילות) ברשת, כך שצמתים בתוך אותה קהילה מחוברים בצפיפות גבוהה ביניהם, בעוד שהחיבורים בין קהילות שונות דלילים יותר באופן יחסי — למעשה, גרסת ה-'clustering' של עולם הגרפים.",
+    "title": "Community Detection - סקירה כללית",
+    "definition": "Community Detection הוא תהליך זיהוי קבוצות צמתים (קהילות) ברשת, כך שצמתים בתוך אותה קהילה מחוברים בצפיפות גבוהה ביניהם, בעוד שהחיבורים בין קהילות שונות דלילים יותר באופן יחסי - למעשה, גרסת ה-'clustering' של עולם הגרפים.",
     "related_raw": [
       "Louvain Algorithm",
       "Label Propagation",
@@ -544,13 +544,13 @@
   {
     "id": "Topic 1 - Unsupervised Learning::metrics::16_Inertia_Elbow_Method.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "metrics",
     "category_label": "מדדי הערכה",
     "num": 16,
     "slug_name": "Inertia Elbow Method",
     "title": "Inertia ושיטת ה-Elbow",
-    "definition": "Inertia (גם Within-Cluster Sum of Squares, WCSS) מודד את סכום ריבועי המרחקים בין כל נקודה לבין מרכז האשכול שאליו היא משויכת. Elbow Method היא שיטה גרפית-היוריסטית הבוחנת את ה-Inertia במספר ערכי שונים לאיתור 'נקודת המרפק' — מספר האשכולות שבו השיפור השולי מפסיק להיות משמעותי.",
+    "definition": "Inertia (גם Within-Cluster Sum of Squares, WCSS) מודד את סכום ריבועי המרחקים בין כל נקודה לבין מרכז האשכול שאליו היא משויכת. Elbow Method היא שיטה גרפית-היוריסטית הבוחנת את ה-Inertia במספר ערכי שונים לאיתור 'נקודת המרפק' - מספר האשכולות שבו השיפור השולי מפסיק להיות משמעותי.",
     "related_raw": [
       "K-Means Clustering",
       "Silhouette Score"
@@ -564,13 +564,13 @@
   {
     "id": "Topic 1 - Unsupervised Learning::metrics::17_Silhouette_Score.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "metrics",
     "category_label": "מדדי הערכה",
     "num": 17,
     "slug_name": "Silhouette Score",
     "title": "Silhouette Score",
-    "definition": "Silhouette Score מודד עבור כל נקודה כמה היא 'משתלבת' באשכול שלה בהשוואה לאשכולות האחרים — משקלל גם קומפקטיות תוך-אשכולית וגם הפרדה בין-אשכולית. הערך הממוצע על פני כל הנקודות משמש כמדד גלובלי לאיכות חלוקת ה-clustering כולה.",
+    "definition": "Silhouette Score מודד עבור כל נקודה כמה היא 'משתלבת' באשכול שלה בהשוואה לאשכולות האחרים - משקלל גם קומפקטיות תוך-אשכולית וגם הפרדה בין-אשכולית. הערך הממוצע על פני כל הנקודות משמש כמדד גלובלי לאיכות חלוקת ה-clustering כולה.",
     "related_raw": [
       "K-Means Clustering",
       "Inertia & Elbow Method",
@@ -586,13 +586,13 @@
   {
     "id": "Topic 1 - Unsupervised Learning::metrics::18_Modularity.docx",
     "module": "Topic 1 - Unsupervised Learning",
-    "module_label": "נושא 1 — Unsupervised Learning",
+    "module_label": "נושא 1 - Unsupervised Learning",
     "category": "metrics",
     "category_label": "מדדי הערכה",
     "num": 18,
     "slug_name": "Modularity",
     "title": "Modularity",
-    "definition": "Modularity מודד את איכות חלוקת רשת לקהילות, על-ידי השוואת צפיפות הקשתות בתוך הקהילות לצפיפות הצפויה ברשת אקראית 'דומה' (configuration model — רשת אקראית עם אותה התפלגות דרגות בדיוק). ערך גבוה מעיד שיש בתוך הקהילות הרבה יותר קשתות מהמצופה באקראי.",
+    "definition": "Modularity מודד את איכות חלוקת רשת לקהילות, על-ידי השוואת צפיפות הקשתות בתוך הקהילות לצפיפות הצפויה ברשת אקראית 'דומה' (configuration model - רשת אקראית עם אותה התפלגות דרגות בדיוק). ערך גבוה מעיד שיש בתוך הקהילות הרבה יותר קשתות מהמצופה באקראי.",
     "related_raw": [
       "Louvain Algorithm",
       "Label Propagation",
@@ -610,13 +610,13 @@
   {
     "id": "Topic 2 - Natural Language Processing::algorithms::02_Boolean_Retrieval.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 2,
     "slug_name": "Boolean Retrieval",
     "title": "אחזור בוליאני (Boolean Retrieval)",
-    "definition": "שיטת אחזור מידע מבוססת על מטריצת היארעות בינארית (Binary Term-Document Incidence Matrix), שבה כל תא מציין אם מילה מסוימת מופיעה במסמך נתון. שאילתות מנוסחות באמצעות אופרטורים בוליאניים — AND, OR, NOT.",
+    "definition": "שיטת אחזור מידע מבוססת על מטריצת היארעות בינארית (Binary Term-Document Incidence Matrix), שבה כל תא מציין אם מילה מסוימת מופיעה במסמך נתון. שאילתות מנוסחות באמצעות אופרטורים בוליאניים - AND, OR, NOT.",
     "related_raw": [
       "Vector Representation of Documents",
       "Bag of Words",
@@ -636,13 +636,13 @@
   {
     "id": "Topic 2 - Natural Language Processing::algorithms::08_Fuzzy_String_Matching.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 8,
     "slug_name": "Fuzzy String Matching",
     "title": "התאמת מחרוזות מקורבת (Fuzzy String Matching)",
-    "definition": "משפחת שיטות למדידת דמיון בין מחרוזות שאינן זהות במדויק, באמצעות 'מרחק עריכה' (Edit Distance) — מספר הפעולות המינימלי הדרוש להמיר מחרוזת אחת לאחרת — או באמצעות ייצוג וקטורי של רצפי תווים (character n-grams).",
+    "definition": "משפחת שיטות למדידת דמיון בין מחרוזות שאינן זהות במדויק, באמצעות 'מרחק עריכה' (Edit Distance) - מספר הפעולות המינימלי הדרוש להמיר מחרוזת אחת לאחרת - או באמצעות ייצוג וקטורי של רצפי תווים (character n-grams).",
     "related_raw": [
       "Record Linkage and Entity Resolution",
       "Jaccard Similarity",
@@ -660,12 +660,12 @@
   {
     "id": "Topic 2 - Natural Language Processing::algorithms::09_BM25.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 9,
     "slug_name": "BM25",
-    "title": "BM25 — Okapi BM25 Ranking Function",
+    "title": "BM25 - Okapi BM25 Ranking Function",
     "definition": "פונקציית ניקוד לדירוג מסמכים לפי רלוונטיות לשאילתה, המהווה שיפור הסתברותי על TF-IDF. BM25 הופך עם השנים לסטנדרט דה-פקטו במנועי חיפוש (Elasticsearch, Lucene) ולשלב ה-Retrieval הראשוני בצנרות RAG.",
     "related_raw": [
       "TF-IDF",
@@ -688,12 +688,12 @@
   {
     "id": "Topic 2 - Natural Language Processing::algorithms::11_LDA_Latent_Dirichlet_Allocation.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 11,
     "slug_name": "LDA Latent Dirichlet Allocation",
-    "title": "LDA — Latent Dirichlet Allocation",
+    "title": "LDA - Latent Dirichlet Allocation",
     "definition": "אלגוריתם Topic Modeling לא-מפוקח, המניח שכל מסמך הוא תמהיל (mixture) של כמה נושאים סמויים (topics), וכל נושא הוא התפלגות על פני מילות אוצר המילים. המטרה: לגלות את הנושאים הסמויים ואת ההתפלגות שלהם בכל מסמך, ישירות מהדאטה (Unsupervised).",
     "related_raw": [
       "Bag of Words",
@@ -714,13 +714,13 @@
   {
     "id": "Topic 2 - Natural Language Processing::algorithms::17_GloVe.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 17,
     "slug_name": "GloVe",
-    "title": "GloVe — Global Vectors for Word Representation",
-    "definition": "שיטה ללימוד Word Embeddings המבוססת על פירוק (factorization) של מטריצת co-occurrence גלובלית של הקורפוס — בניגוד ל-Word2Vec שמתבסס על חלונות קונטקסט מקומיים, GloVe מנצל סטטיסטיקה גלובלית של הקורפוס כולו.",
+    "title": "GloVe - Global Vectors for Word Representation",
+    "definition": "שיטה ללימוד Word Embeddings המבוססת על פירוק (factorization) של מטריצת co-occurrence גלובלית של הקורפוס - בניגוד ל-Word2Vec שמתבסס על חלונות קונטקסט מקומיים, GloVe מנצל סטטיסטיקה גלובלית של הקורפוס כולו.",
     "related_raw": [
       "Word Embeddings Overview",
       "Word2Vec",
@@ -740,12 +740,12 @@
   {
     "id": "Topic 2 - Natural Language Processing::algorithms::18_Word2Vec.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 18,
     "slug_name": "Word2Vec",
-    "title": "Word2Vec — Skip-gram & CBOW",
+    "title": "Word2Vec - Skip-gram & CBOW",
     "definition": "משפחת מודלים ללימוד Word Embeddings על-ידי אימון רשת נוירונים פשוטה (שכבה אחת) לחיזוי מילים מתוך הקשרן המקומי בטקסט. שני ארכיטקטורות מרכזיות: Skip-gram (חיזוי מילות ההקשר מתוך מילת המטרה) ו-CBOW (חיזוי מילת המטרה מתוך מילות ההקשר).",
     "related_raw": [
       "Word Embeddings Overview",
@@ -766,7 +766,7 @@
   {
     "id": "Topic 2 - Natural Language Processing::algorithms::19_FastText.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 19,
@@ -790,13 +790,13 @@
   {
     "id": "Topic 2 - Natural Language Processing::algorithms::20_Doc2Vec.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 20,
     "slug_name": "Doc2Vec",
-    "title": "Doc2Vec — Paragraph Vectors",
-    "definition": "הרחבה של Word2Vec ללימוד וקטור הטמעה (embedding) שלם למסמך/פסקה, ולא רק למילים בודדות — כך שניתן להשוות מסמכים שלמים זה לזה ישירות במרחב הווקטורי.",
+    "title": "Doc2Vec - Paragraph Vectors",
+    "definition": "הרחבה של Word2Vec ללימוד וקטור הטמעה (embedding) שלם למסמך/פסקה, ולא רק למילים בודדות - כך שניתן להשוות מסמכים שלמים זה לזה ישירות במרחב הווקטורי.",
     "related_raw": [
       "Word2Vec",
       "Word Embeddings Overview",
@@ -816,13 +816,13 @@
   {
     "id": "Topic 2 - Natural Language Processing::concepts::01_Vector_Representation_of_Documents.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 1,
     "slug_name": "Vector Representation of Documents",
     "title": "ייצוג וקטורי של מסמכים (Vector Representation of Documents)",
-    "definition": "כדי שמודל מחשב יוכל לעבד טקסט, יש להמיר כל מסמך לכתב מספרי — וקטור במרחב |V|-מימדי, כאשר V הוא אוצר המילים (Vocabulary) של הקורפוס. כל מסמך d מיוצג כווקטור שבו כל תא מתאר היבט מסוים של מילה אחת באוצר המילים.",
+    "definition": "כדי שמודל מחשב יוכל לעבד טקסט, יש להמיר כל מסמך לכתב מספרי - וקטור במרחב |V|-מימדי, כאשר V הוא אוצר המילים (Vocabulary) של הקורפוס. כל מסמך d מיוצג כווקטור שבו כל תא מתאר היבט מסוים של מילה אחת באוצר המילים.",
     "related_raw": [
       "Boolean Retrieval",
       "Bag of Words",
@@ -842,13 +842,13 @@
   {
     "id": "Topic 2 - Natural Language Processing::concepts::04_Bag_of_Words.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 4,
     "slug_name": "Bag of Words",
-    "title": "שק המילים (Bag of Words — BoW)",
-    "definition": "ייצוג של מסמך כווקטור ספירות — לכל מילה באוצר המילים, כמה פעמים היא מופיעה במסמך. השם 'שק מילים' מבטא את העיקרון המרכזי: סדר המילים נשמט לחלוטין, ונשמרת רק תדירות ההופעה.",
+    "title": "שק המילים (Bag of Words - BoW)",
+    "definition": "ייצוג של מסמך כווקטור ספירות - לכל מילה באוצר המילים, כמה פעמים היא מופיעה במסמך. השם 'שק מילים' מבטא את העיקרון המרכזי: סדר המילים נשמט לחלוטין, ונשמרת רק תדירות ההופעה.",
     "related_raw": [
       "Vector Representation of Documents",
       "TF-IDF",
@@ -868,13 +868,13 @@
   {
     "id": "Topic 2 - Natural Language Processing::concepts::07_Record_Linkage_and_Entity_Resolution.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 7,
     "slug_name": "Record Linkage and Entity Resolution",
     "title": "Record Linkage ו-Entity Resolution",
-    "definition": "משימה של זיהוי רשומות (records) שונות, אשר מתארות את אותה ישות בעולם האמיתי (אדם, חברה, מוצר) אך נכתבו בצורה שונה — עקב שגיאות כתיב, פורמטים שונים, או חסר מידע. המטרה: לאחד/לקשר רשומות אלה (Deduplication).",
+    "definition": "משימה של זיהוי רשומות (records) שונות, אשר מתארות את אותה ישות בעולם האמיתי (אדם, חברה, מוצר) אך נכתבו בצורה שונה - עקב שגיאות כתיב, פורמטים שונים, או חסר מידע. המטרה: לאחד/לקשר רשומות אלה (Deduplication).",
     "related_raw": [
       "Fuzzy String Matching",
       "Jaccard Similarity",
@@ -894,13 +894,13 @@
   {
     "id": "Topic 2 - Natural Language Processing::concepts::13_Text_Preprocessing_Pipeline.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 13,
     "slug_name": "Text Preprocessing Pipeline",
     "title": "צנרת עיבוד מקדים לטקסט (Text Preprocessing Pipeline)",
-    "definition": "סדרת שלבי עיבוד שמטרתם להמיר טקסט גולמי וחופשי (raw text) לצורה נקייה ואחידה, המתאימה להזנה לאלגוריתמי NLP — בין אם מודל קלאסי מבוסס BoW/TF-IDF ובין אם מודל מבוסס embeddings.",
+    "definition": "סדרת שלבי עיבוד שמטרתם להמיר טקסט גולמי וחופשי (raw text) לצורה נקייה ואחידה, המתאימה להזנה לאלגוריתמי NLP - בין אם מודל קלאסי מבוסס BoW/TF-IDF ובין אם מודל מבוסס embeddings.",
     "related_raw": [
       "Bag of Words",
       "N-grams and Phrase Detection",
@@ -918,7 +918,7 @@
   {
     "id": "Topic 2 - Natural Language Processing::concepts::15_N-grams_and_Phrase_Detection.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 15,
@@ -942,12 +942,12 @@
   {
     "id": "Topic 2 - Natural Language Processing::concepts::16_Word_Embeddings_Overview.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 16,
     "slug_name": "Word Embeddings Overview",
-    "title": "ייצוגי מילים סמנטיים (Word Embeddings) — סקירה",
+    "title": "ייצוגי מילים סמנטיים (Word Embeddings) - סקירה",
     "definition": "ייצוג של מילים כווקטורים צפופים (dense) בממד נמוך יחסית (לדוגמה 100-300), הנלמדים מתוך קונטקסט השימוש במילים בקורפוס גדול, כך שמילים בעלות משמעות דומה מקבלות וקטורים קרובים במרחב. זהו שיפור מהותי על ייצוגים סימבוליים-ספארסיים כמו Bag-of-Words/TF-IDF.",
     "related_raw": [
       "GloVe",
@@ -970,13 +970,13 @@
   {
     "id": "Topic 2 - Natural Language Processing::concepts::22_Semantic_Search_and_RAG_Basics.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 22,
     "slug_name": "Semantic Search and RAG Basics",
     "title": "חיפוש סמנטי ו-RAG (Semantic Search & RAG Basics)",
-    "definition": "חיפוש סמנטי (Semantic Search) הוא שיטת אחזור מסמכים המתבססת על דמיון במרחב ה-embeddings (ולא על התאמת מילים מדויקת כמו ב-Boolean/BM25), כדי למצוא תוצאות רלוונטיות מבחינת משמעות גם אם אינן חולקות מילות מפתח זהות. RAG (Retrieval-Augmented Generation) היא ארכיטקטורה הבונה על חיפוש סמנטי כדי 'להזין' למודל שפה גדול (LLM) מקטעי טקסט רלוונטיים מתוך מאגר ידע חיצוני, לפני יצירת התשובה — כך משלבים ידע עדכני/פרטי שלא היה חלק מאימון המודל.",
+    "definition": "חיפוש סמנטי (Semantic Search) הוא שיטת אחזור מסמכים המתבססת על דמיון במרחב ה-embeddings (ולא על התאמת מילים מדויקת כמו ב-Boolean/BM25), כדי למצוא תוצאות רלוונטיות מבחינת משמעות גם אם אינן חולקות מילות מפתח זהות. RAG (Retrieval-Augmented Generation) היא ארכיטקטורה הבונה על חיפוש סמנטי כדי 'להזין' למודל שפה גדול (LLM) מקטעי טקסט רלוונטיים מתוך מאגר ידע חיצוני, לפני יצירת התשובה - כך משלבים ידע עדכני/פרטי שלא היה חלק מאימון המודל.",
     "related_raw": [
       "Word Embeddings Overview",
       "Doc2Vec",
@@ -998,13 +998,13 @@
   {
     "id": "Topic 2 - Natural Language Processing::concepts::23_Text_Classification_Pipeline.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 23,
     "slug_name": "Text Classification Pipeline",
     "title": "צנרת סיווג טקסט (Text Classification Pipeline)",
-    "definition": "תהליך מקצה-לקצה להפיכת מסמכי טקסט גולמיים לתוויות מסווגות (לדוגמה: ספאם/לא-ספאם, סנטימנט חיובי/שלילי, קטגוריית חדשות) — המשלב עיבוד מקדים, ייצוג וקטורי, ומודל סיווג. זהו אחד היישומים השכיחים ביותר של כל הכלים שנסקרו לאורך הנושא (BoW, TF-IDF, Word/Doc Embeddings).",
+    "definition": "תהליך מקצה-לקצה להפיכת מסמכי טקסט גולמיים לתוויות מסווגות (לדוגמה: ספאם/לא-ספאם, סנטימנט חיובי/שלילי, קטגוריית חדשות) - המשלב עיבוד מקדים, ייצוג וקטורי, ומודל סיווג. זהו אחד היישומים השכיחים ביותר של כל הכלים שנסקרו לאורך הנושא (BoW, TF-IDF, Word/Doc Embeddings).",
     "related_raw": [
       "Text Preprocessing Pipeline",
       "Bag of Words",
@@ -1026,13 +1026,13 @@
   {
     "id": "Topic 2 - Natural Language Processing::concepts::24_Information_Retrieval_Approaches.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 24,
     "slug_name": "Information Retrieval Approaches",
-    "title": "גישות אחזור מידע — סיכום והשוואה (Information Retrieval Approaches)",
-    "definition": "סיכום והשוואה של הגישות המרכזיות לאחזור מידע (Information Retrieval) שנסקרו בנושא — מהאחזור הבוליאני הקשיח, דרך שקלול מבוסס-תדירויות (TF-IDF, BM25), ועד אחזור סמנטי מבוסס embeddings — לצורך הבנת מתי כל גישה מתאימה.",
+    "title": "גישות אחזור מידע - סיכום והשוואה (Information Retrieval Approaches)",
+    "definition": "סיכום והשוואה של הגישות המרכזיות לאחזור מידע (Information Retrieval) שנסקרו בנושא - מהאחזור הבוליאני הקשיח, דרך שקלול מבוסס-תדירויות (TF-IDF, BM25), ועד אחזור סמנטי מבוסס embeddings - לצורך הבנת מתי כל גישה מתאימה.",
     "related_raw": [
       "Boolean Retrieval",
       "TF-IDF",
@@ -1052,13 +1052,13 @@
   {
     "id": "Topic 2 - Natural Language Processing::formulas::03_Jaccard_Similarity.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "formulas",
     "category_label": "נוסחאות",
     "num": 3,
     "slug_name": "Jaccard Similarity",
     "title": "דמיון ז'קארד (Jaccard Similarity)",
-    "definition": "מדד דמיון בין שתי קבוצות (לדוגמה — קבוצות המילים הייחודיות בשני מסמכים), המוגדר כגודל החיתוך שלהן חלקי גודל האיחוד שלהן.",
+    "definition": "מדד דמיון בין שתי קבוצות (לדוגמה - קבוצות המילים הייחודיות בשני מסמכים), המוגדר כגודל החיתוך שלהן חלקי גודל האיחוד שלהן.",
     "related_raw": [
       "Boolean Retrieval",
       "Fuzzy String Matching",
@@ -1076,12 +1076,12 @@
   {
     "id": "Topic 2 - Natural Language Processing::formulas::05_TF-IDF.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "formulas",
     "category_label": "נוסחאות",
     "num": 5,
     "slug_name": "TF-IDF",
-    "title": "TF-IDF — Term Frequency – Inverse Document Frequency",
+    "title": "TF-IDF - Term Frequency – Inverse Document Frequency",
     "definition": "שיטת שקלול של מטריצת Bag-of-Words, המשלבת את תדירות המונח במסמך (TF) עם נדירותו על פני הקורפוס (IDF), כך שמילים נפוצות בכל הקורפוס מקבלות משקל נמוך, ומילים נדירות ואינפורמטיביות מקבלות משקל גבוה.",
     "related_raw": [
       "Bag of Words",
@@ -1102,13 +1102,13 @@
   {
     "id": "Topic 2 - Natural Language Processing::formulas::06_Cosine_Similarity.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "formulas",
     "category_label": "נוסחאות",
     "num": 6,
     "slug_name": "Cosine Similarity",
     "title": "דמיון קוסינוס (Cosine Similarity)",
-    "definition": "מדד דמיון בין שני וקטורים, המבוסס על הזווית שביניהם במרחב הווקטורי — ולא על גודלם (norm). שני וקטורים המצביעים לאותו כיוון יקבלו דמיון גבוה גם אם עוצמתם שונה.",
+    "definition": "מדד דמיון בין שני וקטורים, המבוסס על הזווית שביניהם במרחב הווקטורי - ולא על גודלם (norm). שני וקטורים המצביעים לאותו כיוון יקבלו דמיון גבוה גם אם עוצמתם שונה.",
     "related_raw": [
       "TF-IDF",
       "Jaccard Similarity",
@@ -1128,13 +1128,13 @@
   {
     "id": "Topic 2 - Natural Language Processing::formulas::14_PMI_Pointwise_Mutual_Information.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "formulas",
     "category_label": "נוסחאות",
     "num": 14,
     "slug_name": "PMI Pointwise Mutual Information",
-    "title": "PMI — Pointwise Mutual Information",
-    "definition": "מדד סטטיסטי הבוחן עד כמה שני אירועים (לדוגמה — שתי מילים) מופיעים יחד בתדירות גבוהה יותר ממה שהיה צפוי בהנחת אי-תלות סטטיסטית. מבוסס על הרעיון המפורסם בבלשנות: &quot;A word is characterized by the company it keeps&quot; (Firth, 1957) — מילה מאופיינת על-ידי המילים שמופיעות לצידה.",
+    "title": "PMI - Pointwise Mutual Information",
+    "definition": "מדד סטטיסטי הבוחן עד כמה שני אירועים (לדוגמה - שתי מילים) מופיעים יחד בתדירות גבוהה יותר ממה שהיה צפוי בהנחת אי-תלות סטטיסטית. מבוסס על הרעיון המפורסם בבלשנות: &quot;A word is characterized by the company it keeps&quot; (Firth, 1957) - מילה מאופיינת על-ידי המילים שמופיעות לצידה.",
     "related_raw": [
       "N-grams and Phrase Detection",
       "Topic Coherence",
@@ -1152,7 +1152,7 @@
   {
     "id": "Topic 2 - Natural Language Processing::metrics::10_Retrieval_Evaluation_Recall_at_K_and_MRR.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "metrics",
     "category_label": "מדדי הערכה",
     "num": 10,
@@ -1178,13 +1178,13 @@
   {
     "id": "Topic 2 - Natural Language Processing::metrics::12_Topic_Coherence.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "metrics",
     "category_label": "מדדי הערכה",
     "num": 12,
     "slug_name": "Topic Coherence",
     "title": "קוהרנטיות נושאים (Topic Coherence)",
-    "definition": "מדד להערכת איכות הנושאים שהתקבלו ממודל Topic Modeling (כגון LDA) — בודק עד כמה המילים המאפיינות נושא נתון 'הולכות יחד' באופן סמנטי. ציון גבוה מעיד על נושאים שמילותיהם נוטות להופיע יחד באופן עקבי בקורפוס, ולא רק נושאים סטטיסטיים מקריים.",
+    "definition": "מדד להערכת איכות הנושאים שהתקבלו ממודל Topic Modeling (כגון LDA) - בודק עד כמה המילים המאפיינות נושא נתון 'הולכות יחד' באופן סמנטי. ציון גבוה מעיד על נושאים שמילותיהם נוטות להופיע יחד באופן עקבי בקורפוס, ולא רק נושאים סטטיסטיים מקריים.",
     "related_raw": [
       "LDA (Latent Dirichlet Allocation)",
       "PMI (Pointwise Mutual Information)",
@@ -1200,13 +1200,13 @@
   {
     "id": "Topic 2 - Natural Language Processing::metrics::21_Embedding_Evaluation.docx",
     "module": "Topic 2 - Natural Language Processing",
-    "module_label": "נושא 2 — NLP",
+    "module_label": "נושא 2 - NLP",
     "category": "metrics",
     "category_label": "מדדי הערכה",
     "num": 21,
     "slug_name": "Embedding Evaluation",
     "title": "הערכת איכות Embeddings (Embedding Evaluation)",
-    "definition": "מסגרת כללית להערכת איכות ייצוגי embeddings (מילים/מסמכים), המתחלקת לשתי גישות מרכזיות: הערכה תוכית (Intrinsic) — בודקת תכונות פנימיות של מרחב הווקטורים עצמו, והערכה חיצונית (Extrinsic) — בודקת ביצועים על משימה downstream בפועל.",
+    "definition": "מסגרת כללית להערכת איכות ייצוגי embeddings (מילים/מסמכים), המתחלקת לשתי גישות מרכזיות: הערכה תוכית (Intrinsic) - בודקת תכונות פנימיות של מרחב הווקטורים עצמו, והערכה חיצונית (Extrinsic) - בודקת ביצועים על משימה downstream בפועל.",
     "related_raw": [
       "Word Embeddings Overview",
       "GloVe",
@@ -1228,12 +1228,12 @@
   {
     "id": "Topic 3 - Deep Learning::algorithms::05_Backpropagation.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 5,
     "slug_name": "Backpropagation",
-    "title": "Backpropagation — אלגוריתם הפצה לאחור",
+    "title": "Backpropagation - אלגוריתם הפצה לאחור",
     "definition": "אלגוריתם לחישוב הגרדיאנט של פונקציית ה-Loss לגבי כל אחד ממשקלי הרשת, על ידי שימוש בכלל השרשרת (Chain Rule) ומעבר אחורה מהפלט לכניסה. הוא הבסיס לאימון כל רשת עצבית עמוקה.",
     "related_raw": [
       "MLP"
@@ -1246,12 +1246,12 @@
   {
     "id": "Topic 3 - Deep Learning::algorithms::09_SGD.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 9,
     "slug_name": "SGD",
-    "title": "SGD — Stochastic Gradient Descent",
+    "title": "SGD - Stochastic Gradient Descent",
     "definition": "אלגוריתם אופטימיזציה המעדכן את משקלי המודל בכיוון ההפוך לגרדיאנט של פונקציית ה-Loss, תוך שימוש ב-batch קטן (או דוגמה בודדת) בכל איטרציה במקום כל הדאטה.",
     "related_raw": [
       "Backpropagation"
@@ -1264,13 +1264,13 @@
   {
     "id": "Topic 3 - Deep Learning::algorithms::10_Momentum.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 10,
     "slug_name": "Momentum",
-    "title": "Momentum — אופטימיזציה עם תנע",
-    "definition": "שיטת אופטימיזציה המוסיפה ל-SGD &quot;זיכרון&quot; של כיווני העדכון הקודמים, כך שהעדכון הנוכחי הוא ממוצע ממושקל (אקספוננציאלי) של הגרדיאנטים הקודמים ולא רק הגרדיאנט הנוכחי — בדומה לכדור המתגלגל במורד עם תנע.",
+    "title": "Momentum - אופטימיזציה עם תנע",
+    "definition": "שיטת אופטימיזציה המוסיפה ל-SGD &quot;זיכרון&quot; של כיווני העדכון הקודמים, כך שהעדכון הנוכחי הוא ממוצע ממושקל (אקספוננציאלי) של הגרדיאנטים הקודמים ולא רק הגרדיאנט הנוכחי - בדומה לכדור המתגלגל במורד עם תנע.",
     "related_raw": [
       "SGD"
     ],
@@ -1282,13 +1282,13 @@
   {
     "id": "Topic 3 - Deep Learning::algorithms::11_AdaGrad.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 11,
     "slug_name": "AdaGrad",
-    "title": "AdaGrad — Adaptive Gradient Algorithm",
-    "definition": "שיטת אופטימיזציה המתאימה learning rate נפרד לכל פרמטר, על סמך סכום ריבועי הגרדיאנטים ההיסטוריים שלו — פרמטרים עם גרדיאנטים גדולים בעבר מקבלים learning rate קטן יותר, ולהפך.",
+    "title": "AdaGrad - Adaptive Gradient Algorithm",
+    "definition": "שיטת אופטימיזציה המתאימה learning rate נפרד לכל פרמטר, על סמך סכום ריבועי הגרדיאנטים ההיסטוריים שלו - פרמטרים עם גרדיאנטים גדולים בעבר מקבלים learning rate קטן יותר, ולהפך.",
     "related_raw": [
       "SGD"
     ],
@@ -1300,7 +1300,7 @@
   {
     "id": "Topic 3 - Deep Learning::algorithms::12_RMSProp_AdaDelta.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 12,
@@ -1318,13 +1318,13 @@
   {
     "id": "Topic 3 - Deep Learning::algorithms::13_Adam.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 13,
     "slug_name": "Adam",
-    "title": "Adam — Adaptive Moment Estimation",
-    "definition": "אלגוריתם אופטימיזציה המשלב Momentum (ממוצע נע של הגרדיאנט עצמו) עם RMSProp (ממוצע נע של ריבוע הגרדיאנט), בתוספת תיקון bias — הוא ברירת המחדל הנפוצה ביותר לאימון רשתות עמוקות.",
+    "title": "Adam - Adaptive Moment Estimation",
+    "definition": "אלגוריתם אופטימיזציה המשלב Momentum (ממוצע נע של הגרדיאנט עצמו) עם RMSProp (ממוצע נע של ריבוע הגרדיאנט), בתוספת תיקון bias - הוא ברירת המחדל הנפוצה ביותר לאימון רשתות עמוקות.",
     "related_raw": [
       "Momentum"
     ],
@@ -1336,7 +1336,7 @@
   {
     "id": "Topic 3 - Deep Learning::algorithms::15_Dropout.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 15,
@@ -1354,13 +1354,13 @@
   {
     "id": "Topic 3 - Deep Learning::algorithms::16_Batch_Normalization.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 16,
     "slug_name": "Batch Normalization",
     "title": "Batch Normalization",
-    "definition": "שיטה המנרמלת את האקטיבציות של שכבה (לממוצע 0 ושונות 1) על פני כל מיני-באטץ' באימון, ולאחר מכן מאפשרת לרשת ללמוד קנה מידה (scale) והיסט (shift) משלה — מייצבת ומאיצה את האימון.",
+    "definition": "שיטה המנרמלת את האקטיבציות של שכבה (לממוצע 0 ושונות 1) על פני כל מיני-באטץ' באימון, ולאחר מכן מאפשרת לרשת ללמוד קנה מידה (scale) והיסט (shift) משלה - מייצבת ומאיצה את האימון.",
     "related_raw": [
       "Dropout"
     ],
@@ -1372,13 +1372,13 @@
   {
     "id": "Topic 3 - Deep Learning::algorithms::17_Data_Augmentation.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 17,
     "slug_name": "Data Augmentation",
     "title": "Data Augmentation",
-    "definition": "שיטה להגדלת גיוון סט האימון על ידי יצירת גרסאות משתנות (אך תקפות מבחינה סמנטית) של דוגמאות קיימות — למשל סיבוב, היפוך או שינוי בהירות של תמונות — במקום אספת דאטה חדש.",
+    "definition": "שיטה להגדלת גיוון סט האימון על ידי יצירת גרסאות משתנות (אך תקפות מבחינה סמנטית) של דוגמאות קיימות - למשל סיבוב, היפוך או שינוי בהירות של תמונות - במקום אספת דאטה חדש.",
     "related_raw": [
       "Overfitting"
     ],
@@ -1390,7 +1390,7 @@
   {
     "id": "Topic 3 - Deep Learning::algorithms::19_Transfer_Learning.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 19,
@@ -1408,13 +1408,13 @@
   {
     "id": "Topic 3 - Deep Learning::algorithms::24_Convolution.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 24,
     "slug_name": "Convolution",
-    "title": "Convolution — קונבולוציה",
-    "definition": "פעולה מתמטית המעבירה פילטר (kernel) קטן על פני התמונה/האות, ומחשבת בכל מיקום סכום משוקלל מקומי — כך מחלצים תכונות מקומיות (כגון קצוות, טקסטורות) תוך שמירה על מבנה המקום (spatial structure).",
+    "title": "Convolution - קונבולוציה",
+    "definition": "פעולה מתמטית המעבירה פילטר (kernel) קטן על פני התמונה/האות, ומחשבת בכל מיקום סכום משוקלל מקומי - כך מחלצים תכונות מקומיות (כגון קצוות, טקסטורות) תוך שמירה על מבנה המקום (spatial structure).",
     "related_raw": [
       "CNN"
     ],
@@ -1426,13 +1426,13 @@
   {
     "id": "Topic 3 - Deep Learning::algorithms::25_Max_Pooling.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 25,
     "slug_name": "Max Pooling",
     "title": "Max Pooling",
-    "definition": "פעולת דגימה-יתר (downsampling) המחלקת את מפת התכונות לחלונות קטנים (לדוגמה 2x2) ובוחרת מכל חלון את הערך המקסימלי בלבד — מקטינה את הרזולוציה המרחבית ומדגישה את התכונות הבולטות ביותר.",
+    "definition": "פעולת דגימה-יתר (downsampling) המחלקת את מפת התכונות לחלונות קטנים (לדוגמה 2x2) ובוחרת מכל חלון את הערך המקסימלי בלבד - מקטינה את הרזולוציה המרחבית ומדגישה את התכונות הבולטות ביותר.",
     "related_raw": [
       "Convolution"
     ],
@@ -1444,13 +1444,13 @@
   {
     "id": "Topic 3 - Deep Learning::algorithms::29_Teacher_Forcing.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 29,
     "slug_name": "Teacher Forcing",
     "title": "Teacher Forcing",
-    "definition": "שיטת אימון למודלים רקורסיביים (כגון Seq2Seq) שבה בכל צעד פיענוח (decoding) מזינים למודל את הטוקן האמיתי (ground-truth) מהצעד הקודם, במקום את הטוקן שהמודל עצמו חזה — מייצב ומאיץ את האימון.",
+    "definition": "שיטת אימון למודלים רקורסיביים (כגון Seq2Seq) שבה בכל צעד פיענוח (decoding) מזינים למודל את הטוקן האמיתי (ground-truth) מהצעד הקודם, במקום את הטוקן שהמודל עצמו חזה - מייצב ומאיץ את האימון.",
     "related_raw": [
       "Seq2Seq Encoder-Decoder"
     ],
@@ -1462,7 +1462,7 @@
   {
     "id": "Topic 3 - Deep Learning::algorithms::31_Matrix_Factorization.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 31,
@@ -1480,13 +1480,13 @@
   {
     "id": "Topic 3 - Deep Learning::algorithms::36_Multi_Head_Attention.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "algorithms",
     "category_label": "אלגוריתמים",
     "num": 36,
     "slug_name": "Multi Head Attention",
     "title": "Multi-Head Attention",
-    "definition": "הרחבה של Scaled Dot-Product Attention שבה מריצים כמה &quot;ראשי&quot; Attention במקביל, כל אחד במרחב תת-מימדי שונה, ולאחר מכן משרשרים (concat) ומשליכים (project) את כל הראשים לפלט אחד — מאפשר ללכוד סוגי קשרים שונים בין טוקנים בו-זמנית.",
+    "definition": "הרחבה של Scaled Dot-Product Attention שבה מריצים כמה &quot;ראשי&quot; Attention במקביל, כל אחד במרחב תת-מימדי שונה, ולאחר מכן משרשרים (concat) ומשליכים (project) את כל הראשים לפלט אחד - מאפשר ללכוד סוגי קשרים שונים בין טוקנים בו-זמנית.",
     "related_raw": [
       "Transformer"
     ],
@@ -1498,12 +1498,12 @@
   {
     "id": "Topic 3 - Deep Learning::architectures::04_MLP_Multi-Layer_Perceptron.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "architectures",
     "category_label": "ארכיטקטורות",
     "num": 4,
     "slug_name": "MLP Multi-Layer Perceptron",
-    "title": "MLP — Multi-Layer Perceptron",
+    "title": "MLP - Multi-Layer Perceptron",
     "definition": "רשת עצבית מלאה (Fully-Connected) המורכבת משכבות נוירונים, שבה כל נוירון בשכבה מחובר לכל הנוירונים בשכבה הקודמת. משמשת כאבן הבניין הבסיסית של רשתות עצביות עמוקות.",
     "related_raw": [
       "Backpropagation"
@@ -1516,7 +1516,7 @@
   {
     "id": "Topic 3 - Deep Learning::architectures::20_Autoencoder.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "architectures",
     "category_label": "ארכיטקטורות",
     "num": 20,
@@ -1534,12 +1534,12 @@
   {
     "id": "Topic 3 - Deep Learning::architectures::26_CNN.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "architectures",
     "category_label": "ארכיטקטורות",
     "num": 26,
     "slug_name": "CNN",
-    "title": "CNN — Convolutional Neural Network",
+    "title": "CNN - Convolutional Neural Network",
     "definition": "ארכיטקטורת רשת עצבית המתמחה בעיבוד נתונים בעלי מבנה מרחבי (תמונות בעיקר), המבוססת על שכבות קונבולוציה המשתפות משקולות (Filters) על פני כל המרחב הקלט.",
     "related_raw": [
       "Convolution"
@@ -1552,12 +1552,12 @@
   {
     "id": "Topic 3 - Deep Learning::architectures::27_RNN.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "architectures",
     "category_label": "ארכיטקטורות",
     "num": 27,
     "slug_name": "RNN",
-    "title": "RNN — Recurrent Neural Network",
+    "title": "RNN - Recurrent Neural Network",
     "definition": "ארכיטקטורת רשת עצבית המעבדת רצפים (Sequences) על ידי שמירת מצב חבוי (Hidden State) שמתעדכן בכל צעד זמן, ומאפשר לרשת &quot;לזכור&quot; מידע מצעדים קודמים.",
     "related_raw": [
       "LSTM"
@@ -1570,12 +1570,12 @@
   {
     "id": "Topic 3 - Deep Learning::architectures::28_LSTM.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "architectures",
     "category_label": "ארכיטקטורות",
     "num": 28,
     "slug_name": "LSTM",
-    "title": "LSTM — Long Short-Term Memory",
+    "title": "LSTM - Long Short-Term Memory",
     "definition": "גרסה מתקדמת של RNN המוסיפה מנגנון שערים (Gates) ו-Cell State נפרד, המאפשרים לרשת לזכור מידע לאורך רצפים ארוכים בלי לסבול מ-Vanishing Gradients באותה חדות.",
     "related_raw": [
       "RNN"
@@ -1588,7 +1588,7 @@
   {
     "id": "Topic 3 - Deep Learning::architectures::30_Embedding_Layer.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "architectures",
     "category_label": "ארכיטקטורות",
     "num": 30,
@@ -1606,12 +1606,12 @@
   {
     "id": "Topic 3 - Deep Learning::architectures::34_Seq2Seq_Encoder_Decoder.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "architectures",
     "category_label": "ארכיטקטורות",
     "num": 34,
     "slug_name": "Seq2Seq Encoder Decoder",
-    "title": "Seq2Seq — Sequence-to-Sequence (Encoder-Decoder)",
+    "title": "Seq2Seq - Sequence-to-Sequence (Encoder-Decoder)",
     "definition": "ארכיטקטורה כללית למיפוי רצף קלט לרצף פלט באורך שונה, המורכבת משני רכיבים: Encoder שמקודד את הקלט לייצוג קבוע, ו-Decoder שמייצר את הפלט צעד-צעד מתוך ייצוג זה.",
     "related_raw": [
       "RNN"
@@ -1624,7 +1624,7 @@
   {
     "id": "Topic 3 - Deep Learning::architectures::37_Transformer.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "architectures",
     "category_label": "ארכיטקטורות",
     "num": 37,
@@ -1642,12 +1642,12 @@
   {
     "id": "Topic 3 - Deep Learning::architectures::39_BERT.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "architectures",
     "category_label": "ארכיטקטורות",
     "num": 39,
     "slug_name": "BERT",
-    "title": "BERT — Bidirectional Encoder Representations from Transformers",
+    "title": "BERT - Bidirectional Encoder Representations from Transformers",
     "definition": "מודל שפה מבוסס Transformer Encoder-only, המאומן באופן דו-כיווני (Bidirectional) על משימות Self-Supervised כדי להפיק ייצוגים תלויי-הקשר (Contextual Embeddings) עבור מילים וטקסטים.",
     "related_raw": [
       "Transformer"
@@ -1660,7 +1660,7 @@
   {
     "id": "Topic 3 - Deep Learning::architectures::40_Bi_Encoder_Retriever.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "architectures",
     "category_label": "ארכיטקטורות",
     "num": 40,
@@ -1678,12 +1678,12 @@
   {
     "id": "Topic 3 - Deep Learning::concepts::01_Hardware_for_Deep_Learning.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 1,
     "slug_name": "Hardware for Deep Learning",
-    "title": "Hardware for Deep Learning — חומרה ללמידה עמוקה",
+    "title": "Hardware for Deep Learning - חומרה ללמידה עמוקה",
     "definition": "הרכיבים החשובים (CPU, GPU, TPU) המאפשרים אימון והרצה יעילים של רשתות עצביות עמוקות, בעזרת חישוב מקבילי מסיבי של פעולות מטריצות ווקטורים.",
     "related_raw": [
       "Tensors"
@@ -1696,13 +1696,13 @@
   {
     "id": "Topic 3 - Deep Learning::concepts::02_Tensors.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 2,
     "slug_name": "Tensors",
-    "title": "Tensors — טנזורים",
-    "definition": "מבנה הנתונים הבסיסי בלמידה עמוקה — מערך רב-מימדי של מספרים (הכללה של סקלר, וקטור ומטריצה למימדים גבוהים יותר), המשמש לאחסון קלט, משקלים, אקטיבציות וגרדיאנטים בכל שלב של הרשת.",
+    "title": "Tensors - טנזורים",
+    "definition": "מבנה הנתונים הבסיסי בלמידה עמוקה - מערך רב-מימדי של מספרים (הכללה של סקלר, וקטור ומטריצה למימדים גבוהים יותר), המשמש לאחסון קלט, משקלים, אקטיבציות וגרדיאנטים בכל שלב של הרשת.",
     "related_raw": [
       "Hardware for Deep Learning"
     ],
@@ -1714,13 +1714,13 @@
   {
     "id": "Topic 3 - Deep Learning::concepts::03_Autograd.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 3,
     "slug_name": "Autograd",
-    "title": "Autograd — דיפרנציאציה אוטומטית",
-    "definition": "מנגנון המאפשר חישוב אוטומטי של גרדיאנטים על ידי בניית גרף חישוב דינמי (computation graph) במהלך ה-Forward Pass, ושימוש בו לחישוב נגזרות בעזרת כלל השרשרת ב-Backward Pass — הבסיס הטכני שמאפשר Backpropagation בספריות כמו PyTorch.",
+    "title": "Autograd - דיפרנציאציה אוטומטית",
+    "definition": "מנגנון המאפשר חישוב אוטומטי של גרדיאנטים על ידי בניית גרף חישוב דינמי (computation graph) במהלך ה-Forward Pass, ושימוש בו לחישוב נגזרות בעזרת כלל השרשרת ב-Backward Pass - הבסיס הטכני שמאפשר Backpropagation בספריות כמו PyTorch.",
     "related_raw": [
       "Backpropagation"
     ],
@@ -1732,12 +1732,12 @@
   {
     "id": "Topic 3 - Deep Learning::concepts::14_Overfitting.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 14,
     "slug_name": "Overfitting",
-    "title": "Overfitting — התאמת יתר",
+    "title": "Overfitting - התאמת יתר",
     "definition": "תופעה שבה המודל לומד את דאטה האימון &quot;בעל פה&quot; (כולל רעש ופרטים ספציפיים שלא מתכללים), כך שהוא מציג ביצועים מצוינים על סט האימון אך ביצועים גרועים משמעותית על דאטה חדש (validation/test).",
     "related_raw": [
       "Dropout"
@@ -1750,12 +1750,12 @@
   {
     "id": "Topic 3 - Deep Learning::concepts::18_Vanishing_Exploding_Gradients.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 18,
     "slug_name": "Vanishing Exploding Gradients",
-    "title": "Vanishing / Exploding Gradients — דעיכת/התפוצצות גרדיאנטים",
+    "title": "Vanishing / Exploding Gradients - דעיכת/התפוצצות גרדיאנטים",
     "definition": "תופעה ברשתות עמוקות (במיוחד RNN עמוקות) שבה הגרדיאנט המחושב ב-Backpropagation נעשה קטן מאוד (דועך לאפס) או גדול מאוד (מתפוצץ) כשהוא מועבר אחורה דרך שכבות רבות, מה שמונע אימון יציב.",
     "related_raw": [
       "LSTM"
@@ -1768,13 +1768,13 @@
   {
     "id": "Topic 3 - Deep Learning::concepts::22_Representation_Learning.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 22,
     "slug_name": "Representation Learning",
-    "title": "Representation Learning — למידת ייצוגים",
-    "definition": "גישה שבה הרשת לומדת באופן אוטומטי ייצוגים (features) שימושיים מהדאטה הגולמי, במקום שמהנדס יבנה תכונות באופן ידני (feature engineering) — הרשת עצמה מגלה אילו תכונות חשובות למשימה.",
+    "title": "Representation Learning - למידת ייצוגים",
+    "definition": "גישה שבה הרשת לומדת באופן אוטומטי ייצוגים (features) שימושיים מהדאטה הגולמי, במקום שמהנדס יבנה תכונות באופן ידני (feature engineering) - הרשת עצמה מגלה אילו תכונות חשובות למשימה.",
     "related_raw": [
       "Embedding Layer"
     ],
@@ -1786,13 +1786,13 @@
   {
     "id": "Topic 3 - Deep Learning::concepts::23_Self_Supervised_Learning.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 23,
     "slug_name": "Self Supervised Learning",
-    "title": "Self-Supervised Learning — למידה עצמית-מפוקחת",
-    "definition": "גישת אימון שבה המודל יוצר תוויות אימון משלו מתוך הדאטה הגולמי עצמו (ללא צורך בתיוג אנושי), על ידי הגדרת משימת עזר (pretext task) שמלמדת ייצוגים שימושיים — לדוגמה חזוי מילה מוסתרת, או שחזור תמונה חסרה.",
+    "title": "Self-Supervised Learning - למידה עצמית-מפוקחת",
+    "definition": "גישת אימון שבה המודל יוצר תוויות אימון משלו מתוך הדאטה הגולמי עצמו (ללא צורך בתיוג אנושי), על ידי הגדרת משימת עזר (pretext task) שמלמדת ייצוגים שימושיים - לדוגמה חזוי מילה מוסתרת, או שחזור תמונה חסרה.",
     "related_raw": [
       "BERT"
     ],
@@ -1804,13 +1804,13 @@
   {
     "id": "Topic 3 - Deep Learning::concepts::32_Image_Captioning.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 32,
     "slug_name": "Image Captioning",
-    "title": "Image Captioning — כיתוב אוטומטי לתמונות",
-    "definition": "משימה המשלבת Computer Vision ו-NLP, שבה המודל מקבל תמונה ומפיק תיאור טקסטואלי (כיתוב) שלה בשפה טבעית — בדרך כלל בעזרת ארכיטקטורת Encoder-Decoder המשלבת CNN לחילוץ תכונות תמונה ו-RNN/Transformer לפיענוח טקסט.",
+    "title": "Image Captioning - כיתוב אוטומטי לתמונות",
+    "definition": "משימה המשלבת Computer Vision ו-NLP, שבה המודל מקבל תמונה ומפיק תיאור טקסטואלי (כיתוב) שלה בשפה טבעית - בדרך כלל בעזרת ארכיטקטורת Encoder-Decoder המשלבת CNN לחילוץ תכונות תמונה ו-RNN/Transformer לפיענוח טקסט.",
     "related_raw": [
       "Seq2Seq Encoder-Decoder"
     ],
@@ -1822,12 +1822,12 @@
   {
     "id": "Topic 3 - Deep Learning::concepts::33_Multi_Input_Networks.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 33,
     "slug_name": "Multi Input Networks",
-    "title": "Multi-Input Networks — רשתות מרובות-קלט",
+    "title": "Multi-Input Networks - רשתות מרובות-קלט",
     "definition": "ארכיטקטורות רשת עצבית המקבלות בו-זמנית כמה סוגי קלט שונים (לדוגמה תמונה וטקסט, או כמה מקורות נתונים מספריים), מעבדות כל קלט בענף (branch) נפרד, ולאחר מכן משלבות (fuse) את הייצוגים לכדי תחזית משותפת אחת.",
     "related_raw": [
       "MLP"
@@ -1840,12 +1840,12 @@
   {
     "id": "Topic 3 - Deep Learning::concepts::38_Contextual_vs_Static_Embeddings.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 38,
     "slug_name": "Contextual vs Static Embeddings",
-    "title": "Contextual vs Static Embeddings — ייצוגים הקשריים מול סטטיים",
+    "title": "Contextual vs Static Embeddings - ייצוגים הקשריים מול סטטיים",
     "definition": "הבחנה בין שני סוגי ייצוגי מילים (word embeddings): ייצוג סטטי שבו לכל מילה יש וקטור קבוע יחיד ללא תלות בהקשר, וייצוג הקשרי שבו הווקטור של כל מילה מחושב דינמית בהתאם למשפט שבו היא מופיעה.",
     "related_raw": [
       "BERT"
@@ -1858,12 +1858,12 @@
   {
     "id": "Topic 3 - Deep Learning::concepts::41_Zero_Shot_Classification.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "concepts",
     "category_label": "מושגים תיאורטיים",
     "num": 41,
     "slug_name": "Zero Shot Classification",
-    "title": "Zero-Shot Classification — סיווג ללא דוגמאות אימון",
+    "title": "Zero-Shot Classification - סיווג ללא דוגמאות אימון",
     "definition": "גישת סיווג שבה המודל מסווג דוגמאות למחלקות שהוא לא ראה כלל בזמן האימון, על ידי ניצול ייצוגים סמנטיים כלליים (לדוגמה embeddings של שם המחלקה בשפה טבעית) במקום למידה ישירה מדוגמאות מתויגות לכל מחלקה.",
     "related_raw": [
       "BERT"
@@ -1876,13 +1876,13 @@
   {
     "id": "Topic 3 - Deep Learning::formulas::06_Activation_Functions.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "formulas",
     "category_label": "נוסחאות",
     "num": 6,
     "slug_name": "Activation Functions",
-    "title": "Activation Functions — פונקציות הפעלה",
-    "definition": "פונקציות לא-לינאריות המופעלות על הפלט של כל נוירון ברשת עצבית, ומאפשרות לרשת ללמוד קשרים לא-לינאריים מורכבים — בלעדיהן הרשת הייתה שקולה למודל לינארי אחד, ללא תלות במספר השכבות.",
+    "title": "Activation Functions - פונקציות הפעלה",
+    "definition": "פונקציות לא-לינאריות המופעלות על הפלט של כל נוירון ברשת עצבית, ומאפשרות לרשת ללמוד קשרים לא-לינאריים מורכבים - בלעדיהן הרשת הייתה שקולה למודל לינארי אחד, ללא תלות במספר השכבות.",
     "related_raw": [
       "Vanishing/Exploding Gradients"
     ],
@@ -1894,12 +1894,12 @@
   {
     "id": "Topic 3 - Deep Learning::formulas::07_Regression_Loss_Functions.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "formulas",
     "category_label": "נוסחאות",
     "num": 7,
     "slug_name": "Regression Loss Functions",
-    "title": "Regression Loss Functions — פונקציות Loss לרגרסיה",
+    "title": "Regression Loss Functions - פונקציות Loss לרגרסיה",
     "definition": "פונקציות המודדות את הפער בין הערך החזוי (ŷ) לערך האמיתי (y) במשימות רגרסיה (חיזוי ערך רציף), ומשמשות לאימון המודל על ידי מזעור הפער הזה.",
     "related_raw": [
       "Classification Loss Functions"
@@ -1912,12 +1912,12 @@
   {
     "id": "Topic 3 - Deep Learning::formulas::08_Classification_Loss_Functions.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "formulas",
     "category_label": "נוסחאות",
     "num": 8,
     "slug_name": "Classification Loss Functions",
-    "title": "Classification Loss Functions — פונקציות Loss לסיווג",
+    "title": "Classification Loss Functions - פונקציות Loss לסיווג",
     "definition": "פונקציות המודדות את הפער בין התפלגות ההסתברות החזויה לבין התווית האמיתית במשימות סיווג, ומשמשות לאימון המודל על ידי מזעור הפער הזה.",
     "related_raw": [
       "Regression Loss Functions"
@@ -1930,13 +1930,13 @@
   {
     "id": "Topic 3 - Deep Learning::formulas::35_Scaled_Dot-Product_Attention.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "formulas",
     "category_label": "נוסחאות",
     "num": 35,
     "slug_name": "Scaled Dot-Product Attention",
     "title": "Scaled Dot-Product Attention",
-    "definition": "מנגנון המחשב, עבור כל איבר ברצף, סכום משוקלל של איברים אחרים ברצף (Values), כאשר המשקלים נקבעים על ידי דמיון (Dot-Product) בין שאילתה (Query) למפתחות (Keys) — הרכיב הבסיסי של ארכיטקטורת Transformer.",
+    "definition": "מנגנון המחשב, עבור כל איבר ברצף, סכום משוקלל של איברים אחרים ברצף (Values), כאשר המשקלים נקבעים על ידי דמיון (Dot-Product) בין שאילתה (Query) למפתחות (Keys) - הרכיב הבסיסי של ארכיטקטורת Transformer.",
     "related_raw": [
       "Multi-Head Attention"
     ],
@@ -1948,13 +1948,13 @@
   {
     "id": "Topic 3 - Deep Learning::metrics::21_Autoencoder_Reconstruction_Metrics.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "metrics",
     "category_label": "מדדי הערכה",
     "num": 21,
     "slug_name": "Autoencoder Reconstruction Metrics",
-    "title": "Autoencoder Reconstruction Metrics — מדדי שחזור ל-Autoencoder",
-    "definition": "מדדים המודדים עד כמה הפלט המשוחזר (Decoder output) של Autoencoder קרוב לקלט המקורי — משמשים גם כפונקציית Loss לאימון וגם כמדד הערכה לאיכות הדחיסה/שחזור.",
+    "title": "Autoencoder Reconstruction Metrics - מדדי שחזור ל-Autoencoder",
+    "definition": "מדדים המודדים עד כמה הפלט המשוחזר (Decoder output) של Autoencoder קרוב לקלט המקורי - משמשים גם כפונקציית Loss לאימון וגם כמדד הערכה לאיכות הדחיסה/שחזור.",
     "related_raw": [
       "Autoencoder"
     ],
@@ -1966,13 +1966,13 @@
   {
     "id": "Topic 3 - Deep Learning::metrics::42_Perplexity.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "metrics",
     "category_label": "מדדי הערכה",
     "num": 42,
     "slug_name": "Perplexity",
-    "title": "Perplexity — מבוכה",
-    "definition": "מדד המעריך עד כמה מודל שפה (Language Model) 'מבולבל' בעת חיזוי הטוקן הבא ברצף — מוגדר כ-2 בחזקת ה-Entropy הצולבת (או e בחזקת ה-Loss), כאשר ערך נמוך יותר מצביע על מודל בטוח ומדויק יותר.",
+    "title": "Perplexity - מבוכה",
+    "definition": "מדד המעריך עד כמה מודל שפה (Language Model) 'מבולבל' בעת חיזוי הטוקן הבא ברצף - מוגדר כ-2 בחזקת ה-Entropy הצולבת (או e בחזקת ה-Loss), כאשר ערך נמוך יותר מצביע על מודל בטוח ומדויק יותר.",
     "related_raw": [
       "RNN"
     ],
@@ -1984,12 +1984,12 @@
   {
     "id": "Topic 3 - Deep Learning::metrics::43_BLEU_Score.docx",
     "module": "Topic 3 - Deep Learning",
-    "module_label": "נושא 3 — Deep Learning",
+    "module_label": "נושא 3 - Deep Learning",
     "category": "metrics",
     "category_label": "מדדי הערכה",
     "num": 43,
     "slug_name": "BLEU Score",
-    "title": "BLEU Score — Bilingual Evaluation Understudy",
+    "title": "BLEU Score - Bilingual Evaluation Understudy",
     "definition": "מדד המעריך את איכות טקסט שנוצר אוטומטית (לדוגמה תרגום מכונה) על ידי השוואת n-grams (רצפי מילים סמוכות) בין הטקסט שנוצר לבין טקסט התייחסות (reference) שנכתב על ידי אדם, בתוספת קנס על פלט קצר מדי.",
     "related_raw": [
       "Seq2Seq Encoder-Decoder"
@@ -2007,7 +2007,7 @@
     "category_label": "אלגוריתמים",
     "num": 6,
     "slug_name": "RLHF",
-    "title": "RLHF — Reinforcement Learning from Human Feedback",
+    "title": "RLHF - Reinforcement Learning from Human Feedback",
     "definition": "שיטה ליישור (alignment) התנהגות LLM עם העדפות אנושיות, באמצעות אימון מודל פרס (Reward Model) על דירוגים אנושיים, ושימוש בו לאימון המודל הראשי בלמידת חיזוקים (Reinforcement Learning).",
     "related_raw": [
       "Pretraining vs Fine-Tuning vs Instruction-Tuning",
@@ -2027,8 +2027,8 @@
     "category_label": "אלגוריתמים",
     "num": 16,
     "slug_name": "HNSW",
-    "title": "HNSW — Hierarchical Navigable Small World",
-    "definition": "HNSW הוא אלגוריתם state-of-the-art לחיפוש שכנים קרובים בקירוב (Approximate Nearest Neighbor — ANN), המבוסס על גרף רב-שכבתי (multi-layer proximity graph). הוא עומד בבסיס מנועי החיפוש של FAISS, Qdrant, Weaviate ו-Milvus (Malkov &amp; Yashunin, 2016).",
+    "title": "HNSW - Hierarchical Navigable Small World",
+    "definition": "HNSW הוא אלגוריתם state-of-the-art לחיפוש שכנים קרובים בקירוב (Approximate Nearest Neighbor - ANN), המבוסס על גרף רב-שכבתי (multi-layer proximity graph). הוא עומד בבסיס מנועי החיפוש של FAISS, Qdrant, Weaviate ו-Milvus (Malkov &amp; Yashunin, 2016).",
     "related_raw": [
       "Vector Stores",
       "Embedding Models and APIs",
@@ -2051,7 +2051,7 @@
     "category_label": "אלגוריתמים",
     "num": 20,
     "slug_name": "Hybrid Search BM25 Vector",
-    "title": "Hybrid Search — BM25 + חיפוש סמנטי",
+    "title": "Hybrid Search - BM25 + חיפוש סמנטי",
     "definition": "Hybrid Search משלב חיפוש מילות-מפתח (BM25) עם חיפוש סמנטי וקטורי, כדי לכסות גם התאמות מדויקות (מזהים, שמות תרופות, קודי שגיאה) וגם ניסוחים שונים באותה משמעות (paraphrases), ולשפר recall מבלי לפגוע ב-precision.",
     "related_raw": [
       "HNSW",
@@ -2076,7 +2076,7 @@
     "num": 47,
     "slug_name": "Triple Extraction Graph Construction",
     "title": "חילוץ טריפלטים ובניית גרף ידע",
-    "definition": "כדי לבנות Knowledge Graph נדרשים טריפלטים (subject, relation, object). במקום regex ידני, מבקשים מ-LLM לקרוא כל מסמך ולהפיק טריפלטים בפורמט JSON — לאחר מכן בונים מהם גרף מכוון (directed multigraph) ומפעילים עליו אלגוריתמי אחזור.",
+    "definition": "כדי לבנות Knowledge Graph נדרשים טריפלטים (subject, relation, object). במקום regex ידני, מבקשים מ-LLM לקרוא כל מסמך ולהפיק טריפלטים בפורמט JSON - לאחר מכן בונים מהם גרף מכוון (directed multigraph) ומפעילים עליו אלגוריתמי אחזור.",
     "related_raw": [
       "Knowledge Graph RAG Architecture",
       "Neo4j Graph Database",
@@ -2099,8 +2099,8 @@
     "category_label": "אלגוריתמים",
     "num": 51,
     "slug_name": "Embedding FineTuning SimCSE",
-    "title": "Embedding Fine-Tuning — SimCSE Contrastive Learning",
-    "definition": "Embedding Fine-Tuning הוא תהליך של אימון מודל sentence-transformer (לדוגמה all-MiniLM-L6-v2) על דאטה ספציפי-לתחום, כדי לשנות את פונקציית המיפוי f(text) → vector — ובכך לשנות מה נחשב 'דומה' (similarity space), ולא לשנות וקטורים קיימים במסד הנתונים.",
+    "title": "Embedding Fine-Tuning - SimCSE Contrastive Learning",
+    "definition": "Embedding Fine-Tuning הוא תהליך של אימון מודל sentence-transformer (לדוגמה all-MiniLM-L6-v2) על דאטה ספציפי-לתחום, כדי לשנות את פונקציית המיפוי f(text) → vector - ובכך לשנות מה נחשב 'דומה' (similarity space), ולא לשנות וקטורים קיימים במסד הנתונים.",
     "related_raw": [
       "Embedding Models and APIs",
       "Chunking Strategies",
@@ -2125,8 +2125,8 @@
     "category_label": "אלגוריתמים",
     "num": 52,
     "slug_name": "LoRA QLoRA FineTuning",
-    "title": "LoRA / QLoRA — Parameter-Efficient LLM Fine-Tuning",
-    "definition": "LoRA (Low-Rank Adaptation) היא שיטת PEFT (Parameter-Efficient Fine-Tuning) המאמנת adapter קטן ('Low-Rank') במקום את כל משקלי המודל. QLoRA משלבת זאת עם quantization ל-4-bit של המודל הבסיסי — כך שניתן לאמן adapters על GPU בודד או laptop, בעוד המודל הבסיסי (frozen) נשאר מקוונטז וקפוא.",
+    "title": "LoRA / QLoRA - Parameter-Efficient LLM Fine-Tuning",
+    "definition": "LoRA (Low-Rank Adaptation) היא שיטת PEFT (Parameter-Efficient Fine-Tuning) המאמנת adapter קטן ('Low-Rank') במקום את כל משקלי המודל. QLoRA משלבת זאת עם quantization ל-4-bit של המודל הבסיסי - כך שניתן לאמן adapters על GPU בודד או laptop, בעוד המודל הבסיסי (frozen) נשאר מקוונטז וקפוא.",
     "related_raw": [
       "Embedding Fine-Tuning SimCSE",
       "Full Fine-Tuning vs LoRA",
@@ -2150,7 +2150,7 @@
     "num": 63,
     "slug_name": "YOLO Object Tracking ByteTrack",
     "title": "Object Tracking עם ByteTrack",
-    "definition": "Object Tracking מוסיף 'זיכרון' מעל detection — במקום לעבד כל פריים (frame) באופן עצמאי, המערכת משייכת ID קבוע (persistent ID) לכל אובייקט ועוקבת אחריו על פני רצף פריימים. ByteTrack הוא אלגוריתם tracking נפוץ המשולב עם YOLO.",
+    "definition": "Object Tracking מוסיף 'זיכרון' מעל detection - במקום לעבד כל פריים (frame) באופן עצמאי, המערכת משייכת ID קבוע (persistent ID) לכל אובייקט ועוקבת אחריו על פני רצף פריימים. ByteTrack הוא אלגוריתם tracking נפוץ המשולב עם YOLO.",
     "related_raw": [
       "YOLO Object Detection Architecture",
       "CV Task Types Comparison",
@@ -2172,7 +2172,7 @@
     "num": 65,
     "slug_name": "YOLO Custom Training Transfer Learning",
     "title": "אימון YOLO מותאם-אישית ו-Transfer Learning",
-    "definition": "אימון מודל YOLO מותאם-אישית על דאטה ייעודי, באמצעות Transfer Learning — המשך אימון ממשקלים pretrained (לא מאפס) לזיהוי קטגוריות חדשות שלא היו בדאטהסט המקורי (כגון COCO).",
+    "definition": "אימון מודל YOLO מותאם-אישית על דאטה ייעודי, באמצעות Transfer Learning - המשך אימון ממשקלים pretrained (לא מאפס) לזיהוי קטגוריות חדשות שלא היו בדאטהסט המקורי (כגון COCO).",
     "related_raw": [
       "YOLO Object Detection Architecture",
       "Embedding Fine-Tuning SimCSE",
@@ -2196,7 +2196,7 @@
     "num": 18,
     "slug_name": "Bi Encoder vs Cross Encoder",
     "title": "Bi-Encoder לעומת Cross-Encoder",
-    "definition": "Bi-Encoder ו-Cross-Encoder הם שני ארכיטיפים של ארכיטקטורות לקידוד טקסט לצורך השוואת דמיון בין שאילתה למסמך — הראשון מקודד כל צד בנפרד (מהיר, ניתן לסקיילינג), השני מקודד את שניהם יחד (מדויק, איטי).",
+    "definition": "Bi-Encoder ו-Cross-Encoder הם שני ארכיטיפים של ארכיטקטורות לקידוד טקסט לצורך השוואת דמיון בין שאילתה למסמך - הראשון מקודד כל צד בנפרד (מהיר, ניתן לסקיילינג), השני מקודד את שניהם יחד (מדויק, איטי).",
     "related_raw": [
       "Re-ranking Strategies",
       "Embedding Models and APIs",
@@ -2219,7 +2219,7 @@
     "category_label": "ארכיטקטורות",
     "num": 22,
     "slug_name": "RAG Architecture Core",
-    "title": "RAG — Retrieval-Augmented Generation: ארכיטקטורת הליבה",
+    "title": "RAG - Retrieval-Augmented Generation: ארכיטקטורת הליבה",
     "definition": "RAG היא ארכיטקטורה היברידית המשלבת שני רכיבים: Retriever ששולף מסמכים/chunks רלוונטיים ממסד ידע, ו-Generator (LLM) שמייצר תשובה מעוגנת (grounded) בהתבסס על המסמכים שנשלפו. הוצגה לראשונה על ידי Facebook AI Research (Lewis et al., 2020) במאמר &quot;Retrieval-Augmented Generation for Knowledge-Intensive NLP&quot;.",
     "related_raw": [
       "Chunking Strategies",
@@ -2250,7 +2250,7 @@
     "num": 24,
     "slug_name": "Conversational RAG",
     "title": "Conversational RAG",
-    "definition": "Conversational RAG הוא וריאנט RAG המתוכנן לאינטראקציות רב-תוריות — הוא שומר זיכרון של קלטי המשתמש ותגובות המערכת הקודמות, ומאפשר שיחה טבעית ומודעת-הקשר על פני מספר פניות.",
+    "definition": "Conversational RAG הוא וריאנט RAG המתוכנן לאינטראקציות רב-תוריות - הוא שומר זיכרון של קלטי המשתמש ותגובות המערכת הקודמות, ומאפשר שיחה טבעית ומודעת-הקשר על פני מספר פניות.",
     "related_raw": [
       "RAG Architecture Core",
       "Query Rewrite",
@@ -2298,7 +2298,7 @@
     "num": 35,
     "slug_name": "Multi Agent Communication Patterns",
     "title": "Multi-Agent Communication Patterns",
-    "definition": "תבנית התקשורת של מערכת agents — Agent בודד (Single Agent) מול ארכיטקטורת Supervisor + Agents מתמחים (Multi-Agent) — קובעת עד כמה המערכת modular, ניתנת להרחבה, ועמידה בפני מורכבות גוברת.",
+    "definition": "תבנית התקשורת של מערכת agents - Agent בודד (Single Agent) מול ארכיטקטורת Supervisor + Agents מתמחים (Multi-Agent) - קובעת עד כמה המערכת modular, ניתנת להרחבה, ועמידה בפני מורכבות גוברת.",
     "related_raw": [
       "AI Agents Core Concepts",
       "CrewAI Architecture",
@@ -2319,8 +2319,8 @@
     "category_label": "ארכיטקטורות",
     "num": 37,
     "slug_name": "CrewAI Architecture",
-    "title": "CrewAI — ארכיטקטורת Role-Based Multi-Agent",
-    "definition": "CrewAI הוא framework לבניית מערכות multi-agent מבוססות-תפקידים — צוות (Crew) של agents מתמחים (researcher, writer וכו') משתפים פעולה דרך תהליך (Process) מוגדר כדי להשיג מטרה משותפת.",
+    "title": "CrewAI - ארכיטקטורת Role-Based Multi-Agent",
+    "definition": "CrewAI הוא framework לבניית מערכות multi-agent מבוססות-תפקידים - צוות (Crew) של agents מתמחים (researcher, writer וכו') משתפים פעולה דרך תהליך (Process) מוגדר כדי להשיג מטרה משותפת.",
     "related_raw": [
       "Multi-Agent Communication Patterns",
       "Agent Frameworks Comparison",
@@ -2343,7 +2343,7 @@
     "category_label": "ארכיטקטורות",
     "num": 38,
     "slug_name": "CrewAI Flows",
-    "title": "CrewAI Flows — Workflows מבוססי-אירועים",
+    "title": "CrewAI Flows - Workflows מבוססי-אירועים",
     "definition": "CrewAI Flows הם דרך מובנית לבנות workflows רב-שלביים מבוססי-אירועים, המתאמים בין tasks ו-Crews. Flows מנהלים סדר ביצוע, state ולוגיקה, ומאפשרים אוטומציות AI גמישות וניתנות להרחבה.",
     "related_raw": [
       "CrewAI Architecture",
@@ -2365,8 +2365,8 @@
     "category_label": "ארכיטקטורות",
     "num": 41,
     "slug_name": "MCP Architecture",
-    "title": "MCP Architecture — ארכיטקטורת Model Context Protocol",
-    "definition": "MCP (Model Context Protocol) הוא גישה ארכיטקטונית המפרידה (decouple) בין שכבת ה-UI, שכבת ה-Orchestration ושכבת ה-Execution של agent. ההפרדה הזו משפרת תחזוקתיות, סקלאביליות, תצפיתיות (observability) ופריסה מאובטחת. ניתן לחשוב על MCP כ&quot;מתאם אוניברסלי&quot; — במקום לבנות אינטגרציה מותאמת לכל שירות (DB, API, קבצים), MCP מספק פרוטוקול אחד אחיד.",
+    "title": "MCP Architecture - ארכיטקטורת Model Context Protocol",
+    "definition": "MCP (Model Context Protocol) הוא גישה ארכיטקטונית המפרידה (decouple) בין שכבת ה-UI, שכבת ה-Orchestration ושכבת ה-Execution של agent. ההפרדה הזו משפרת תחזוקתיות, סקלאביליות, תצפיתיות (observability) ופריסה מאובטחת. ניתן לחשוב על MCP כ&quot;מתאם אוניברסלי&quot; - במקום לבנות אינטגרציה מותאמת לכל שירות (DB, API, קבצים), MCP מספק פרוטוקול אחד אחיד.",
     "related_raw": [
       "FastMCP Framework",
       "CrewAI Architecture",
@@ -2387,7 +2387,7 @@
     "category_label": "ארכיטקטורות",
     "num": 42,
     "slug_name": "FastMCP Framework",
-    "title": "FastMCP — מימוש פרקטי של MCP",
+    "title": "FastMCP - מימוש פרקטי של MCP",
     "definition": "FastMCP הוא תבנית מימוש (framework קל-משקל) לבניית שרתי MCP באמצעות FastAPI. הוא משתמש ב-FastAPI כשכבת transport ו-orchestration ל-agents/כלי MCP, במקום לכתוב לוגיקת שרת MCP גולמית, וחושף כלים, agents ו-pipelines מעל MCP במאמץ מינימלי.",
     "related_raw": [
       "MCP Architecture",
@@ -2409,7 +2409,7 @@
     "category_label": "ארכיטקטורות",
     "num": 46,
     "slug_name": "Knowledge Graph RAG Architecture",
-    "title": "Knowledge Graph RAG (KG-RAG) — ארכיטקטורה",
+    "title": "Knowledge Graph RAG (KG-RAG) - ארכיטקטורה",
     "definition": "KG-RAG הוא הרחבה של RAG רגיל שבה לצד אחזור טקסטואלי (chunks), מאחזרים מסלולים מבניים (paths) בין ישויות בתוך Knowledge Graph. כאשר RAG וקטורי שוגה במשימות הדורשות נימוק מרובה-שלבים (multi-hop) או הבנת קשרי סיבה-תוצאה, KG-RAG מספק קשרים מפורשים שמאפשרים לוגיקת חיתוך/מסלול מבוססת-מבנה.",
     "related_raw": [
       "Triple Extraction & Graph Construction",
@@ -2435,7 +2435,7 @@
     "category_label": "ארכיטקטורות",
     "num": 48,
     "slug_name": "Neo4j Graph Database",
-    "title": "Neo4j — מסד נתונים גרפי",
+    "title": "Neo4j - מסד נתונים גרפי",
     "definition": "Neo4j הוא מסד נתונים גרפי (graph database) שנועד לאחסון ולשאילתת קשרים. דאטה מיוצג כ-Nodes (ישויות, לדוגמה Tesla, BMW, CATL), Relationships (קשרים, לדוגמה SUPPLIES, USES) ו-Properties (תכונות, לדוגמה type, year, category). מותאם לשאילתות קשרים, traversal מרובה-hops וחקירת גרף.",
     "related_raw": [
       "Triple Extraction & Graph Construction",
@@ -2481,7 +2481,7 @@
     "category_label": "ארכיטקטורות",
     "num": 53,
     "slug_name": "Full FineTuning vs LoRA",
-    "title": "Full Fine-Tuning לעומת LoRA — היקף האימון מחדש",
+    "title": "Full Fine-Tuning לעומת LoRA - היקף האימון מחדש",
     "definition": "Full Fine-Tuning הוא המשך אימון (continued training) על כל משקלי המודל הקדם-מאומן (pretrained), בניגוד ל-LoRA/PEFT שמאמנת רק adapter קטן מעל מודל קפוא. שתי הגישות 'ממשיכות' את הידע הקיים (שפה, דקדוק, תבניות חשיבה) ומתאימות אותו להוראות חדשות, התנהגות ספציפית-לתחום, וסטייל/טון.",
     "related_raw": [
       "LoRA/QLoRA Fine-Tuning",
@@ -2503,8 +2503,8 @@
     "category_label": "ארכיטקטורות",
     "num": 56,
     "slug_name": "Claude Agent SDK Architecture",
-    "title": "Claude Agent SDK — ארכיטקטורה ו-query() Loop",
-    "definition": "Claude Agent SDK (שינוי שם מ-Claude Code SDK, סוף 2025) הוא ספרייה (Python/TypeScript) שחושפת את אותו runtime שמפעיל את Claude Code — agent loop, כלים מובנים, skills, sub-agents, hooks, MCP — לשימוש headless מתוך סקריפטים, שירותים, או CI, ולא רק מטרמינל אינטראקטיבי.",
+    "title": "Claude Agent SDK - ארכיטקטורה ו-query() Loop",
+    "definition": "Claude Agent SDK (שינוי שם מ-Claude Code SDK, סוף 2025) הוא ספרייה (Python/TypeScript) שחושפת את אותו runtime שמפעיל את Claude Code - agent loop, כלים מובנים, skills, sub-agents, hooks, MCP - לשימוש headless מתוך סקריפטים, שירותים, או CI, ולא רק מטרמינל אינטראקטיבי.",
     "related_raw": [
       "Claude Agent SDK Sub-Agents",
       "Claude Agent SDK Hooks",
@@ -2529,8 +2529,8 @@
     "category_label": "ארכיטקטורות",
     "num": 61,
     "slug_name": "YOLO Object Detection Architecture",
-    "title": "YOLO — You Only Look Once: ארכיטקטורת זיהוי אובייקטים",
-    "definition": "YOLO (You Only Look Once) הוא משפחת מודלי Deep Learning לזיהוי אובייקטים (object detection) בזמן אמת. הרעיון המרכזי: המודל 'מסתכל' על התמונה פעם אחת בלבד, ומחזיר במעבר יחיד מה קיים בתמונה, היכן הוא ממוקם (bounding box), ומה רמת הביטחון (confidence) — ללא צורך בסריקה אזורית מרובת-שלבים כמו בגישות זיהוי קלאסיות יותר.",
+    "title": "YOLO - You Only Look Once: ארכיטקטורת זיהוי אובייקטים",
+    "definition": "YOLO (You Only Look Once) הוא משפחת מודלי Deep Learning לזיהוי אובייקטים (object detection) בזמן אמת. הרעיון המרכזי: המודל 'מסתכל' על התמונה פעם אחת בלבד, ומחזיר במעבר יחיד מה קיים בתמונה, היכן הוא ממוקם (bounding box), ומה רמת הביטחון (confidence) - ללא צורך בסריקה אזורית מרובת-שלבים כמו בגישות זיהוי קלאסיות יותר.",
     "related_raw": [
       "CV Task Types Comparison",
       "YOLO Custom Training & Transfer Learning",
@@ -2551,8 +2551,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 1,
     "slug_name": "AI Architecture Decision Framework",
-    "title": "מסגרת קבלת החלטות ארכיטקטוניות ב-AI — Eight Patterns — שמונה תבניות פתרון",
-    "definition": "מסגרת מעשית לבחירת התבנית ההנדסית המתאימה למשימת AI נתונה. במקום לקפוץ ישר ל-Agent או RAG, המסגרת ממליצה לבדוק תחילה אם פתרון פשוט יותר מספיק — ולעלות במורכבות רק כשהמשימה דורשת זאת.",
+    "title": "מסגרת קבלת החלטות ארכיטקטוניות ב-AI - Eight Patterns - שמונה תבניות פתרון",
+    "definition": "מסגרת מעשית לבחירת התבנית ההנדסית המתאימה למשימת AI נתונה. במקום לקפוץ ישר ל-Agent או RAG, המסגרת ממליצה לבדוק תחילה אם פתרון פשוט יותר מספיק - ולעלות במורכבות רק כשהמשימה דורשת זאת.",
     "related_raw": [
       "RAG",
       "AI Agents",
@@ -2579,8 +2579,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 2,
     "slug_name": "LLM Provider Landscape",
-    "title": "נוף ספקי LLM ואפשרויות פריסה — LLM Provider Landscape & Deployment Options",
-    "definition": "מיפוי הנוף המעשי של מודלי שפה גדולים ב-2026: ספקי API מסחריים מובילים, פלטפורמות hosting מולטי-מודל, ואפשרויות הרצה מקומית/open-source — לצורך בחירת הפתרון המתאים לפרויקט.",
+    "title": "נוף ספקי LLM ואפשרויות פריסה - LLM Provider Landscape & Deployment Options",
+    "definition": "מיפוי הנוף המעשי של מודלי שפה גדולים ב-2026: ספקי API מסחריים מובילים, פלטפורמות hosting מולטי-מודל, ואפשרויות הרצה מקומית/open-source - לצורך בחירת הפתרון המתאים לפרויקט.",
     "related_raw": [
       "מסגרת קבלת החלטות ארכיטקטוניות",
       "Pretraining vs Fine-Tuning vs Instruction-Tuning"
@@ -2599,8 +2599,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 3,
     "slug_name": "Decoding Strategies Tokenization",
-    "title": "אסטרטגיות Decoding וטוקניזציה — Temperature, Top-p, Top-k & Tokens",
-    "definition": "LLM מייצר טקסט על ידי חיזוי חזרתי של הטוקן הבא — בכל שלב המודל מחשב התפלגות הסתברות על כל הטוקנים האפשריים באוצר המילים, ופרמטרי ה-decoding קובעים איך בוחרים טוקן מתוך ההתפלגות הזו.",
+    "title": "אסטרטגיות Decoding וטוקניזציה - Temperature, Top-p, Top-k & Tokens",
+    "definition": "LLM מייצר טקסט על ידי חיזוי חזרתי של הטוקן הבא - בכל שלב המודל מחשב התפלגות הסתברות על כל הטוקנים האפשריים באוצר המילים, ופרמטרי ה-decoding קובעים איך בוחרים טוקן מתוך ההתפלגות הזו.",
     "related_raw": [
       "Prompt Engineering Techniques",
       "LLM Provider Landscape"
@@ -2619,7 +2619,7 @@
     "category_label": "מושגים תיאורטיים",
     "num": 4,
     "slug_name": "Encoder vs Decoder LLM Architectures",
-    "title": "Encoder-only מול Decoder-only — ארכיטקטורות LLM — BERT לעומת GPT",
+    "title": "Encoder-only מול Decoder-only - ארכיטקטורות LLM - BERT לעומת GPT",
     "definition": "שתי משפחות עיקריות של מודלי Transformer ב-NLP: מודלים Encoder-only (כמו BERT) שמעבדים את הטקסט באופן דו-כיווני (bidirectional) ומתאימים להבנה/סיווג, ומודלים Decoder-only (כמו משפחת GPT) שמייצרים טקסט אוטורגרסיבית טוקן אחר טוקן.",
     "related_raw": [
       "Transformer (Topic 3)",
@@ -2643,7 +2643,7 @@
     "category_label": "מושגים תיאורטיים",
     "num": 5,
     "slug_name": "Pretraining FineTuning InstructionTuning",
-    "title": "Pretraining מול Fine-Tuning מול Instruction-Tuning — שלבי האימון של LLM מודרני",
+    "title": "Pretraining מול Fine-Tuning מול Instruction-Tuning - שלבי האימון של LLM מודרני",
     "definition": "מודל שפה מודרני עובר בדרך כלל כמה שלבי אימון נפרדים, שכל אחד מהם נותן יכולת אחרת: Pretraining בונה ידע שפה כללי, Fine-Tuning מתאים למשימה ספציפית, ו-Instruction-Tuning מלמד את המודל לפעול לפי הוראות בשיחה.",
     "related_raw": [
       "RLHF",
@@ -2665,8 +2665,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 7,
     "slug_name": "Prompt Engineering Techniques",
-    "title": "טכניקות Prompt Engineering — Zero-shot, Few-shot, Chain-of-Thought",
-    "definition": "אוסף טכניקות לבניית prompt שמשפרות את דיוק התשובה של LLM, בלי לשנות את משקלי המודל — על ידי מתן הקשר, דוגמאות, או הנחיה לחשוב בשלבים.",
+    "title": "טכניקות Prompt Engineering - Zero-shot, Few-shot, Chain-of-Thought",
+    "definition": "אוסף טכניקות לבניית prompt שמשפרות את דיוק התשובה של LLM, בלי לשנות את משקלי המודל - על ידי מתן הקשר, דוגמאות, או הנחיה לחשוב בשלבים.",
     "related_raw": [
       "Decoding Strategies & Tokenization",
       "Agent Planning Strategies (CoT, ToT, Reflexion)",
@@ -2687,7 +2687,7 @@
     "category_label": "מושגים תיאורטיים",
     "num": 8,
     "slug_name": "ML Tasks Taxonomy",
-    "title": "מיפוי משימות למידת מכונה — Supervised vs Unsupervised & ML Task Taxonomy",
+    "title": "מיפוי משימות למידת מכונה - Supervised vs Unsupervised & ML Task Taxonomy",
     "definition": "חלוקה בסיסית של משימות למידת מכונה לפי קיום (או אי-קיום) משתנה מטרה (target variable) מתויג, ומיפוי של סוגי המשימות הנפוצות בכל קטגוריה.",
     "related_raw": [
       "מודלים מתמחים מול LLM גנרי",
@@ -2707,7 +2707,7 @@
     "category_label": "מושגים תיאורטיים",
     "num": 9,
     "slug_name": "Specialist vs Generalist Models",
-    "title": "מודלים מתמחים מול LLM גנרי — Specialist vs Generalist Models",
+    "title": "מודלים מתמחים מול LLM גנרי - Specialist vs Generalist Models",
     "definition": "מסגרת חשיבה לשאלה מתי כדאי לבנות/להשתמש במודל ML מתמחה וקטן במקום לפנות ל-LLM גנרי גדול, גם בעידן שבו LLMs פותרים מגוון רחב של משימות.",
     "related_raw": [
       "מיפוי משימות למידת מכונה",
@@ -2727,7 +2727,7 @@
     "category_label": "מושגים תיאורטיים",
     "num": 10,
     "slug_name": "Model Selection Strategy",
-    "title": "אסטרטגיית בחירת מודל LLM — Model Selection Strategy",
+    "title": "אסטרטגיית בחירת מודל LLM - Model Selection Strategy",
     "definition": "מסגרת מעשית לבחירת מודל LLM למשימה נתונה, לפי קריטריונים תפעוליים (multimodality, מהירות, עלות, פרטיות, הסקה, קונטקסט) ולא לפי 'המודל הגדול ביותר'.",
     "related_raw": [
       "נוף ספקי LLM ואפשרויות פריסה",
@@ -2747,7 +2747,7 @@
     "category_label": "מושגים תיאורטיים",
     "num": 11,
     "slug_name": "Chunking Strategies",
-    "title": "אסטרטגיות Chunking למסמכים — Chunking Strategies",
+    "title": "אסטרטגיות Chunking למסמכים - Chunking Strategies",
     "definition": "פיצול מסמכים ארוכים ל'נתחים' (chunks) קטנים יותר, כדי להתאים לחלון הקונטקסט של LLM, לשפר את דיוק ה-retrieval ב-RAG, ולהפחית הזיות.",
     "related_raw": [
       "Embedding Strategies & Retrieval Pipelines",
@@ -2769,7 +2769,7 @@
     "category_label": "מושגים תיאורטיים",
     "num": 12,
     "slug_name": "Function Calling",
-    "title": "Function Calling — קריאת פונקציות/כלים על-ידי LLM",
+    "title": "Function Calling - קריאת פונקציות/כלים על-ידי LLM",
     "definition": "מנגנון שמאפשר ל-LLM להפעיל פונקציות/כלים חיצוניים (APIs, קוד, לוגיקה עסקית) על-ידי בניית קריאה מבנית (JSON) תואמת-סכמה, במקום רק להחזיר טקסט חופשי.",
     "related_raw": [
       "Structured Output from LLMs",
@@ -2791,7 +2791,7 @@
     "category_label": "מושגים תיאורטיים",
     "num": 13,
     "slug_name": "Structured Output LLM",
-    "title": "פלט מבני מ-LLM — Structured Output & Validation",
+    "title": "פלט מבני מ-LLM - Structured Output & Validation",
     "definition": "טכניקות לקבל מ-LLM פלט בפורמט מבני וניתן-לפרסור (JSON, YAML, טבלאות Markdown) במקום טקסט חופשי, כדי לאפשר אינטגרציה ישירה למסדי נתונים, APIs ולוחות מחוונים.",
     "related_raw": [
       "Function Calling",
@@ -2811,8 +2811,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 14,
     "slug_name": "Document Ingestion PDF OCR",
-    "title": "חילוץ מסמכים ו-OCR — Document Ingestion & PDF Parsing",
-    "definition": "שלב קדם-עיבוד שמטרתו להמיר מקורות מידע לא-מבניים (PDF, HTML, סקאנים) לטקסט נקי שניתן להזין ל-LLM/pipeline RAG — כולל ניקוי, נורמליזציה, ו-OCR למסמכים סרוקים.",
+    "title": "חילוץ מסמכים ו-OCR - Document Ingestion & PDF Parsing",
+    "definition": "שלב קדם-עיבוד שמטרתו להמיר מקורות מידע לא-מבניים (PDF, HTML, סקאנים) לטקסט נקי שניתן להזין ל-LLM/pipeline RAG - כולל ניקוי, נורמליזציה, ו-OCR למסמכים סרוקים.",
     "related_raw": [
       "Chunking Strategies",
       "RAG Architecture & Variants"
@@ -2832,7 +2832,7 @@
     "num": 15,
     "slug_name": "Embedding Models and APIs",
     "title": "מודלי Embedding ו-APIs",
-    "definition": "Embedding API הוא שירות שמהפוך טקסט לוקטור מספרי בעל ממד גבוה (high-dimensional vector), כך שמשמעות סמנטית של הטקסט נשמרת במרחב הווקטורי — טקסטים בעלי משמעות קרובה יקבלו וקטורים קרובים.",
+    "definition": "Embedding API הוא שירות שמהפוך טקסט לוקטור מספרי בעל ממד גבוה (high-dimensional vector), כך שמשמעות סמנטית של הטקסט נשמרת במרחב הווקטורי - טקסטים בעלי משמעות קרובה יקבלו וקטורים קרובים.",
     "related_raw": [
       "Vector Stores",
       "HNSW",
@@ -2906,7 +2906,7 @@
     "num": 23,
     "slug_name": "Query Rewrite RAG",
     "title": "Query Rewrite ב-RAG",
-    "definition": "Query Rewrite היא טכניקת עיבוד-מקדים (pre-retrieval) שבה LLM מנסח מחדש שאילתת משתמש מעורפלת או חלקית, כך שתהיה ספציפית וברורה יותר לפני ביצוע ה-retrieval — היא לא RAG בעצמה, אלא שלב המשפר את איכות ה-retrieval.",
+    "definition": "Query Rewrite היא טכניקת עיבוד-מקדים (pre-retrieval) שבה LLM מנסח מחדש שאילתת משתמש מעורפלת או חלקית, כך שתהיה ספציפית וברורה יותר לפני ביצוע ה-retrieval - היא לא RAG בעצמה, אלא שלב המשפר את איכות ה-retrieval.",
     "related_raw": [
       "RAG Architecture Core",
       "Conversational RAG",
@@ -2928,7 +2928,7 @@
     "num": 26,
     "slug_name": "Multi Hop Retrieval",
     "title": "Multi-hop Retrieval",
-    "definition": "Multi-hop Retrieval היא טכניקת RAG שבה מענה על שאלה מחייב שרשור של מספר פיסות עדות ממסמכים שונים — מדמה חשיבה צעד-אחר-צעד, כאשר תוצאת ה-retrieval הראשון מכוונת את ה-retrieval הבא.",
+    "definition": "Multi-hop Retrieval היא טכניקת RAG שבה מענה על שאלה מחייב שרשור של מספר פיסות עדות ממסמכים שונים - מדמה חשיבה צעד-אחר-צעד, כאשר תוצאת ה-retrieval הראשון מכוונת את ה-retrieval הבא.",
     "related_raw": [
       "ReAct RAG",
       "Multi-vector Retrieval",
@@ -2950,7 +2950,7 @@
     "num": 27,
     "slug_name": "Multi Vector Retrieval",
     "title": "Multi-vector Retrieval",
-    "definition": "Multi-vector Retrieval היא טכניקה שבה כל מסמך מיוצג על ידי מספר וקטורים צפופים (לדוגמה: כותרת, גוף, מטא-דאטה) המבטאים היבטים סמנטיים שונים — משפר recall ורלוונטיות עבור שאילתות מורכבות/מרובות-היבטים.",
+    "definition": "Multi-vector Retrieval היא טכניקה שבה כל מסמך מיוצג על ידי מספר וקטורים צפופים (לדוגמה: כותרת, גוף, מטא-דאטה) המבטאים היבטים סמנטיים שונים - משפר recall ורלוונטיות עבור שאילתות מורכבות/מרובות-היבטים.",
     "related_raw": [
       "Multi-hop Retrieval",
       "Hybrid Search BM25 + Vectors",
@@ -2974,7 +2974,7 @@
     "num": 28,
     "slug_name": "Streaming RAG",
     "title": "Streaming RAG",
-    "definition": "Streaming RAG משלב RAG עם פלט סטרימינג טוקן-אחר-טוקן מה-LLM — במקום לחכות לתשובה המלאה, המודל מתחיל לייצר פלט מיד לאחר שליפת ההקשר הרלוונטי, ומשפר את תחושת הרספונסיביות.",
+    "definition": "Streaming RAG משלב RAG עם פלט סטרימינג טוקן-אחר-טוקן מה-LLM - במקום לחכות לתשובה המלאה, המודל מתחיל לייצר פלט מיד לאחר שליפת ההקשר הרלוונטי, ומשפר את תחושת הרספונסיביות.",
     "related_raw": [
       "RAG Architecture Core",
       "Conversational RAG",
@@ -2995,8 +2995,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 30,
     "slug_name": "RAG Production Best Practices",
-    "title": "RAG בפרודקשן — שיקולים, מלכודות ו-Best Practices",
-    "definition": "מעבר מ-RAG בסביבת מחקר/POC לסביבת פרודקשן דורש התייחסות לשיקולי latency, עלות, עדכניות נתונים ואמינות — מעבר ללוגיקת ה-retrieval/generation הבסיסית.",
+    "title": "RAG בפרודקשן - שיקולים, מלכודות ו-Best Practices",
+    "definition": "מעבר מ-RAG בסביבת מחקר/POC לסביבת פרודקשן דורש התייחסות לשיקולי latency, עלות, עדכניות נתונים ואמינות - מעבר ללוגיקת ה-retrieval/generation הבסיסית.",
     "related_raw": [
       "RAG Architecture Core",
       "RAG Evaluation Faithfulness & RAGAS",
@@ -3019,8 +3019,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 31,
     "slug_name": "AI Agents Core Concepts",
-    "title": "AI Agents — מושגי יסוד",
-    "definition": "AI Agent הוא מערכת מבוססת-LLM שמתכננת, מנמקת (reasoning) ופועלת (acting) באופן אוטונומי להשגת מטרה — בניגוד ל-pipeline נוקשה עם שלבים קבועים-מראש, ה-agent מפרק משימה כוללת לצעדים, ומשתמש בכלים/זיכרון לפי הצורך.",
+    "title": "AI Agents - מושגי יסוד",
+    "definition": "AI Agent הוא מערכת מבוססת-LLM שמתכננת, מנמקת (reasoning) ופועלת (acting) באופן אוטונומי להשגת מטרה - בניגוד ל-pipeline נוקשה עם שלבים קבועים-מראש, ה-agent מפרק משימה כוללת לצעדים, ומשתמש בכלים/זיכרון לפי הצורך.",
     "related_raw": [
       "Agent Planning Strategies",
       "Agentic Memory",
@@ -3046,7 +3046,7 @@
     "num": 32,
     "slug_name": "Agent Planning Strategies",
     "title": "אסטרטגיות תכנון ל-AI Agents",
-    "definition": "אסטרטגיות תכנון (Planning) הן השיטות שבהן Agent מפרק מטרה למספר צעדי-ביניים — מחולקות לתכנון ללא משוב (one-pass) ותכנון עם משוב (איטרטיבי, מתבסס על תוצאות צעדים קודמים).",
+    "definition": "אסטרטגיות תכנון (Planning) הן השיטות שבהן Agent מפרק מטרה למספר צעדי-ביניים - מחולקות לתכנון ללא משוב (one-pass) ותכנון עם משוב (איטרטיבי, מתבסס על תוצאות צעדים קודמים).",
     "related_raw": [
       "AI Agents Core Concepts",
       "ReAct RAG",
@@ -3069,8 +3069,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 33,
     "slug_name": "Agentic Memory",
-    "title": "Agentic Memory — זיכרון ב-AI Agents",
-    "definition": "LLMs הם stateless מטבעם (אין להם זיכרון מובנה). Agentic Memory הוא המנגנון המאפשר ל-Agent לשמר הקשר שיחה/אינטראקציה — ברמת session בודד (קצר-טווח) או בין sessions שונים (ארוך-טווח).",
+    "title": "Agentic Memory - זיכרון ב-AI Agents",
+    "definition": "LLMs הם stateless מטבעם (אין להם זיכרון מובנה). Agentic Memory הוא המנגנון המאפשר ל-Agent לשמר הקשר שיחה/אינטראקציה - ברמת session בודד (קצר-טווח) או בין sessions שונים (ארוך-טווח).",
     "related_raw": [
       "AI Agents Core Concepts",
       "Conversational RAG",
@@ -3092,7 +3092,7 @@
     "num": 34,
     "slug_name": "Agent Guardrails",
     "title": "Guardrails ב-AI Agents",
-    "definition": "Guardrails הם מכניזמים המגבילים ומכוונים את התנהגות ה-Agent כדי לבנות אפליקציות AI אחראיות — מונעים תוכן רעיל, חוסר רלוונטיות לדומיין, ו-hallucinations.",
+    "definition": "Guardrails הם מכניזמים המגבילים ומכוונים את התנהגות ה-Agent כדי לבנות אפליקציות AI אחראיות - מונעים תוכן רעיל, חוסר רלוונטיות לדומיין, ו-hallucinations.",
     "related_raw": [
       "AI Agents Core Concepts",
       "RAG Production Best Practices",
@@ -3113,7 +3113,7 @@
     "category_label": "מושגים תיאורטיים",
     "num": 36,
     "slug_name": "Agent Frameworks Comparison",
-    "title": "השוואת Agent Frameworks — LangChain, AutoGen, CrewAI",
+    "title": "השוואת Agent Frameworks - LangChain, AutoGen, CrewAI",
     "definition": "שלושת ה-frameworks המרכזיים לבניית AI Agents כיום נבדלים בעיקר באופן שבו הם מנהלים multi-agent collaboration, planning, ושיתוף הקשר.",
     "related_raw": [
       "Multi-Agent Communication Patterns",
@@ -3136,7 +3136,7 @@
     "num": 39,
     "slug_name": "CrewAI RAG Integration",
     "title": "שילוב CrewAI עם RAG",
-    "definition": "חיבור agent ב-CrewAI ל-retriever (מסד וקטורי) מאפשר לו לבסס (ground) את תשובותיו על מסמכים רלוונטיים אמיתיים — משלב את הגמישות המבנית של agent workflows עם עומק הידע של retrieval מבוסס-מסמכים.",
+    "definition": "חיבור agent ב-CrewAI ל-retriever (מסד וקטורי) מאפשר לו לבסס (ground) את תשובותיו על מסמכים רלוונטיים אמיתיים - משלב את הגמישות המבנית של agent workflows עם עומק הידע של retrieval מבוסס-מסמכים.",
     "related_raw": [
       "CrewAI Architecture",
       "RAG Architecture Core",
@@ -3181,8 +3181,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 43,
     "slug_name": "MCP Production Security Best Practices",
-    "title": "MCP — אבטחה ושיטות עבודה לפרודקשן",
-    "definition": "פריסת שרתי MCP בפרודקשן מחייבת התייחסות לאבטחה, תצפיתיות ופרקטיקות תפעול לצד הארכיטקטורה עצמה — כל קריאת agent צריכה להיחשב כקריאת API פרודקשנית.",
+    "title": "MCP - אבטחה ושיטות עבודה לפרודקשן",
+    "definition": "פריסת שרתי MCP בפרודקשן מחייבת התייחסות לאבטחה, תצפיתיות ופרקטיקות תפעול לצד הארכיטקטורה עצמה - כל קריאת agent צריכה להיחשב כקריאת API פרודקשנית.",
     "related_raw": [
       "MCP Architecture",
       "FastMCP Framework",
@@ -3203,8 +3203,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 44,
     "slug_name": "Anthropic Skills Architecture",
-    "title": "Anthropic Skills — ארכיטקטורה ומבנה",
-    "definition": "Skill הוא תיקייה ארוזה של הוראות, סקריפטים וקבצי-עזר ש-Claude טוען לפי-דרישה כאשר המשימה מתאימה. ניתן לחשוב עליו כ&quot;ספר-משחק&quot; מתמחה: Claude קורא את SKILL.md, מגלה אילו כלים/קבצים זמינים, ועוקב אחר התהליך המתועד. העיקרון המרכזי: model-invoked, לא protocol-invoked — Claude עצמו מחליט מתי להפעיל Skill לפי התיאור שלו, ללא חיווט (wiring) או שרתים.",
+    "title": "Anthropic Skills - ארכיטקטורה ומבנה",
+    "definition": "Skill הוא תיקייה ארוזה של הוראות, סקריפטים וקבצי-עזר ש-Claude טוען לפי-דרישה כאשר המשימה מתאימה. ניתן לחשוב עליו כ&quot;ספר-משחק&quot; מתמחה: Claude קורא את SKILL.md, מגלה אילו כלים/קבצים זמינים, ועוקב אחר התהליך המתועד. העיקרון המרכזי: model-invoked, לא protocol-invoked - Claude עצמו מחליט מתי להפעיל Skill לפי התיאור שלו, ללא חיווט (wiring) או שרתים.",
     "related_raw": [
       "Skills vs MCP Comparison",
       "MCP Architecture",
@@ -3225,7 +3225,7 @@
     "category_label": "מושגים תיאורטיים",
     "num": 45,
     "slug_name": "Skills vs MCP Comparison",
-    "title": "Skills מול MCP — מתי להשתמש במה",
+    "title": "Skills מול MCP - מתי להשתמש במה",
     "definition": "Anthropic Skills ושרתי MCP הם שני primitives משלימים להרחבת יכולות Claude: Skill הוא חוברת הוראות מקומית שנטענת לפי-דרישה, ו-MCP הוא שרת חיצוני שחושף כלים/משאבים בפרוטוקול סטנדרטי. הבחירה הנכונה תלויה במידת ה-statefulness, השיתוף הנדרש, ורמת ה-typing.",
     "related_raw": [
       "Anthropic Skills Architecture",
@@ -3249,8 +3249,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 54,
     "slug_name": "Choosing FineTuning Approach",
-    "title": "בחירת גישת Fine-Tuning — Embeddings / LoRA / Full FT / RAG",
-    "definition": "מסגרת מעשית להחלטה היכן בצנרת (pipeline) לתקן כשל: בשלב האחזור (embeddings), בשלב ההתנהגות (LLM adapter/full), או בכלל לא לבצע fine-tuning ולהישאר עם RAG. ההבחנה המרכזית: embeddings קובעים מה המודל רואה; LLM קובע איך הוא מגיב — אותה צנרת, שני failure modes שונים.",
+    "title": "בחירת גישת Fine-Tuning - Embeddings / LoRA / Full FT / RAG",
+    "definition": "מסגרת מעשית להחלטה היכן בצנרת (pipeline) לתקן כשל: בשלב האחזור (embeddings), בשלב ההתנהגות (LLM adapter/full), או בכלל לא לבצע fine-tuning ולהישאר עם RAG. ההבחנה המרכזית: embeddings קובעים מה המודל רואה; LLM קובע איך הוא מגיב - אותה צנרת, שני failure modes שונים.",
     "related_raw": [
       "AI Architecture Decision Framework",
       "Embedding Fine-Tuning SimCSE",
@@ -3275,8 +3275,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 55,
     "slug_name": "Choosing Architecture Case Studies",
-    "title": "בחירת ארכיטקטורה — היוריסטיקות ו-Case Studies",
-    "definition": "כלי עזר מעשי לתרגום 'צורך' (need) ל'בחירה' (pick) — טבלת היוריסטיקות מקצרת את תהליך ההחלטה בין שמונה התבניות (Simple LLM, RAG, Single Agent, Multi-Agent, Flow, Skill, Fine-Tune, MCP) באמצעות מיפוי ישיר בין תיאור הצורך לתבנית המתאימה.",
+    "title": "בחירת ארכיטקטורה - היוריסטיקות ו-Case Studies",
+    "definition": "כלי עזר מעשי לתרגום 'צורך' (need) ל'בחירה' (pick) - טבלת היוריסטיקות מקצרת את תהליך ההחלטה בין שמונה התבניות (Simple LLM, RAG, Single Agent, Multi-Agent, Flow, Skill, Fine-Tune, MCP) באמצעות מיפוי ישיר בין תיאור הצורך לתבנית המתאימה.",
     "related_raw": [
       "AI Architecture Decision Framework",
       "MCP Production Security Best Practices",
@@ -3297,8 +3297,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 57,
     "slug_name": "Claude Agent SDK SubAgents",
-    "title": "Claude Agent SDK — Sub-Agents ובידוד קונטקסט",
-    "definition": "Sub-agent הוא agent עזר עם חלון קונטקסט נקי משלו, כלים משלו, ו-system prompt משלו, שנקרא על ידי agent הורה (parent) באמצעות כלי ה-Task — ומחזיר סיכום (summary) בלבד להורה, כדי למנוע 'זיהום' קונטקסט בריצות ארוכות.",
+    "title": "Claude Agent SDK - Sub-Agents ובידוד קונטקסט",
+    "definition": "Sub-agent הוא agent עזר עם חלון קונטקסט נקי משלו, כלים משלו, ו-system prompt משלו, שנקרא על ידי agent הורה (parent) באמצעות כלי ה-Task - ומחזיר סיכום (summary) בלבד להורה, כדי למנוע 'זיהום' קונטקסט בריצות ארוכות.",
     "related_raw": [
       "Claude Agent SDK Architecture",
       "Claude Agent SDK Hooks",
@@ -3321,8 +3321,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 58,
     "slug_name": "Claude Agent SDK Hooks",
-    "title": "Claude Agent SDK — Hooks: שערים דטרמיניסטיים",
-    "definition": "Hook הוא פקודת shell שה-runtime מפעיל באירוע מחזור-חיים (lifecycle event) מסוים — ופועל תמיד, באופן דטרמיניסטי, ללא תלות בהחלטת המודל. קוד היציאה (exit code) והפלט (stdout) קובעים מה קורה בהמשך (לדוגמה: לחסום קריאת כלי).",
+    "title": "Claude Agent SDK - Hooks: שערים דטרמיניסטיים",
+    "definition": "Hook הוא פקודת shell שה-runtime מפעיל באירוע מחזור-חיים (lifecycle event) מסוים - ופועל תמיד, באופן דטרמיניסטי, ללא תלות בהחלטת המודל. קוד היציאה (exit code) והפלט (stdout) קובעים מה קורה בהמשך (לדוגמה: לחסום קריאת כלי).",
     "related_raw": [
       "Claude Agent SDK Architecture",
       "Claude Agent SDK Sub-Agents",
@@ -3345,8 +3345,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 59,
     "slug_name": "Claude Agent SDK Plugins",
-    "title": "Claude Agent SDK — Plugins: חבילות לשיתוף",
-    "definition": "Plugin הוא תיקייה מנוהלת-גרסאות (versioned folder) שמאגדת skills, sub-agents, hooks, slash commands, ו-MCP servers ליחידה אחת להתקנה — כך שיכולות agent הופכות לאקוסיסטם חבילות (package ecosystem), בדומה למודול npm.",
+    "title": "Claude Agent SDK - Plugins: חבילות לשיתוף",
+    "definition": "Plugin הוא תיקייה מנוהלת-גרסאות (versioned folder) שמאגדת skills, sub-agents, hooks, slash commands, ו-MCP servers ליחידה אחת להתקנה - כך שיכולות agent הופכות לאקוסיסטם חבילות (package ecosystem), בדומה למודול npm.",
     "related_raw": [
       "Claude Agent SDK Architecture",
       "Claude Agent SDK Sub-Agents",
@@ -3371,8 +3371,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 60,
     "slug_name": "Claude Agent SDK PlanMode Demo",
-    "title": "Claude Agent SDK — Plan Mode והדמו המלא (Code-Review Plugin)",
-    "definition": "Plan Mode הוא permission mode שבו ה-agent יכול רק לקרוא — אין edits, אין writes, אין Bash הרסני. ה-agent סוקר את הקוד, מציע תוכנית (plan), והמשתמש מאשר אותה — רק לאחר מכן מתחיל ביצוע בפועל.",
+    "title": "Claude Agent SDK - Plan Mode והדמו המלא (Code-Review Plugin)",
+    "definition": "Plan Mode הוא permission mode שבו ה-agent יכול רק לקרוא - אין edits, אין writes, אין Bash הרסני. ה-agent סוקר את הקוד, מציע תוכנית (plan), והמשתמש מאשר אותה - רק לאחר מכן מתחיל ביצוע בפועל.",
     "related_raw": [
       "Claude Agent SDK Architecture",
       "Claude Agent SDK Sub-Agents",
@@ -3395,8 +3395,8 @@
     "category_label": "מושגים תיאורטיים",
     "num": 62,
     "slug_name": "CV Task Types Comparison",
-    "title": "סוגי משימות Computer Vision — Detection / Segmentation / Pose / Classification",
-    "definition": "Computer Vision כולל כמה סוגי משימות בסיסיים שמטרתם לחלץ מידע שונה מתמונה — מ'מה יש בתמונה' (classification) ועד 'אילו פיקסלים בדיוק שייכים לאובייקט' (segmentation). YOLO מספק מודלים נפרדים (אך ארכיטקטורה דומה) לכל אחת מהמשימות.",
+    "title": "סוגי משימות Computer Vision - Detection / Segmentation / Pose / Classification",
+    "definition": "Computer Vision כולל כמה סוגי משימות בסיסיים שמטרתם לחלץ מידע שונה מתמונה - מ'מה יש בתמונה' (classification) ועד 'אילו פיקסלים בדיוק שייכים לאובייקט' (segmentation). YOLO מספק מודלים נפרדים (אך ארכיטקטורה דומה) לכל אחת מהמשימות.",
     "related_raw": [
       "YOLO Object Detection Architecture",
       "YOLO Practical Applications",
@@ -3417,7 +3417,7 @@
     "category_label": "מושגים תיאורטיים",
     "num": 64,
     "slug_name": "YOLO Practical Applications",
-    "title": "יישומים מעשיים — People Counting, Face Blur, Static Detection",
+    "title": "יישומים מעשיים - People Counting, Face Blur, Static Detection",
     "definition": "מסמך זה מאגד שלושה יישומים מעשיים הנבנים מעל היכולות הבסיסיות של YOLO (detection ו-pose): ספירת אנשים, טשטוש פרטיות (face blur), וזיהוי על תמונות סטטיות (לא רק וידאו חי).",
     "related_raw": [
       "YOLO Object Detection Architecture",
@@ -3461,8 +3461,8 @@
     "category_label": "מדדי הערכה",
     "num": 21,
     "slug_name": "Retrieval Evaluation Metrics",
-    "title": "מדדי הערכה ל-Retrieval — Recall@k, Precision@k, MRR, nDCG",
-    "definition": "מדדי הערכה ל-retrieval בודקים האם, וכמה טוב, מערכת השליפה (vector search / hybrid search) מצליחה להחזיר את המסמכים הרלוונטיים ביותר לשאילתה — בטרם שלב ה-LLM. הערכה שיטתית מאפשרת השוואת אסטרטגיות chunking, מודלי embedding, ולוגיקת re-ranking, ומונעת מצב שבו בעיית retrieval גרועה מוסווה ככשל LLM. 1️⃣ Recall@k 📋 מודד אם לפחות מסמך רלוונטי אחד מופיע בתוך top-k התוצאות שהוחזרו. קריטי כשאסור לפספס תוכן רלוונטי (למשל מערכות retrieval רפואיות). 2️⃣ Precision@k 📋 מחשב את שיעור המסמכים הרלוונטיים מתוך top-k התוצאות. מתמקד באיכות (לא רק בנוכחות) של מה שהוחזר — חשוב כשרק מספר מצומצם של chunks נכנס ל-LLM. 3️⃣ MRR — Mean Reciprocal Rank 📋 מודד באיזה מיקום בדירוג מופיע המסמך הרלוונטי הראשון. נותן פרס למערכות שמציבות תוצאות רלוונטיות בראש הרשימה — נפוץ במערכות QA וחיפוש. כאשר rankq הוא המיקום של המסמך הרלוונטי הראשון לשאילתה q. 4️⃣ nDCG — Normalized Discounted Cumulative Gain 📋 מעריך את איכות הדירוג המלא, ומשקלל מסמכים רלוונטיים לפי מיקומם — מתאים להגדרות עם רלוונטיות מדורגת (graded relevance) ולא רק בינארית. כאשר reli הוא ציון הרלוונטיות של המסמך במיקום i, ו-IDCG@k הוא ה-DCG של הדירוג האידיאלי.",
+    "title": "מדדי הערכה ל-Retrieval - Recall@k, Precision@k, MRR, nDCG",
+    "definition": "מדדי הערכה ל-retrieval בודקים האם, וכמה טוב, מערכת השליפה (vector search / hybrid search) מצליחה להחזיר את המסמכים הרלוונטיים ביותר לשאילתה - בטרם שלב ה-LLM. הערכה שיטתית מאפשרת השוואת אסטרטגיות chunking, מודלי embedding, ולוגיקת re-ranking, ומונעת מצב שבו בעיית retrieval גרועה מוסווה ככשל LLM. 1️⃣ Recall@k 📋 מודד אם לפחות מסמך רלוונטי אחד מופיע בתוך top-k התוצאות שהוחזרו. קריטי כשאסור לפספס תוכן רלוונטי (למשל מערכות retrieval רפואיות). 2️⃣ Precision@k 📋 מחשב את שיעור המסמכים הרלוונטיים מתוך top-k התוצאות. מתמקד באיכות (לא רק בנוכחות) של מה שהוחזר - חשוב כשרק מספר מצומצם של chunks נכנס ל-LLM. 3️⃣ MRR - Mean Reciprocal Rank 📋 מודד באיזה מיקום בדירוג מופיע המסמך הרלוונטי הראשון. נותן פרס למערכות שמציבות תוצאות רלוונטיות בראש הרשימה - נפוץ במערכות QA וחיפוש. כאשר rankq הוא המיקום של המסמך הרלוונטי הראשון לשאילתה q. 4️⃣ nDCG - Normalized Discounted Cumulative Gain 📋 מעריך את איכות הדירוג המלא, ומשקלל מסמכים רלוונטיים לפי מיקומם - מתאים להגדרות עם רלוונטיות מדורגת (graded relevance) ולא רק בינארית. כאשר reli הוא ציון הרלוונטיות של המסמך במיקום i, ו-IDCG@k הוא ה-DCG של הדירוג האידיאלי.",
     "related_raw": [
       "Re-ranking Strategies",
       "Bi-Encoder vs Cross-Encoder",
@@ -3485,7 +3485,7 @@
     "category_label": "מדדי הערכה",
     "num": 29,
     "slug_name": "RAG Evaluation Faithfulness RAGAS",
-    "title": "הערכת RAG — Faithfulness ו-RAGAS",
+    "title": "הערכת RAG - Faithfulness ו-RAGAS",
     "definition": "הערכת RAG מתחלקת לשני עוגנים: הערכת ה-retrieval (האם נשלפו המסמכים הנכונים) והערכת ה-generation (האם התשובה שנוצרה מעוגנת ונכונה לאור המסמכים שנשלפו). Faithfulness ו-RAGAS הם הכלים המרכזיים להערכת ציר ה-generation.",
     "related_raw": [
       "RAG Architecture Core",
@@ -3507,7 +3507,7 @@
     "category_label": "מדדי הערכה",
     "num": 50,
     "slug_name": "KG RAG Evaluation Recall at k",
-    "title": "הערכת KG-RAG — Recall@k ושיקולי שימוש",
+    "title": "הערכת KG-RAG - Recall@k ושיקולי שימוש",
     "definition": "Recall@k מודד את שיעור הפריטים הרלוונטיים (expected entities) שמופיעים בתוך k התוצאות המאוחזרות הראשונות. בהקשר KG-RAG, משתמשים בו להשוואת ביצועי שיטות אחזור שונות (keyword/vector/graph) על שאלות multi-hop.",
     "related_raw": [
       "Knowledge Graph RAG Architecture",
@@ -3531,8 +3531,8 @@
     "category_label": "מדדי הערכה",
     "num": 66,
     "slug_name": "YOLO Evaluation Metrics mAP",
-    "title": "מדדי הערכה ל-Object Detection — mAP50 ו-mAP50-95",
-    "definition": "מדדי הערכה ל-object detection בודקים גם אם האובייקט זוהה (כמו classification) וגם אם מיקומו (bounding box) מדויק — מדד IoU (Intersection over Union) מכמת חפיפה גיאומטרית, ו-mAP (mean Average Precision) משקלל את הדיוק על פני קטגוריות וספי-IoU שונים.",
+    "title": "מדדי הערכה ל-Object Detection - mAP50 ו-mAP50-95",
+    "definition": "מדדי הערכה ל-object detection בודקים גם אם האובייקט זוהה (כמו classification) וגם אם מיקומו (bounding box) מדויק - מדד IoU (Intersection over Union) מכמת חפיפה גיאומטרית, ו-mAP (mean Average Precision) משקלל את הדיוק על פני קטגוריות וספי-IoU שונים.",
     "related_raw": [
       "Retrieval Evaluation Metrics (Recall@k/Precision@k/MRR/nDCG)",
       "YOLO Custom Training & Transfer Learning",
