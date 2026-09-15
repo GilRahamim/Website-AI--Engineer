@@ -9,6 +9,7 @@ import { usePageTitle } from '../hooks/usePageTitle';
 import { useUserDataStore } from '../store/userDataStore';
 import { useAuthStore } from '../store/authStore';
 import { useSyncStore } from '../store/syncStore';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
   { value: 'light', label: 'בהירה' },
@@ -204,31 +205,23 @@ export default function Settings() {
           <h2 className="font-semibold text-[var(--kb-text)]">מראה</h2>
           <fieldset className="flex flex-col gap-2">
             <legend className="text-sm text-[var(--kb-muted)]">ערכת נושא</legend>
-            <div role="radiogroup" aria-label="ערכת נושא" className="flex w-fit rounded-[10px] bg-[var(--kb-surface2)] p-[3px]">
-              {THEME_OPTIONS.map((option) => {
-                const checked = option.value === themePreference;
-                return (
-                  <label
-                    key={option.value}
-                    className={`flex min-h-10 cursor-pointer items-center rounded-lg px-4 text-sm ${
-                      checked
-                        ? 'bg-[var(--kb-surface)] font-semibold text-[var(--kb-accent)] shadow-[var(--kb-shadow-sm)]'
-                        : 'font-medium text-[var(--kb-text2)]'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="theme"
-                      value={option.value}
-                      checked={checked}
-                      onChange={() => handleThemeChoice(option.value)}
-                      className="sr-only"
-                    />
-                    {option.label}
-                  </label>
-                );
-              })}
-            </div>
+            <ToggleGroup
+              type="single"
+              value={themePreference}
+              onValueChange={(value) => value && handleThemeChoice(value as ThemePreference)}
+              aria-label="ערכת נושא"
+              className="w-fit rounded-[10px] bg-[var(--kb-surface2)] p-[3px]"
+            >
+              {THEME_OPTIONS.map((option) => (
+                <ToggleGroupItem
+                  key={option.value}
+                  value={option.value}
+                  className="min-h-10 rounded-lg px-4 text-sm data-[state=on]:bg-[var(--kb-surface)] data-[state=on]:font-semibold data-[state=on]:text-[var(--kb-accent)] data-[state=on]:shadow-[var(--kb-shadow-sm)]"
+                >
+                  {option.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
           </fieldset>
         </section>
 
