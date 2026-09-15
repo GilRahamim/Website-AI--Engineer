@@ -1,4 +1,6 @@
 import type { ModulesMap } from '../../types';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface TopicFiltersProps {
   modules: ModulesMap;
@@ -19,36 +21,38 @@ export default function TopicFilters({
 }: TopicFiltersProps) {
   return (
     <>
-      <label className="flex flex-col text-sm text-[var(--kb-text)]">
-        מודול
-        <select
-          value={selectedModule}
-          onChange={(e) => onModuleChange(e.target.value)}
-          className="min-h-11 rounded-md border border-[var(--kb-border-input)] bg-[var(--kb-surface)] px-2 text-base text-[var(--kb-text)]"
-        >
-          <option value="all">הכול</option>
-          {Object.entries(modules).map(([key, label]) => (
-            <option key={key} value={key}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="flex flex-col text-sm text-[var(--kb-text)]">
-        קטגוריה
-        <select
-          value={selectedCategory}
-          onChange={(e) => onCategoryChange(e.target.value)}
-          className="min-h-11 rounded-md border border-[var(--kb-border-input)] bg-[var(--kb-surface)] px-2 text-base text-[var(--kb-text)]"
-        >
-          <option value="all">הכול</option>
-          {Object.entries(categoryLabels).map(([key, label]) => (
-            <option key={key} value={key}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </label>
+      <div className="flex flex-col gap-1 text-sm text-[var(--kb-text)]">
+        <Label htmlFor="topic-filters-module">מודול</Label>
+        <Select value={selectedModule} onValueChange={onModuleChange}>
+          <SelectTrigger id="topic-filters-module" className="min-h-11">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">הכול</SelectItem>
+            {Object.entries(modules).map(([key, label]) => (
+              <SelectItem key={key} value={key}>
+                {label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="flex flex-col gap-1 text-sm text-[var(--kb-text)]">
+        <Label htmlFor="topic-filters-category">קטגוריה</Label>
+        <Select value={selectedCategory} onValueChange={onCategoryChange}>
+          <SelectTrigger id="topic-filters-category" className="min-h-11">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">הכול</SelectItem>
+            {Object.entries(categoryLabels).map(([key, label]) => (
+              <SelectItem key={key} value={key}>
+                {label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </>
   );
 }
