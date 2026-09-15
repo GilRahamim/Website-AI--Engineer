@@ -7,6 +7,7 @@ import { useUserDataStore } from '../../store/userDataStore';
 import { useUiStore } from '../../store/uiStore';
 import { useInstallPrompt } from '../../hooks/useInstallPrompt';
 import ThemeToggle from '../theme/ThemeToggle';
+import { Button } from '@/components/ui/button';
 
 const NAV_ITEMS: { to: string; label: string }[] = [
   { to: '/', label: 'בית' },
@@ -14,9 +15,6 @@ const NAV_ITEMS: { to: string; label: string }[] = [
   { to: '/quiz', label: 'מבחן' },
   { to: '/map', label: 'מפה' },
 ];
-
-const iconButtonClass =
-  'grid size-11 place-items-center rounded-[10px] bg-[var(--kb-surface2)] text-[var(--kb-text2)] transition-colors hover:bg-[var(--kb-border)] hover:text-[var(--kb-text)]';
 
 export default function Header() {
   const srsCards = useUserDataStore((s) => s.srsCards);
@@ -31,15 +29,17 @@ export default function Header() {
     <header className="sticky top-0 z-10 border-b border-[var(--kb-border)] bg-[var(--kb-surface)] shadow-[var(--kb-shadow-sm)]">
       <div className="mx-auto flex min-h-16 max-w-[1440px] items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="icon"
             onClick={() => setDrawerOpen(true)}
             aria-label="פתח תפריט"
             aria-expanded={drawerOpen}
-            className={`${iconButtonClass} md:hidden`}
+            className="size-11 rounded-[10px] md:hidden"
           >
             <Menu aria-hidden="true" size={20} />
-          </button>
+          </Button>
           <Link to="/" className="flex items-center gap-2.5 text-[var(--kb-text)] no-underline">
           <span className="grid size-9 place-items-center rounded-[10px] bg-[var(--kb-accent-soft)] text-[var(--kb-accent)]">
             <Sparkles aria-hidden="true" size={18} />
@@ -77,11 +77,12 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <button
+          <Button
             type="button"
+            variant="secondary"
             onClick={() => window.dispatchEvent(new Event('kb-open-palette'))}
             aria-label="חיפוש מהיר (Ctrl+K)"
-            className="flex min-h-11 items-center gap-2 rounded-[10px] bg-[var(--kb-surface2)] px-3 text-sm text-[var(--kb-muted)] transition-colors hover:bg-[var(--kb-border)] hover:text-[var(--kb-text)] lg:w-64"
+            className="flex min-h-11 items-center gap-2 rounded-[10px] px-3 text-sm text-[var(--kb-muted)] lg:w-64"
           >
             <Search aria-hidden="true" size={18} />
             <span className="hidden min-w-0 flex-1 truncate text-start lg:inline">חפש נושא, הגדרה או הערה…</span>
@@ -91,20 +92,23 @@ export default function Header() {
             >
               Ctrl K
             </kbd>
-          </button>
+          </Button>
           <ThemeToggle />
-          <Link to="/settings" aria-label="הגדרות" title="הגדרות" className={`${iconButtonClass} no-underline`}>
-            <SlidersHorizontal aria-hidden="true" size={18} />
-          </Link>
+          <Button variant="secondary" size="icon" asChild className="size-11 rounded-[10px]">
+            <Link to="/settings" aria-label="הגדרות" title="הגדרות">
+              <SlidersHorizontal aria-hidden="true" size={18} />
+            </Link>
+          </Button>
           {canInstall && (
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={promptInstall}
-              className="hidden min-h-11 items-center gap-2 rounded-[10px] border border-[var(--kb-border)] bg-[var(--kb-surface)] px-3 text-sm font-semibold text-[var(--kb-text)] hover:bg-[var(--kb-surface2)] sm:flex"
+              className="hidden items-center gap-2 rounded-[10px] px-3 text-sm font-semibold sm:flex"
             >
               <Download aria-hidden="true" size={16} />
               התקן אפליקציה
-            </button>
+            </Button>
           )}
         </div>
       </div>
