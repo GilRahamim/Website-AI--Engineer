@@ -5,7 +5,17 @@ import { MemoryRouter } from 'react-router-dom';
 import Flashcards from './Flashcards';
 import { useUserDataStore } from '../store/userDataStore';
 import { useSyncStore } from '../store/syncStore';
+import { modules } from '../lib/catalog';
+import { STATUS_LABELS } from '../lib/progressStatus';
 import topicsData from '../data/topics.clean.json';
+
+// jsdom doesn't implement pointer capture or scrollIntoView, and Radix
+// Select's trigger/item pointer handlers call both. Stub them so
+// userEvent's pointer-event simulation doesn't throw.
+Element.prototype.hasPointerCapture = Element.prototype.hasPointerCapture ?? (() => false);
+Element.prototype.setPointerCapture = Element.prototype.setPointerCapture ?? (() => {});
+Element.prototype.releasePointerCapture = Element.prototype.releasePointerCapture ?? (() => {});
+Element.prototype.scrollIntoView = Element.prototype.scrollIntoView ?? (() => {});
 
 function reset() {
   useUserDataStore.setState({
@@ -31,6 +41,14 @@ function renderPage() {
       <Flashcards />
     </MemoryRouter>,
   );
+}
+
+// Radix Select's trigger is a button, not a native <select>, so choosing an
+// option means clicking the trigger and then clicking the option by its
+// visible label — the same pattern Task 9 used for SortMenu.
+async function selectComboboxOption(user: ReturnType<typeof userEvent.setup>, comboboxName: string, optionName: string) {
+  await user.click(screen.getByRole('combobox', { name: comboboxName }));
+  await user.click(await screen.findByRole('option', { name: optionName }));
 }
 
 describe('Flashcards', () => {
@@ -69,7 +87,7 @@ describe('Flashcards', () => {
     renderPage();
     const moduleCount = topicsData.filter((t) => t.module === topicsData[0].module).length;
 
-    await user.selectOptions(screen.getByLabelText('מודול'), topicsData[0].module);
+    await selectComboboxOption(user, 'מודול', modules[topicsData[0].module]);
     expect(screen.getByText(`1 מתוך ${moduleCount}`)).toBeInTheDocument();
   });
 
@@ -77,7 +95,7 @@ describe('Flashcards', () => {
     useUserDataStore.setState({ progress: new Map(topicsData.map((t) => [t.id, 'mastered' as const])) });
     const user = userEvent.setup();
     renderPage();
-    await user.selectOptions(screen.getByLabelText('מצב למידה'), 'new');
+    await selectComboboxOption(user, 'מצב למידה', STATUS_LABELS.new);
     expect(screen.getByRole('status')).toHaveTextContent('אין כרטיסים לחזרה');
   });
 
@@ -106,7 +124,7 @@ describe('Flashcards', () => {
     useUserDataStore.setState({ progress });
     const user = userEvent.setup();
     renderPage();
-    await user.selectOptions(screen.getByLabelText('מצב למידה'), 'new');
+    await selectComboboxOption(user, 'מצב למידה', STATUS_LABELS.new);
     expect(screen.getByText('1 מתוך 1')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'לחץ לחשיפה' }));
@@ -138,7 +156,7 @@ describe('Flashcards', () => {
     useUserDataStore.setState({ progress });
     const user = userEvent.setup();
     renderPage();
-    await user.selectOptions(screen.getByLabelText('מצב למידה'), 'new');
+    await selectComboboxOption(user, 'מצב למידה', STATUS_LABELS.new);
     expect(screen.getByText('1 מתוך 2')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'לחץ לחשיפה' }));

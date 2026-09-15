@@ -9,9 +9,9 @@ import { useUserDataStore } from '../store/userDataStore';
 import { usePageTitle } from '../hooks/usePageTitle';
 import Header from '../components/layout/Header';
 import TopicFilters from '../components/browse/TopicFilters';
-
-const PRIMARY_BUTTON = 'min-h-11 rounded-[10px] bg-[var(--kb-accent)] px-5 text-sm font-semibold text-[var(--kb-on-accent)] hover:opacity-90 disabled:opacity-50';
-const SECONDARY_BUTTON = 'min-h-11 rounded-[10px] border border-[var(--kb-border-strong)] bg-[var(--kb-surface)] px-4 text-sm font-semibold text-[var(--kb-text)] hover:bg-[var(--kb-surface2)]';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
 // Rating buttons: "good" is the default answer in spaced repetition, so it
@@ -173,21 +173,22 @@ export default function Flashcards() {
             onModuleChange={handleModuleChange}
             onCategoryChange={handleCategoryChange}
           />
-          <label className="flex flex-col text-sm text-[var(--kb-text)]">
-            מצב למידה
-            <select
-              value={selectedStatus}
-              onChange={(e) => handleStatusChange(e.target.value as ProgressStatus | 'all')}
-              className="min-h-11 rounded-md border border-[var(--kb-border-input)] bg-[var(--kb-surface)] px-2 text-base text-[var(--kb-text)]"
-            >
-              <option value="all">הכול</option>
-              {ALL_STATUSES.map((status) => (
-                <option key={status} value={status}>
-                  {STATUS_LABELS[status]}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div className="flex flex-col gap-1 text-sm text-[var(--kb-text)]">
+            <Label htmlFor="flashcards-status">מצב למידה</Label>
+            <Select value={selectedStatus} onValueChange={(value) => handleStatusChange(value as ProgressStatus | 'all')}>
+              <SelectTrigger id="flashcards-status" className="min-h-11">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">הכול</SelectItem>
+                {ALL_STATUSES.map((status) => (
+                  <SelectItem key={status} value={status}>
+                    {STATUS_LABELS[status]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <label className="flex min-h-11 items-center gap-2 text-sm text-[var(--kb-text)]">
             <input type="checkbox" checked={dueOnly} onChange={(e) => handleDueOnlyChange(e.target.checked)} />
             רק כרטיסים לחזרה היום
@@ -204,9 +205,9 @@ export default function Flashcards() {
               {dueOnly ? 'הכול מעודכן להיום. אפשר לתרגל גם כרטיסים שעוד לא הגיע זמנם.' : 'שנה את הסינון כדי למצוא כרטיסים לתרגול.'}
             </p>
             {dueOnly && (
-              <button type="button" onClick={() => handleDueOnlyChange(false)} className={`mt-1 ${PRIMARY_BUTTON}`}>
+              <Button type="button" onClick={() => handleDueOnlyChange(false)} className="mt-1">
                 תרגל את כל הכרטיסים
-              </button>
+              </Button>
             )}
           </div>
         )}
@@ -217,13 +218,12 @@ export default function Flashcards() {
             className="flex flex-col items-center gap-3 rounded-xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-6 text-center shadow-[var(--kb-shadow-sm)]"
           >
             <p className="text-lg font-bold text-[var(--kb-text)]">{`סיימת! ${reviewedCount} כרטיסים נסקרו.`}</p>
-            <button
+            <Button
               type="button"
               onClick={() => resetSession(buildQueue(selectedModule, selectedCategory, selectedStatus, dueOnly))}
-              className={PRIMARY_BUTTON}
             >
               סבב נוסף
-            </button>
+            </Button>
           </div>
         )}
 
@@ -235,9 +235,9 @@ export default function Flashcards() {
             <p className="mb-1 text-sm text-[var(--kb-muted)]">{`${currentIndex + 1} מתוך ${queue.length}`}</p>
             <h2 className="mb-4 text-xl font-bold text-[var(--kb-text)]">{currentTopic.title}</h2>
             {!revealed ? (
-              <button ref={revealButtonRef} type="button" onClick={() => setRevealed(true)} className={PRIMARY_BUTTON}>
+              <Button ref={revealButtonRef} type="button" onClick={() => setRevealed(true)}>
                 לחץ לחשיפה
-              </button>
+              </Button>
             ) : (
               <>
                 <p className="mb-4 text-[var(--kb-text2)]">{currentTopic.definition}</p>
@@ -249,11 +249,12 @@ export default function Flashcards() {
                 </Link>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                   {RATINGS.map(({ rating, label, key }) => (
-                    <button
+                    <Button
                       key={rating}
                       type="button"
+                      variant={rating === 'good' ? 'default' : 'outline'}
                       onClick={() => handleRate(rating)}
-                      className={`flex items-center justify-center gap-2 ${rating === 'good' ? PRIMARY_BUTTON : SECONDARY_BUTTON}`}
+                      className="flex items-center justify-center gap-2"
                     >
                       {label}
                       <kbd
@@ -262,7 +263,7 @@ export default function Flashcards() {
                       >
                         {key}
                       </kbd>
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </>
