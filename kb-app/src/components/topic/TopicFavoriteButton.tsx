@@ -1,5 +1,6 @@
 import { Star } from 'lucide-react';
 import { useUserDataStore } from '../../store/userDataStore';
+import { Toggle } from '@/components/ui/toggle';
 
 interface TopicFavoriteButtonProps {
   topicId: string;
@@ -24,19 +25,18 @@ export default function TopicFavoriteButton({ topicId, size = 'sm', tabIndex = 0
   const toggleFavorite = useUserDataStore((s) => s.toggleFavorite);
 
   return (
-    <button
-      type="button"
+    <Toggle
       tabIndex={tabIndex}
+      pressed={isFavorite}
       onClick={(event) => {
         event.preventDefault();
         event.stopPropagation();
         toggleFavorite(topicId);
       }}
-      aria-pressed={isFavorite}
       aria-label={isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}
-      className={`kb-favorite-star grid place-items-center rounded-full border border-[var(--kb-border)] bg-[var(--kb-surface)] ${SIZE_CLASS[size]}`}
+      className={`kb-favorite-star grid place-items-center rounded-full border border-[var(--kb-border)] bg-[var(--kb-surface)] data-[state=on]:bg-[var(--kb-surface)] data-[state=on]:text-[var(--kb-accent)] ${SIZE_CLASS[size]}`}
     >
       <Star aria-hidden="true" size={ICON_SIZE[size]} fill={isFavorite ? 'currentColor' : 'none'} />
-    </button>
+    </Toggle>
   );
 }
