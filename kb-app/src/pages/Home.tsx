@@ -21,6 +21,7 @@ import SearchBar from '../components/browse/SearchBar';
 import FilterChips from '../components/browse/FilterChips';
 import SortMenu from '../components/browse/SortMenu';
 import AccordionGroup from '../components/browse/AccordionGroup';
+import { Button } from '@/components/ui/button';
 
 const statusChipClass =
   'flex min-h-10 items-center rounded-full border px-3 text-[13px] transition-colors aria-pressed:border-[var(--kb-accent-soft)] aria-pressed:bg-[var(--kb-accent-soft)] aria-pressed:font-semibold aria-pressed:text-[var(--kb-accent)] border-[var(--kb-border)] bg-[var(--kb-surface)] font-medium text-[var(--kb-text2)] hover:bg-[var(--kb-surface2)]';
@@ -159,12 +160,12 @@ export default function Home() {
             </div>
             <FilterChips modules={modules} categoryLabels={categoryLabels} />
             <div className="flex gap-3 text-[13px]">
-              <button type="button" onClick={expandAllGroups} className="min-h-10 px-1 font-medium text-[var(--kb-accent)] hover:underline">
+              <Button type="button" variant="link" onClick={expandAllGroups} className="h-auto min-h-10 p-0 px-1 font-medium">
                 הרחב הכול
-              </button>
-              <button type="button" onClick={collapseAllGroups} className="min-h-10 px-1 font-medium text-[var(--kb-accent)] hover:underline">
+              </Button>
+              <Button type="button" variant="link" onClick={collapseAllGroups} className="h-auto min-h-10 p-0 px-1 font-medium">
                 כווץ הכול
-              </button>
+              </Button>
             </div>
             {groups.length === 0 && (
               <div
@@ -175,13 +176,9 @@ export default function Home() {
                 <p className="font-semibold text-[var(--kb-text)]">לא נמצאו נושאים.</p>
                 <p className="text-sm text-[var(--kb-muted)]">נסה מילת חיפוש אחרת או הסר חלק מהסינונים.</p>
                 {hasActiveFilters && (
-                  <button
-                    type="button"
-                    onClick={clearFilters}
-                    className="mt-1 inline-flex min-h-11 items-center rounded-[10px] bg-[var(--kb-accent)] px-4 text-sm font-semibold text-[var(--kb-on-accent)] hover:opacity-90"
-                  >
+                  <Button type="button" onClick={clearFilters} className="mt-1 rounded-[10px]">
                     נקה סינון והצג הכול
-                  </button>
+                  </Button>
                 )}
               </div>
             )}
