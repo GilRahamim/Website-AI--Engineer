@@ -11,6 +11,7 @@ import PrevNextNav from './PrevNextNav';
 import ReaderAside from './ReaderAside';
 import TopicNotes from '../topic/TopicNotes';
 import { sizeFormulaImage } from '../../lib/formulaSizing';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface TopicReaderProps {
   topic: Topic;
@@ -168,11 +169,17 @@ export default function TopicReader({ topic, topics, topicsById }: TopicReaderPr
                     : 'שגיאה בטעינת התוכן.'}
                 </p>
               ) : (
-                <div role="status" aria-busy="true" className="kb-skeleton">
+                <div role="status" aria-busy="true" className="flex flex-col gap-[0.85rem]">
                   <span className="sr-only">טוען תוכן…</span>
-                  {Array.from({ length: 9 }, (_, i) => (
-                    <span key={i} aria-hidden="true" />
-                  ))}
+                  <Skeleton className="mb-2 h-5 w-[36%]" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-[92%]" />
+                  <Skeleton className="h-4 w-[85%]" />
+                  <Skeleton className="h-4 w-[60%]" />
+                  <Skeleton className="mt-5 h-5 w-[40%]" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-[88%]" />
+                  <Skeleton className="h-4 w-[70%]" />
                 </div>
               )
             ) : (

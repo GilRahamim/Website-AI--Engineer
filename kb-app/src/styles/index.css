@@ -181,34 +181,6 @@ summary:active {
   gap: 1rem;
 }
 
-/* Content-loading placeholder for the reader: reserves roughly a screen of
-   height so the real content does not push everything below it down when
-   it arrives (CLS), and pulses only when motion is allowed. */
-.kb-skeleton {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  min-height: 24rem;
-}
-.kb-skeleton > span {
-  display: block;
-  height: 0.95rem;
-  border-radius: 6px;
-  background: var(--kb-surface2);
-  animation: kb-skeleton-pulse 1.4s ease-in-out infinite;
-}
-.kb-skeleton > span:nth-child(1) { width: 36%; height: 1.25rem; margin-bottom: 0.5rem; }
-.kb-skeleton > span:nth-child(3) { width: 92%; }
-.kb-skeleton > span:nth-child(4) { width: 85%; }
-.kb-skeleton > span:nth-child(5) { width: 60%; }
-.kb-skeleton > span:nth-child(6) { width: 40%; height: 1.25rem; margin-top: 1.25rem; }
-.kb-skeleton > span:nth-child(8) { width: 88%; }
-.kb-skeleton > span:nth-child(9) { width: 70%; }
-@keyframes kb-skeleton-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.55; }
-}
-
 /* Phone table of contents: a native disclosure above the article body. */
 .kb-toc-disclosure > summary {
   list-style: none;
