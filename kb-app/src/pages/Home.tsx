@@ -105,6 +105,16 @@ export default function Home() {
     <>
       <Header />
       <div className="mx-auto flex max-w-[1440px] items-start">
+        <aside className="sticky top-16 hidden max-h-[calc(100vh-4rem)] w-72 shrink-0 overflow-y-auto border-e border-[var(--kb-border)] bg-[var(--kb-surface)] md:block">
+          <Sidebar
+            modules={modules}
+            moduleCounts={moduleCounts}
+            moduleMasteredCounts={moduleMasteredCounts}
+            categoryLabels={categoryLabels}
+            categoryCounts={categoryCounts}
+            topicsById={topicsById}
+          />
+        </aside>
         <div className="min-w-0 flex-1">
           <section aria-label="לוח למידה" className="px-4 pt-4 sm:px-6 lg:px-8">
             <h1 className="sr-only">AI Engineer</h1>
@@ -188,16 +198,6 @@ export default function Home() {
             ))}
           </main>
         </div>
-        <aside className="sticky top-16 hidden max-h-[calc(100vh-4rem)] w-72 shrink-0 overflow-y-auto border-s border-[var(--kb-border)] bg-[var(--kb-surface)] md:block">
-          <Sidebar
-            modules={modules}
-            moduleCounts={moduleCounts}
-            moduleMasteredCounts={moduleMasteredCounts}
-            categoryLabels={categoryLabels}
-            categoryCounts={categoryCounts}
-            topicsById={topicsById}
-          />
-        </aside>
       </div>
       <ShortcutsHelp open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
     </>

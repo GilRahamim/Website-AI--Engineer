@@ -77,7 +77,7 @@ export default function ReaderAside({ topic, headings, activeHeadingId, onSelect
         <StatusSegmented topicId={topic.id} />
         <div className="flex items-center justify-between gap-2">
           <span className="text-sm font-medium text-[var(--kb-text2)]">{isFavorite ? 'במועדפים' : 'הוסף למועדפים'}</span>
-          <TopicFavoriteButton topicId={topic.id} />
+          <TopicFavoriteButton topicId={topic.id} size="xs" />
         </div>
         <p className="text-xs text-[var(--kb-muted)]">
           {card ? `נסקר ${card.reps} פעמים · ${reviewText}` : reviewText}

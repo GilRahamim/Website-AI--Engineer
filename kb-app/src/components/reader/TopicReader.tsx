@@ -104,12 +104,13 @@ export default function TopicReader({ topic, topics, topicsById }: TopicReaderPr
 
   // One grid for every viewport: on phones the aside (status control) sits
   // between the title block and the content; from lg up it moves to a
-  // sticky second column spanning both rows. A single aside instance keeps
-  // the radiogroup and table of contents unique in the accessibility tree.
+  // sticky first column (the leading/right edge in this RTL layout)
+  // spanning both rows. A single aside instance keeps the radiogroup and
+  // table of contents unique in the accessibility tree.
   return (
-    <div className="mx-auto grid max-w-[1040px] grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_260px] lg:gap-x-10 lg:gap-y-6 lg:px-8">
+    <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-x-10 lg:gap-y-6 lg:px-8">
       <article className="contents">
-        <div className="min-w-0 max-w-[75ch] lg:col-start-1">
+        <div className="min-w-0 max-w-[85ch] lg:col-start-2">
           <nav
             aria-label="breadcrumb"
             className="mb-4 flex flex-wrap items-center gap-2 text-sm text-[var(--kb-muted)]"
@@ -148,7 +149,7 @@ export default function TopicReader({ topic, topics, topicsById }: TopicReaderPr
           )}
         </div>
 
-        <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
+        <div className="lg:col-start-1 lg:row-span-2 lg:row-start-1">
           <ReaderAside
             topic={topic}
             headings={toc.headings}
@@ -157,7 +158,7 @@ export default function TopicReader({ topic, topics, topicsById }: TopicReaderPr
           />
         </div>
 
-        <div className="min-w-0 max-w-[75ch] lg:col-start-1">
+        <div className="min-w-0 max-w-[85ch] lg:col-start-2">
           <div className="border-t border-[var(--kb-border)] pt-6">
             {rawHtml === null ? (
               error ? (
