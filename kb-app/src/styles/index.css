@@ -1,5 +1,11 @@
 @import "tailwindcss";
 @import "./tokens.css";
+@import "tw-animate-css";
+
+/* shadcn/Radix components ship `dark:` classes; this app toggles theme via
+   a data-theme attribute (lib/theme.ts), not shadcn's default .dark class —
+   so `dark:` must key off the attribute instead. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 * {
   box-sizing: border-box;

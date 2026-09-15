@@ -45,3 +45,31 @@
   --kb-cat-formulas: oklch(72% 0.14 320);
   --kb-cat-architectures: oklch(72% 0.15 25);
 }
+
+/* shadcn/ui variable mapping — points at the existing --kb-* tokens above,
+   so every shadcn component matches this palette in both themes with no
+   separate dark block: --kb-* already flips under [data-theme="dark"]. */
+:root {
+  --background: var(--kb-bg);
+  --foreground: var(--kb-text);
+  --card: var(--kb-surface);
+  --card-foreground: var(--kb-text);
+  --popover: var(--kb-surface);
+  --popover-foreground: var(--kb-text);
+  --primary: var(--kb-accent);
+  --primary-foreground: var(--kb-on-accent);
+  --secondary: var(--kb-surface2);
+  --secondary-foreground: var(--kb-text);
+  --muted: var(--kb-surface2);
+  --muted-foreground: var(--kb-muted);
+  --accent: var(--kb-accent-soft);
+  --accent-foreground: var(--kb-accent);
+  /* Net-new: nothing in --kb-* represents an error/danger state today.
+     Same lightness/chroma discipline as the rest of the palette. */
+  --destructive: oklch(58% 0.19 25);
+  --destructive-foreground: #fff;
+  --border: var(--kb-border);
+  --input: var(--kb-border-input);
+  --ring: var(--kb-accent);
+  --radius: 0.625rem;
+}
