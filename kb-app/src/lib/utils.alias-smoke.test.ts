@@ -3,7 +3,8 @@ import { cn } from '@/lib/utils';
 
 describe('cn via @/* alias', () => {
   it('resolves @/lib/utils import and merges classes', () => {
-    expect(cn('a', false && 'b', undefined, 'c')).toBe('a c');
+    const isDisabled = false;
+    expect(cn('a', isDisabled && 'b', undefined, 'c')).toBe('a c');
   });
 
   it('resolves Tailwind conflicts via alias import', () => {

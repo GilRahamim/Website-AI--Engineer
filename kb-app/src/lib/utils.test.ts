@@ -3,7 +3,8 @@ import { cn } from './utils';
 
 describe('cn', () => {
   it('merges class lists and drops falsy values', () => {
-    expect(cn('a', false && 'b', undefined, 'c')).toBe('a c');
+    const isDisabled = false;
+    expect(cn('a', isDisabled && 'b', undefined, 'c')).toBe('a c');
   });
 
   it('lets a later Tailwind class win over an earlier conflicting one', () => {
