@@ -1,4 +1,5 @@
 import { Component, lazy, Suspense, useEffect, type ReactNode } from 'react';
+import { DirectionProvider } from '@radix-ui/react-direction';
 import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Reader from './pages/Reader';
@@ -67,7 +68,7 @@ export default function App() {
   }, []);
 
   return (
-    <>
+    <DirectionProvider dir="rtl">
       <ScrollToTop />
       <RouteErrorBoundary>
         <Suspense fallback={<RouteFallback />}>
@@ -110,6 +111,6 @@ export default function App() {
       <CommandPalette />
       {/* Phone drawer + bottom tab bar, once for every route (see AppChrome). */}
       <AppChrome />
-    </>
+    </DirectionProvider>
   );
 }
