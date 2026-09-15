@@ -1,6 +1,7 @@
 import { ChevronDown } from 'lucide-react';
 import type { GridItemProps } from '../../hooks/useGridKeyboardNav';
 import type { TopicGroup, ViewMode } from '../../types';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import TopicGrid from './TopicGrid';
 import TopicListRow from './TopicListRow';
 
@@ -21,33 +22,23 @@ export default function AccordionGroup({
   highlightTerm,
   getItemProps,
 }: AccordionGroupProps) {
-  const headingId = `group-heading-${group.moduleKey}`;
-  const panelId = `group-panel-${group.moduleKey}`;
-
   return (
-    <section className="mb-6">
-      <h2>
-        <button
-          type="button"
-          id={headingId}
-          aria-expanded={expanded}
-          aria-controls={panelId}
-          onClick={onToggle}
-          className="flex w-full min-h-11 items-center justify-between rounded-lg border border-[var(--kb-border)] bg-[var(--kb-surface2)] px-4 py-2 text-start font-bold text-[var(--kb-text)]"
-        >
+    <Accordion
+      type="single"
+      collapsible
+      value={expanded ? group.moduleKey : ''}
+      onValueChange={() => onToggle()}
+      className="mb-6"
+    >
+      <AccordionItem value={group.moduleKey} className="rounded-lg border border-[var(--kb-border)] bg-[var(--kb-surface2)]">
+        <AccordionTrigger className="min-h-11 px-4 py-2 text-start font-bold text-[var(--kb-text)] hover:no-underline [&>svg]:hidden">
           <span>{group.moduleLabel}</span>
-          <span className="flex items-center gap-2 text-sm text-[var(--kb-muted)]">
+          <span className="ms-auto flex items-center gap-2 text-sm font-normal text-[var(--kb-muted)]">
             {group.topics.length}
-            <ChevronDown
-              aria-hidden="true"
-              size={18}
-              className={`transition-transform ${expanded ? '' : 'rotate-90'}`}
-            />
+            <ChevronDown aria-hidden="true" size={18} className="transition-transform duration-200" />
           </span>
-        </button>
-      </h2>
-      {expanded && (
-        <div id={panelId} role="region" aria-labelledby={headingId} className="mt-3">
+        </AccordionTrigger>
+        <AccordionContent className="px-0 pb-0 pt-3">
           {viewMode === 'grid' ? (
             <TopicGrid topics={group.topics} highlightTerm={highlightTerm} getItemProps={getItemProps} />
           ) : (
@@ -59,8 +50,8 @@ export default function AccordionGroup({
               ))}
             </ul>
           )}
-        </div>
-      )}
-    </section>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 }
