@@ -2,6 +2,7 @@ import { Circle, CircleCheck, CircleDot } from 'lucide-react';
 import { useUserDataStore } from '../../store/userDataStore';
 import { NEXT_STATUS, STATUS_LABELS } from '../../lib/progressStatus';
 import type { ProgressStatus } from '../../types';
+import { Button } from '@/components/ui/button';
 
 interface TopicStatusButtonProps {
   topicId: string;
@@ -21,8 +22,10 @@ export default function TopicStatusButton({ topicId, size = 'sm', tabIndex = 0 }
   const Icon = STATUS_ICONS[status];
 
   return (
-    <button
+    <Button
       type="button"
+      variant="outline"
+      size="icon"
       tabIndex={tabIndex}
       onClick={(event) => {
         // Defensive — TopicCard/TopicListRow (Task 4) render this as a
@@ -34,11 +37,9 @@ export default function TopicStatusButton({ topicId, size = 'sm', tabIndex = 0 }
       }}
       aria-label={`מצב למידה: ${STATUS_LABELS[status]}. לחץ למעבר ל'${STATUS_LABELS[NEXT_STATUS[status]]}'`}
       data-status={status}
-      className={`kb-status-pill grid place-items-center rounded-full border border-[var(--kb-border)] bg-[var(--kb-surface)] ${
-        size === 'lg' ? 'size-12' : 'size-11'
-      }`}
+      className={`kb-status-pill rounded-full ${size === 'lg' ? 'size-12' : 'size-11'}`}
     >
       <Icon aria-hidden="true" size={size === 'lg' ? 22 : 18} />
-    </button>
+    </Button>
   );
 }
