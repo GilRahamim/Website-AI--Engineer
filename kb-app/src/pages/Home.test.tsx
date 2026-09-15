@@ -106,6 +106,64 @@ describe('Home', () => {
     expect(totalCards).toBeGreaterThan(0);
   });
 
+  it('lets two different module groups be expanded simultaneously, leaving other groups collapsed', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>,
+    );
+
+    // Start fully collapsed so each click below can only be explained by
+    // that specific group's own state, not the shared default-expanded state.
+    act(() => {
+      useUiStore.getState().collapseAllGroups();
+    });
+    const main = screen.getByRole('main');
+    expect(within(main).queryAllByRole('link')).toHaveLength(0);
+
+    // `expanded` scopes to elements that actually expose aria-expanded (the
+    // accordion triggers), excluding the module filter chips above them that
+    // share the same label text but only expose aria-pressed.
+    const triggerA = within(main).getByRole('button', { name: /מבוא למדעי הנתונים/, expanded: false });
+    const triggerB = within(main).getByRole('button', { name: /נושא 1 - Unsupervised Learning/, expanded: false });
+    const triggerC = within(main).getByRole('button', { name: /נושא 2 - NLP/, expanded: false });
+    const countA = topicsData.filter((t) => t.module === 'Intro to Data Science').length;
+    const countC = topicsData.filter((t) => t.module === 'Topic 2 - Natural Language Processing').length;
+
+    await user.click(triggerA);
+    expect(triggerA).toHaveAttribute('aria-expanded', 'true');
+    expect(triggerB).toHaveAttribute('aria-expanded', 'false');
+    expect(triggerC).toHaveAttribute('aria-expanded', 'false');
+    expect(within(main).getAllByRole('link')).toHaveLength(countA);
+
+    // Expanding a *different* group must not collapse group A — this is the
+    // concrete regression this test guards against: a single shared
+    // `Accordion type="single"` wrapping every module group (instead of one
+    // independent Accordion instance per group) would only allow one group
+    // open at a time and would fail this assertion.
+    await user.click(triggerC);
+    expect(triggerA).toHaveAttribute('aria-expanded', 'true');
+    expect(triggerB).toHaveAttribute('aria-expanded', 'false');
+    expect(triggerC).toHaveAttribute('aria-expanded', 'true');
+    expect(within(main).getAllByRole('link')).toHaveLength(countA + countC);
+  });
+
+  it('"הרחב הכול" / "כווץ הכול" expand and collapse every module group at once', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'כווץ הכול' }));
+    expect(within(screen.getByRole('main')).queryAllByRole('link')).toHaveLength(0);
+
+    await user.click(screen.getByRole('button', { name: 'הרחב הכול' }));
+    expect(within(screen.getByRole('main')).getAllByRole('link')).toHaveLength(topicsData.length);
+  });
+
   it('narrows visible topics when the search store value changes', () => {
     render(
       <MemoryRouter>
