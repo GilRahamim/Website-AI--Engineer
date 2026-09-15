@@ -4,6 +4,7 @@ import type { GridItemProps } from '../../hooks/useGridKeyboardNav';
 import { highlightMatch } from '../../lib/highlightMatch';
 import TopicStatusButton from '../topic/TopicStatusButton';
 import TopicFavoriteButton from '../topic/TopicFavoriteButton';
+import { Card } from '@/components/ui/card';
 
 interface TopicCardProps {
   topic: Topic;
@@ -19,7 +20,7 @@ export default function TopicCard({ topic, highlightTerm, itemProps }: TopicCard
      name-based heuristic misidentifies the whole itemProps object because it has a property
      literally named "ref". */
   return (
-    <div className="kb-topic-card relative flex flex-col gap-2 p-4 transition-[transform,box-shadow] duration-150 ease-[var(--kb-ease)]">
+    <Card className="kb-topic-card relative flex flex-col gap-2 p-4 transition-[transform,box-shadow] duration-150 ease-[var(--kb-ease)]">
       <div className="flex items-center justify-between gap-2">
         <span className="kb-category-chip" data-category={topic.category}>
           {topic.category_label}
@@ -50,7 +51,7 @@ export default function TopicCard({ topic, highlightTerm, itemProps }: TopicCard
         </h3>
         <p className="text-sm text-[var(--kb-muted)] line-clamp-3">{topic.definition}</p>
       </Link>
-    </div>
+    </Card>
   );
   /* eslint-enable react-hooks/refs */
 }

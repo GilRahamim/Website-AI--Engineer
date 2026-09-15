@@ -4,6 +4,7 @@ import type { GridItemProps } from '../../hooks/useGridKeyboardNav';
 import { highlightMatch } from '../../lib/highlightMatch';
 import TopicStatusButton from '../topic/TopicStatusButton';
 import TopicFavoriteButton from '../topic/TopicFavoriteButton';
+import { Card } from '@/components/ui/card';
 
 interface TopicListRowProps {
   topic: Topic;
@@ -22,7 +23,7 @@ export default function TopicListRow({ topic, highlightTerm, itemProps }: TopicL
 
   /* eslint-disable react-hooks/refs -- see TopicCard.tsx for rationale */
   return (
-    <div className="kb-topic-list-row relative flex min-h-16 items-center gap-3 px-3 py-2.5 transition-[transform,box-shadow] duration-150 ease-[var(--kb-ease)]">
+    <Card className="kb-topic-list-row relative flex min-h-16 items-center gap-3 px-3 py-2.5 transition-[transform,box-shadow] duration-150 ease-[var(--kb-ease)]">
       <span className="kb-category-dot shrink-0" data-category={topic.category}>
         <span className="sr-only">{topic.category_label}</span>
       </span>
@@ -51,7 +52,7 @@ export default function TopicListRow({ topic, highlightTerm, itemProps }: TopicL
         <TopicStatusButton topicId={topic.id} tabIndex={itemProps.tabIndex} />
         <TopicFavoriteButton topicId={topic.id} tabIndex={itemProps.tabIndex} />
       </div>
-    </div>
+    </Card>
   );
   /* eslint-enable react-hooks/refs */
 }

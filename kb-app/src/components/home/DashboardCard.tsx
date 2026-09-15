@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { BookOpen, ChevronLeft, Shuffle } from 'lucide-react';
 import type { Topic } from '../../types';
+import { Card } from '@/components/ui/card';
 
 interface DashboardCardProps {
   masteredCount: number;
@@ -96,7 +97,7 @@ export default function DashboardCard({
   const review = reviewCopy(dueCount, newCount);
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4">
-      <div className={tileClass}>
+      <Card className={tileClass}>
         <div className="flex items-center gap-4">
           <ProgressRing value={masteredCount} max={totalCount} />
           <div className="flex min-w-0 flex-col gap-0.5">
@@ -105,9 +106,9 @@ export default function DashboardCard({
             <span className="text-xs text-[var(--kb-muted)]">{`${learningCount} בלמידה · ${newCount} נושאים חדשים`}</span>
           </div>
         </div>
-      </div>
+      </Card>
 
-      <div className={tileClass}>
+      <Card className={tileClass}>
         <span className="text-xs font-medium text-[var(--kb-muted)]">חזרה מרווחת</span>
         <span className="text-base font-bold text-[var(--kb-text)]">{review.headline}</span>
         <span className="text-xs text-[var(--kb-muted)]">{`נסקרו עד כה ${reviewedCount} כרטיסים`}</span>
@@ -130,25 +131,27 @@ export default function DashboardCard({
             </span>
           </Link>
         </div>
-      </div>
+      </Card>
 
       {continueTopic && (
-        <Link
-          to={`/topic/${encodeURIComponent(continueTopic.id)}`}
+        <Card
+          asChild
           className={`${tileClass} justify-between no-underline hover:border-[var(--kb-border-strong)] hover:bg-[var(--kb-surface2)]`}
         >
-          <div className="flex items-center gap-3">
-            <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-[var(--kb-accent-soft)] text-[var(--kb-accent)]">
-              <BookOpen aria-hidden="true" size={18} />
-            </span>
-            <div className="flex min-w-0 flex-col">
-              <span className="text-xs font-medium text-[var(--kb-muted)]">{continueLabel}</span>
-              <span className="line-clamp-2 text-base font-bold leading-snug text-[var(--kb-text)]">{continueTopic.title}</span>
+          <Link to={`/topic/${encodeURIComponent(continueTopic.id)}`}>
+            <div className="flex items-center gap-3">
+              <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-[var(--kb-accent-soft)] text-[var(--kb-accent)]">
+                <BookOpen aria-hidden="true" size={18} />
+              </span>
+              <div className="flex min-w-0 flex-col">
+                <span className="text-xs font-medium text-[var(--kb-muted)]">{continueLabel}</span>
+                <span className="line-clamp-2 text-base font-bold leading-snug text-[var(--kb-text)]">{continueTopic.title}</span>
+              </div>
+              <ChevronLeft aria-hidden="true" size={18} className="ms-auto shrink-0 text-[var(--kb-muted)]" />
             </div>
-            <ChevronLeft aria-hidden="true" size={18} className="ms-auto shrink-0 text-[var(--kb-muted)]" />
-          </div>
-          <span className="text-xs text-[var(--kb-muted)]">{continueTopic.module_label}</span>
-        </Link>
+            <span className="text-xs text-[var(--kb-muted)]">{continueTopic.module_label}</span>
+          </Link>
+        </Card>
       )}
     </div>
   );
