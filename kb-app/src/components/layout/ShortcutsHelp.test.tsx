@@ -1,22 +1,27 @@
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ShortcutsHelp from './ShortcutsHelp';
 
 describe('ShortcutsHelp', () => {
   it('renders nothing when closed', () => {
-    const { container } = render(<ShortcutsHelp open={false} onClose={() => {}} />);
-    expect(container).toBeEmptyDOMElement();
+    render(<ShortcutsHelp open={false} onClose={() => {}} />);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  it('renders a modal dialog listing the shortcuts when open', () => {
+  it('opens as a labelled modal dialog listing the shortcuts, focused on the close button', () => {
     render(<ShortcutsHelp open onClose={() => {}} />);
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    const dialog = screen.getByRole('dialog', { name: 'קיצורי מקלדת' });
+    expect(dialog).toBeInTheDocument();
     expect(screen.getByText('/')).toBeInTheDocument();
     expect(screen.getByText('Esc')).toBeInTheDocument();
+    // Radix's default onMountAutoFocus focuses the first tabbable element in
+    // the content, which is the "סגור" button (it comes before the
+    // shadcn-provided X close button in DOM order).
+    expect(screen.getByRole('button', { name: 'סגור' })).toHaveFocus();
   });
 
-  it('calls onClose when the close button is clicked', async () => {
+  it('calls onClose when the "סגור" button is clicked', async () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
     render(<ShortcutsHelp open onClose={onClose} />);
@@ -24,29 +29,23 @@ describe('ShortcutsHelp', () => {
     expect(onClose).toHaveBeenCalledOnce();
   });
 
-  it('calls onClose when the backdrop is clicked', async () => {
+  it('calls onClose when the corner close button (shadcn default, sr-only "Close") is clicked', async () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
     render(<ShortcutsHelp open onClose={onClose} />);
-    await user.click(screen.getByRole('dialog').parentElement!);
+    await user.click(screen.getByRole('button', { name: 'Close' }));
     expect(onClose).toHaveBeenCalledOnce();
   });
 
-  it('moves focus into the dialog when it opens', () => {
-    render(<ShortcutsHelp open onClose={() => {}} />);
-    expect(screen.getByRole('button', { name: 'סגור' })).toHaveFocus();
-  });
-
-  it('keeps focus on the close button when Tab is pressed', async () => {
+  it('calls onClose on Escape', async () => {
     const user = userEvent.setup();
-    render(<ShortcutsHelp open onClose={() => {}} />);
-    const closeButton = screen.getByRole('button', { name: 'סגור' });
-    expect(closeButton).toHaveFocus();
-    await user.tab();
-    expect(closeButton).toHaveFocus();
+    const onClose = vi.fn();
+    render(<ShortcutsHelp open onClose={onClose} />);
+    await user.keyboard('{Escape}');
+    expect(onClose).toHaveBeenCalledOnce();
   });
 
-  it('restores focus to the previously focused element when closed', () => {
+  it('restores focus to the previously focused element when closed', async () => {
     const trigger = document.createElement('button');
     trigger.textContent = 'פתח קיצורים';
     document.body.appendChild(trigger);
@@ -58,8 +57,12 @@ describe('ShortcutsHelp', () => {
     rerender(<ShortcutsHelp open onClose={() => {}} />);
     expect(screen.getByRole('button', { name: 'סגור' })).toHaveFocus();
 
+    // Radix's FocusScope dispatches its unmount-autofocus event (which our
+    // onCloseAutoFocus handler uses to restore focus) from a setTimeout(0)
+    // scheduled in the effect cleanup, so the restore lands a tick after
+    // this synchronous rerender — waitFor lets that macrotask flush.
     rerender(<ShortcutsHelp open={false} onClose={() => {}} />);
-    expect(trigger).toHaveFocus();
+    await waitFor(() => expect(trigger).toHaveFocus());
 
     trigger.remove();
   });

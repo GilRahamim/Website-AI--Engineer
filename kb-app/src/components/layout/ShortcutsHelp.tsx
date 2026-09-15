@@ -1,5 +1,6 @@
-import { useEffect, useRef, type KeyboardEvent } from 'react';
-import { lockBodyScroll } from '../../lib/lockBodyScroll';
+import { useEffect, useRef } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 interface ShortcutsHelpProps {
   open: boolean;
@@ -16,52 +17,38 @@ const SHORTCUTS: { keys: string; description: string }[] = [
   { keys: 'Ctrl/Cmd + K', description: 'פתיחת חיפוש מהיר ופעולות' },
 ];
 
+/**
+ * Radix's own close-focus restoration (in DialogContentModal) targets a
+ * `Dialog.Trigger` element, but this dialog has no in-tree trigger — it's
+ * opened externally via the `open`/`onClose` props (e.g. from a global "?"
+ * keyboard shortcut) — so `context.triggerRef.current` is always null and
+ * Radix's default `onCloseAutoFocus` (which calls `event.preventDefault()`
+ * and then `context.triggerRef.current?.focus()`) ends up doing nothing,
+ * leaving focus stranded. We track whatever had focus when the dialog opened
+ * and restore it ourselves via `onCloseAutoFocus`, while still letting Radix
+ * own the trap/Escape/backdrop behavior.
+ */
 export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
-  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (open) {
       previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      closeButtonRef.current?.focus();
-    } else if (previousFocusRef.current) {
-      previousFocusRef.current.focus();
-      previousFocusRef.current = null;
     }
   }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-    return lockBodyScroll();
-  }, [open]);
-
-  if (!open) return null;
-
-  function handleDialogKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-    // The dialog currently has a single focusable element (the close button),
-    // so trapping Tab is just a matter of keeping focus pinned to it.
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      closeButtonRef.current?.focus();
-    }
-  }
 
   return (
-    <div
-      onClick={onClose}
-      className="fixed inset-0 z-20 grid place-items-center bg-[var(--kb-overlay)] p-4"
-    >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="shortcuts-title"
-        onClick={(event) => event.stopPropagation()}
-        onKeyDown={handleDialogKeyDown}
-        className="w-full max-w-sm rounded-xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-6 shadow-[var(--kb-shadow-lg)]"
+    <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
+      <DialogContent
+        className="max-w-sm"
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          previousFocusRef.current?.focus();
+        }}
       >
-        <h2 id="shortcuts-title" className="mb-4 text-lg font-bold text-[var(--kb-text)]">
-          קיצורי מקלדת
-        </h2>
+        <DialogHeader>
+          <DialogTitle>קיצורי מקלדת</DialogTitle>
+        </DialogHeader>
         <dl className="flex flex-col gap-2">
           {SHORTCUTS.map((shortcut) => (
             <div key={shortcut.keys} className="flex items-center justify-between gap-4">
@@ -74,16 +61,10 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
             </div>
           ))}
         </dl>
-        <button
-          ref={closeButtonRef}
-          type="button"
-          aria-label="סגור"
-          onClick={onClose}
-          className="mt-6 min-h-11 w-full rounded-md border border-[var(--kb-border)] text-[var(--kb-text)]"
-        >
+        <Button type="button" variant="outline" className="mt-2 w-full" onClick={onClose}>
           סגור
-        </button>
-      </div>
-    </div>
+        </Button>
+      </DialogContent>
+    </Dialog>
   );
 }
