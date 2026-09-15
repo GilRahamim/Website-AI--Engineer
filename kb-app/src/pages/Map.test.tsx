@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import Map from './Map';
 import topicsData from '../data/topics.clean.json';
 import type { GraphLink, GraphNode } from '../lib/graph';
+import { categoryLabels, modules } from '../lib/catalog';
 
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
@@ -57,6 +58,22 @@ function renderPage() {
   );
 }
 
+// jsdom doesn't implement pointer capture or scrollIntoView, and Radix
+// Select's trigger/item pointer handlers call both. Stub them so
+// userEvent's pointer-event simulation doesn't throw.
+Element.prototype.hasPointerCapture = Element.prototype.hasPointerCapture ?? (() => false);
+Element.prototype.setPointerCapture = Element.prototype.setPointerCapture ?? (() => {});
+Element.prototype.releasePointerCapture = Element.prototype.releasePointerCapture ?? (() => {});
+Element.prototype.scrollIntoView = Element.prototype.scrollIntoView ?? (() => {});
+
+// Radix Select's trigger is a button, not a native <select>, so choosing an
+// option means clicking the trigger and then clicking the option by its
+// visible label — the same pattern Task 9 used for SortMenu.
+async function selectComboboxOption(user: ReturnType<typeof userEvent.setup>, comboboxName: string, optionName: string) {
+  await user.click(screen.getByRole('combobox', { name: comboboxName }));
+  await user.click(await screen.findByRole('option', { name: optionName }));
+}
+
 describe('Map', () => {
   beforeEach(() => {
     mockNavigate.mockClear();
@@ -72,7 +89,7 @@ describe('Map', () => {
     renderPage();
     const moduleCount = topicsData.filter((t) => t.module === topicsData[0].module).length;
 
-    await user.selectOptions(screen.getByLabelText('מודול'), topicsData[0].module);
+    await selectComboboxOption(user, 'מודול', modules[topicsData[0].module]);
     expect(screen.getByText(`nodes:${moduleCount}`)).toBeInTheDocument();
   });
 
@@ -81,7 +98,7 @@ describe('Map', () => {
     renderPage();
     const categoryCount = topicsData.filter((t) => t.category === topicsData[0].category).length;
 
-    await user.selectOptions(screen.getByLabelText('קטגוריה'), topicsData[0].category);
+    await selectComboboxOption(user, 'קטגוריה', categoryLabels[topicsData[0].category]);
     expect(screen.getByText(`nodes:${categoryCount}`)).toBeInTheDocument();
   });
 
@@ -99,6 +116,23 @@ describe('Map', () => {
     renderPage();
     await user.click(screen.getByRole('button', { name: topicsData[0].title }));
     expect(mockNavigate).toHaveBeenCalledWith(`/topic/${encodeURIComponent(topicsData[0].id)}`);
+  });
+
+  it('jumping to a topic via the jump-to-topic select navigates and resets back to the placeholder', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    const jumpSelect = screen.getByRole('combobox', { name: 'קפוץ לנושא' });
+    expect(jumpSelect).toHaveTextContent('בחר נושא מהמפה…');
+
+    await user.click(jumpSelect);
+    await user.click(await screen.findByRole('option', { name: topicsData[0].title }));
+
+    expect(mockNavigate).toHaveBeenCalledWith(`/topic/${encodeURIComponent(topicsData[0].id)}`);
+    // The old native <select value=""> never updated any state on change —
+    // it just read the value once and navigated — so the control always
+    // showed its placeholder again afterward. The Radix replacement must
+    // keep that behavior rather than getting stuck showing the last pick.
+    expect(jumpSelect).toHaveTextContent('בחר נושא מהמפה…');
   });
 
   it('keeps the same graphData reference across a hover interaction (the force layout does not reset)', async () => {

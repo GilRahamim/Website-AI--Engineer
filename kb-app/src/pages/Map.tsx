@@ -7,6 +7,8 @@ import { categoryLabels, modules, topics } from '../lib/catalog';
 import { usePageTitle } from '../hooks/usePageTitle';
 import Header from '../components/layout/Header';
 import TopicFilters from '../components/browse/TopicFilters';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
 const CATEGORY_TOKEN_VARS: Record<Category, string> = {
@@ -112,23 +114,26 @@ export default function Map() {
             onModuleChange={setSelectedModule}
             onCategoryChange={setSelectedCategory}
           />
-          <label className="flex flex-col text-sm text-[var(--kb-text)]">
-            קפוץ לנושא
-            <select
+          <div className="flex flex-col gap-1 text-sm text-[var(--kb-text)]">
+            <Label htmlFor="map-jump-to-topic">קפוץ לנושא</Label>
+            <Select
               value=""
-              onChange={(e) => {
-                if (e.target.value) navigate(`/topic/${encodeURIComponent(e.target.value)}`);
+              onValueChange={(value) => {
+                if (value) navigate(`/topic/${encodeURIComponent(value)}`);
               }}
-              className="min-h-11 max-w-64 rounded-md border border-[var(--kb-border-input)] bg-[var(--kb-surface)] px-2 text-base text-[var(--kb-text)]"
             >
-              <option value="">בחר נושא מהמפה…</option>
-              {graphData.nodes.map((node) => (
-                <option key={node.id} value={node.id}>
-                  {node.title}
-                </option>
-              ))}
-            </select>
-          </label>
+              <SelectTrigger id="map-jump-to-topic" className="min-h-11 max-w-64">
+                <SelectValue placeholder="בחר נושא מהמפה…" />
+              </SelectTrigger>
+              <SelectContent>
+                {graphData.nodes.map((node) => (
+                  <SelectItem key={node.id} value={node.id}>
+                    {node.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <p className="text-sm text-[var(--kb-muted)]">{`${graphData.nodes.length} נושאים, ${graphData.links.length} קשרים`}</p>
         </div>
         <ul aria-label="מקרא קטגוריות" className="mb-3 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-[var(--kb-text2)]">
