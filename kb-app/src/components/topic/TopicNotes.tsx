@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { useUserDataStore } from '../../store/userDataStore';
 
 interface TopicNotesProps {
@@ -100,16 +102,16 @@ export default function TopicNotes({ topicId, inputRef }: TopicNotesProps) {
   return (
     <div className="mt-8 border-t border-[var(--kb-border)] pt-4">
       <div className="mb-2 flex items-center justify-between gap-3">
-        <label htmlFor={`topic-notes-${topicId}`} className="text-sm font-bold text-[var(--kb-text)]">
+        <Label htmlFor={`topic-notes-${topicId}`} className="text-sm font-bold text-[var(--kb-text)]">
           ההערות שלי
-        </label>
+        </Label>
         {(isDirty || hasSaved) && (
           <span role="status" className="text-xs text-[var(--kb-muted)]">
             {isDirty ? 'שומר…' : 'נשמר'}
           </span>
         )}
       </div>
-      <textarea
+      <Textarea
         id={`topic-notes-${topicId}`}
         ref={inputRef}
         value={value}
@@ -123,7 +125,7 @@ export default function TopicNotes({ topicId, inputRef }: TopicNotesProps) {
         onBlur={(event) => flush(event.target.value)}
         placeholder="כתוב כאן הערות אישיות על הנושא…"
         rows={4}
-        className="w-full rounded-lg border border-[var(--kb-border-input)] bg-[var(--kb-surface)] p-3 text-[var(--kb-text)] outline-none placeholder:text-[var(--kb-muted)]"
+        className="w-full"
       />
     </div>
   );
