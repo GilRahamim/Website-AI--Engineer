@@ -16,15 +16,20 @@
   "dependencies": {
     "@fontsource/heebo": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
+    "@radix-ui/react-direction": "^1.1.4",
     "@supabase/supabase-js": "^2.116.0",
     "@tailwindcss/vite": "^4.3.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "idb": "^8.0.3",
     "lucide-react": "^1.46.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-force-graph-2d": "^1.29.1",
     "react-router-dom": "^7.18.2",
+    "tailwind-merge": "^3.7.0",
     "tailwindcss": "^4.3.3",
+    "tw-animate-css": "^1.4.0",
     "zustand": "^5.0.14"
   },
   "devDependencies": {
