@@ -4,6 +4,14 @@ import userEvent from '@testing-library/user-event';
 import SortMenu from './SortMenu';
 import { useUiStore } from '../../store/uiStore';
 
+// jsdom doesn't implement pointer capture or scrollIntoView, and Radix
+// Select's trigger/item pointer handlers call both. Stub them so
+// userEvent's pointer-event simulation doesn't throw.
+Element.prototype.hasPointerCapture = Element.prototype.hasPointerCapture ?? (() => false);
+Element.prototype.setPointerCapture = Element.prototype.setPointerCapture ?? (() => {});
+Element.prototype.releasePointerCapture = Element.prototype.releasePointerCapture ?? (() => {});
+Element.prototype.scrollIntoView = Element.prototype.scrollIntoView ?? (() => {});
+
 function reset() {
   useUiStore.setState({ sortOrder: 'original', viewMode: 'grid' });
 }
@@ -13,13 +21,14 @@ describe('SortMenu', () => {
 
   it('reflects the current sort order', () => {
     render(<SortMenu />);
-    expect(screen.getByLabelText('מיין נושאים לפי')).toHaveValue('original');
+    expect(screen.getByRole('combobox', { name: 'מיין נושאים לפי' })).toHaveTextContent('מקורי');
   });
 
   it('updates the store when a new option is chosen', async () => {
     const user = userEvent.setup();
     render(<SortMenu />);
-    await user.selectOptions(screen.getByLabelText('מיין נושאים לפי'), 'alpha');
+    await user.click(screen.getByRole('combobox', { name: 'מיין נושאים לפי' }));
+    await user.click(await screen.findByRole('option', { name: 'א־ת' }));
     expect(useUiStore.getState().sortOrder).toBe('alpha');
   });
 });

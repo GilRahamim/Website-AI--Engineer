@@ -1,5 +1,6 @@
 import type { SortOrder } from '../../types';
 import { useUiStore } from '../../store/uiStore';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const SORT_OPTIONS: { value: SortOrder; label: string }[] = [
   { value: 'original', label: 'מקורי' },
@@ -12,20 +13,20 @@ export default function SortMenu() {
   const setSortOrder = useUiStore((s) => s.setSortOrder);
 
   return (
-    <label className="flex items-center gap-2 text-sm text-[var(--kb-text)]">
+    <div className="flex items-center gap-2 text-sm text-[var(--kb-text)]">
       <span>מיון:</span>
-      <select
-        aria-label="מיין נושאים לפי"
-        value={sortOrder}
-        onChange={(event) => setSortOrder(event.target.value as SortOrder)}
-        className="min-h-11 rounded-md border border-[var(--kb-border-input)] bg-[var(--kb-surface)] px-2 text-base"
-      >
-        {SORT_OPTIONS.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-    </label>
+      <Select value={sortOrder} onValueChange={(value) => setSortOrder(value as SortOrder)}>
+        <SelectTrigger aria-label="מיין נושאים לפי" className="min-h-11 min-w-28">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {SORT_OPTIONS.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 }
