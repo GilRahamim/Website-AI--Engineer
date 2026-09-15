@@ -12,6 +12,7 @@ import ReaderAside from './ReaderAside';
 import TopicNotes from '../topic/TopicNotes';
 import { sizeFormulaImage } from '../../lib/formulaSizing';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface TopicReaderProps {
   topic: Topic;
@@ -163,11 +164,13 @@ export default function TopicReader({ topic, topics, topicsById }: TopicReaderPr
           <div className="border-t border-[var(--kb-border)] pt-6">
             {rawHtml === null ? (
               error ? (
-                <p role="alert">
-                  {error.offline
-                    ? 'אין חיבור לאינטרנט — ניתן לצפות רק בנושאים שנצפו כבר.'
-                    : 'שגיאה בטעינת התוכן.'}
-                </p>
+                <Alert variant="destructive" role="alert">
+                  <AlertDescription>
+                    {error.offline
+                      ? 'אין חיבור לאינטרנט — ניתן לצפות רק בנושאים שנצפו כבר.'
+                      : 'שגיאה בטעינת התוכן.'}
+                  </AlertDescription>
+                </Alert>
               ) : (
                 <div role="status" aria-busy="true" className="flex flex-col gap-[0.85rem]">
                   <span className="sr-only">טוען תוכן…</span>
