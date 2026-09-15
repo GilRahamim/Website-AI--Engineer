@@ -9,9 +9,9 @@ import { useUserDataStore } from '../store/userDataStore';
 import { usePageTitle } from '../hooks/usePageTitle';
 import Header from '../components/layout/Header';
 import TopicFilters from '../components/browse/TopicFilters';
-
-const PRIMARY_BUTTON = 'min-h-11 rounded-[10px] bg-[var(--kb-accent)] px-5 text-sm font-semibold text-[var(--kb-on-accent)] hover:opacity-90 disabled:opacity-50';
-
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const QUESTION_COUNT_OPTIONS = [5, 10, 20] as const;
 
@@ -140,41 +140,46 @@ export default function Quiz() {
               onModuleChange={setSelectedModule}
               onCategoryChange={setSelectedCategory}
             />
-            <label className="flex flex-col text-sm text-[var(--kb-text)]">
-              מצב למידה
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value as ProgressStatus | 'all')}
-                className="min-h-11 rounded-md border border-[var(--kb-border-input)] bg-[var(--kb-surface)] px-2 text-base text-[var(--kb-text)]"
-              >
-                <option value="all">הכול</option>
-                {ALL_STATUSES.map((status) => (
-                  <option key={status} value={status}>
-                    {STATUS_LABELS[status]}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="flex flex-col text-sm text-[var(--kb-text)]">
-              מספר שאלות
-              <select
+            <div className="flex flex-col gap-1 text-sm text-[var(--kb-text)]">
+              <Label htmlFor="quiz-status">מצב למידה</Label>
+              <Select value={selectedStatus} onValueChange={(value) => setSelectedStatus(value as ProgressStatus | 'all')}>
+                <SelectTrigger id="quiz-status" className="min-h-11">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">הכול</SelectItem>
+                  {ALL_STATUSES.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {STATUS_LABELS[status]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col gap-1 text-sm text-[var(--kb-text)]">
+              <Label htmlFor="quiz-question-count">מספר שאלות</Label>
+              <Select
                 value={String(questionCount)}
-                onChange={(e) => setQuestionCount(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                className="min-h-11 rounded-md border border-[var(--kb-border-input)] bg-[var(--kb-surface)] px-2 text-base text-[var(--kb-text)]"
+                onValueChange={(value) => setQuestionCount(value === 'all' ? 'all' : Number(value))}
               >
-                {QUESTION_COUNT_OPTIONS.map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
-                <option value="all">{`הכול (${pool.length})`}</option>
-              </select>
-            </label>
+                <SelectTrigger id="quiz-question-count" className="min-h-11">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {QUESTION_COUNT_OPTIONS.map((n) => (
+                    <SelectItem key={n} value={String(n)}>
+                      {n}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="all">{`הכול (${pool.length})`}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <p className="mb-4 text-sm text-[var(--kb-muted)]">{`${pool.length} נושאים תואמים`}</p>
-          <button type="button" onClick={handleStart} disabled={pool.length === 0} className={PRIMARY_BUTTON}>
+          <Button type="button" onClick={handleStart} disabled={pool.length === 0}>
             התחל מבחן
-          </button>
+          </Button>
         </main>
       </>
     );
@@ -191,9 +196,9 @@ export default function Quiz() {
             className="rounded-xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-6 text-center shadow-[var(--kb-shadow-sm)]"
           >
             <p className="mb-4 text-lg font-bold text-[var(--kb-text)]">{`סיימת! ${correctCount} מתוך ${questions.length} נכונות`}</p>
-            <button type="button" onClick={() => setQuestions(null)} className={`mb-4 ${PRIMARY_BUTTON}`}>
+            <Button type="button" onClick={() => setQuestions(null)} className="mb-4">
               מבחן חדש
-            </button>
+            </Button>
             {missedTopicIds.length > 0 && (
               <div className="text-start">
                 <h2 className="mb-2 text-sm font-bold text-[var(--kb-muted)]">נושאים שכדאי לחזור עליהם:</h2>
@@ -241,14 +246,15 @@ export default function Quiz() {
                         ? 'bg-[var(--kb-surface2)] border-[var(--kb-border-strong)] line-through'
                         : 'opacity-60';
                   return (
-                    <button
+                    <Button
                       key={option}
                       ref={index === 0 ? firstOptionRef : undefined}
                       type="button"
+                      variant="outline"
                       disabled={isAnswered}
                       onClick={() => handleAnswer(index)}
                       aria-pressed={isChosen}
-                      className={`flex min-h-11 items-center justify-between gap-3 rounded-md border border-[var(--kb-border)] px-4 py-2 text-start text-[var(--kb-text)] disabled:opacity-100 ${stateClass}`}
+                      className={`flex min-h-11 items-center justify-between gap-3 px-4 py-2 text-start disabled:opacity-100 ${stateClass}`}
                     >
                       <span className="min-w-0 flex-1">{option}</span>
                       {isAnswered && isCorrectOption && (
@@ -257,14 +263,14 @@ export default function Quiz() {
                       {isAnswered && isChosen && !isCorrectOption && (
                         <X aria-hidden="true" size={18} className="shrink-0 text-[var(--kb-muted)]" />
                       )}
-                    </button>
+                    </Button>
                   );
                 })}
               </div>
               {answeredIndex !== null && (
-                <button type="button" onClick={handleNext} className={`mt-4 ${PRIMARY_BUTTON}`}>
+                <Button type="button" onClick={handleNext} className="mt-4">
                   הבא
-                </button>
+                </Button>
               )}
             </div>
           )

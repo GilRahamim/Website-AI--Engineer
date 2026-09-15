@@ -5,8 +5,17 @@ import { MemoryRouter } from 'react-router-dom';
 import Quiz from './Quiz';
 import { useUserDataStore } from '../store/userDataStore';
 import { useSyncStore } from '../store/syncStore';
+import { STATUS_LABELS } from '../lib/progressStatus';
 import topicsData from '../data/topics.clean.json';
 import type { ProgressStatus } from '../types';
+
+// jsdom doesn't implement pointer capture or scrollIntoView, and Radix
+// Select's trigger/item pointer handlers call both. Stub them so
+// userEvent's pointer-event simulation doesn't throw.
+Element.prototype.hasPointerCapture = Element.prototype.hasPointerCapture ?? (() => false);
+Element.prototype.setPointerCapture = Element.prototype.setPointerCapture ?? (() => {});
+Element.prototype.releasePointerCapture = Element.prototype.releasePointerCapture ?? (() => {});
+Element.prototype.scrollIntoView = Element.prototype.scrollIntoView ?? (() => {});
 
 function reset() {
   useUserDataStore.setState({
@@ -44,15 +53,23 @@ function isolateOneTopic(target: (typeof topicsData)[number]) {
   useUserDataStore.setState({ progress });
 }
 
+// Radix Select's trigger is a button, not a native <select>, so choosing an
+// option means clicking the trigger and then clicking the option by its
+// visible label — the same pattern Task 9 used for SortMenu.
+async function selectComboboxOption(user: ReturnType<typeof userEvent.setup>, comboboxName: string, optionName: string) {
+  await user.click(screen.getByRole('combobox', { name: comboboxName }));
+  await user.click(await screen.findByRole('option', { name: optionName }));
+}
+
 describe('Quiz', () => {
   beforeEach(reset);
 
   it('renders the setup screen with filters, a question-count selector and a start button', () => {
     renderPage();
-    expect(screen.getByLabelText('מודול')).toBeInTheDocument();
-    expect(screen.getByLabelText('קטגוריה')).toBeInTheDocument();
-    expect(screen.getByLabelText('מצב למידה')).toBeInTheDocument();
-    expect(screen.getByLabelText('מספר שאלות')).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'מודול' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'קטגוריה' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'מצב למידה' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'מספר שאלות' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'התחל מבחן' })).toBeInTheDocument();
   });
 
@@ -71,7 +88,7 @@ describe('Quiz', () => {
     isolateOneTopic(target);
     const user = userEvent.setup();
     renderPage();
-    await user.selectOptions(screen.getByLabelText('מצב למידה'), 'new');
+    await selectComboboxOption(user, 'מצב למידה', STATUS_LABELS.new);
     await user.click(screen.getByRole('button', { name: 'התחל מבחן' }));
 
     await user.click(within(screen.getByRole('main')).getByRole('button', { name: target.title }));
@@ -91,7 +108,7 @@ describe('Quiz', () => {
     });
     const user = userEvent.setup();
     renderPage();
-    await user.selectOptions(screen.getByLabelText('מצב למידה'), 'new');
+    await selectComboboxOption(user, 'מצב למידה', STATUS_LABELS.new);
     await user.click(screen.getByRole('button', { name: 'התחל מבחן' }));
 
     const main = screen.getByRole('main');
@@ -114,7 +131,7 @@ describe('Quiz', () => {
     isolateOneTopic(target);
     const user = userEvent.setup();
     renderPage();
-    await user.selectOptions(screen.getByLabelText('מצב למידה'), 'new');
+    await selectComboboxOption(user, 'מצב למידה', STATUS_LABELS.new);
     await user.click(screen.getByRole('button', { name: 'התחל מבחן' }));
 
     const main = screen.getByRole('main');
@@ -147,7 +164,7 @@ describe('Quiz', () => {
       useUserDataStore.setState({ isLoaded: true });
     });
 
-    await user.selectOptions(screen.getByLabelText('מצב למידה'), 'new');
+    await selectComboboxOption(user, 'מצב למידה', STATUS_LABELS.new);
     await user.click(screen.getByRole('button', { name: 'התחל מבחן' }));
 
     expect(within(screen.getByRole('main')).getByText('1 מתוך 1')).toBeInTheDocument();
@@ -158,7 +175,7 @@ describe('Quiz', () => {
     isolateOneTopic(target);
     const user = userEvent.setup();
     renderPage();
-    await user.selectOptions(screen.getByLabelText('מצב למידה'), 'new');
+    await selectComboboxOption(user, 'מצב למידה', STATUS_LABELS.new);
     await user.click(screen.getByRole('button', { name: 'התחל מבחן' }));
 
     await user.keyboard('1');
