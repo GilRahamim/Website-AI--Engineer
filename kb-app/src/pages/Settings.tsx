@@ -10,6 +10,9 @@ import { useUserDataStore } from '../store/userDataStore';
 import { useAuthStore } from '../store/authStore';
 import { useSyncStore } from '../store/syncStore';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
   { value: 'light', label: 'בהירה' },
@@ -19,8 +22,6 @@ const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
 
 const SECTION_CLASS =
   'flex flex-col gap-2 rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-4 shadow-[var(--kb-shadow-sm)]';
-const BUTTON_CLASS =
-  'inline-flex min-h-11 w-fit items-center gap-2 rounded-[10px] border border-[var(--kb-border-strong)] px-4 text-sm font-semibold text-[var(--kb-text)] hover:bg-[var(--kb-surface2)] disabled:opacity-50';
 
 const VALID_PROGRESS_STATUSES = new Set(['new', 'learning', 'mastered']);
 
@@ -196,9 +197,12 @@ export default function Settings() {
         <h1 className="text-xl font-bold text-[var(--kb-text)]">הגדרות</h1>
 
         {message && (
-          <p role={message.kind === 'error' ? 'alert' : 'status'} className="text-sm text-[var(--kb-text)]">
-            {message.text}
-          </p>
+          <Alert
+            variant={message.kind === 'error' ? 'destructive' : 'default'}
+            role={message.kind === 'error' ? 'alert' : 'status'}
+          >
+            <AlertDescription>{message.text}</AlertDescription>
+          </Alert>
         )}
 
         <section className={SECTION_CLASS}>
@@ -234,21 +238,13 @@ export default function Settings() {
           ) : email ? (
             <>
               <p className="text-sm text-[var(--kb-text)]">{`מחובר כ: \u2066${email}\u2069`}</p>
-              <button
-                type="button"
-                onClick={handleSignOut}
-                className={BUTTON_CLASS}
-              >
+              <Button type="button" variant="outline" onClick={handleSignOut}>
                 התנתק
-              </button>
+              </Button>
               <p className="text-sm text-[var(--kb-muted)]">{`מסונכרן לאחרונה: ${formatLastSynced(lastSyncedAt)}`}</p>
-              <button
-                type="button"
-                onClick={handleSyncNow}
-                className={BUTTON_CLASS}
-              >
+              <Button type="button" variant="outline" onClick={handleSyncNow}>
                 סנכרן עכשיו
-              </button>
+              </Button>
             </>
           ) : (
             <form onSubmit={handleSendMagicLink} className="flex flex-col gap-2">
@@ -256,7 +252,7 @@ export default function Settings() {
               <label htmlFor="settings-email" className="text-sm font-medium text-[var(--kb-text)]">
                 כתובת אימייל
               </label>
-              <input
+              <Input
                 id="settings-email"
                 type="email"
                 required
@@ -266,15 +262,10 @@ export default function Settings() {
                 onChange={(e) => setEmailInput(e.target.value)}
                 placeholder="you@example.com"
                 dir="ltr"
-                className="min-h-11 w-full rounded-lg border border-[var(--kb-border-input)] bg-[var(--kb-surface)] px-3 text-base text-[var(--kb-text)] outline-none placeholder:text-[var(--kb-muted)] focus:border-[var(--kb-accent)]"
               />
-              <button
-                type="submit"
-                disabled={isSending}
-                className={BUTTON_CLASS}
-              >
+              <Button type="submit" variant="outline" disabled={isSending}>
                 שלח קישור התחברות
-              </button>
+              </Button>
             </form>
           )}
         </section>
@@ -284,10 +275,10 @@ export default function Settings() {
           {canInstall ? (
             <>
               <p className="text-sm text-[var(--kb-muted)]">התקן את האתר כאפליקציה במסך הבית לגישה מהירה ולעבודה ללא חיבור.</p>
-              <button type="button" onClick={promptInstall} className={BUTTON_CLASS}>
+              <Button type="button" variant="outline" onClick={promptInstall}>
                 <Download aria-hidden="true" size={16} />
                 התקן אפליקציה
-              </button>
+              </Button>
             </>
           ) : (
             <p className="text-sm text-[var(--kb-muted)]">
@@ -301,13 +292,9 @@ export default function Settings() {
           <p className="text-sm text-[var(--kb-muted)]">
             שמור קובץ גיבוי של כל הנתונים האישיים שלך — התקדמות, מועדפים, הערות וכרטיסיות.
           </p>
-          <button
-            type="button"
-            onClick={handleExport}
-            className={BUTTON_CLASS}
-          >
+          <Button type="button" variant="outline" onClick={handleExport}>
             ייצא את הנתונים שלי
-          </button>
+          </Button>
         </section>
 
         <section className={SECTION_CLASS}>
@@ -323,13 +310,9 @@ export default function Settings() {
             aria-label="בחר קובץ גיבוי לייבוא"
             className="sr-only"
           />
-          <button
-            type="button"
-            onClick={handleImportClick}
-            className={BUTTON_CLASS}
-          >
+          <Button type="button" variant="outline" onClick={handleImportClick}>
             ייבוא נתונים
-          </button>
+          </Button>
         </section>
       </main>
     </>
