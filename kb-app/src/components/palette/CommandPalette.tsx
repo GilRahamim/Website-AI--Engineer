@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText } from 'lucide-react';
 import { searchIndex, topics } from '../../lib/catalog';
@@ -6,7 +6,8 @@ import type { Topic } from '../../types';
 import { useUserDataStore } from '../../store/userDataStore';
 import { buildActionList, filterResults, type PaletteAction } from '../../lib/commandPalette';
 import { getCurrentTheme, setTheme } from '../../lib/theme';
-import { lockBodyScroll } from '../../lib/lockBodyScroll';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 
 const allActions = buildActionList();
 
@@ -18,31 +19,42 @@ const ACTION_ROUTES: Record<string, string> = {
   settings: '/settings',
 };
 
-type PaletteItem = { kind: 'action'; action: PaletteAction } | { kind: 'topic'; topic: Topic };
-
+/**
+ * This component composes `Dialog`/`DialogContent` directly rather than the
+ * `CommandDialog` wrapper: the `CommandDialog` scaffolded in
+ * `components/ui/command.tsx` only forwards `open`/`onOpenChange`/`modal` to
+ * the Radix `Dialog` root (its props type is Radix's own `DialogProps`,
+ * which has no `title`/`description`/`shouldFilter`), and it hard-codes the
+ * inner `Command` with no passthrough for extra props. So `shouldFilter`
+ * would never reach `cmdk`'s `Command`, and there is no accessible
+ * title/description rendered. Composing `Command` with `shouldFilter={false}`
+ * directly (confirmed against `node_modules/cmdk`'s source: `shouldFilter`
+ * is a real prop the root component destructures, and both its sort and
+ * filter routines early-return when it's `false`, leaving `filtered.count`
+ * as the full unfiltered item count) keeps this app's own `filterResults`
+ * ranking in control of what's shown, exactly as intended.
+ *
+ * Radix's own close-focus restoration (in DialogContentModal) targets
+ * `context.triggerRef.current`, but this dialog has no in-tree
+ * `DialogTrigger` — it's opened externally via Ctrl/Cmd+K and the
+ * `kb-open-palette` window event — so that ref is always null and Radix's
+ * default `onCloseAutoFocus` ends up doing nothing, leaving focus stranded
+ * (same issue as ShortcutsHelp.tsx / MobileDrawer.tsx in Tasks 5-6). We track
+ * whatever had focus when the dialog opened and restore it ourselves via
+ * `onCloseAutoFocus`, while still letting Radix own the trap/Escape/backdrop
+ * behavior.
+ */
 export default function CommandPalette() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
-  const inputRef = useRef<HTMLInputElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
-  // Global Cmd/Ctrl+K listener, mounted once. Unlike this app's bare `/`/`?`
-  // shortcuts, a modifier combo never collides with normal typing, so no
-  // "am I typing" guard is needed and the listener applies everywhere,
-  // including while a text field is focused. The query/index reset on open
-  // happens inside this same event-handler callback (not a bare useEffect
-  // body), so it never trips react-hooks/set-state-in-effect.
   useEffect(() => {
     function toggle() {
       setOpen((wasOpen) => {
         const next = !wasOpen;
-        if (next) {
-          setQuery('');
-          setSelectedIndex(0);
-        }
+        if (next) setQuery('');
         return next;
       });
     }
@@ -52,15 +64,9 @@ export default function CommandPalette() {
         toggle();
       }
     }
-    // The header's search control (a pointer-friendly stand-in for Ctrl+K)
-    // asks for the palette via this window event rather than importing
-    // palette state, keeping the two components decoupled.
     function handleOpenRequest() {
       setOpen((wasOpen) => {
-        if (!wasOpen) {
-          setQuery('');
-          setSelectedIndex(0);
-        }
+        if (!wasOpen) setQuery('');
         return true;
       });
     }
@@ -72,31 +78,14 @@ export default function CommandPalette() {
     };
   }, []);
 
-  // Focus management only (ref writes + .focus() calls) — same pattern as
-  // ShortcutsHelp.tsx. No setState here: this effect must not be the thing
-  // that resets query/selectedIndex, or react-hooks/set-state-in-effect
-  // would flag it.
   useEffect(() => {
     if (open) {
       previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      inputRef.current?.focus();
-    } else if (previousFocusRef.current) {
-      previousFocusRef.current.focus();
-      previousFocusRef.current = null;
     }
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-    return lockBodyScroll();
   }, [open]);
 
   const notes = useUserDataStore((s) => s.notes);
   const results = useMemo(() => filterResults(query, allActions, topics, searchIndex, notes), [query, notes]);
-  const combined: PaletteItem[] = [
-    ...results.actions.map((action): PaletteItem => ({ kind: 'action', action })),
-    ...results.topics.map((topic): PaletteItem => ({ kind: 'topic', topic })),
-  ];
 
   function close() {
     setOpen(false);
@@ -117,101 +106,43 @@ export default function CommandPalette() {
     close();
   }
 
-  function activateIndex(index: number) {
-    const item = combined[index];
-    if (!item) return;
-    if (item.kind === 'action') runAction(item.action);
-    else openTopic(item.topic);
-  }
-
-  function handleDialogKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-    if (event.key === 'Tab') {
-      // Single focusable element (the input) — pin focus to it, same
-      // trapping strategy as ShortcutsHelp.tsx.
-      event.preventDefault();
-      inputRef.current?.focus();
-      return;
-    }
-    if (event.key === 'Escape') {
-      event.preventDefault();
-      close();
-      return;
-    }
-    if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      setSelectedIndex((i) => (combined.length === 0 ? 0 : (i + 1) % combined.length));
-      return;
-    }
-    if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      setSelectedIndex((i) => (combined.length === 0 ? 0 : (i - 1 + combined.length) % combined.length));
-      return;
-    }
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      activateIndex(selectedIndex);
-    }
-  }
-
-  if (!open) return null;
-
   return (
-    <div onClick={close} className="fixed inset-0 z-30 flex justify-center bg-[var(--kb-overlay)] p-4 pt-[max(1.5rem,10vh)]">
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="command-palette-title"
-        onClick={(event) => event.stopPropagation()}
-        onKeyDown={handleDialogKeyDown}
-        className="h-fit w-full max-w-lg rounded-xl border border-[var(--kb-border)] bg-[var(--kb-surface)] shadow-[var(--kb-shadow-lg)]"
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent
+        className="overflow-hidden p-0 shadow-lg"
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          previousFocusRef.current?.focus();
+        }}
       >
-        <h2 id="command-palette-title" className="sr-only">
-          חיפוש מהיר
-        </h2>
-        <input
-          ref={inputRef}
-          type="text"
-          role="combobox"
-          aria-expanded="true"
-          aria-controls="command-palette-listbox"
-          aria-autocomplete="list"
-          aria-activedescendant={combined.length > 0 ? `command-palette-option-${selectedIndex}` : undefined}
-          aria-label="חיפוש מהיר"
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setSelectedIndex(0);
-          }}
-          placeholder="חפש נושא או פעולה..."
-          className="min-h-11 w-full rounded-t-xl border-b border-[var(--kb-border-input)] bg-transparent px-4 text-base text-[var(--kb-text)] outline-none"
-        />
-        <ul id="command-palette-listbox" role="listbox" aria-label="תוצאות" className="max-h-80 overflow-y-auto p-2">
-          {combined.length === 0 && <li className="px-3 py-2 text-sm text-[var(--kb-muted)]">אין תוצאות</li>}
-          {combined.map((item, index) => {
-            const key = item.kind === 'action' ? `action-${item.action.id}` : `topic-${item.topic.id}`;
-            const label = item.kind === 'action' ? item.action.label : item.topic.title;
-            const isSelected = index === selectedIndex;
-            return (
-              <li
-                key={key}
-                id={`command-palette-option-${index}`}
-                role="option"
-                aria-selected={isSelected}
-                onClick={() => activateIndex(index)}
-                onMouseEnter={() => setSelectedIndex(index)}
-                className={`flex min-h-11 cursor-pointer items-center rounded-md px-3 text-[var(--kb-text)] ${
-                  isSelected ? 'bg-[var(--kb-surface2)]' : ''
-                }`}
-              >
-                {item.kind === 'topic' && (
-                  <FileText aria-hidden="true" size={16} className="me-2 shrink-0 text-[var(--kb-muted)]" />
-                )}
-                {label}
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    </div>
+        <DialogTitle className="sr-only">חיפוש מהיר</DialogTitle>
+        <DialogDescription className="sr-only">חפש נושא או פעולה</DialogDescription>
+        <Command shouldFilter={false}>
+          <CommandInput placeholder="חפש נושא או פעולה..." value={query} onValueChange={setQuery} />
+          <CommandList>
+            <CommandEmpty>אין תוצאות</CommandEmpty>
+            {results.actions.length > 0 && (
+              <CommandGroup heading="פעולות">
+                {results.actions.map((action) => (
+                  <CommandItem key={action.id} value={action.id} onSelect={() => runAction(action)}>
+                    {action.label}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+            {results.topics.length > 0 && (
+              <CommandGroup heading="נושאים">
+                {results.topics.map((topic) => (
+                  <CommandItem key={topic.id} value={topic.id} onSelect={() => openTopic(topic)}>
+                    <FileText aria-hidden="true" size={16} className="me-2 shrink-0 text-[var(--kb-muted)]" />
+                    {topic.title}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+          </CommandList>
+        </Command>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -11,6 +11,12 @@ vi.mock('react-router-dom', async () => {
   return { ...actual, useNavigate: () => mockNavigate };
 });
 
+// jsdom doesn't implement scrollIntoView, and cmdk calls it (from a layout
+// effect) whenever the highlighted item changes — including on every mount,
+// so every test in this file needs the stub, not just one. Same pattern as
+// TopicReader.test.tsx.
+Element.prototype.scrollIntoView = vi.fn();
+
 function renderPalette() {
   return render(
     <MemoryRouter>
