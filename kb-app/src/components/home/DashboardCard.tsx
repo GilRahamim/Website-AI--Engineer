@@ -134,7 +134,10 @@ export default function DashboardCard({
       </Card>
 
       {continueTopic && (
-        <Card className={`${tileClass} justify-between hover:border-[var(--kb-border-strong)] hover:bg-[var(--kb-surface2)]`}>
+        <Card
+          asChild
+          className={`${tileClass} justify-between no-underline hover:border-[var(--kb-border-strong)] hover:bg-[var(--kb-surface2)]`}
+        >
           <Link to={`/topic/${encodeURIComponent(continueTopic.id)}`}>
             <div className="flex items-center gap-3">
               <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-[var(--kb-accent-soft)] text-[var(--kb-accent)]">
