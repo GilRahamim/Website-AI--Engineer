@@ -178,7 +178,7 @@ summary:active {
 .kb-topic-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 /* Phone table of contents: a native disclosure above the article body. */
