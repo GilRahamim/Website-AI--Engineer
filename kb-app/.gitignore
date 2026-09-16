@@ -1,3 +1,6 @@
+# SDD workspace scratch (should only ever exist at repo root, not here)
+.superpowers/
+
 # Logs
 logs
 *.log
