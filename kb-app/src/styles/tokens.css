@@ -4,9 +4,11 @@
   --kb-border-strong: oklch(83% 0.014 260);
   --kb-text: oklch(23% 0.02 260); --kb-text2: oklch(38% 0.018 260); --kb-muted: oklch(52% 0.016 260);
   --kb-accent: oklch(54% 0.16 260); --kb-accent-soft: oklch(95.5% 0.03 260);
+  --kb-accent-warm: oklch(78% 0.11 95);
   /* Text/icons placed ON a solid --kb-accent fill. White only works in the
      light theme; the dark accent is a light lavender (2.3:1 against white). */
   --kb-on-accent: #fff;
+  --kb-on-accent-warm: oklch(25% 0.02 95);
   /* Form-control boundaries need 3:1 against the surface (WCAG 1.4.11);
      --kb-border is a 1.3:1 hairline meant for dividers, not inputs. */
   --kb-border-input: oklch(66% 0.012 260);
@@ -34,7 +36,9 @@
   --kb-border-strong: oklch(40% 0.018 260);
   --kb-text: oklch(93% 0.006 260); --kb-text2: oklch(80% 0.01 260); --kb-muted: oklch(64% 0.014 260);
   --kb-accent: oklch(74% 0.14 260); --kb-accent-soft: oklch(32% 0.06 260);
+  --kb-accent-warm: oklch(80% 0.10 95);
   --kb-on-accent: oklch(15% 0.02 260);
+  --kb-on-accent-warm: oklch(20% 0.02 95);
   --kb-border-input: oklch(52% 0.016 260);
 
   --kb-shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.4);

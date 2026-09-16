@@ -84,4 +84,17 @@ describe('DashboardCard', () => {
     );
     expect(tiles).toHaveLength(3);
   });
+
+  it('uses the warm accent on the due-today headline when cards are due', () => {
+    renderCard({ dueCount: 8, newCount: 0 });
+    const headline = screen.getByText('8 כרטיסים לחזרה היום');
+    expect(headline).toHaveClass('text-[var(--kb-accent-warm)]');
+  });
+
+  it('does not use the warm accent when nothing is due', () => {
+    renderCard({ dueCount: 0, newCount: 5 });
+    const headline = screen.getByText('אין חזרות מתוזמנות להיום');
+    expect(headline).toHaveClass('text-[var(--kb-text)]');
+    expect(headline).not.toHaveClass('text-[var(--kb-accent-warm)]');
+  });
 });

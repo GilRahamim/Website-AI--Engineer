@@ -110,7 +110,11 @@ export default function DashboardCard({
 
       <Card className={tileClass}>
         <span className="text-xs font-medium text-[var(--kb-muted)]">חזרה מרווחת</span>
-        <span className="text-base font-bold text-[var(--kb-text)]">{review.headline}</span>
+        <span
+          className={`text-base font-bold ${dueCount > 0 ? 'text-[var(--kb-accent-warm)]' : 'text-[var(--kb-text)]'}`}
+        >
+          {review.headline}
+        </span>
         <span className="text-xs text-[var(--kb-muted)]">{`נסקרו עד כה ${reviewedCount} כרטיסים`}</span>
         <div className="mt-auto flex flex-col gap-2">
           <Link
