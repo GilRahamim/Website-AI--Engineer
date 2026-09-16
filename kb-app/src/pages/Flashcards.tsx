@@ -134,7 +134,16 @@ export default function Flashcards() {
         // it, so without this it silently loses focus-guard coverage for
         // the module/category/status filters rendered alongside this page's
         // review card (found in Task 17 review).
-        (event.target instanceof HTMLElement && event.target.getAttribute('role') === 'combobox');
+        //
+        // Once the dropdown is actually opened (not just focused), Radix
+        // moves focus into its portaled listbox content — `event.target`
+        // during that interaction is the listbox (`role="listbox"`) or one
+        // of its options (`role="option"`), neither of which is the
+        // combobox trigger, so the check above alone misses it (found in
+        // final-review pass). `closest` covers the trigger button itself,
+        // the open listbox, and any option inside it in one check.
+        (event.target instanceof HTMLElement &&
+          event.target.closest('[role="combobox"],[role="listbox"],[role="option"]') !== null);
       if (isTyping || !currentTopic) return;
 
       if (!revealed && (event.key === ' ' || event.key === 'Enter')) {
@@ -211,7 +220,7 @@ export default function Flashcards() {
               {dueOnly ? 'הכול מעודכן להיום. אפשר לתרגל גם כרטיסים שעוד לא הגיע זמנם.' : 'שנה את הסינון כדי למצוא כרטיסים לתרגול.'}
             </p>
             {dueOnly && (
-              <Button type="button" onClick={() => handleDueOnlyChange(false)} className="mt-1">
+              <Button type="button" onClick={() => handleDueOnlyChange(false)} className="mt-1 min-h-11">
                 תרגל את כל הכרטיסים
               </Button>
             )}
@@ -227,6 +236,7 @@ export default function Flashcards() {
             <Button
               type="button"
               onClick={() => resetSession(buildQueue(selectedModule, selectedCategory, selectedStatus, dueOnly))}
+              className="min-h-11"
             >
               סבב נוסף
             </Button>
@@ -241,7 +251,7 @@ export default function Flashcards() {
             <p className="mb-1 text-sm text-[var(--kb-muted)]">{`${currentIndex + 1} מתוך ${queue.length}`}</p>
             <h2 className="mb-4 text-xl font-bold text-[var(--kb-text)]">{currentTopic.title}</h2>
             {!revealed ? (
-              <Button ref={revealButtonRef} type="button" onClick={() => setRevealed(true)}>
+              <Button ref={revealButtonRef} type="button" onClick={() => setRevealed(true)} className="min-h-11">
                 לחץ לחשיפה
               </Button>
             ) : (
@@ -260,7 +270,7 @@ export default function Flashcards() {
                       type="button"
                       variant={rating === 'good' ? 'default' : 'outline'}
                       onClick={() => handleRate(rating)}
-                      className="flex items-center justify-center gap-2"
+                      className="flex min-h-11 items-center justify-center gap-2"
                     >
                       {label}
                       <kbd

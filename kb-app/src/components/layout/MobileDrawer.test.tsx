@@ -49,10 +49,10 @@ describe('MobileDrawer', () => {
     const opener = screen.getByRole('button', { name: 'פתח' });
 
     // shadcn's SheetContent renders its own close button with an sr-only
-    // "Close" label (from the scaffolded ui/sheet.tsx), replacing the old
-    // hand-written button labelled "סגור".
+    // "סגור" label (ui/sheet.tsx), matching the old hand-written button's
+    // aria-label.
     await user.click(opener);
-    await user.click(screen.getByRole('button', { name: 'Close' }));
+    await user.click(screen.getByRole('button', { name: 'סגור' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(opener).toHaveFocus();
 

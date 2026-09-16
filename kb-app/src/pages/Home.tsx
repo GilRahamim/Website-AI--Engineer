@@ -176,7 +176,7 @@ export default function Home() {
                 <p className="font-semibold text-[var(--kb-text)]">לא נמצאו נושאים.</p>
                 <p className="text-sm text-[var(--kb-muted)]">נסה מילת חיפוש אחרת או הסר חלק מהסינונים.</p>
                 {hasActiveFilters && (
-                  <Button type="button" onClick={clearFilters} className="mt-1 rounded-[10px]">
+                  <Button type="button" onClick={clearFilters} className="mt-1 min-h-11 rounded-[10px]">
                     נקה סינון והצג הכול
                   </Button>
                 )}

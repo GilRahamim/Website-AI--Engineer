@@ -238,11 +238,11 @@ export default function Settings() {
           ) : email ? (
             <>
               <p className="text-sm text-[var(--kb-text)]">{`מחובר כ: \u2066${email}\u2069`}</p>
-              <Button type="button" variant="outline" onClick={handleSignOut}>
+              <Button type="button" variant="outline" onClick={handleSignOut} className="w-fit">
                 התנתק
               </Button>
               <p className="text-sm text-[var(--kb-muted)]">{`מסונכרן לאחרונה: ${formatLastSynced(lastSyncedAt)}`}</p>
-              <Button type="button" variant="outline" onClick={handleSyncNow}>
+              <Button type="button" variant="outline" onClick={handleSyncNow} className="w-fit">
                 סנכרן עכשיו
               </Button>
             </>
@@ -263,7 +263,7 @@ export default function Settings() {
                 placeholder="you@example.com"
                 dir="ltr"
               />
-              <Button type="submit" variant="outline" disabled={isSending}>
+              <Button type="submit" variant="outline" disabled={isSending} className="w-fit">
                 שלח קישור התחברות
               </Button>
             </form>
@@ -275,7 +275,7 @@ export default function Settings() {
           {canInstall ? (
             <>
               <p className="text-sm text-[var(--kb-muted)]">התקן את האתר כאפליקציה במסך הבית לגישה מהירה ולעבודה ללא חיבור.</p>
-              <Button type="button" variant="outline" onClick={promptInstall}>
+              <Button type="button" variant="outline" onClick={promptInstall} className="w-fit">
                 <Download aria-hidden="true" size={16} />
                 התקן אפליקציה
               </Button>
@@ -292,7 +292,7 @@ export default function Settings() {
           <p className="text-sm text-[var(--kb-muted)]">
             שמור קובץ גיבוי של כל הנתונים האישיים שלך — התקדמות, מועדפים, הערות וכרטיסיות.
           </p>
-          <Button type="button" variant="outline" onClick={handleExport}>
+          <Button type="button" variant="outline" onClick={handleExport} className="w-fit">
             ייצא את הנתונים שלי
           </Button>
         </section>
@@ -310,7 +310,7 @@ export default function Settings() {
             aria-label="בחר קובץ גיבוי לייבוא"
             className="sr-only"
           />
-          <Button type="button" variant="outline" onClick={handleImportClick}>
+          <Button type="button" variant="outline" onClick={handleImportClick} className="w-fit">
             ייבוא נתונים
           </Button>
         </section>

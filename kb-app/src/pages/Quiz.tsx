@@ -177,7 +177,7 @@ export default function Quiz() {
             </div>
           </div>
           <p className="mb-4 text-sm text-[var(--kb-muted)]">{`${pool.length} נושאים תואמים`}</p>
-          <Button type="button" onClick={handleStart} disabled={pool.length === 0}>
+          <Button type="button" onClick={handleStart} disabled={pool.length === 0} className="min-h-11">
             התחל מבחן
           </Button>
         </main>
@@ -196,7 +196,7 @@ export default function Quiz() {
             className="rounded-xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-6 text-center shadow-[var(--kb-shadow-sm)]"
           >
             <p className="mb-4 text-lg font-bold text-[var(--kb-text)]">{`סיימת! ${correctCount} מתוך ${questions.length} נכונות`}</p>
-            <Button type="button" onClick={() => setQuestions(null)} className="mb-4">
+            <Button type="button" onClick={() => setQuestions(null)} className="mb-4 min-h-11">
               מבחן חדש
             </Button>
             {missedTopicIds.length > 0 && (
@@ -254,7 +254,7 @@ export default function Quiz() {
                       disabled={isAnswered}
                       onClick={() => handleAnswer(index)}
                       aria-pressed={isChosen}
-                      className={`flex min-h-11 items-center justify-between gap-3 px-4 py-2 text-start disabled:opacity-100 ${stateClass}`}
+                      className={`flex h-auto min-h-11 items-center justify-between gap-3 whitespace-normal px-4 py-2 text-start disabled:opacity-100 ${stateClass}`}
                     >
                       <span className="min-w-0 flex-1">{option}</span>
                       {isAnswered && isCorrectOption && (
@@ -268,7 +268,7 @@ export default function Quiz() {
                 })}
               </div>
               {answeredIndex !== null && (
-                <Button type="button" onClick={handleNext} className="mt-4">
+                <Button type="button" onClick={handleNext} className="mt-4 min-h-11">
                   הבא
                 </Button>
               )}

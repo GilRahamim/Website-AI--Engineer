@@ -9,7 +9,7 @@ interface TopicFavoriteButtonProps {
 }
 
 const SIZE_CLASS: Record<'xs' | 'sm' | 'lg', string> = {
-  xs: 'size-9',
+  xs: 'size-9 min-w-0 p-0',
   sm: 'size-11',
   lg: 'size-12',
 };

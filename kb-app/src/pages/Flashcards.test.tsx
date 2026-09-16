@@ -197,4 +197,25 @@ describe('Flashcards', () => {
     expect(useUserDataStore.getState().srsCards.size).toBe(0);
     expect(screen.getByText(`1 מתוך ${topicsData.length}`)).toBeInTheDocument();
   });
+
+  // Regression: opening the dropdown (not just focusing the trigger) moves
+  // Radix's focus into the portaled listbox, so `event.target` during that
+  // interaction is the listbox or one of its options — neither an
+  // HTMLSelectElement nor `role="combobox"`. Without matching those too, a
+  // rating digit key that also happens to be an option's typeahead silently
+  // grades/advances the card while the dropdown is open.
+  it('ignores a rating-key shortcut fired while the select dropdown is open', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await user.click(screen.getByRole('button', { name: 'לחץ לחשיפה' }));
+
+    const statusTrigger = screen.getByRole('combobox', { name: 'מצב למידה' });
+    await user.click(statusTrigger);
+    const listbox = await screen.findByRole('listbox');
+
+    fireEvent.keyDown(listbox, { key: '3' });
+
+    expect(useUserDataStore.getState().srsCards.size).toBe(0);
+    expect(screen.getByText(`1 מתוך ${topicsData.length}`)).toBeInTheDocument();
+  });
 });

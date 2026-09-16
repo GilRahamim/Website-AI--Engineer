@@ -37,6 +37,7 @@ export default function MobileDrawer({ title, children }: MobileDrawerProps) {
       <SheetContent
         side="right"
         className="w-[min(20rem,85vw)] gap-0 overflow-y-auto p-0 pb-[env(safe-area-inset-bottom)] md:hidden"
+        overlayClassName="md:hidden"
         onCloseAutoFocus={(event) => {
           event.preventDefault();
           previousFocusRef.current?.focus();

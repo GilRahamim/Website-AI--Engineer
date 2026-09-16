@@ -35,7 +35,11 @@ export default function AccordionGroup({
           <span>{group.moduleLabel}</span>
           <span className="ms-auto flex items-center gap-2 text-sm font-normal text-[var(--kb-muted)]">
             {group.topics.length}
-            <ChevronDown aria-hidden="true" size={18} className="transition-transform duration-200" />
+            <ChevronDown
+              aria-hidden="true"
+              size={18}
+              className={`transition-transform duration-200 ${expanded ? '' : 'rotate-90'}`}
+            />
           </span>
         </AccordionTrigger>
         <AccordionContent className="px-0 pb-0 pt-3">

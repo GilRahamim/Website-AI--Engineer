@@ -16,24 +16,25 @@ describe('ShortcutsHelp', () => {
     expect(screen.getByText('/')).toBeInTheDocument();
     expect(screen.getByText('Esc')).toBeInTheDocument();
     // Radix's default onMountAutoFocus focuses the first tabbable element in
-    // the content, which is the "סגור" button (it comes before the
-    // shadcn-provided X close button in DOM order).
-    expect(screen.getByRole('button', { name: 'סגור' })).toHaveFocus();
+    // the content, which is the visible "סגור" button (it comes before the
+    // shadcn-provided X close button — also labelled "סגור" now — in DOM
+    // order, hence the [0]).
+    expect(screen.getAllByRole('button', { name: 'סגור' })[0]).toHaveFocus();
   });
 
   it('calls onClose when the "סגור" button is clicked', async () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
     render(<ShortcutsHelp open onClose={onClose} />);
-    await user.click(screen.getByRole('button', { name: 'סגור' }));
+    await user.click(screen.getAllByRole('button', { name: 'סגור' })[0]);
     expect(onClose).toHaveBeenCalledOnce();
   });
 
-  it('calls onClose when the corner close button (shadcn default, sr-only "Close") is clicked', async () => {
+  it('calls onClose when the corner close button (shadcn default, sr-only "סגור") is clicked', async () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
     render(<ShortcutsHelp open onClose={onClose} />);
-    await user.click(screen.getByRole('button', { name: 'Close' }));
+    await user.click(screen.getAllByRole('button', { name: 'סגור' })[1]);
     expect(onClose).toHaveBeenCalledOnce();
   });
 
@@ -55,7 +56,7 @@ describe('ShortcutsHelp', () => {
     const { rerender } = render(<ShortcutsHelp open={false} onClose={() => {}} />);
     trigger.focus();
     rerender(<ShortcutsHelp open onClose={() => {}} />);
-    expect(screen.getByRole('button', { name: 'סגור' })).toHaveFocus();
+    expect(screen.getAllByRole('button', { name: 'סגור' })[0]).toHaveFocus();
 
     // Radix's FocusScope dispatches its unmount-autofocus event (which our
     // onCloseAutoFocus handler uses to restore focus) from a setTimeout(0)

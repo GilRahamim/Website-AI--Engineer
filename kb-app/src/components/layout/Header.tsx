@@ -104,7 +104,7 @@ export default function Header() {
               type="button"
               variant="outline"
               onClick={promptInstall}
-              className="hidden items-center gap-2 rounded-[10px] px-3 text-sm font-semibold sm:flex"
+              className="hidden min-h-11 items-center gap-2 rounded-[10px] px-3 text-sm font-semibold sm:flex"
             >
               <Download aria-hidden="true" size={16} />
               התקן אפליקציה
