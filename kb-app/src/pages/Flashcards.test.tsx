@@ -218,4 +218,10 @@ describe('Flashcards', () => {
     expect(useUserDataStore.getState().srsCards.size).toBe(0);
     expect(screen.getByText(`1 מתוך ${topicsData.length}`)).toBeInTheDocument();
   });
+
+  it('uses the heading font on the page title', () => {
+    renderPage();
+    const heading = screen.getByRole('heading', { level: 1, name: 'כרטיסיות' });
+    expect(heading).toHaveClass('font-[var(--kb-font-heading)]');
+  });
 });

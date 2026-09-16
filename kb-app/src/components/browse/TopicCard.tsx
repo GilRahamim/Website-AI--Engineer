@@ -38,7 +38,7 @@ export default function TopicCard({ topic, highlightTerm, itemProps }: TopicCard
         onKeyDown={itemProps.onKeyDown}
         className="kb-stretched-link flex flex-col gap-2"
       >
-        <h3 className="text-base font-bold text-[var(--kb-text)]">
+        <h3 className="text-base font-bold font-[var(--kb-font-heading)] text-[var(--kb-text)]">
           {titleSegments.map((segment, i) =>
             segment.match ? (
               <mark key={i} className="bg-[var(--kb-accent-soft)] text-[var(--kb-text)]">

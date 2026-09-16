@@ -17,6 +17,7 @@
   --kb-focus-ring: 0 0 0 2px var(--kb-bg), 0 0 0 4px var(--kb-accent);
   --kb-ease: cubic-bezier(.2,.6,.2,1);
   --kb-font-sans: 'Heebo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --kb-font-heading: 'Rubik', var(--kb-font-sans);
   --kb-font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', monospace;
 
   --kb-cat-algorithms: oklch(56% 0.14 250);

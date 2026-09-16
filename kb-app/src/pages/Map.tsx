@@ -104,7 +104,7 @@ export default function Map() {
     <>
       <Header />
       <main className="flex flex-col p-4">
-        <h1 className="mb-4 text-xl font-bold text-[var(--kb-text)]">מפת ידע</h1>
+        <h1 className="mb-4 text-xl font-bold font-[var(--kb-font-heading)] text-[var(--kb-text)]">מפת ידע</h1>
         <div className="mb-4 flex flex-wrap items-center gap-3">
           <TopicFilters
             modules={modules}

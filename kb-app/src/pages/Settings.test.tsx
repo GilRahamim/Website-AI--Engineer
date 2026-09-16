@@ -122,6 +122,12 @@ describe('Settings — theme', () => {
     expect(localStorage.getItem('kb-theme')).toBeNull();
     expect(screen.getByRole('radio', { name: 'לפי המערכת' })).toBeChecked();
   });
+
+  it('uses the heading font on section headings', () => {
+    renderSettings();
+    const heading = screen.getByRole('heading', { level: 2, name: 'מראה' });
+    expect(heading).toHaveClass('font-[var(--kb-font-heading)]');
+  });
 });
 
 describe('Settings — account', () => {

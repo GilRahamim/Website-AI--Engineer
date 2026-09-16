@@ -124,6 +124,12 @@ describe('TopicCard', () => {
     expect(screen.getByRole('button', { name: /מצב למידה/ })).toHaveAttribute('tabindex', '0');
     expect(screen.getByRole('button', { name: /מועדפים/ })).toHaveAttribute('tabindex', '0');
   });
+
+  it('uses the heading font on the title', () => {
+    renderWithRouter(<TopicCard topic={topic} highlightTerm="" itemProps={itemProps} />);
+    const heading = screen.getByRole('heading', { level: 3 });
+    expect(heading).toHaveClass('font-[var(--kb-font-heading)]');
+  });
 });
 
 describe('TopicListRow', () => {
