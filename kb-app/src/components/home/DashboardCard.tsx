@@ -61,7 +61,7 @@ function ProgressRing({ value, max }: { value: number; max: number }) {
 }
 
 const tileClass =
-  'flex flex-col gap-3 rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-4 shadow-[var(--kb-shadow-sm)]';
+  'flex flex-col gap-3 rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-4 shadow-[var(--kb-shadow-card)]';
 
 /**
  * What the review tile says depends on where the user is: scheduled cards
@@ -134,10 +134,7 @@ export default function DashboardCard({
       </Card>
 
       {continueTopic && (
-        <Card
-          asChild
-          className={`${tileClass} justify-between no-underline hover:border-[var(--kb-border-strong)] hover:bg-[var(--kb-surface2)]`}
-        >
+        <Card className={`${tileClass} justify-between hover:border-[var(--kb-border-strong)] hover:bg-[var(--kb-surface2)]`}>
           <Link to={`/topic/${encodeURIComponent(continueTopic.id)}`}>
             <div className="flex items-center gap-3">
               <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-[var(--kb-accent-soft)] text-[var(--kb-accent)]">

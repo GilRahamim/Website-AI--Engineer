@@ -20,7 +20,7 @@ export default function TopicCard({ topic, highlightTerm, itemProps }: TopicCard
      name-based heuristic misidentifies the whole itemProps object because it has a property
      literally named "ref". */
   return (
-    <Card className="kb-topic-card relative flex flex-col gap-2 p-4 transition-[transform,box-shadow] duration-150 ease-[var(--kb-ease)]">
+    <Card className="kb-topic-card relative flex flex-col gap-2 p-4 shadow-[var(--kb-shadow-card)] transition-[transform,box-shadow] duration-150 ease-[var(--kb-ease)]">
       <div className="flex items-center justify-between gap-2">
         <span className="kb-category-chip" data-category={topic.category}>
           {topic.category_label}

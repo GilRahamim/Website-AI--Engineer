@@ -76,4 +76,12 @@ describe('DashboardCard', () => {
     renderCard({ continueTopic: null });
     expect(screen.queryByRole('link', { name: /המשך קריאה/ })).not.toBeInTheDocument();
   });
+
+  it('uses the layered card shadow on the dashboard tiles', () => {
+    const { container } = renderCard();
+    const tiles = Array.from(container.querySelectorAll('div')).filter((el) =>
+      el.className.includes('shadow-[var(--kb-shadow-card)]'),
+    );
+    expect(tiles).toHaveLength(3);
+  });
 });
