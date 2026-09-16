@@ -30,7 +30,7 @@ node scripts/migrate-data.mjs   # מיגרציית דאטה (חד-פעמי; מ-d
 8. **סודות לא ב-git.** `.env` בלבד; `.env.example` עם placeholders.
 
 ## מבנה (ראה מסמך 01 למלא)
-`src/data` נתונים סטטיים · `src/lib` לוגיקה (db, sync, search, srs, theme) · `src/store` Zustand · `src/components` UI טהור · `src/pages` מסכים · `scripts/migrate-data.mjs` · `supabase/schema.sql`.
+`src/data` נתונים סטטיים · `src/lib` לוגיקה (db, sync, search, srs, theme) · `src/store` Zustand · `src/components` UI טהור (`src/components/ui/` — פרימיטיבים של shadcn/ui) · `src/pages` מסכים · `scripts/migrate-data.mjs` · `supabase/schema.sql`.
 
 ## סדר עבודה
 בנה לפי השלבים במסמך `00-BUILD-README.md` (Phase 0→6). בסוף כל שלב: build ירוק, typecheck נקי, בדיקה ידנית בבהיר+כהה+RTL, אין רגרסיה. Phase 2+ — בדיקה במובייל.

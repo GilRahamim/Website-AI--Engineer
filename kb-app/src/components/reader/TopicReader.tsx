@@ -172,7 +172,7 @@ export default function TopicReader({ topic, topics, topicsById }: TopicReaderPr
                   </AlertDescription>
                 </Alert>
               ) : (
-                <div role="status" aria-busy="true" className="flex flex-col gap-[0.85rem]">
+                <div role="status" aria-busy="true" className="flex min-h-96 flex-col gap-[0.85rem]">
                   <span className="sr-only">טוען תוכן…</span>
                   <Skeleton className="mb-2 h-5 w-[36%]" />
                   <Skeleton className="h-4 w-full" />
