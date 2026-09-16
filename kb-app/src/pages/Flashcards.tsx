@@ -128,7 +128,13 @@ export default function Flashcards() {
       const isTyping =
         event.target instanceof HTMLInputElement ||
         event.target instanceof HTMLTextAreaElement ||
-        event.target instanceof HTMLSelectElement;
+        event.target instanceof HTMLSelectElement ||
+        // shadcn's Select trigger renders as `<button role="combobox">`, not
+        // an HTMLSelectElement — the instanceof check above never matches
+        // it, so without this it silently loses focus-guard coverage for
+        // the module/category/status filters rendered alongside this page's
+        // review card (found in Task 17 review).
+        (event.target instanceof HTMLElement && event.target.getAttribute('role') === 'combobox');
       if (isTyping || !currentTopic) return;
 
       if (!revealed && (event.key === ' ' || event.key === 'Enter')) {

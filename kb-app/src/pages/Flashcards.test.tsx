@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import Flashcards from './Flashcards';
@@ -176,5 +176,25 @@ describe('Flashcards', () => {
     await user.keyboard('3');
     expect(useUserDataStore.getState().srsCards.size).toBe(1);
     expect(screen.getByText(`2 מתוך ${topicsData.length}`)).toBeInTheDocument();
+  });
+
+  // Regression: the status Select's trigger is a shadcn/Radix `<button
+  // role="combobox">`, not a native <select>, so it must still be
+  // recognized by the keydown guard's "isTyping" check the same way a
+  // native <select> was before Task 17 — otherwise a rating digit fired
+  // while the trigger is focused falls through to the rating shortcut and
+  // silently grades the current card. (Space/Enter isn't exercised here:
+  // Radix's own trigger handles that key to open its dropdown, which is a
+  // separate concern from this guard.)
+  it('ignores a rating-key shortcut fired at a focused select trigger', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await user.click(screen.getByRole('button', { name: 'לחץ לחשיפה' }));
+
+    const statusTrigger = screen.getByRole('combobox', { name: 'מצב למידה' });
+    fireEvent.keyDown(statusTrigger, { key: '3' });
+
+    expect(useUserDataStore.getState().srsCards.size).toBe(0);
+    expect(screen.getByText(`1 מתוך ${topicsData.length}`)).toBeInTheDocument();
   });
 });
