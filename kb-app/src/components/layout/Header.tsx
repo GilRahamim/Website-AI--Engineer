@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Download, Menu, Search, SlidersHorizontal, Sparkles } from 'lucide-react';
+import { Download, Menu, SlidersHorizontal, Sparkles } from 'lucide-react';
 import { topics } from '../../lib/catalog';
 import { getDueStats } from '../../lib/srs';
 import { useUserDataStore } from '../../store/userDataStore';
@@ -77,22 +77,6 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => window.dispatchEvent(new Event('kb-open-palette'))}
-            aria-label="חיפוש מהיר (Ctrl+K)"
-            className="flex min-h-11 items-center gap-2 rounded-[10px] px-3 text-sm text-[var(--kb-muted)] lg:w-64"
-          >
-            <Search aria-hidden="true" size={18} />
-            <span className="hidden min-w-0 flex-1 truncate text-start lg:inline">חפש נושא, הגדרה או הערה…</span>
-            <kbd
-              aria-hidden="true"
-              className="hidden rounded border border-[var(--kb-border)] bg-[var(--kb-surface)] px-1.5 py-0.5 font-mono text-[11px] lg:inline"
-            >
-              Ctrl K
-            </kbd>
-          </Button>
           <ThemeToggle />
           <Button variant="secondary" size="icon" asChild className="size-11 rounded-[10px]">
             <Link to="/settings" aria-label="הגדרות" title="הגדרות">

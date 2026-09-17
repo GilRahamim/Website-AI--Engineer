@@ -58,16 +58,6 @@ describe('Header', () => {
     expect(screen.getByRole('link', { name: 'בית' })).not.toHaveAttribute('aria-current');
   });
 
-  it('renders a search control that opens the command palette', async () => {
-    const user = userEvent.setup();
-    const listener = vi.fn();
-    window.addEventListener('kb-open-palette', listener);
-    renderWithRouter();
-    await user.click(screen.getByRole('button', { name: /חיפוש מהיר/ }));
-    expect(listener).toHaveBeenCalledTimes(1);
-    window.removeEventListener('kb-open-palette', listener);
-  });
-
   it('uses the header landmark', () => {
     renderWithRouter();
     expect(screen.getByRole('banner')).toBeInTheDocument();
