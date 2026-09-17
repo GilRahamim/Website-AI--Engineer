@@ -194,7 +194,7 @@ export default function Settings() {
     <>
       <Header />
       <main className="mx-auto flex max-w-xl flex-col gap-5 p-4 sm:px-6">
-        <h1 className="text-xl font-bold font-[var(--kb-font-heading)] text-[var(--kb-text)]">הגדרות</h1>
+        <h1 className="text-xl font-bold [font-family:var(--kb-font-heading)] text-[var(--kb-text)]">הגדרות</h1>
 
         {message && (
           <Alert
@@ -206,7 +206,7 @@ export default function Settings() {
         )}
 
         <section className={SECTION_CLASS}>
-          <h2 className="font-semibold font-[var(--kb-font-heading)] text-[var(--kb-text)]">מראה</h2>
+          <h2 className="font-semibold [font-family:var(--kb-font-heading)] text-[var(--kb-text)]">מראה</h2>
           <fieldset className="flex flex-col gap-2">
             <legend className="text-sm text-[var(--kb-muted)]">ערכת נושא</legend>
             <ToggleGroup
@@ -230,7 +230,7 @@ export default function Settings() {
         </section>
 
         <section className={SECTION_CLASS}>
-          <h2 className="font-semibold font-[var(--kb-font-heading)] text-[var(--kb-text)]">חשבון</h2>
+          <h2 className="font-semibold [font-family:var(--kb-font-heading)] text-[var(--kb-text)]">חשבון</h2>
           {!syncAvailable ? (
             <p className="text-sm text-[var(--kb-muted)]">
               סנכרון בין מכשירים אינו זמין בהתקנה זו. כל הנתונים נשמרים במכשיר הזה בלבד; לגיבוי השתמש בייצוא למטה.
@@ -271,7 +271,7 @@ export default function Settings() {
         </section>
 
         <section className={SECTION_CLASS}>
-          <h2 className="font-semibold font-[var(--kb-font-heading)] text-[var(--kb-text)]">אפליקציה</h2>
+          <h2 className="font-semibold [font-family:var(--kb-font-heading)] text-[var(--kb-text)]">אפליקציה</h2>
           {canInstall ? (
             <>
               <p className="text-sm text-[var(--kb-muted)]">התקן את האתר כאפליקציה במסך הבית לגישה מהירה ולעבודה ללא חיבור.</p>
@@ -288,7 +288,7 @@ export default function Settings() {
         </section>
 
         <section className={SECTION_CLASS}>
-          <h2 className="font-semibold font-[var(--kb-font-heading)] text-[var(--kb-text)]">ייצוא נתונים</h2>
+          <h2 className="font-semibold [font-family:var(--kb-font-heading)] text-[var(--kb-text)]">ייצוא נתונים</h2>
           <p className="text-sm text-[var(--kb-muted)]">
             שמור קובץ גיבוי של כל הנתונים האישיים שלך — התקדמות, מועדפים, הערות וכרטיסיות.
           </p>
@@ -298,7 +298,7 @@ export default function Settings() {
         </section>
 
         <section className={SECTION_CLASS}>
-          <h2 className="font-semibold font-[var(--kb-font-heading)] text-[var(--kb-text)]">ייבוא נתונים</h2>
+          <h2 className="font-semibold [font-family:var(--kb-font-heading)] text-[var(--kb-text)]">ייבוא נתונים</h2>
           <p className="text-sm text-[var(--kb-muted)]">
             שחזר נתונים מקובץ גיבוי. הפעולה תחליף את כל הנתונים המקומיים הקיימים.
           </p>

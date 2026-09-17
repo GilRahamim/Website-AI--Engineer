@@ -21,7 +21,7 @@ export default function RelatedTopics({ relatedIds, relatedRaw = [], topicsById 
 
   return (
     <nav aria-label="נושאים קשורים" className="mt-8 border-t border-[var(--kb-border)] pt-4">
-      <h2 className="mb-3 text-base font-bold font-[var(--kb-font-heading)] text-[var(--kb-text)]">נושאים קשורים</h2>
+      <h2 className="mb-3 text-base font-bold [font-family:var(--kb-font-heading)] text-[var(--kb-text)]">נושאים קשורים</h2>
       <ul className="flex flex-wrap gap-2">
         {resolved.map((topic) => (
           <li key={topic.id}>

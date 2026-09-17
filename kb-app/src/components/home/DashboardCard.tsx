@@ -61,7 +61,7 @@ function ProgressRing({ value, max }: { value: number; max: number }) {
 }
 
 const tileClass =
-  'flex flex-col gap-3 rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-4 shadow-[var(--kb-shadow-card)]';
+  'flex flex-col gap-3 rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-4 !shadow-[var(--kb-shadow-card)]';
 
 /**
  * What the review tile says depends on where the user is: scheduled cards

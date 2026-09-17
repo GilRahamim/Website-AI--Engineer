@@ -128,13 +128,13 @@ describe('TopicCard', () => {
   it('uses the heading font on the title', () => {
     renderWithRouter(<TopicCard topic={topic} highlightTerm="" itemProps={itemProps} />);
     const heading = screen.getByRole('heading', { level: 3 });
-    expect(heading).toHaveClass('font-[var(--kb-font-heading)]');
+    expect(heading).toHaveClass('[font-family:var(--kb-font-heading)]');
   });
 
   it('uses the layered card shadow', () => {
     renderWithRouter(<TopicCard topic={topic} highlightTerm="" itemProps={itemProps} />);
     const card = screen.getByRole('link').closest('.kb-topic-card');
-    expect(card).toHaveClass('shadow-[var(--kb-shadow-card)]');
+    expect(card).toHaveClass('!shadow-[var(--kb-shadow-card)]');
   });
 });
 

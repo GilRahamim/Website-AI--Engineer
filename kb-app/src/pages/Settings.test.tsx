@@ -126,7 +126,7 @@ describe('Settings — theme', () => {
   it('uses the heading font on section headings', () => {
     renderSettings();
     const heading = screen.getByRole('heading', { level: 2, name: 'מראה' });
-    expect(heading).toHaveClass('font-[var(--kb-font-heading)]');
+    expect(heading).toHaveClass('[font-family:var(--kb-font-heading)]');
   });
 });
 

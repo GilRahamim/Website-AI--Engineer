@@ -20,7 +20,7 @@ export default function TopicCard({ topic, highlightTerm, itemProps }: TopicCard
      name-based heuristic misidentifies the whole itemProps object because it has a property
      literally named "ref". */
   return (
-    <Card className="kb-topic-card relative flex flex-col gap-2 p-4 shadow-[var(--kb-shadow-card)] transition-[transform,box-shadow] duration-150 ease-[var(--kb-ease)]">
+    <Card className="kb-topic-card relative flex flex-col gap-2 p-4 !shadow-[var(--kb-shadow-card)] transition-[transform,box-shadow] duration-150 ease-[var(--kb-ease)]">
       <div className="flex items-center justify-between gap-2">
         <span className="kb-category-chip" data-category={topic.category}>
           {topic.category_label}
@@ -38,7 +38,7 @@ export default function TopicCard({ topic, highlightTerm, itemProps }: TopicCard
         onKeyDown={itemProps.onKeyDown}
         className="kb-stretched-link flex flex-col gap-2"
       >
-        <h3 className="text-base font-bold font-[var(--kb-font-heading)] text-[var(--kb-text)]">
+        <h3 className="text-base font-bold [font-family:var(--kb-font-heading)] text-[var(--kb-text)]">
           {titleSegments.map((segment, i) =>
             segment.match ? (
               <mark key={i} className="bg-[var(--kb-accent-soft)] text-[var(--kb-text)]">

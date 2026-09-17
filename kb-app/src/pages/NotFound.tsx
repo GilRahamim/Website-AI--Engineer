@@ -9,7 +9,7 @@ export default function NotFound() {
       <Header />
       <main className="mx-auto flex max-w-md flex-col items-center gap-4 px-4 py-20 text-center">
         <p className="font-mono text-sm text-[var(--kb-muted)]">404</p>
-        <h1 className="text-2xl font-extrabold font-[var(--kb-font-heading)] text-[var(--kb-text)]">הדף לא נמצא</h1>
+        <h1 className="text-2xl font-extrabold [font-family:var(--kb-font-heading)] text-[var(--kb-text)]">הדף לא נמצא</h1>
         <p className="text-[var(--kb-text2)]">הכתובת שהגעת אליה לא קיימת, או שהנושא הוסר.</p>
         <Link
           to="/"

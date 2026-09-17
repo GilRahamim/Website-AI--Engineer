@@ -130,7 +130,7 @@ export default function Quiz() {
       <>
         <Header />
         <main className="mx-auto max-w-xl p-4">
-          <h1 className="mb-4 text-xl font-bold font-[var(--kb-font-heading)] text-[var(--kb-text)]">מבחן</h1>
+          <h1 className="mb-4 text-xl font-bold [font-family:var(--kb-font-heading)] text-[var(--kb-text)]">מבחן</h1>
           <div className="mb-4 flex flex-wrap items-center gap-2">
             <TopicFilters
               modules={modules}
@@ -189,7 +189,7 @@ export default function Quiz() {
     <>
       <Header />
       <main className="mx-auto max-w-xl p-4">
-        <h1 className="mb-4 text-xl font-bold font-[var(--kb-font-heading)] text-[var(--kb-text)]">מבחן</h1>
+        <h1 className="mb-4 text-xl font-bold [font-family:var(--kb-font-heading)] text-[var(--kb-text)]">מבחן</h1>
         {quizDone ? (
           <div
             role="status"

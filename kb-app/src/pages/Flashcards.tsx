@@ -178,7 +178,7 @@ export default function Flashcards() {
     <>
       <Header />
       <main className="mx-auto max-w-xl p-4">
-        <h1 className="mb-4 text-xl font-bold font-[var(--kb-font-heading)] text-[var(--kb-text)]">כרטיסיות</h1>
+        <h1 className="mb-4 text-xl font-bold [font-family:var(--kb-font-heading)] text-[var(--kb-text)]">כרטיסיות</h1>
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <TopicFilters
             modules={modules}
@@ -249,7 +249,7 @@ export default function Flashcards() {
             className="rounded-xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-6 text-center shadow-[var(--kb-shadow-sm)]"
           >
             <p className="mb-1 text-sm text-[var(--kb-muted)]">{`${currentIndex + 1} מתוך ${queue.length}`}</p>
-            <h2 className="mb-4 text-xl font-bold font-[var(--kb-font-heading)] text-[var(--kb-text)]">{currentTopic.title}</h2>
+            <h2 className="mb-4 text-xl font-bold [font-family:var(--kb-font-heading)] text-[var(--kb-text)]">{currentTopic.title}</h2>
             {!revealed ? (
               <Button ref={revealButtonRef} type="button" onClick={() => setRevealed(true)} className="min-h-11">
                 לחץ לחשיפה

@@ -222,6 +222,6 @@ describe('Flashcards', () => {
   it('uses the heading font on the page title', () => {
     renderPage();
     const heading = screen.getByRole('heading', { level: 1, name: 'כרטיסיות' });
-    expect(heading).toHaveClass('font-[var(--kb-font-heading)]');
+    expect(heading).toHaveClass('[font-family:var(--kb-font-heading)]');
   });
 });
