@@ -5,6 +5,7 @@ import { useInstallPrompt } from '../hooks/useInstallPrompt';
 import { exportAllData, importAllData, type ExportPayload } from '../lib/db';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { getThemePreference, setThemePreference, type ThemePreference } from '../lib/theme';
+import { getPathMode, setPathMode, type PathMode } from '../lib/pathMode';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { useUserDataStore } from '../store/userDataStore';
 import { useAuthStore } from '../store/authStore';
@@ -18,6 +19,11 @@ const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
   { value: 'light', label: 'בהירה' },
   { value: 'dark', label: 'כהה' },
   { value: 'system', label: 'לפי המערכת' },
+];
+
+const PATH_MODE_OPTIONS: { value: PathMode; label: string; description: string }[] = [
+  { value: 'guided', label: 'מודרך', description: 'מסמן לך את הנושא הנוכחי בנתיב ואת מה שעוד לא הגעת אליו — בלי לחסום קפיצות קדימה.' },
+  { value: 'free', label: 'חופשי', description: 'בלי הנחיה — עברו בין הנושאים בכל סדר שתרצו.' },
 ];
 
 const SECTION_CLASS =
@@ -101,6 +107,7 @@ export default function Settings() {
   const [message, setMessage] = useState<{ kind: 'success' | 'error'; text: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [themePreference, setThemePreferenceState] = useState<ThemePreference>(getThemePreference);
+  const [pathMode, setPathModeState] = useState<PathMode>(getPathMode);
   const syncAvailable = isSupabaseConfigured();
   const { canInstall, promptInstall } = useInstallPrompt();
 
@@ -116,6 +123,11 @@ export default function Settings() {
 
   function handleThemeChoice(preference: ThemePreference) {
     setThemePreference(preference);
+  }
+
+  function handlePathModeChoice(mode: PathMode) {
+    setPathMode(mode);
+    setPathModeState(mode);
   }
 
   async function handleExport() {
@@ -226,6 +238,33 @@ export default function Settings() {
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
+          </fieldset>
+        </section>
+
+        <section className={SECTION_CLASS}>
+          <h2 className="font-semibold [font-family:var(--kb-font-heading)] text-[var(--kb-text)]">נתיב למידה</h2>
+          <fieldset className="flex flex-col gap-2">
+            <legend className="text-sm text-[var(--kb-muted)]">מצב הדרכה</legend>
+            <ToggleGroup
+              type="single"
+              value={pathMode}
+              onValueChange={(value) => value && handlePathModeChoice(value as PathMode)}
+              aria-label="מצב הדרכה בנתיב הלמידה"
+              className="w-fit rounded-[10px] bg-[var(--kb-surface2)] p-[3px]"
+            >
+              {PATH_MODE_OPTIONS.map((option) => (
+                <ToggleGroupItem
+                  key={option.value}
+                  value={option.value}
+                  className="min-h-10 rounded-lg px-4 text-sm data-[state=on]:bg-[var(--kb-surface)] data-[state=on]:font-semibold data-[state=on]:text-[var(--kb-accent)] data-[state=on]:shadow-[var(--kb-shadow-sm)]"
+                >
+                  {option.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+            <p className="text-sm text-[var(--kb-muted)]">
+              {PATH_MODE_OPTIONS.find((option) => option.value === pathMode)?.description}
+            </p>
           </fieldset>
         </section>
 

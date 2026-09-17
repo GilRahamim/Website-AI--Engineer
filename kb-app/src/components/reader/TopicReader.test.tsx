@@ -116,13 +116,37 @@ describe('TopicReader', () => {
     expect(document.getElementById('sec-2')).toHaveTextContent('השוואה');
   });
 
-  it('renders previous/next navigation within the module', () => {
+  it('renders previous/next navigation along the learning path', () => {
     renderWithRouter();
     expect(screen.getByRole('link', { name: /הבא.*Related Topic/ })).toHaveAttribute(
       'href',
       `/topic/${encodeURIComponent(relatedTopic.id)}`,
     );
     expect(screen.queryByRole('link', { name: /הקודם/ })).not.toBeInTheDocument();
+  });
+
+  it('crosses into the next module instead of stopping at the end of the current one', () => {
+    const lastOfModule: Topic = { ...topic, id: 'last-of-module', num: 99 };
+    const firstOfNextModule: Topic = {
+      ...topic,
+      id: 'first-of-next-module',
+      module: 'Topic 1 - Unsupervised Learning',
+      module_label: 'נושא 1',
+      num: 1,
+    };
+    render(
+      <MemoryRouter>
+        <TopicReader
+          topic={lastOfModule}
+          topics={[lastOfModule, firstOfNextModule]}
+          topicsById={new Map([[lastOfModule.id, lastOfModule], [firstOfNextModule.id, firstOfNextModule]])}
+        />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('link', { name: new RegExp(`הבא.*${firstOfNextModule.title}`) })).toHaveAttribute(
+      'href',
+      `/topic/${encodeURIComponent(firstOfNextModule.id)}`,
+    );
   });
 
   it('renders resolved related topics and unresolved names', async () => {

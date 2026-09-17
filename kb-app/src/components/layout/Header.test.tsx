@@ -63,6 +63,11 @@ describe('Header', () => {
     expect(screen.getByRole('banner')).toBeInTheDocument();
   });
 
+  it('renders a link to the Path page', () => {
+    renderWithRouter();
+    expect(screen.getByRole('link', { name: 'נתיב' })).toHaveAttribute('href', '/path');
+  });
+
   it('renders a link to the Flashcards page', () => {
     renderWithRouter();
     expect(screen.getByRole('link', { name: /כרטיסיות/ })).toHaveAttribute('href', '/flashcards');

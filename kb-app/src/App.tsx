@@ -12,6 +12,7 @@ const Flashcards = lazy(() => import('./pages/Flashcards'));
 const Quiz = lazy(() => import('./pages/Quiz'));
 const KnowledgeMap = lazy(() => import('./pages/Map'));
 const Settings = lazy(() => import('./pages/Settings'));
+const Path = lazy(() => import('./pages/Path'));
 
 function RouteFallback() {
   return (
@@ -96,6 +97,10 @@ export default function App() {
                 from the static topic dataset, so it carries none of the
                 hydration hazard the routes above had to design around. */}
             <Route path="/map" element={<KnowledgeMap />} />
+            {/* Path never reads userDataStore during render setup beyond the
+                already-hydrated progress map read by useUserDataStore's
+                selector, same non-hazardous shape as Map/Settings above. */}
+            <Route path="/path" element={<Path />} />
             {/* Settings never reads userDataStore during render — it only provides
                 export/import UI for data backup, so it carries none of the
                 hydration hazard the routes above had to design around. */}

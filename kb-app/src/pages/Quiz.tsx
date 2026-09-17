@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Check, X } from 'lucide-react';
 import type { ProgressStatus, Topic } from '../types';
 import { buildQuiz, type QuizQuestion } from '../lib/quiz';
@@ -18,8 +18,15 @@ const QUESTION_COUNT_OPTIONS = [5, 10, 20] as const;
 export default function Quiz() {
   usePageTitle('מבחן');
   const gradeCard = useUserDataStore((s) => s.gradeCard);
+  const location = useLocation();
 
-  const [selectedModule, setSelectedModule] = useState('all');
+  // The learning-path "module complete" nudge (FinishTopicAction) links
+  // here with `state: { module }` to pre-filter the quiz to what was just
+  // finished — falls back to "all" for every other, ordinary way in.
+  const [selectedModule, setSelectedModule] = useState(() => {
+    const presetModule = (location.state as { module?: string } | null)?.module;
+    return presetModule && presetModule in modules ? presetModule : 'all';
+  });
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState<ProgressStatus | 'all'>('all');
   const [questionCount, setQuestionCount] = useState<number | 'all'>(10);

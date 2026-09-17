@@ -130,6 +130,25 @@ describe('Settings — theme', () => {
   });
 });
 
+describe('Settings — path mode', () => {
+  it('defaults to "guided" when nothing is stored', () => {
+    renderSettings();
+    const group = screen.getByRole('radiogroup', { name: 'מצב הדרכה בנתיב הלמידה' });
+    expect(group).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: 'מודרך' })).toBeChecked();
+    expect(screen.getByRole('radio', { name: 'חופשי' })).not.toBeChecked();
+  });
+
+  it('choosing free stores it and switches the description', async () => {
+    const user = userEvent.setup();
+    renderSettings();
+    await user.click(screen.getByRole('radio', { name: 'חופשי' }));
+    expect(localStorage.getItem('kb-path-mode')).toBe('free');
+    expect(screen.getByRole('radio', { name: 'חופשי' })).toBeChecked();
+    expect(screen.getByText(/בלי הנחיה/)).toBeInTheDocument();
+  });
+});
+
 describe('Settings — account', () => {
   it('renders the signed-out email form', () => {
     renderSettings();

@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { CircleHelp, Home, Layers, Map } from 'lucide-react';
+import { CircleHelp, Home, Layers, Map, Milestone } from 'lucide-react';
 
 interface TabBarProps {
   dueCount: number;
@@ -7,6 +7,7 @@ interface TabBarProps {
 
 const TABS = [
   { to: '/', label: 'בית', Icon: Home },
+  { to: '/path', label: 'נתיב', Icon: Milestone },
   { to: '/flashcards', label: 'כרטיסיות', Icon: Layers },
   { to: '/quiz', label: 'מבחן', Icon: CircleHelp },
   { to: '/map', label: 'מפה', Icon: Map },

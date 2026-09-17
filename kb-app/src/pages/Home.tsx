@@ -4,6 +4,7 @@ import { BookOpen, PanelLeftClose, PanelLeftOpen, SearchX, Star } from 'lucide-r
 import { categoryCounts, categoryLabels, moduleCounts, modules, searchIndex, topics, topicsById } from '../lib/catalog';
 import { filterTopics } from '../lib/filterTopics';
 import { groupTopicsByModule } from '../lib/groupTopics';
+import { getFirstUnmasteredTopic } from '../lib/learningPath';
 import { ALL_STATUSES, STATUS_LABELS } from '../lib/progressStatus';
 import { getDueStats } from '../lib/srs';
 import { useGridKeyboardNav } from '../hooks/useGridKeyboardNav';
@@ -76,11 +77,12 @@ export default function Home() {
   const [now] = useState(() => Date.now());
   const [randomTopic] = useState(() => topics[Math.floor(Math.random() * topics.length)]);
   const dueStats = getDueStats(topics, srsCards, now);
-  // Most recently viewed topic; a brand-new user is pointed at the first
-  // topic of the course instead so the tile never sits empty.
-  const lastViewed = recents.length > 0 ? (topicsById.get(recents[0].topicId) ?? null) : null;
-  const continueTopic = lastViewed ?? topics[0];
-  const continueLabel = lastViewed ? 'המשך קריאה' : 'התחל כאן';
+  // "Continue where you left off": the first not-yet-mastered topic in the
+  // course's own teaching order (site-build-docs/06-LEARNING-PATH.md), not
+  // the most recently viewed topic — so the tile always steers toward
+  // finishing the path, even if the last thing viewed was a detour.
+  const continueTopic = getFirstUnmasteredTopic(progress);
+  const continueLabel = progress.size > 0 ? 'המשך קריאה' : 'התחל כאן';
 
   // Phones get the compact row layout regardless of the stored grid/list
   // preference — a 3-line card per topic is too tall at 390px.

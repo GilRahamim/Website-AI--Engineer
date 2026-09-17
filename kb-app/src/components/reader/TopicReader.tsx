@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import { useUiStore } from '../../store/uiStore';
 import type { Topic } from '../../types';
 import { buildToc } from '../../lib/tocFromHtml';
-import { estimateReadingMinutes, getModulePosition, getPrevNext } from '../../lib/topicNav';
+import { estimateReadingMinutes, getModulePosition } from '../../lib/topicNav';
+import { getPathPrevNext } from '../../lib/learningPath';
 import { useActiveHeading } from '../../hooks/useActiveHeading';
 import { useReaderShortcuts } from '../../hooks/useReaderShortcuts';
 import RelatedTopics from './RelatedTopics';
 import PrevNextNav from './PrevNextNav';
+import FinishTopicAction from './FinishTopicAction';
 import ReaderAside from './ReaderAside';
 import TopicNotes from '../topic/TopicNotes';
 import { sizeFormulaImage } from '../../lib/formulaSizing';
@@ -92,7 +94,7 @@ export default function TopicReader({ topic, topics, topicsById }: TopicReaderPr
   const activeHeadingId = useActiveHeading(headingIds);
   const readingMinutes = rawHtml === null ? null : estimateReadingMinutes(rawHtml);
 
-  const { prev, next } = getPrevNext(topic, topics);
+  const { prev, next } = getPathPrevNext(topic, topics);
   const position = getModulePosition(topic, topics);
 
   useReaderShortcuts({ topicId: topic.id, prev, next, notesRef });
@@ -190,6 +192,7 @@ export default function TopicReader({ topic, topics, topicsById }: TopicReaderPr
             )}
           </div>
 
+          <FinishTopicAction topic={topic} next={next} />
           <PrevNextNav prev={prev} next={next} />
           <TopicNotes topicId={topic.id} inputRef={notesRef} />
           <RelatedTopics

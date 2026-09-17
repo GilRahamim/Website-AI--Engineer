@@ -43,6 +43,14 @@ function renderPage() {
   );
 }
 
+function renderPageWithModulePreset(module: string) {
+  return render(
+    <MemoryRouter initialEntries={[{ pathname: '/quiz', state: { module } }]}>
+      <Quiz />
+    </MemoryRouter>,
+  );
+}
+
 /** Narrows the pool to exactly one real topic via the status filter, so
  *  the resulting single-question quiz is about a known, predictable
  *  topic — the correct answer's exact text is then knowable from the
@@ -71,6 +79,16 @@ describe('Quiz', () => {
     expect(screen.getByRole('combobox', { name: 'מצב למידה' })).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'מספר שאלות' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'התחל מבחן' })).toBeInTheDocument();
+  });
+
+  it('pre-selects the module filter when arriving with a module-complete nudge state', () => {
+    renderPageWithModulePreset('Intro to Data Science');
+    expect(screen.getByRole('combobox', { name: 'מודול' })).toHaveTextContent('מבוא למדעי הנתונים');
+  });
+
+  it('ignores an unrecognized preset module and falls back to "all"', () => {
+    renderPageWithModulePreset('not-a-real-module');
+    expect(screen.getByRole('combobox', { name: 'מודול' })).toHaveTextContent('הכול');
   });
 
   it('starts a session showing a definition and 4 options', async () => {

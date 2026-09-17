@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import Home from './Home';
 import { useUiStore } from '../store/uiStore';
 import { useUserDataStore } from '../store/userDataStore';
+import { pathTopics } from '../lib/learningPath';
 import topicsData from '../data/topics.clean.json';
 
 function reset() {
@@ -70,7 +71,7 @@ describe('Home', () => {
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 
-  it('points a brand-new user at the first topic under "start here"', () => {
+  it('points a brand-new user at the first topic of the learning path under "start here"', () => {
     render(
       <MemoryRouter>
         <Home />
@@ -78,21 +79,24 @@ describe('Home', () => {
     );
     expect(screen.getByRole('link', { name: /התחל כאן/ })).toHaveAttribute(
       'href',
-      `/topic/${encodeURIComponent(topicsData[0].id)}`,
+      `/topic/${encodeURIComponent(pathTopics[0].id)}`,
     );
   });
 
-  it('shows the most recently viewed topic as "continue reading"', () => {
-    const recent = topicsData[3];
-    useUserDataStore.setState({ recents: [{ topicId: recent.id, viewedAt: Date.now() }] });
+  it('shows the first not-yet-mastered path topic as "continue reading", ignoring recents', () => {
+    useUserDataStore.setState({
+      progress: new Map([[pathTopics[0].id, 'mastered']]),
+      recents: [{ topicId: pathTopics[5].id, viewedAt: Date.now() }],
+    });
     render(
       <MemoryRouter>
         <Home />
       </MemoryRouter>,
     );
-    expect(screen.getByRole('link', { name: new RegExp(`המשך קריאה.*${recent.title.slice(0, 10)}`) })).toHaveAttribute(
+    const expected = pathTopics[1];
+    expect(screen.getByRole('link', { name: new RegExp(`המשך קריאה.*${expected.title.slice(0, 10)}`) })).toHaveAttribute(
       'href',
-      `/topic/${encodeURIComponent(recent.id)}`,
+      `/topic/${encodeURIComponent(expected.id)}`,
     );
   });
 

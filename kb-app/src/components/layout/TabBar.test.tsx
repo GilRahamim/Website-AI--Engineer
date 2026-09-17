@@ -12,11 +12,12 @@ function renderAt(path: string, dueCount = 0) {
 }
 
 describe('TabBar', () => {
-  it('renders the four primary destinations as links', () => {
+  it('renders the primary destinations as links', () => {
     renderAt('/');
     const nav = screen.getByRole('navigation', { name: 'ניווט תחתון' });
     expect(nav).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'בית' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: 'נתיב' })).toHaveAttribute('href', '/path');
     expect(screen.getByRole('link', { name: /כרטיסיות/ })).toHaveAttribute('href', '/flashcards');
     expect(screen.getByRole('link', { name: 'מבחן' })).toHaveAttribute('href', '/quiz');
     expect(screen.getByRole('link', { name: 'מפה' })).toHaveAttribute('href', '/map');

@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 
 const NAV_ITEMS: { to: string; label: string }[] = [
   { to: '/', label: 'בית' },
+  { to: '/path', label: 'נתיב' },
   { to: '/flashcards', label: 'כרטיסיות' },
   { to: '/quiz', label: 'מבחן' },
   { to: '/map', label: 'מפה' },
