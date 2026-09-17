@@ -1,8 +1,10 @@
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, Star } from 'lucide-react';
 import type { ModulesMap, Topic } from '../../types';
 import { useUiStore } from '../../store/uiStore';
 import { useUserDataStore } from '../../store/userDataStore';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 interface SidebarProps {
   modules: ModulesMap;
@@ -23,14 +25,45 @@ const CATEGORY_DOT: Record<string, string> = {
   architectures: 'var(--kb-cat-architectures)',
 };
 
-function SectionHeading({ children }: { children: string }) {
-  return <h2 className="mb-2 text-xs font-semibold text-[var(--kb-muted)]">{children}</h2>;
+const sectionTriggerClass =
+  'min-h-8 justify-start gap-1.5 py-0 text-xs font-semibold text-[var(--kb-muted)] hover:text-[var(--kb-text)] hover:no-underline [&>svg]:size-3.5';
+
+/**
+ * Collapsible section shell shared by every sidebar block (Modules,
+ * Categories, Favorites, Recently viewed). Reuses the app's existing
+ * accordion primitive (Radix under the hood) so keyboard support and
+ * aria-expanded come for free, and the open/close animation matches the
+ * module groups on the home page. `navLabel` stays on the <nav> landmark
+ * even when it differs from the visible `heading` text (e.g. "ניווט
+ * מודולים" vs. "מודולים"), so existing screen-reader navigation names
+ * don't change.
+ */
+function SidebarSection({
+  id,
+  navLabel,
+  heading,
+  children,
+}: {
+  id: string;
+  navLabel: string;
+  heading: string;
+  children: ReactNode;
+}) {
+  return (
+    <nav aria-label={navLabel}>
+      <Accordion type="single" collapsible defaultValue={id} className="w-full">
+        <AccordionItem value={id} className="border-b-0">
+          <AccordionTrigger className={sectionTriggerClass}>{heading}</AccordionTrigger>
+          <AccordionContent className="pb-0 pt-2">{children}</AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </nav>
+  );
 }
 
-function TopicLinkList({ label, topics, Icon }: { label: string; topics: Topic[]; Icon: typeof Star }) {
+function TopicLinkList({ id, label, topics, Icon }: { id: string; label: string; topics: Topic[]; Icon: typeof Star }) {
   return (
-    <nav aria-label={label}>
-      <SectionHeading>{label}</SectionHeading>
+    <SidebarSection id={id} navLabel={label} heading={label}>
       <ul className="flex flex-col gap-0.5">
         {topics.map((topic) => (
           <li key={topic.id}>
@@ -44,7 +77,7 @@ function TopicLinkList({ label, topics, Icon }: { label: string; topics: Topic[]
           </li>
         ))}
       </ul>
-    </nav>
+    </SidebarSection>
   );
 }
 
@@ -78,8 +111,7 @@ export default function Sidebar({
   return (
     <div className="flex flex-col gap-6 p-4">
       {showFilters && (
-      <nav aria-label="ניווט מודולים">
-        <SectionHeading>מודולים</SectionHeading>
+      <SidebarSection id="modules" navLabel="ניווט מודולים" heading="מודולים">
         <ul className="flex flex-col gap-1">
           {Object.entries(modules).map(([key, label]) => {
             const total = moduleCounts[key] ?? 0;
@@ -109,12 +141,11 @@ export default function Sidebar({
             );
           })}
         </ul>
-      </nav>
+      </SidebarSection>
       )}
 
       {showFilters && (
-      <nav aria-label="ניווט קטגוריות">
-        <SectionHeading>קטגוריות</SectionHeading>
+      <SidebarSection id="categories" navLabel="ניווט קטגוריות" heading="קטגוריות">
         <ul className="flex flex-col gap-0.5">
           {Object.entries(categoryLabels).map(([key, label]) => {
             const active = selectedCategories.has(key);
@@ -142,11 +173,11 @@ export default function Sidebar({
             );
           })}
         </ul>
-      </nav>
+      </SidebarSection>
       )}
 
-      {favoriteTopics.length > 0 && <TopicLinkList label="מועדפים" topics={favoriteTopics} Icon={Star} />}
-      {recentTopics.length > 0 && <TopicLinkList label="נצפו לאחרונה" topics={recentTopics} Icon={BookOpen} />}
+      {favoriteTopics.length > 0 && <TopicLinkList id="favorites" label="מועדפים" topics={favoriteTopics} Icon={Star} />}
+      {recentTopics.length > 0 && <TopicLinkList id="recent" label="נצפו לאחרונה" topics={recentTopics} Icon={BookOpen} />}
       {!showFilters && favoriteTopics.length === 0 && recentTopics.length === 0 && (
         <p className="text-sm text-[var(--kb-muted)]">נושאים שתסמן במועדפים או תפתח יופיעו כאן לגישה מהירה.</p>
       )}

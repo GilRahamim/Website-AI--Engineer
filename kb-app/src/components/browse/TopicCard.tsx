@@ -26,8 +26,8 @@ export default function TopicCard({ topic, highlightTerm, itemProps }: TopicCard
           {topic.category_label}
         </span>
         <div className="flex items-center gap-1">
-          <TopicStatusButton topicId={topic.id} tabIndex={itemProps.tabIndex} />
-          <TopicFavoriteButton topicId={topic.id} tabIndex={itemProps.tabIndex} />
+          <TopicStatusButton topicId={topic.id} size="xs" tabIndex={itemProps.tabIndex} />
+          <TopicFavoriteButton topicId={topic.id} size="xs" tabIndex={itemProps.tabIndex} />
         </div>
       </div>
       <Link

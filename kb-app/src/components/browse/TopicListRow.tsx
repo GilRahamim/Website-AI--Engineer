@@ -49,8 +49,8 @@ export default function TopicListRow({ topic, highlightTerm, itemProps }: TopicL
         <span className="truncate text-xs text-[var(--kb-muted)]">{topic.definition}</span>
       </Link>
       <div className="flex shrink-0 items-center gap-1">
-        <TopicStatusButton topicId={topic.id} tabIndex={itemProps.tabIndex} />
-        <TopicFavoriteButton topicId={topic.id} tabIndex={itemProps.tabIndex} />
+        <TopicStatusButton topicId={topic.id} size="xs" tabIndex={itemProps.tabIndex} />
+        <TopicFavoriteButton topicId={topic.id} size="xs" tabIndex={itemProps.tabIndex} />
       </div>
     </Card>
   );

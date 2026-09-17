@@ -6,9 +6,21 @@ import { Button } from '@/components/ui/button';
 
 interface TopicStatusButtonProps {
   topicId: string;
-  size?: 'sm' | 'lg';
+  size?: 'xs' | 'sm' | 'lg';
   tabIndex?: number;
 }
+
+const SIZE_CLASS: Record<'xs' | 'sm' | 'lg', string> = {
+  xs: 'size-9',
+  sm: 'size-11',
+  lg: 'size-12',
+};
+
+const ICON_SIZE: Record<'xs' | 'sm' | 'lg', number> = {
+  xs: 15,
+  sm: 18,
+  lg: 22,
+};
 
 const STATUS_ICONS: Record<ProgressStatus, typeof Circle> = {
   new: Circle,
@@ -37,9 +49,9 @@ export default function TopicStatusButton({ topicId, size = 'sm', tabIndex = 0 }
       }}
       aria-label={`מצב למידה: ${STATUS_LABELS[status]}. לחץ למעבר ל'${STATUS_LABELS[NEXT_STATUS[status]]}'`}
       data-status={status}
-      className={`kb-status-pill rounded-full ${size === 'lg' ? 'size-12' : 'size-11'}`}
+      className={`kb-status-pill rounded-full ${SIZE_CLASS[size]}`}
     >
-      <Icon aria-hidden="true" size={size === 'lg' ? 22 : 18} />
+      <Icon aria-hidden="true" size={ICON_SIZE[size]} />
     </Button>
   );
 }

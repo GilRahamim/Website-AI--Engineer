@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SearchX } from 'lucide-react';
+import { BookOpen, PanelLeftClose, PanelLeftOpen, SearchX, Star } from 'lucide-react';
 import { categoryCounts, categoryLabels, moduleCounts, modules, searchIndex, topics, topicsById } from '../lib/catalog';
 import { filterTopics } from '../lib/filterTopics';
 import { groupTopicsByModule } from '../lib/groupTopics';
@@ -26,6 +26,16 @@ import { Button } from '@/components/ui/button';
 const statusChipClass =
   'flex min-h-10 items-center rounded-full border px-3 text-[13px] transition-colors aria-pressed:border-[var(--kb-accent-soft)] aria-pressed:bg-[var(--kb-accent-soft)] aria-pressed:font-semibold aria-pressed:text-[var(--kb-accent)] border-[var(--kb-border)] bg-[var(--kb-surface)] font-medium text-[var(--kb-text2)] hover:bg-[var(--kb-surface2)]';
 
+const SIDEBAR_COLLAPSED_KEY = 'kb-sidebar-collapsed';
+
+function getStoredSidebarCollapsed(): boolean {
+  try {
+    return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
 export default function Home() {
   usePageTitle();
   const navigate = useNavigate();
@@ -47,7 +57,21 @@ export default function Home() {
   const notes = useUserDataStore((s) => s.notes);
   const srsCards = useUserDataStore((s) => s.srsCards);
   const recents = useUserDataStore((s) => s.recents);
+  const favorites = useUserDataStore((s) => s.favorites);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(getStoredSidebarCollapsed);
+
+  function toggleSidebarCollapsed() {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(SIDEBAR_COLLAPSED_KEY, next ? '1' : '0');
+      } catch {
+        // localStorage unavailable (private browsing); collapse still works for this session.
+      }
+      return next;
+    });
+  }
 
   const [now] = useState(() => Date.now());
   const [randomTopic] = useState(() => topics[Math.floor(Math.random() * topics.length)]);
@@ -106,15 +130,74 @@ export default function Home() {
     <>
       <Header />
       <div className="mx-auto flex max-w-[1440px] items-start">
-        <aside className="sticky top-16 hidden max-h-[calc(100vh-4rem)] w-72 shrink-0 overflow-y-auto border-e border-[var(--kb-border)] bg-[var(--kb-surface)] md:block">
-          <Sidebar
-            modules={modules}
-            moduleCounts={moduleCounts}
-            moduleMasteredCounts={moduleMasteredCounts}
-            categoryLabels={categoryLabels}
-            categoryCounts={categoryCounts}
-            topicsById={topicsById}
-          />
+        <aside
+          className={`sticky top-16 hidden max-h-[calc(100vh-4rem)] shrink-0 overflow-y-auto border-e border-[var(--kb-border)] bg-[var(--kb-surface)] transition-[width] duration-200 ease-[var(--kb-ease)] md:block ${
+            sidebarCollapsed ? 'w-14' : 'w-72'
+          }`}
+        >
+          {sidebarCollapsed ? (
+            <div className="flex flex-col items-center gap-2 p-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={toggleSidebarCollapsed}
+                aria-label="הרחב סרגל צד"
+                aria-expanded={false}
+                className="size-10 rounded-[10px]"
+              >
+                <PanelLeftOpen aria-hidden="true" size={18} />
+              </Button>
+              {favorites.size > 0 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleSidebarCollapsed}
+                  aria-label="הרחב סרגל צד להצגת מועדפים"
+                  className="size-10 rounded-[10px] text-[var(--kb-accent)]"
+                >
+                  <Star aria-hidden="true" size={18} />
+                </Button>
+              )}
+              {recents.length > 0 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleSidebarCollapsed}
+                  aria-label="הרחב סרגל צד להצגת נצפו לאחרונה"
+                  className="size-10 rounded-[10px]"
+                >
+                  <BookOpen aria-hidden="true" size={18} />
+                </Button>
+              )}
+            </div>
+          ) : (
+            <>
+              <div className="flex justify-end p-2 pb-0">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleSidebarCollapsed}
+                  aria-label="כווץ סרגל צד"
+                  aria-expanded={true}
+                  className="size-9 rounded-[10px]"
+                >
+                  <PanelLeftClose aria-hidden="true" size={16} />
+                </Button>
+              </div>
+              <Sidebar
+                modules={modules}
+                moduleCounts={moduleCounts}
+                moduleMasteredCounts={moduleMasteredCounts}
+                categoryLabels={categoryLabels}
+                categoryCounts={categoryCounts}
+                topicsById={topicsById}
+              />
+            </>
+          )}
         </aside>
         <div className="min-w-0 flex-1">
           <section aria-label="לוח למידה" className="px-4 pt-4 sm:px-6 lg:px-8">
