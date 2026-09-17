@@ -1,17 +1,24 @@
 :root {
-  --kb-bg: oklch(97.5% 0.005 260);      --kb-surface: oklch(99.2% 0.003 260);
-  --kb-surface2: oklch(95.5% 0.007 260); --kb-border: oklch(90% 0.01 260);
-  --kb-border-strong: oklch(83% 0.014 260);
-  --kb-text: oklch(23% 0.02 260); --kb-text2: oklch(38% 0.018 260); --kb-muted: oklch(52% 0.016 260);
-  --kb-accent: oklch(54% 0.16 260); --kb-accent-soft: oklch(95.5% 0.03 260);
-  --kb-accent-warm: oklch(78% 0.11 95);
+  /* Zen Linen (remix) — warm linen/paper neutrals with a terracotta accent,
+     converted from the theme's sRGB hex to this file's OKLCH convention and
+     re-validated for contrast rather than reused verbatim (see below). */
+  --kb-bg: oklch(91.9% 0.017 88);      --kb-surface: oklch(95.3% 0.016 86);
+  --kb-surface2: oklch(86.5% 0.02 88); --kb-border: oklch(84.3% 0.023 87);
+  --kb-border-strong: oklch(77% 0.025 87);
+  --kb-text: oklch(23.5% 0 90); --kb-text2: oklch(35.6% 0.007 85); --kb-muted: oklch(46.9% 0.014 85);
+  /* Zen Linen's chart-1 terracotta (#F26A4B) is too light to use as-is for
+     text/icons on this bg (2.4:1) — same hue, relit to clear 4.5:1. */
+  --kb-accent: oklch(55% 0.19 34); --kb-accent-soft: oklch(94.5% 0.025 34);
+  /* Zen Linen has no second accent; kept a distinct warm hue for the due-today
+     nudge but relit — the old amber (khaki, ~1.6:1) nearly vanished on linen. */
+  --kb-accent-warm: oklch(48% 0.13 75);
   /* Text/icons placed ON a solid --kb-accent fill. White only works in the
      light theme; the dark accent is a light lavender (2.3:1 against white). */
   --kb-on-accent: #fff;
-  --kb-on-accent-warm: oklch(25% 0.02 95);
+  --kb-on-accent-warm: oklch(97% 0.01 75);
   /* Form-control boundaries need 3:1 against the surface (WCAG 1.4.11);
      --kb-border is a 1.3:1 hairline meant for dividers, not inputs. */
-  --kb-border-input: oklch(66% 0.012 260);
+  --kb-border-input: oklch(61.5% 0.022 87);
 
   --kb-shadow-sm: 0 1px 2px oklch(20% 0.02 260 / 0.06), 0 1px 3px oklch(20% 0.02 260 / 0.08);
   --kb-shadow-md: 0 4px 12px oklch(20% 0.02 260 / 0.10);
@@ -31,15 +38,15 @@
   --kb-overlay: oklch(0% 0 0 / 0.4);
 }
 :root[data-theme="dark"] {
-  --kb-bg: oklch(19% 0.012 260); --kb-surface: oklch(23% 0.014 260);
-  --kb-surface2: oklch(27% 0.016 260); --kb-border: oklch(32% 0.016 260);
-  --kb-border-strong: oklch(40% 0.018 260);
-  --kb-text: oklch(93% 0.006 260); --kb-text2: oklch(80% 0.01 260); --kb-muted: oklch(64% 0.014 260);
-  --kb-accent: oklch(74% 0.14 260); --kb-accent-soft: oklch(32% 0.06 260);
-  --kb-accent-warm: oklch(80% 0.10 95);
-  --kb-on-accent: oklch(15% 0.02 260);
-  --kb-on-accent-warm: oklch(20% 0.02 95);
-  --kb-border-input: oklch(52% 0.016 260);
+  --kb-bg: oklch(19.1% 0 90); --kb-surface: oklch(22.6% 0 90);
+  --kb-surface2: oklch(25.2% 0 90); --kb-border: oklch(29.3% 0 90);
+  --kb-border-strong: oklch(36.6% 0 90);
+  --kb-text: oklch(91.7% 0.013 82); --kb-text2: oklch(79.1% 0.012 82); --kb-muted: oklch(63.5% 0.011 82);
+  --kb-accent: oklch(72% 0.16 34); --kb-accent-soft: oklch(30% 0.07 34);
+  --kb-accent-warm: oklch(80% 0.10 75);
+  --kb-on-accent: oklch(15% 0.02 34);
+  --kb-on-accent-warm: oklch(20% 0.02 75);
+  --kb-border-input: oklch(54% 0.012 82);
 
   --kb-shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.4);
   --kb-shadow-md: 0 4px 14px oklch(0% 0 0 / 0.45);
@@ -73,10 +80,39 @@
   --accent-foreground: var(--kb-accent);
   /* Net-new: nothing in --kb-* represents an error/danger state today.
      Same lightness/chroma discipline as the rest of the palette. */
-  --destructive: oklch(58% 0.19 25);
+  --destructive: oklch(57.7% 0.215 27);
   --destructive-foreground: #fff;
   --border: var(--kb-border);
   --input: var(--kb-border-input);
   --ring: var(--kb-accent);
-  --radius: 0.625rem;
+  --radius: 0.5rem;
+}
+
+/* Tailwind v4 only generates utilities (bg-primary, border-input, etc.) for
+   custom properties registered here — the plain :root mapping above sets
+   the values but is invisible to the utility generator without this block. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }

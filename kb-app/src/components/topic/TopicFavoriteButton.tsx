@@ -34,7 +34,7 @@ export default function TopicFavoriteButton({ topicId, size = 'sm', tabIndex = 0
         toggleFavorite(topicId);
       }}
       aria-label={isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}
-      className={`kb-favorite-star grid place-items-center rounded-full border border-[var(--kb-border)] bg-[var(--kb-surface)] data-[state=on]:bg-[var(--kb-surface)] data-[state=on]:text-[var(--kb-accent)] ${SIZE_CLASS[size]}`}
+      className={`kb-favorite-star grid place-items-center rounded-full border border-input bg-background data-[state=on]:bg-background data-[state=on]:text-[var(--kb-accent)] ${SIZE_CLASS[size]}`}
     >
       <Star aria-hidden="true" size={ICON_SIZE[size]} fill={isFavorite ? 'currentColor' : 'none'} />
     </Toggle>
