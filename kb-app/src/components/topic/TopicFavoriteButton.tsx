@@ -10,8 +10,8 @@ interface TopicFavoriteButtonProps {
 
 const SIZE_CLASS: Record<'xs' | 'sm' | 'lg', string> = {
   xs: 'size-9 min-w-0 p-0',
-  sm: 'size-11',
-  lg: 'size-12',
+  sm: 'size-11 min-w-0 p-0',
+  lg: 'size-12 min-w-0 p-0',
 };
 
 const ICON_SIZE: Record<'xs' | 'sm' | 'lg', number> = {
